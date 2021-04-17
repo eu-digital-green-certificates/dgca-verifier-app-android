@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">dgca-verifier-app-android</string>
+    <string name="pause">Pause</string>
+    <string name="resume">Resume</string>
 </resources>

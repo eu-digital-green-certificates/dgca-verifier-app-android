@@ -17,22 +17,34 @@ class CborProcessingChain(
         return ResultCbor(cbor, cose, comCose, prefEncodedComCose)
     }
 
-    fun verify(input: String, verificationResult: VerificationResult = VerificationResult()): VaccinationData {
+    fun verify(
+        input: String,
+        verificationResult: VerificationResult = VerificationResult()
+    ): VaccinationData {
         val plainInput = valSuiteService.decode(input, verificationResult)
         val compressedCose = base45Service.decode(plainInput, verificationResult)
         val cose = compressorService.decode(compressedCose, verificationResult)
         val cbor = coseService.decode(cose, verificationResult)
         return cborService.decode(cbor, verificationResult)
     }
-
 }
 
-class VerificationResult {
-    var base45Decoded = false
-    var valSuitePrefix: String? = null
-    var zlibDecoded = false
-    var coseVerified = false
-    var cborDecoded = false
+data class VerificationResult(
+    var base45Decoded: Boolean = false,
+    var valSuitePrefix: String? = null,
+    var zlibDecoded: Boolean = false,
+    var coseVerified: Boolean = false,
+    var cborDecoded: Boolean = false
+) {
+
+    override fun toString(): String {
+        return "VerificationResult: \n" +
+                "base45Decoded: $base45Decoded \n" +
+                "valSuitePrefix: $valSuitePrefix \n" +
+                "zlibDecoded: $zlibDecoded \n" +
+                "coseVerified: $coseVerified \n" +
+                "cborDecoded: $cborDecoded"
+    }
 }
 
 data class ResultCbor(

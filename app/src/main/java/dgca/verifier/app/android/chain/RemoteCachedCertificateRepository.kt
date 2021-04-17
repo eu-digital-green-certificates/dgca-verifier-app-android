@@ -25,7 +25,4 @@ class RemoteCachedCertificateRepository(private val baseUrl: String) : Certifica
     internal fun addCertificate(kid: String, certificate: Certificate) {
         map[kid] = certificate
     }
-
 }
-
-

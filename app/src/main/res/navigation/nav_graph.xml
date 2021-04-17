@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/codeReaderFragment">
+
+    <fragment
+        android:id="@+id/codeReaderFragment"
+        android:name="dgca.verifier.app.android.CodeReaderFragment"
+        android:label="CodeReader"
+        tools:layout="@layout/fragment_code_reader">
+
+        <action
+            android:id="@+id/action_codeReaderFragment_to_resultFragment"
+            app:destination="@id/resultFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/resultFragment"
+        android:name="dgca.verifier.app.android.ResultFragment"
+        android:label="Result"
+        tools:layout="@layout/fragment_result">
+
+        <argument
+            android:name="qrCodeText"
+            app:argType="string" />
+    </fragment>
+</navigation>

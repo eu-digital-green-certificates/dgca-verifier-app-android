@@ -1,53 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.journeyapps.barcodescanner.DecoratedBarcodeView
-        android:id="@+id/barcode_scanner"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_above="@+id/buttonsLayout"
-        android:layout_alignParentTop="true">
-
-    </com.journeyapps.barcodescanner.DecoratedBarcodeView>
-
-    <LinearLayout
-        android:id="@+id/buttonsLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/centerHorizont"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/pause"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="pause"
-            android:text="Pause" />
-
-        <Button
-            android:id="@+id/resume"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="resume"
-            android:text="Resume" />
-    </LinearLayout>
-
-    <View
-        android:id="@+id/centerHorizont"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_centerHorizontal="true" />
+        android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navGraph="@navigation/nav_graph" />
 
-    <ImageView
-        android:id="@+id/barcodePreview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/buttonsLayout"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@id/centerHorizont" />
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
