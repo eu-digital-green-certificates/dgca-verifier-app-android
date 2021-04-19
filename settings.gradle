@@ -1,2 +1,3 @@
 include ':app'
+include ':decoder'
 rootProject.name = "dgca-verifier-app-android"

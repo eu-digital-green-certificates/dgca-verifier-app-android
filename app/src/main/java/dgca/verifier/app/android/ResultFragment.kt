@@ -7,24 +7,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
-import dgca.verifier.app.android.chain.CborProcessingChain
-import dgca.verifier.app.android.chain.DefaultBase45Service
-import dgca.verifier.app.android.chain.DefaultCborService
-import dgca.verifier.app.android.chain.DefaultCompressorService
-import dgca.verifier.app.android.chain.DefaultCoseService
-import dgca.verifier.app.android.chain.DefaultValSuiteService
-import dgca.verifier.app.android.chain.RemoteCachedCertificateRepository
-import dgca.verifier.app.android.chain.VaccinationData
-import dgca.verifier.app.android.chain.VerificationCryptoService
-import dgca.verifier.app.android.chain.VerificationResult
 import dgca.verifier.app.android.databinding.FragmentResultBinding
+import dgca.verifier.app.decoder.chain.CborProcessingChain
+import dgca.verifier.app.decoder.chain.RemoteCachedCertificateRepository
+import dgca.verifier.app.decoder.chain.VerificationCryptoService
+import dgca.verifier.app.decoder.chain.base45.DefaultBase45Service
+import dgca.verifier.app.decoder.chain.cbor.DefaultCborService
+import dgca.verifier.app.decoder.chain.compression.DefaultCompressorService
+import dgca.verifier.app.decoder.chain.cose.DefaultCoseService
+import dgca.verifier.app.decoder.chain.model.VaccinationData
+import dgca.verifier.app.decoder.chain.model.VerificationResult
+import dgca.verifier.app.decoder.chain.prefixvalidation.DefaultPrefixValidationService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.ExperimentalSerializationApi
 
-@ExperimentalSerializationApi
+@Suppress("EXPERIMENTAL_API_USAGE")
 @ExperimentalUnsignedTypes
 class ResultFragment : Fragment() {
 
@@ -69,7 +68,7 @@ class ResultFragment : Fragment() {
         val cryptoService = VerificationCryptoService(repository)
 
         val coseService = DefaultCoseService(cryptoService)
-        val valSuiteService = DefaultValSuiteService()
+        val valSuiteService = DefaultPrefixValidationService()
         val compressorService = DefaultCompressorService()
         val base45Service = DefaultBase45Service()
         val cborService = DefaultCborService()

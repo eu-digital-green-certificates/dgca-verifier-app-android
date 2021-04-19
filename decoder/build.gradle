@@ -1,8 +1,7 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
     id 'kotlin-android'
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.4.30'
-    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
@@ -10,13 +9,13 @@ android {
     buildToolsVersion Config.buildToolsVersion
 
     defaultConfig {
-        applicationId "dgca.verifier.app.android"
         minSdkVersion Config.minSdk
         targetSdkVersion Config.targetSdk
         versionCode Config.versionCode
         versionName Config.versionName
 
         testInstrumentationRunner Config.androidTestInstrumentation
+        consumerProguardFiles Config.proguardConsumerRules
     }
 
     buildTypes {
@@ -34,24 +33,16 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-
-    buildFeatures {
-        viewBinding true
-    }
 }
 
 dependencies {
-    implementation project(':decoder')
-
     implementation Deps.kotlin_stdlib
-    implementation Deps.androidx_core
-    implementation Deps.androidx_appcompat
-    implementation Deps.androidx_material
-    implementation Deps.androidx_constraint
-    implementation Deps.androidx_navigation_fragment
-    implementation Deps.androidx_navigation_ui
-    implementation Deps.kotlinx_coroutines
-    implementation Deps.zxing
+    implementation Deps.kotlin_reflect
+    implementation Deps.kotlin_serialization_json
+    implementation Deps.kotlin_serialization_cbor
+    implementation Deps.java_cose
+    implementation Deps.bouncy_castle
+    implementation Deps.okhttp
 
     testImplementation Deps.test_junit
 }
