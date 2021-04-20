@@ -3,11 +3,8 @@ package dgca.verifier.app.decoder.chain.cose
 import COSE.HeaderKeys
 import COSE.MessageTag
 import COSE.Sign1Message
-import com.upokecenter.cbor.CBORObject
-import com.upokecenter.cbor.CBORType
 import dgca.verifier.app.decoder.chain.CryptoService
 import dgca.verifier.app.decoder.chain.model.VerificationResult
-import dgca.verifier.app.decoder.chain.toHexString
 
 class DefaultCoseService(private val cryptoService: CryptoService) : CoseService {
 
@@ -29,18 +26,13 @@ class DefaultCoseService(private val cryptoService: CryptoService) : CoseService
         }
     }
 
-    private fun getKid(it: Sign1Message): String? {
+    private fun getKid(it: Sign1Message): ByteArray? {
         val key = HeaderKeys.KID.AsCBOR()
         if (it.protectedAttributes.ContainsKey(key)) {
-            return asString(it.protectedAttributes.get(key))
+            return it.protectedAttributes.get(key).GetByteString()
         } else if (it.unprotectedAttributes.ContainsKey(key)) {
-            return asString(it.unprotectedAttributes.get(key))
+            return it.unprotectedAttributes.get(key).GetByteString()
         }
         return null
-    }
-
-    private fun asString(get: CBORObject): String? = when (get.type) {
-        CBORType.ByteString -> get.GetByteString().toHexString()
-        else -> get.AsString()
     }
 }

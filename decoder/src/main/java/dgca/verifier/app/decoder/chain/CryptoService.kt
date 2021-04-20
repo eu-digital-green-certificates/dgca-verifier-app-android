@@ -11,7 +11,7 @@ interface CryptoService {
 
     fun getCborSigningKey(): OneKey
 
-    fun getCborVerificationKey(kid: String): OneKey
+    fun getCborVerificationKey(kid: ByteArray): OneKey
 
-    fun getCertificate(kid: String): Certificate
+    fun getCertificate(kid: ByteArray): Certificate
 }

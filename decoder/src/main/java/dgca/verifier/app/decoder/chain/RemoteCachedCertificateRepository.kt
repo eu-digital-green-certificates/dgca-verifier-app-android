@@ -9,20 +9,23 @@ class RemoteCachedCertificateRepository(private val baseUrl: String) : Certifica
 
     private val map = mutableMapOf<String, Certificate>()
 
-    override fun loadCertificate(kid: String): Certificate {
-        if (map.containsKey(kid)) return map[kid]!!
-        val request = Request.Builder().get().url("$baseUrl/$kid").build()
+    override fun loadCertificate(kid: ByteArray): Certificate {
+        val key = kid.toBase64()
+        if (map.containsKey(key)) return map[key]!!
+        val request = Request.Builder().get().url("$baseUrl/$key").build()
         val response = OkHttpClient.Builder().build().newCall(request).execute()
         response.body?.let {
             val certificate =
                 CertificateFactory.getInstance("X.509").generateCertificate(it.byteStream())
-            addCertificate(kid, certificate)
+            map[key] = certificate
+
             return certificate
         }
         throw IllegalArgumentException("Unable to get certificate for $kid at $baseUrl")
     }
 
-    private fun addCertificate(kid: String, certificate: Certificate) {
-        map[kid] = certificate
+    private fun addCertificate(kid: ByteArray, certificate: Certificate) {
+        val key = kid.toBase64()
+        map[key] = certificate
     }
 }
