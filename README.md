@@ -19,10 +19,6 @@
 
 - [ ] TODO
 
-## Status
-
-![ci](https://github.com/eu-digital-green-certificates/dgca-verifier-app-android/actions/workflows/ci-master.yml/badge.svg)
-
 ## Development
 
 ### Prerequisites
