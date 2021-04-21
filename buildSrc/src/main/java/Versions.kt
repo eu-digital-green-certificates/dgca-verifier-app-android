@@ -23,6 +23,9 @@ object Versions {
     const val bouncy_castle = "1.68"
     const val okhttp = "4.9.1"
 
+    // Validation
+    const val json_validation = "2.2.6"
+
     // Tests
     const val junit = "4.13.1"
 }

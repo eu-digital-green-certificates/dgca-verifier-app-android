@@ -13,7 +13,8 @@ class CborProcessingChain(
     private val coseService: CoseService,
     private val prefixValidationService: PrefixValidationService,
     private val compressorService: CompressorService,
-    private val base45Service: Base45Service
+    private val base45Service: Base45Service,
+    private val schemaValidator: SchemaValidator
 ) {
 
     fun verify(
@@ -24,6 +25,8 @@ class CborProcessingChain(
         val compressedCose = base45Service.decode(plainInput, verificationResult)
         val cose = compressorService.decode(compressedCose, verificationResult)
         val cbor = coseService.decode(cose, verificationResult)
+        schemaValidator.validate(cbor, verificationResult)
+
         return cborService.decode(cbor, verificationResult)
     }
 }

@@ -5,7 +5,8 @@ data class VerificationResult(
     var countryPrefix: String? = null,
     var zlibDecoded: Boolean = false,
     var coseVerified: Boolean = false,
-    var cborDecoded: Boolean = false
+    var cborDecoded: Boolean = false,
+    var isSchemaValid: Boolean = false
 ) {
 
     override fun toString(): String {
@@ -14,6 +15,7 @@ data class VerificationResult(
                 "valSuitePrefix: $countryPrefix \n" +
                 "zlibDecoded: $zlibDecoded \n" +
                 "coseVerified: $coseVerified \n" +
-                "cborDecoded: $cborDecoded"
+                "cborDecoded: $cborDecoded \n" +
+                "isSchemaValid: $isSchemaValid"
     }
 }

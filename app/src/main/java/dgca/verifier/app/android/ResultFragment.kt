@@ -10,6 +10,7 @@ import androidx.navigation.fragment.navArgs
 import dgca.verifier.app.android.databinding.FragmentResultBinding
 import dgca.verifier.app.decoder.chain.CborProcessingChain
 import dgca.verifier.app.decoder.chain.RemoteCachedCertificateRepository
+import dgca.verifier.app.decoder.chain.SchemaValidator
 import dgca.verifier.app.decoder.chain.VerificationCryptoService
 import dgca.verifier.app.decoder.chain.base45.DefaultBase45Service
 import dgca.verifier.app.decoder.chain.cbor.DefaultCborService
@@ -72,13 +73,15 @@ class ResultFragment : Fragment() {
         val compressorService = DefaultCompressorService()
         val base45Service = DefaultBase45Service()
         val cborService = DefaultCborService()
+        val schemaValidator = SchemaValidator()
 
         return CborProcessingChain(
             cborService,
             coseService,
             valSuiteService,
             compressorService,
-            base45Service
+            base45Service,
+            schemaValidator
         )
     }
 }

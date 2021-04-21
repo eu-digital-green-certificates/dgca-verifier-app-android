@@ -43,6 +43,7 @@ dependencies {
     implementation Deps.java_cose
     implementation Deps.bouncy_castle
     implementation Deps.okhttp
+    implementation Deps.json_validation
 
     testImplementation Deps.test_junit
 }

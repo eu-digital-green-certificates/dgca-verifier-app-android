@@ -29,6 +29,7 @@ class DefaultCborService : CborService {
 
             val hcert = map[CwtHeaderKeys.HCERT.AsCBOR()]
             val hcertv1 = hcert[CBORObject.FromObject(1)].GetByteString()
+
             return Cbor { ignoreUnknownKeys = true }.decodeFromByteArray<VaccinationData>(hcertv1)
                 .also {
                     verificationResult.cborDecoded = true

@@ -19,6 +19,7 @@ object Deps {
     const val java_cose = "com.augustcellars.cose:cose-java:${Versions.java_cose}"
     const val bouncy_castle = "org.bouncycastle:bcpkix-jdk15to18:${Versions.bouncy_castle}"
     const val okhttp = "com.squareup.okhttp3:okhttp:${Versions.okhttp}"
+    const val json_validation = "com.github.fge:json-schema-validator:${Versions.json_validation}"
 
     const val test_junit = "junit:junit:${Versions.junit}"
 }
