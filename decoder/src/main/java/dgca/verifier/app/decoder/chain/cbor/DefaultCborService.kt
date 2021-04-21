@@ -2,8 +2,6 @@ package dgca.verifier.app.decoder.chain.cbor
 
 import com.upokecenter.cbor.CBORObject
 import dgca.verifier.app.decoder.chain.cwt.CwtHeaderKeys
-import dgca.verifier.app.decoder.chain.model.Person
-import dgca.verifier.app.decoder.chain.model.Test
 import dgca.verifier.app.decoder.chain.model.VaccinationData
 import dgca.verifier.app.decoder.chain.model.VerificationResult
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -18,17 +16,6 @@ class DefaultCborService : CborService {
         verificationResult.cborDecoded = false
         try {
             val map = CBORObject.DecodeFromBytes(input)
-            map["@context"]?.let { // NL from https://demo.uvci.eu/
-                val name = map["https://schema.org/nam"].AsString()
-                val gender = map["https://schema.org/gen"].AsString()
-                val date = map["https://schema.org/dat"].AsString()
-                return VaccinationData(
-                    Person(n = name, gen = gender),
-                    tst = listOf(Test(dat = date))
-                ).also {
-                    verificationResult.cborDecoded = true
-                }
-            }
 
             val issuer = map[CwtHeaderKeys.ISSUER.AsCBOR()].AsString()
             if (issuer != "AT") throw IllegalArgumentException("Issuer not correct: $issuer")
