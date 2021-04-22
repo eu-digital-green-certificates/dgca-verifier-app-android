@@ -19,6 +19,19 @@
         tools:text="Gabriele \nMusterfrau" />
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/person_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_margin"
+        android:layout_marginTop="30dp"
+        android:textSize="@dimen/text_size_medium"
+        android:typeface="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/person_full_name"
+        tools:text="Passport: 1234" />
+
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,7 +41,7 @@
         app:layout_constraintEnd_toStartOf="@+id/status"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/person_full_name"
+        app:layout_constraintTop_toBottomOf="@+id/person_info"
         tools:text="@string/type_vaccination" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -41,7 +54,7 @@
         app:layout_constraintEnd_toStartOf="@+id/cert_status_icon"
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toEndOf="@+id/type"
-        app:layout_constraintTop_toBottomOf="@+id/person_full_name"
+        app:layout_constraintTop_toBottomOf="@+id/person_info"
         tools:text="@string/cert_valid" />
 
     <androidx.appcompat.widget.AppCompatImageView

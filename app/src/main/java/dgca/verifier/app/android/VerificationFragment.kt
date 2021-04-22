@@ -19,6 +19,7 @@ import dgca.verifier.app.decoder.chain.cbor.DefaultCborService
 import dgca.verifier.app.decoder.chain.compression.DefaultCompressorService
 import dgca.verifier.app.decoder.chain.cose.DefaultCoseService
 import dgca.verifier.app.decoder.chain.model.GreenCertificate
+import dgca.verifier.app.decoder.chain.model.IdentifierType
 import dgca.verifier.app.decoder.chain.model.VerificationResult
 import dgca.verifier.app.decoder.chain.prefixvalidation.DefaultPrefixValidationService
 import kotlinx.coroutines.Dispatchers
@@ -76,6 +77,23 @@ class VerificationFragment : Fragment() {
                     adapter.update(certificate.vaccinations)
                     binding.personFullName.text = certificate.subject.givenName + "\n" + certificate.subject.familyName
                     binding.type.text = getCertType(certificate)
+
+                    val personalInfo = StringBuilder()
+                    val identifier = certificate.subject.identifiers?.first()
+                    when (identifier?.type) {
+                        IdentifierType.PASSPORT -> personalInfo.append("Passport: ${identifier.id}")
+                        IdentifierType.NATIONAL_IDENTIFIER -> { // TODO: update
+                        }
+                        IdentifierType.CITIZENSHIP -> { // TODO: update
+                        }
+                        IdentifierType.HEALTH -> { // TODO: update
+                        }
+                        null -> {
+                        }
+                    }
+                    personalInfo.append("\n")
+                    personalInfo.append("Date of Birth: ${certificate.subject.dateOfBirth}")
+                    binding.personInfo.text = personalInfo
 
                     if (isCertValid(verificationResult)) {
                         binding.status.text = getString(R.string.cert_valid)

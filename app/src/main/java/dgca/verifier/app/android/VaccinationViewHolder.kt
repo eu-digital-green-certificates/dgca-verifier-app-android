@@ -15,6 +15,15 @@ class VaccinationViewHolder(private val binding: ItemVaccinationBinding) :
     }
 
     fun bind(data: Vaccination) {
-        binding.disease.text = "Disease: ${data.disease}"
+        binding.disease.text = "disease: ${data.disease}"
+        binding.vaccine.text = "vaccine: ${data.vaccine}"
+        binding.medicinalProduct.text = "medicinalProduct: ${data.medicinalProduct}"
+        binding.authorizationHolder.text = "authorizationHolder: ${data.authorizationHolder}"
+        binding.doseSequence.text = "doseSequence: ${data.doseSequence}"
+        binding.doseTotalNumber.text = "doseTotalNumber: ${data.doseTotalNumber}"
+        binding.lotNumber.text = "lotNumber: ${data.lotNumber}"
+        binding.date.text = "date: ${data.date}"
+        binding.administeringCentre.text = "administeringCentre: ${data.administeringCentre}"
+        binding.country.text = "country: ${data.country}"
     }
 }
