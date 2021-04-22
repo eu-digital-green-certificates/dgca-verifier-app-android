@@ -28,7 +28,7 @@ class DefaultCborService : CborService {
             if (expirationTime.isBefore(Instant.now())) throw IllegalArgumentException("Expiration not correct: $expirationTime")
 
             val hcert = map[CwtHeaderKeys.HCERT.AsCBOR()]
-            val hcertv1 = hcert[CBORObject.FromObject(1)].GetByteString()
+            val hcertv1 = hcert[CBORObject.FromObject(1)].EncodeToBytes()
 
             return Cbor { ignoreUnknownKeys = true }.decodeFromByteArray<VaccinationData>(hcertv1)
                 .also {

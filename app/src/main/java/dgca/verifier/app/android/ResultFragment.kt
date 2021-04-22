@@ -65,7 +65,7 @@ class ResultFragment : Fragment() {
     }
 
     private fun buildChain(): CborProcessingChain {
-        val repository = RemoteCachedCertificateRepository("https://dev.a-sit.at/certservice/cert")
+        val repository = RemoteCachedCertificateRepository("https://dgc.a-sit.at/ehn/cert")
         val cryptoService = VerificationCryptoService(repository)
 
         val coseService = DefaultCoseService(cryptoService)

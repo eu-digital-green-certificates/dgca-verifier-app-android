@@ -15,7 +15,7 @@ class SchemaValidator {
     fun validate(cbor: ByteArray, verificationResult: VerificationResult): Boolean {
         val map = CBORObject.DecodeFromBytes(cbor)
         val hcert = map[CwtHeaderKeys.HCERT.AsCBOR()]
-        val hcertv1 = hcert[CBORObject.FromObject(1)].GetByteString()
+        val hcertv1 = hcert[CBORObject.FromObject(1)].EncodeToBytes()
 
         val json = CBORObject.DecodeFromBytes(hcertv1).ToJSONString()
         val mapper = ObjectMapper()
