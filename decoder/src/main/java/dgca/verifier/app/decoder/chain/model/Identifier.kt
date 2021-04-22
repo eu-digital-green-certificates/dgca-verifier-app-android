@@ -1,6 +1,7 @@
 package dgca.verifier.app.decoder.chain.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.io.Serializable
 
 data class Identifier(
 
@@ -12,4 +13,4 @@ data class Identifier(
 
     @JsonProperty("c")
     val country: String? = null
-)
+): Serializable
