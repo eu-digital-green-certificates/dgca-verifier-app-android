@@ -11,7 +11,7 @@ enum class DataType {
     TEST, VACCINATION, RECOVERED
 }
 
-class MediaListAdapter(
+class CertListAdapter(
     private val inflater: LayoutInflater
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 

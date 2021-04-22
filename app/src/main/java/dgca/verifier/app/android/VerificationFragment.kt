@@ -36,11 +36,11 @@ class VerificationFragment : Fragment() {
     private val args by navArgs<VerificationFragmentArgs>()
     private var _binding: FragmentResultBinding? = null
     private val binding get() = _binding!!
-    private lateinit var adapter: MediaListAdapter
+    private lateinit var adapter: CertListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        adapter = MediaListAdapter(layoutInflater)
+        adapter = CertListAdapter(layoutInflater)
     }
 
     override fun onCreateView(
