@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/resultFragment"
-        android:name="dgca.verifier.app.android.ResultFragment"
+        android:name="dgca.verifier.app.android.VerificationFragment"
         android:label="Result"
         tools:layout="@layout/fragment_result">
 

@@ -17,8 +17,7 @@ object Versions {
 
     // Decoder
     const val kotlin_reflect = "1.4.32"
-    const val kotlin_serialization_json = "1.1.0"
-    const val kotlin_serialization_cbor = "1.1.0"
+    const val jackson_cbor = "2.12.3"
     const val java_cose = "1.1.0"
     const val bouncy_castle = "1.68"
     const val okhttp = "4.9.1"

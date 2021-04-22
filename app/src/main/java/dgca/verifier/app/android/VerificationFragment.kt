@@ -16,7 +16,7 @@ import dgca.verifier.app.decoder.chain.base45.DefaultBase45Service
 import dgca.verifier.app.decoder.chain.cbor.DefaultCborService
 import dgca.verifier.app.decoder.chain.compression.DefaultCompressorService
 import dgca.verifier.app.decoder.chain.cose.DefaultCoseService
-import dgca.verifier.app.decoder.chain.model.VaccinationData
+import dgca.verifier.app.decoder.chain.model.GreenCertificate
 import dgca.verifier.app.decoder.chain.model.VerificationResult
 import dgca.verifier.app.decoder.chain.prefixvalidation.DefaultPrefixValidationService
 import kotlinx.coroutines.Dispatchers
@@ -24,11 +24,12 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@Suppress("EXPERIMENTAL_API_USAGE")
-@ExperimentalUnsignedTypes
-class ResultFragment : Fragment() {
+private const val BASE_URL = "https://dgc.a-sit.at/ehn/cert"
 
-    private val args by navArgs<ResultFragmentArgs>()
+@ExperimentalUnsignedTypes
+class VerificationFragment : Fragment() {
+
+    private val args by navArgs<VerificationFragmentArgs>()
     private var _binding: FragmentResultBinding? = null
     private val binding get() = _binding!!
 
@@ -53,7 +54,7 @@ class ResultFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     fun decode(code: String) {
         GlobalScope.launch {
-            val vaccinationData: VaccinationData
+            val vaccinationData: GreenCertificate?
             val decodingChain = buildChain()
             val verificationResult = VerificationResult()
             vaccinationData = decodingChain.verify(code, verificationResult)
@@ -65,7 +66,7 @@ class ResultFragment : Fragment() {
     }
 
     private fun buildChain(): CborProcessingChain {
-        val repository = RemoteCachedCertificateRepository("https://dgc.a-sit.at/ehn/cert")
+        val repository = RemoteCachedCertificateRepository(BASE_URL)
         val cryptoService = VerificationCryptoService(repository)
 
         val coseService = DefaultCoseService(cryptoService)

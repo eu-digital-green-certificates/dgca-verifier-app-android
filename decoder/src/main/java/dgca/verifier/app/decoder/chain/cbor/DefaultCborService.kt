@@ -1,18 +1,15 @@
 package dgca.verifier.app.decoder.chain.cbor
 
+import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper
 import com.upokecenter.cbor.CBORObject
 import dgca.verifier.app.decoder.chain.cwt.CwtHeaderKeys
-import dgca.verifier.app.decoder.chain.model.VaccinationData
+import dgca.verifier.app.decoder.chain.model.GreenCertificate
 import dgca.verifier.app.decoder.chain.model.VerificationResult
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.cbor.Cbor
-import kotlinx.serialization.decodeFromByteArray
 import java.time.Instant
 
-@ExperimentalSerializationApi
 class DefaultCborService : CborService {
 
-    override fun decode(input: ByteArray, verificationResult: VerificationResult): VaccinationData {
+    override fun decode(input: ByteArray, verificationResult: VerificationResult): GreenCertificate? {
         verificationResult.cborDecoded = false
         try {
             val map = CBORObject.DecodeFromBytes(input)
@@ -30,12 +27,12 @@ class DefaultCborService : CborService {
             val hcert = map[CwtHeaderKeys.HCERT.AsCBOR()]
             val hcertv1 = hcert[CBORObject.FromObject(1)].EncodeToBytes()
 
-            return Cbor { ignoreUnknownKeys = true }.decodeFromByteArray<VaccinationData>(hcertv1)
-                .also {
-                    verificationResult.cborDecoded = true
-                }
+            return CBORMapper()
+                .readValue(hcertv1, GreenCertificate::class.java)
+                .also { verificationResult.cborDecoded = true }
+
         } catch (e: Throwable) {
-            return VaccinationData()
+            return null
         }
     }
 }

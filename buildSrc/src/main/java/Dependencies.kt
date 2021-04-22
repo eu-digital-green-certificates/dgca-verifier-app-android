@@ -14,12 +14,11 @@ object Deps {
 
     const val zxing = "com.journeyapps:zxing-android-embedded:${Versions.zxing}"
     const val kotlin_reflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin_reflect}"
-    const val kotlin_serialization_json = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.kotlin_serialization_json}"
-    const val kotlin_serialization_cbor = "org.jetbrains.kotlinx:kotlinx-serialization-cbor:${Versions.kotlin_serialization_cbor}"
     const val java_cose = "com.augustcellars.cose:cose-java:${Versions.java_cose}"
     const val bouncy_castle = "org.bouncycastle:bcpkix-jdk15to18:${Versions.bouncy_castle}"
     const val okhttp = "com.squareup.okhttp3:okhttp:${Versions.okhttp}"
     const val json_validation = "com.github.fge:json-schema-validator:${Versions.json_validation}"
+    const val jackson_cbor = "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${Versions.jackson_cbor}"
 
     const val test_junit = "junit:junit:${Versions.junit}"
 }

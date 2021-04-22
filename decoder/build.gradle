@@ -1,7 +1,6 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
-    id 'org.jetbrains.kotlin.plugin.serialization' version '1.4.30'
 }
 
 android {
@@ -38,12 +37,11 @@ android {
 dependencies {
     implementation Deps.kotlin_stdlib
     implementation Deps.kotlin_reflect
-    implementation Deps.kotlin_serialization_json
-    implementation Deps.kotlin_serialization_cbor
     implementation Deps.java_cose
     implementation Deps.bouncy_castle
     implementation Deps.okhttp
     implementation Deps.json_validation
+    implementation Deps.jackson_cbor
 
     testImplementation Deps.test_junit
 }
