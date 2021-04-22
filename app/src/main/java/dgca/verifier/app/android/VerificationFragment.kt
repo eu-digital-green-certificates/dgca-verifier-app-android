@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -73,6 +74,8 @@ class VerificationFragment : Fragment() {
             certificate = decodingChain.verify(code, verificationResult)
 
             withContext(Dispatchers.Main) {
+                binding.progressBar.isVisible = false
+
                 if (certificate != null) {
                     adapter.update(certificate.vaccinations)
                     binding.personFullName.text = certificate.subject.givenName + "\n" + certificate.subject.familyName
