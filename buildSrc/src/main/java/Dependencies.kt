@@ -11,6 +11,13 @@ object Deps {
     const val androidx_navigation_fragment = "androidx.navigation:navigation-fragment-ktx:${Versions.androidx_navigation}"
     const val androidx_navigation_ui = "androidx.navigation:navigation-ui-ktx:${Versions.androidx_navigation}"
     const val androidx_navigation = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.androidx_navigation}"
+    const val androidx_hilt_compiler = "androidx.hilt:hilt-compiler:${Versions.androidx_hilt_compiler}"
+    const val retrofit2 = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
+
+    const val hilt_plugin = "com.google.dagger:hilt-android-gradle-plugin:${Versions.hilt_version}"
+    const val hilt = "com.google.dagger:hilt-android:${Versions.hilt_version}"
+    const val hilt_compiler = "com.google.dagger:hilt-android-compiler:${Versions.hilt_version}"
+    const val hilt_viewmodel = "androidx.hilt:hilt-lifecycle-viewmodel:${Versions.androidx_hilt_viewmodel}"
 
     const val zxing = "com.journeyapps:zxing-android-embedded:${Versions.zxing}"
     const val kotlin_reflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin_reflect}"

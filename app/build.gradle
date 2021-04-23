@@ -3,6 +3,8 @@ plugins {
     id 'kotlin-android'
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.4.30'
     id 'androidx.navigation.safeargs.kotlin'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -59,6 +61,11 @@ dependencies {
     implementation Deps.androidx_navigation_ui
     implementation Deps.kotlinx_coroutines
     implementation Deps.zxing
+
+    implementation Deps.hilt
+    kapt Deps.hilt_compiler
+    implementation Deps.hilt_viewmodel
+    kapt Deps.androidx_hilt_compiler
 
     testImplementation Deps.test_junit
 }

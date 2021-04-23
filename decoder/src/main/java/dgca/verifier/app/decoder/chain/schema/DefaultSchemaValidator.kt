@@ -1,4 +1,4 @@
-package dgca.verifier.app.decoder.chain
+package dgca.verifier.app.decoder.chain.schema
 
 import android.util.Log
 import com.fasterxml.jackson.databind.JsonNode
@@ -7,12 +7,13 @@ import com.github.fge.jsonschema.core.report.ProcessingReport
 import com.github.fge.jsonschema.main.JsonSchema
 import com.github.fge.jsonschema.main.JsonSchemaFactory
 import com.upokecenter.cbor.CBORObject
+import dgca.verifier.app.decoder.chain.JSON_SCHEMA_V1
 import dgca.verifier.app.decoder.chain.cwt.CwtHeaderKeys
 import dgca.verifier.app.decoder.chain.model.VerificationResult
 
-class SchemaValidator {
+class DefaultSchemaValidator : SchemaValidator {
 
-    fun validate(cbor: ByteArray, verificationResult: VerificationResult): Boolean {
+    override fun validate(cbor: ByteArray, verificationResult: VerificationResult): Boolean {
         val map = CBORObject.DecodeFromBytes(cbor)
         val hcert = map[CwtHeaderKeys.HCERT.AsCBOR()]
         val hcertv1 = hcert[CBORObject.FromObject(1)].EncodeToBytes()

@@ -1,0 +1,64 @@
+package dgca.verifier.app.android.di
+
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import dgca.verifier.app.decoder.chain.CertificateRepository
+import dgca.verifier.app.decoder.chain.CryptoService
+import dgca.verifier.app.decoder.chain.RemoteCachedCertificateRepository
+import dgca.verifier.app.decoder.chain.VerificationCryptoService
+import dgca.verifier.app.decoder.chain.base45.Base45Service
+import dgca.verifier.app.decoder.chain.base45.DefaultBase45Service
+import dgca.verifier.app.decoder.chain.cbor.CborService
+import dgca.verifier.app.decoder.chain.cbor.DefaultCborService
+import dgca.verifier.app.decoder.chain.compression.CompressorService
+import dgca.verifier.app.decoder.chain.compression.DefaultCompressorService
+import dgca.verifier.app.decoder.chain.cose.CoseService
+import dgca.verifier.app.decoder.chain.cose.DefaultCoseService
+import dgca.verifier.app.decoder.chain.prefixvalidation.DefaultPrefixValidationService
+import dgca.verifier.app.decoder.chain.prefixvalidation.PrefixValidationService
+import dgca.verifier.app.decoder.chain.schema.DefaultSchemaValidator
+import dgca.verifier.app.decoder.chain.schema.SchemaValidator
+import javax.inject.Singleton
+
+private const val BASE_URL = "https://dgc.a-sit.at/ehn/cert"
+
+@InstallIn(SingletonComponent::class)
+@Module
+object DecoderModule {
+
+    @Singleton
+    @Provides
+    fun providePrefixValidationService(): PrefixValidationService = DefaultPrefixValidationService()
+
+    @ExperimentalUnsignedTypes
+    @Singleton
+    @Provides
+    fun provideBase45Decoder(): Base45Service = DefaultBase45Service()
+
+    @Singleton
+    @Provides
+    fun provideCompressorService(): CompressorService = DefaultCompressorService()
+
+    @Singleton
+    @Provides
+    fun provideCoseService(cryptoService: CryptoService): CoseService = DefaultCoseService(cryptoService)
+
+    @Singleton
+    @Provides
+    fun provideSchemaValidator(): SchemaValidator = DefaultSchemaValidator()
+
+    @Singleton
+    @Provides
+    fun provideCborService(): CborService = DefaultCborService()
+
+    @Singleton
+    @Provides
+    fun provideRemote(): CertificateRepository = RemoteCachedCertificateRepository(BASE_URL)
+
+    @Singleton
+    @Provides
+    fun provideCryptoService(certificateRepository: CertificateRepository): CryptoService =
+        VerificationCryptoService(certificateRepository)
+}
