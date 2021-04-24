@@ -5,7 +5,6 @@ plugins {
 
 android {
     compileSdkVersion Config.compileSdk
-    buildToolsVersion Config.buildToolsVersion
 
     defaultConfig {
         minSdkVersion Config.minSdk
@@ -39,7 +38,6 @@ dependencies {
     implementation Deps.kotlin_reflect
     implementation Deps.java_cose
     implementation Deps.bouncy_castle
-    implementation Deps.okhttp
     implementation Deps.json_validation
     implementation Deps.jackson_cbor
 
