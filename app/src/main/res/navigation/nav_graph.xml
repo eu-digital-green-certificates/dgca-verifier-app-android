@@ -41,7 +41,7 @@
 
     <fragment
         android:id="@+id/resultFragment"
-        android:name="dgca.verifier.app.android.VerificationFragment"
+        android:name="dgca.verifier.app.android.verification.VerificationFragment"
         android:label="Result"
         tools:layout="@layout/fragment_result">
 

@@ -9,7 +9,6 @@ plugins {
 
 android {
     compileSdkVersion Config.compileSdk
-    buildToolsVersion Config.buildToolsVersion
 
     defaultConfig {
         applicationId "dgca.verifier.app.android"
@@ -66,6 +65,9 @@ dependencies {
     kapt Deps.hilt_compiler
     implementation Deps.hilt_viewmodel
     kapt Deps.androidx_hilt_compiler
+
+    implementation Deps.retrofit2
+    implementation Deps.log_interceptor
 
     testImplementation Deps.test_junit
 }

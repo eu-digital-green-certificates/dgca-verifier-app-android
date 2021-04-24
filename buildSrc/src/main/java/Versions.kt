@@ -35,6 +35,7 @@ object Versions {
     const val androidx_hilt_compiler = "1.0.0-alpha01"
     const val hilt_version = "2.33-beta"
     const val retrofit = "2.9.0"
+    const val loggingInterceptor = "4.0.1"
 
     // QR
     const val zxing = "4.2.0"
@@ -44,7 +45,6 @@ object Versions {
     const val jackson_cbor = "2.12.3"
     const val java_cose = "1.1.0"
     const val bouncy_castle = "1.68"
-    const val okhttp = "4.9.1"
 
     // Validation
     const val json_validation = "2.2.6"

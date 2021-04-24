@@ -17,15 +17,24 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:51 AM
+ *  Created by mykhailo.nester on 4/24/21 2:19 PM
  */
 
-package dgca.verifier.app.decoder.chain.cose
+package dgca.verifier.app.android.di
 
-import dgca.verifier.app.decoder.chain.model.CoseData
-import dgca.verifier.app.decoder.chain.model.VerificationResult
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import dgca.verifier.app.android.data.VerifierRepository
+import dgca.verifier.app.android.data.VerifierRepositoryImpl
+import javax.inject.Singleton
 
-interface CoseService {
+@InstallIn(SingletonComponent::class)
+@Module
+abstract class RepositoryModule {
 
-    fun decode(input: ByteArray, verificationResult: VerificationResult): CoseData?
+    @Singleton
+    @Binds
+    abstract fun bindVerifierRepository(verifierRepository: VerifierRepositoryImpl): VerifierRepository
 }

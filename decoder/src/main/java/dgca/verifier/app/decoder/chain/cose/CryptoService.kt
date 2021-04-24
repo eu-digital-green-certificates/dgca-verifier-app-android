@@ -17,15 +17,16 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:51 AM
+ *  Created by mykhailo.nester on 4/24/21 3:09 PM
  */
 
 package dgca.verifier.app.decoder.chain.cose
 
 import dgca.verifier.app.decoder.chain.model.CoseData
 import dgca.verifier.app.decoder.chain.model.VerificationResult
+import java.security.cert.Certificate
 
-interface CoseService {
+interface CryptoService {
 
-    fun decode(input: ByteArray, verificationResult: VerificationResult): CoseData?
+    fun validate(coseData: CoseData, certificate: Certificate, verificationResult: VerificationResult)
 }

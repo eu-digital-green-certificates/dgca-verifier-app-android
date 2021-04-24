@@ -17,23 +17,18 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:52 AM
+ *  Created by mykhailo.nester on 4/24/21 2:50 PM
  */
 
-package dgca.verifier.app.decoder.chain
+package dgca.verifier.app.android.data.remote
 
-import COSE.HeaderKeys
-import COSE.OneKey
-import com.upokecenter.cbor.CBORObject
-import java.security.cert.Certificate
+import okhttp3.ResponseBody
+import retrofit2.Response
+import retrofit2.http.GET
+import retrofit2.http.Path
 
-interface CryptoService {
+interface ApiService {
 
-    fun getCborHeaders(): List<Pair<HeaderKeys, CBORObject>>
-
-    fun getCborSigningKey(): OneKey
-
-    fun getCborVerificationKey(kid: ByteArray): OneKey
-
-    fun getCertificate(kid: ByteArray): Certificate
+    @GET("/ehn/cert/{key}")
+    suspend fun getCertificates(@Path("key") key: String): Response<ResponseBody>
 }

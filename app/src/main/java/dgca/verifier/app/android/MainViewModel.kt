@@ -17,15 +17,24 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:51 AM
+ *  Created by mykhailo.nester on 4/24/21 2:10 PM
  */
 
-package dgca.verifier.app.decoder.chain.cose
+package dgca.verifier.app.android
 
-import dgca.verifier.app.decoder.chain.model.CoseData
-import dgca.verifier.app.decoder.chain.model.VerificationResult
+import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.ViewModel
+import dgca.verifier.app.android.data.VerifierRepository
 
-interface CoseService {
+class MainViewModel @ViewModelInject constructor(
+    private val verifierRepository: VerifierRepository
+) : ViewModel() {
 
-    fun decode(input: ByteArray, verificationResult: VerificationResult): CoseData?
+    init {
+        updateCache()
+    }
+
+    private fun updateCache() {
+//        TODO: fetch certificates if needed and updated locally.
+    }
 }

@@ -17,36 +17,44 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:47 AM
+ *  Created by mykhailo.nester on 4/24/21 2:54 PM
  */
 
-package dgca.verifier.app.android
+package dgca.verifier.app.android.verification
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.decoder.chain.base45.Base45Service
 import dgca.verifier.app.decoder.chain.cbor.CborService
 import dgca.verifier.app.decoder.chain.compression.CompressorService
 import dgca.verifier.app.decoder.chain.cose.CoseService
+import dgca.verifier.app.decoder.chain.cose.CryptoService
 import dgca.verifier.app.decoder.chain.model.GreenCertificate
 import dgca.verifier.app.decoder.chain.model.VerificationResult
 import dgca.verifier.app.decoder.chain.prefixvalidation.PrefixValidationService
 import dgca.verifier.app.decoder.chain.schema.SchemaValidator
+import dgca.verifier.app.decoder.chain.toBase64
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
+private const val TAG = "DGCA"
 
 class VerificationViewModel @ViewModelInject constructor(
     private val prefixValidationService: PrefixValidationService,
     private val base45Service: Base45Service,
     private val compressorService: CompressorService,
+    private val cryptoService: CryptoService,
     private val coseService: CoseService,
     private val schemaValidator: SchemaValidator,
-    private val cborService: CborService
+    private val cborService: CborService,
+    private val verifierRepository: VerifierRepository
 ) : ViewModel() {
 
     private val _verificationResult = MutableLiveData<VerificationResult>()
@@ -62,16 +70,37 @@ class VerificationViewModel @ViewModelInject constructor(
     @SuppressLint("SetTextI18n")
     fun decode(code: String) {
         viewModelScope.launch {
-            val greenCertificate: GreenCertificate?
+            var greenCertificate: GreenCertificate? = null
             val verificationResult = VerificationResult()
 
             withContext(Dispatchers.IO) {
                 val plainInput = prefixValidationService.decode(code, verificationResult)
                 val compressedCose = base45Service.decode(plainInput, verificationResult)
                 val cose = compressorService.decode(compressedCose, verificationResult)
-                val cbor = coseService.decode(cose, verificationResult)
-                schemaValidator.validate(cbor, verificationResult)
-                greenCertificate = cborService.decode(cbor, verificationResult)
+
+                val coseData = coseService.decode(cose, verificationResult)
+                if (coseData == null) {
+                    Log.d(TAG, "Verification failed: COSE not decoded")
+                    return@withContext
+                }
+
+                val kid = coseData.kid
+                if (kid == null) {
+                    Log.d(TAG, "Verification failed: cannot extract kid from COSE")
+                    return@withContext
+
+                }
+
+                // Load from API for now. Replace with cache logic.
+                val certificate = verifierRepository.getCertificate(kid.toBase64())
+                if (certificate == null) {
+                    Log.d(TAG, "Verification failed: failed to download remote certificate")
+                    return@withContext
+                }
+
+                cryptoService.validate(coseData, certificate, verificationResult)
+                schemaValidator.validate(coseData.cbor, verificationResult)
+                greenCertificate = cborService.decode(coseData.cbor, verificationResult)
             }
 
             _verificationResult.value = verificationResult

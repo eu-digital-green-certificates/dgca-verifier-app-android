@@ -35,6 +35,7 @@ object Deps {
     const val androidx_navigation = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.androidx_navigation}"
     const val androidx_hilt_compiler = "androidx.hilt:hilt-compiler:${Versions.androidx_hilt_compiler}"
     const val retrofit2 = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
+    const val log_interceptor = "com.squareup.okhttp3:logging-interceptor:${Versions.loggingInterceptor}"
 
     const val hilt_plugin = "com.google.dagger:hilt-android-gradle-plugin:${Versions.hilt_version}"
     const val hilt = "com.google.dagger:hilt-android:${Versions.hilt_version}"
@@ -45,7 +46,6 @@ object Deps {
     const val kotlin_reflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin_reflect}"
     const val java_cose = "com.augustcellars.cose:cose-java:${Versions.java_cose}"
     const val bouncy_castle = "org.bouncycastle:bcpkix-jdk15to18:${Versions.bouncy_castle}"
-    const val okhttp = "com.squareup.okhttp3:okhttp:${Versions.okhttp}"
     const val json_validation = "com.github.fge:json-schema-validator:${Versions.json_validation}"
     const val jackson_cbor = "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${Versions.jackson_cbor}"
 

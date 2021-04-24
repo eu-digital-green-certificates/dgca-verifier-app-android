@@ -17,10 +17,10 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:48 AM
+ *  Created by mykhailo.nester on 4/24/21 2:10 PM
  */
 
-package dgca.verifier.app.android
+package dgca.verifier.app.android.verification
 
 import android.os.Bundle
 import android.view.LayoutInflater

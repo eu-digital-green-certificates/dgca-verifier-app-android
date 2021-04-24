@@ -17,31 +17,29 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:57 AM
+ *  Created by mykhailo.nester on 4/24/21 3:06 PM
  */
 
-package dgca.verifier.app.decoder.chain
+package dgca.verifier.app.decoder.chain.cose
 
-import COSE.HeaderKeys
 import COSE.KeyKeys
 import COSE.OneKey
 import com.upokecenter.cbor.CBORObject
+import dgca.verifier.app.decoder.chain.model.CoseData
+import dgca.verifier.app.decoder.chain.model.VerificationResult
 import java.math.BigInteger
+import java.security.cert.Certificate
 import java.security.interfaces.ECPublicKey
 import java.security.interfaces.RSAPublicKey
 
-class VerificationCryptoService(private val repository: CertificateRepository) : CryptoService {
+class VerificationCryptoService : CryptoService {
 
-    override fun getCborHeaders() = listOf<Pair<HeaderKeys, CBORObject>>()
-
-    override fun getCborSigningKey() = OneKey(CBORObject.NewMap())
-
-    override fun getCborVerificationKey(kid: ByteArray): OneKey {
-        val certificate = getCertificate(kid)
-        return when (certificate.publicKey) {
+    override fun validate(coseData: CoseData, certificate: Certificate, verificationResult: VerificationResult) {
+        val verificationKey = when (certificate.publicKey) {
             is ECPublicKey -> buildEcKey(certificate.publicKey as ECPublicKey)
             else -> buildRsaKey(certificate.publicKey as RSAPublicKey)
         }
+        verificationResult.coseVerified = coseData.sign1Message.validate(verificationKey)
     }
 
     private fun buildRsaKey(rsaPublicKey: RSAPublicKey): OneKey {
@@ -60,8 +58,6 @@ class VerificationCryptoService(private val repository: CertificateRepository) :
             it[KeyKeys.EC2_Y.AsCBOR()] = stripLeadingZero(publicKey.w.affineY)
         })
     }
-
-    override fun getCertificate(kid: ByteArray) = repository.loadCertificate(kid)
 
     private fun getEcCurve(publicKey: ECPublicKey) = when (publicKey.params.order.bitLength()) {
         384 -> KeyKeys.EC2_P384

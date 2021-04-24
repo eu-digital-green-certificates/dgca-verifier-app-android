@@ -17,15 +17,14 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:51 AM
+ *  Created by mykhailo.nester on 4/24/21 2:20 PM
  */
 
-package dgca.verifier.app.decoder.chain.cose
+package dgca.verifier.app.android.data
 
-import dgca.verifier.app.decoder.chain.model.CoseData
-import dgca.verifier.app.decoder.chain.model.VerificationResult
+import java.security.cert.Certificate
 
-interface CoseService {
+interface VerifierRepository {
 
-    fun decode(input: ByteArray, verificationResult: VerificationResult): CoseData?
+    suspend fun getCertificate(key: String): Certificate?
 }

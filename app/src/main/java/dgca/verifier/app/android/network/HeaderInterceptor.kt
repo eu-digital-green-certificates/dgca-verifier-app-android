@@ -17,14 +17,32 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:52 AM
+ *  Created by mykhailo.nester on 4/24/21 1:53 PM
  */
 
-package dgca.verifier.app.decoder.chain
+package dgca.verifier.app.android.network
 
-import java.security.cert.Certificate
+import android.os.Build
+import okhttp3.Interceptor
+import okhttp3.Request
+import okhttp3.Response
+import java.io.IOException
 
-interface CertificateRepository {
+class HeaderInterceptor : Interceptor {
 
-    fun loadCertificate(kid: ByteArray): Certificate
+    private val userAgent = "DGCA verifier Android ${Build.VERSION.SDK_INT}, ${Build.MODEL};"
+
+    @Throws(IOException::class)
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val request = addHeadersToRequest(chain.request())
+
+        return chain.proceed(request)
+    }
+
+    private fun addHeadersToRequest(original: Request): Request {
+        val requestBuilder = original.newBuilder()
+            .header("User-Agent", userAgent)
+
+        return requestBuilder.build()
+    }
 }

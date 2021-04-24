@@ -17,15 +17,26 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:51 AM
+ *  Created by mykhailo.nester on 4/24/21 2:16 PM
  */
 
-package dgca.verifier.app.decoder.chain.cose
+package dgca.verifier.app.android.data
 
-import dgca.verifier.app.decoder.chain.model.CoseData
-import dgca.verifier.app.decoder.chain.model.VerificationResult
+import dgca.verifier.app.android.data.remote.ApiService
+import java.security.cert.Certificate
+import java.security.cert.CertificateFactory
+import javax.inject.Inject
 
-interface CoseService {
+class VerifierRepositoryImpl @Inject constructor(
+    private val apiService: ApiService
+) : VerifierRepository {
 
-    fun decode(input: ByteArray, verificationResult: VerificationResult): CoseData?
+    override suspend fun getCertificate(key: String): Certificate? {
+        val response = apiService.getCertificates(key)
+        response.body()?.byteStream()?.let {
+            return CertificateFactory.getInstance("X.509").generateCertificate(it)
+        }
+
+        return null
+    }
 }

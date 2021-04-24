@@ -48,7 +48,7 @@ class DefaultSchemaValidator : SchemaValidator {
         val schema: JsonSchema = factory.getJsonSchema(schemaNode)
 
         val report: ProcessingReport = schema.validate(jsonNode)
-        Log.d("schema validation", "report: $report")
+        Log.d("Schema validation", "report result: ${report.isSuccess}")
 
         val isValid = report.isSuccess
         verificationResult.isSchemaValid = isValid
