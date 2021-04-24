@@ -31,6 +31,9 @@ data class VerificationResult(
     var isSchemaValid: Boolean = false
 ) {
 
+    fun isValid(): Boolean =
+        base45Decoded && zlibDecoded && coseVerified && cborDecoded && isSchemaValid
+
     override fun toString(): String {
         return "VerificationResult: \n" +
                 "base45Decoded: $base45Decoded \n" +

@@ -63,6 +63,9 @@ class VerificationViewModel @ViewModelInject constructor(
     private val _certificate = MutableLiveData<GreenCertificate?>()
     val certificate: LiveData<GreenCertificate?> = _certificate
 
+    private val _inProgress = MutableLiveData<Boolean>()
+    val inProgress: LiveData<Boolean> = _inProgress
+
     fun init(qrCodeText: String) {
         decode(qrCodeText)
     }
@@ -70,6 +73,7 @@ class VerificationViewModel @ViewModelInject constructor(
     @SuppressLint("SetTextI18n")
     fun decode(code: String) {
         viewModelScope.launch {
+            _inProgress.value = true
             var greenCertificate: GreenCertificate? = null
             val verificationResult = VerificationResult()
 
@@ -103,6 +107,7 @@ class VerificationViewModel @ViewModelInject constructor(
                 greenCertificate = cborService.decode(coseData.cbor, verificationResult)
             }
 
+            _inProgress.value = false
             _verificationResult.value = verificationResult
             _certificate.value = greenCertificate
         }
