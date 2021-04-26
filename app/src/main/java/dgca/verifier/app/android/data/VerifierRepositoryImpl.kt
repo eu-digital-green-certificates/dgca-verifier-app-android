@@ -22,7 +22,11 @@
 
 package dgca.verifier.app.android.data
 
+import android.util.Log
 import dgca.verifier.app.android.data.remote.ApiService
+import dgca.verifier.app.decoder.chain.base64ToX509Certificate
+import dgca.verifier.app.decoder.chain.toBase64
+import java.security.MessageDigest
 import java.security.cert.Certificate
 import java.security.cert.CertificateFactory
 import javax.inject.Inject
@@ -47,6 +51,18 @@ class VerifierRepositoryImpl @Inject constructor(
             val responseKid = headers["x-kid"]
             val newResumeToken = headers["x-resume-token"]
             val responseStr = response.body()?.stringSuspending() ?: return@execute
+            val cert = responseStr.base64ToX509Certificate() ?: return@execute
+
+            val certKid = MessageDigest.getInstance("SHA-256")
+                .digest(cert.encoded)
+                .copyOfRange(0, 8)
+                .toBase64()
+
+            if (responseKid != certKid) {
+                return@execute
+            }
+
+            Log.d(VerifierRepositoryImpl::class.java.simpleName, "Cert KID verified")
 
             // TODO: store in storage
 //            let kid = KID.from(responseStr)
@@ -69,3 +85,4 @@ class VerifierRepositoryImpl @Inject constructor(
         }
     }
 }
+
