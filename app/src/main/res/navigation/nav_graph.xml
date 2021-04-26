@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~  license-start
   ~  eu-digital-green-certificates / dgca-verifier-app-android
   ~
@@ -25,7 +24,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/codeReaderFragment">
+    app:startDestination="@id/authFragment">
+
+    <fragment
+        android:id="@+id/authFragment"
+        android:name="dgca.verifier.app.android.AuthFragment"
+        android:label="AuthFragment" >
+        <action
+            android:id="@+id/action_authFragment_to_codeReaderFragment"
+            app:destination="@id/codeReaderFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/codeReaderFragment"
@@ -49,4 +57,5 @@
             android:name="qrCodeText"
             app:argType="string" />
     </fragment>
+
 </navigation>

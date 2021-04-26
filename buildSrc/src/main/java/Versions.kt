@@ -36,6 +36,7 @@ object Versions {
     const val hilt_version = "2.33-beta"
     const val retrofit = "2.9.0"
     const val loggingInterceptor = "4.0.1"
+    const val biometric = "1.2.0-alpha03"
 
     // QR
     const val zxing = "4.2.0"

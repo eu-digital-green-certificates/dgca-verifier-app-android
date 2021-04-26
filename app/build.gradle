@@ -60,6 +60,7 @@ dependencies {
     implementation Deps.androidx_navigation_ui
     implementation Deps.kotlinx_coroutines
     implementation Deps.zxing
+    implementation Deps.biometric
 
     implementation Deps.hilt
     kapt Deps.hilt_compiler
