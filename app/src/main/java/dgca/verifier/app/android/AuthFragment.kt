@@ -86,9 +86,13 @@ class AuthFragment : Fragment() {
             .setSubtitle("Log in using your biometric credential")
             .setNegativeButtonText("Cancel")
             .build()
-        showPrompt()
 
         binding.retry.setOnClickListener { showPrompt() }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        showPrompt()
     }
 
     private fun showPrompt() {
