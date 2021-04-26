@@ -23,6 +23,7 @@
 package dgca.verifier.app.android.di
 
 import android.content.Context
+import com.google.gson.Gson
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
@@ -38,12 +39,14 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 private const val CONNECT_TIMEOUT = 30L
 
-const val BASE_URL = "https://dgc.a-sit.at/"
+//const val BASE_URL = "https://dgc.a-sit.at/"
+const val BASE_URL = "https://dgca-verifier-service.cfapps.eu10.hana.ondemand.com/"
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -96,6 +99,7 @@ object NetworkModule {
 
     private fun createRetrofit(okHttpClient: Lazy<OkHttpClient>): Retrofit {
         return Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create(Gson()))
             .baseUrl(BASE_URL)
             .callFactory { okHttpClient.get().newCall(it) }
             .build()

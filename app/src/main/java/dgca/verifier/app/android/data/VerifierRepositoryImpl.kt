@@ -29,14 +29,43 @@ import javax.inject.Inject
 
 class VerifierRepositoryImpl @Inject constructor(
     private val apiService: ApiService
-) : VerifierRepository {
+) : BaseRepository(), VerifierRepository {
 
     override suspend fun getCertificate(key: String): Certificate? {
-        val response = apiService.getCertificates(key)
-        response.body()?.byteStream()?.let {
-            return CertificateFactory.getInstance("X.509").generateCertificate(it)
+        return execute {
+            val response = apiService.getCertificates(key)
+            response.body()?.byteStream()?.let {
+                return@execute CertificateFactory.getInstance("X.509").generateCertificate(it)
+            }
         }
+    }
 
-        return null
+    override suspend fun getCertUpdate() {
+        execute {
+            val response = apiService.getCertUpdate()
+            val headers = response.headers()
+            val responseKid = headers["x-kid"]
+            val newResumeToken = headers["x-resume-token"]
+            val responseStr = response.body()?.stringSuspending() ?: return@execute
+
+            // TODO: store in storage
+//            let kid = KID.from(responseStr)
+//            let kidStr = KID.string(from: kid)
+//            if kidStr != responseKid {
+//                return
+//            }
+//            LocalData.add(encodedPublicKey: responseStr)
+//            LocalData.set(resumeToken: newResumeToken)
+
+        }
+    }
+
+    override suspend fun getValidCertIds() {
+        execute {
+            val result = apiService.getCertStatus()
+            println(result)
+
+            // TODO: check local storage and remove all that now match
+        }
     }
 }

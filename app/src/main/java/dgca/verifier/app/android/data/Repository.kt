@@ -17,30 +17,9 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 4/24/21 2:10 PM
+ *  Created by mykhailo.nester on 4/26/21 1:53 PM
  */
 
-package dgca.verifier.app.android
+package dgca.verifier.app.android.data
 
-import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import dgca.verifier.app.android.data.VerifierRepository
-import kotlinx.coroutines.launch
-
-class MainViewModel @ViewModelInject constructor(
-    private val verifierRepository: VerifierRepository
-) : ViewModel() {
-
-    fun init() {
-        updateCache()
-    }
-
-    private fun updateCache() {
-//        TODO: fetch certificates if needed and updated locally.
-        viewModelScope.launch {
-            verifierRepository.getCertUpdate()
-            verifierRepository.getValidCertIds()
-        }
-    }
-}
+interface Repository

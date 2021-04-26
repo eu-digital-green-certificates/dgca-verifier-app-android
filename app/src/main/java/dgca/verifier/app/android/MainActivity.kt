@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         requestCameraPermission()
+        viewModel.init()
     }
 
     private fun requestCameraPermission() {
