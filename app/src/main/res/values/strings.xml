@@ -29,4 +29,5 @@
     <string name="type_test">Test</string>
     <string name="type_recovered">Recovered</string>
     <string name="type_vaccination">Vaccination</string>
+    <string name="retry">Retry</string>
 </resources>

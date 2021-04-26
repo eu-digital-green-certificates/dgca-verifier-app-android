@@ -23,6 +23,7 @@
 <resources>
     <color name="green_500">#63c700</color>
     <color name="green_700">#39A300</color>
+    <color name="yellow">#FFEC0A</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#FF000000</color>
 </resources>

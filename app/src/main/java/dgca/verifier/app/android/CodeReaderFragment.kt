@@ -22,10 +22,15 @@
 
 package dgca.verifier.app.android
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.zxing.BarcodeFormat
@@ -35,6 +40,8 @@ import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import dgca.verifier.app.android.databinding.FragmentCodeReaderBinding
+
+private const val CAMERA_REQUEST_CODE = 1003
 
 class CodeReaderFragment : Fragment() {
 
@@ -61,6 +68,11 @@ class CodeReaderFragment : Fragment() {
         override fun possibleResultPoints(resultPoints: List<ResultPoint>) {}
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback { requireActivity().finish() }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -71,6 +83,8 @@ class CodeReaderFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requestCameraPermission()
+
         val formats: Collection<BarcodeFormat> = listOf(BarcodeFormat.AZTEC, BarcodeFormat.QR_CODE)
         binding.barcodeScanner.barcodeView.decoderFactory = DefaultDecoderFactory(formats)
         binding.barcodeScanner.initializeFromIntent(requireActivity().intent)
@@ -95,5 +109,17 @@ class CodeReaderFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         binding.barcodeScanner.pause()
+    }
+
+    private fun requestCameraPermission() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+            == PackageManager.PERMISSION_DENIED
+        ) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.CAMERA),
+                CAMERA_REQUEST_CODE
+            )
+        }
     }
 }
