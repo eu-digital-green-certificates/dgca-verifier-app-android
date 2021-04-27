@@ -17,13 +17,17 @@
   <a href="#licensing">Licensing</a>
 </p>
 
-- [ ] TODO
+## About
+
+This repository contains the source code of the Digital Green Certificates Verifier App for Android.
+
+The DGC Verifier Apps are responsible for verifying certificate QR Codes using public keys from national backend servers. Offline verification is supported, if the latest public keys are present in the app's key store. Consequently, once up-to-date keys have been downloaded, the verification works without active internet connection. 
 
 ## Development
 
 ### Prerequisites
 
-- [ ] TODO
+- [ ] TODO: Describe prerequisites
 
 ### Build
 
@@ -31,21 +35,13 @@ Whether you cloned or downloaded the 'zipped' sources you will either find the s
 
 In either case open a terminal pointing to the directory you put the sources in. The local build process is described afterwards depending on the way you choose.
 
-#### XYZ (Maven, ...) based build
+#### XYZ (Maven, Docker ...) based build
 
-- [ ] TODO
-
-#### Build Docker Image
-
-- [ ] TODO
-
-#### API documentation  
-
-- [ ] TODO
+- [ ] TODO: Add instructions for different build types
 
 ## Documentation  
 
-- [ ] TODO
+- [ ] TODO: Link to documentation
 
 ## Support and feedback
 
