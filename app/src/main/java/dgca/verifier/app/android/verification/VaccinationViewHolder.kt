@@ -22,6 +22,7 @@
 
 package dgca.verifier.app.android.verification
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -36,6 +37,7 @@ class VaccinationViewHolder(private val binding: ItemVaccinationBinding) :
             VaccinationViewHolder(ItemVaccinationBinding.inflate(inflater, parent, false))
     }
 
+    @SuppressLint("SetTextI18n")
     fun bind(data: Vaccination) {
         binding.disease.text = "disease: ${data.disease}"
         binding.vaccine.text = "vaccine: ${data.vaccine}"

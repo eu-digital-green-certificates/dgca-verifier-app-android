@@ -22,6 +22,7 @@
 
 package dgca.verifier.app.android.verification
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -34,7 +35,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.R
-import dgca.verifier.app.android.databinding.FragmentResultBinding
+import dgca.verifier.app.android.databinding.FragmentVerificationBinding
 import dgca.verifier.app.decoder.chain.model.GreenCertificate
 import dgca.verifier.app.decoder.chain.model.IdentifierType
 
@@ -45,7 +46,7 @@ class VerificationFragment : Fragment() {
     private val args by navArgs<VerificationFragmentArgs>()
     private val viewModel by viewModels<VerificationViewModel>()
 
-    private var _binding: FragmentResultBinding? = null
+    private var _binding: FragmentVerificationBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: CertListAdapter
 
@@ -58,17 +59,16 @@ class VerificationFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentResultBinding.inflate(inflater, container, false)
+        _binding = FragmentVerificationBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.adapter = adapter
-
-        viewModel.init(args.qrCodeText)
 
         viewModel.verificationResult.observe(viewLifecycleOwner, {
             if (it.isValid()) {
@@ -84,7 +84,7 @@ class VerificationFragment : Fragment() {
         viewModel.certificate.observe(viewLifecycleOwner, { certificate ->
             if (certificate != null) {
                 adapter.update(certificate.vaccinations)
-                binding.personFullName.text = certificate.subject.givenName + "\n" + certificate.subject.familyName
+                binding.personFullName.text = "${certificate.subject.givenName} \n ${certificate.subject.familyName}"
                 binding.type.text = getCertType(certificate)
 
                 val personalInfo = StringBuilder()
@@ -108,6 +108,8 @@ class VerificationFragment : Fragment() {
         viewModel.inProgress.observe(viewLifecycleOwner, {
             binding.progressBar.isVisible = it
         })
+
+        viewModel.init(args.qrCodeText)
     }
 
     override fun onDestroyView() {

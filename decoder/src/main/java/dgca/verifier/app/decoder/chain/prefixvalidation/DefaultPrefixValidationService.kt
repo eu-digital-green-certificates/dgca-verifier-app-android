@@ -25,7 +25,7 @@ package dgca.verifier.app.decoder.chain.prefixvalidation
 import dgca.verifier.app.decoder.chain.model.VerificationResult
 
 /**
- * Drops a country-specific prefix from contents, e.g. "HC1:o"
+ * Drops a country-specific prefix from contents, e.g. "HC1:"
  */
 class DefaultPrefixValidationService(private val prefix: String = "HC1:") : PrefixValidationService {
 

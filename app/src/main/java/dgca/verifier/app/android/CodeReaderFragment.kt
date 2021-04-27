@@ -60,9 +60,7 @@ class CodeReaderFragment : Fragment() {
             lastText = result.text
             beepManager.playBeepSoundAndVibrate()
 
-            val action =
-                CodeReaderFragmentDirections.actionCodeReaderFragmentToResultFragment(result.text)
-            findNavController().navigate(action)
+            navigateToVerificationPage(result.text)
         }
 
         override fun possibleResultPoints(resultPoints: List<ResultPoint>) {}
@@ -109,6 +107,12 @@ class CodeReaderFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         binding.barcodeScanner.pause()
+    }
+
+    private fun navigateToVerificationPage(text: String) {
+        val action =
+            CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationFragment(text)
+        findNavController().navigate(action)
     }
 
     private fun requestCameraPermission() {

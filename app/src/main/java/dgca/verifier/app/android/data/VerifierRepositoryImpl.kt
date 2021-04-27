@@ -65,14 +65,8 @@ class VerifierRepositoryImpl @Inject constructor(
             Log.d(VerifierRepositoryImpl::class.java.simpleName, "Cert KID verified")
 
             // TODO: store in storage
-//            let kid = KID.from(responseStr)
-//            let kidStr = KID.string(from: kid)
-//            if kidStr != responseKid {
-//                return
-//            }
 //            LocalData.add(encodedPublicKey: responseStr)
 //            LocalData.set(resumeToken: newResumeToken)
-
         }
     }
 
@@ -81,7 +75,7 @@ class VerifierRepositoryImpl @Inject constructor(
             val result = apiService.getCertStatus()
             println(result)
 
-            // TODO: check local storage and remove all that now match
+            // TODO: check local storage and remove all that not match
         }
     }
 }

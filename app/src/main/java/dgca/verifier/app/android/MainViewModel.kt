@@ -33,10 +33,10 @@ class MainViewModel @ViewModelInject constructor(
 ) : ViewModel() {
 
     fun init() {
-        updateCache()
+        refreshData()
     }
 
-    private fun updateCache() {
+    private fun refreshData() {
 //        TODO: fetch certificates if needed and updated locally.
         viewModelScope.launch {
             verifierRepository.getCertUpdate()

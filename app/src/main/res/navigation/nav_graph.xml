@@ -29,7 +29,7 @@
     <fragment
         android:id="@+id/authFragment"
         android:name="dgca.verifier.app.android.AuthFragment"
-        android:label="AuthFragment" >
+        android:label="AuthFragment">
         <action
             android:id="@+id/action_authFragment_to_codeReaderFragment"
             app:destination="@id/codeReaderFragment" />
@@ -42,16 +42,16 @@
         tools:layout="@layout/fragment_code_reader">
 
         <action
-            android:id="@+id/action_codeReaderFragment_to_resultFragment"
-            app:destination="@id/resultFragment" />
+            android:id="@+id/action_codeReaderFragment_to_verificationFragment"
+            app:destination="@id/verificationFragment" />
 
     </fragment>
 
     <fragment
-        android:id="@+id/resultFragment"
+        android:id="@+id/verificationFragment"
         android:name="dgca.verifier.app.android.verification.VerificationFragment"
-        android:label="Result"
-        tools:layout="@layout/fragment_result">
+        android:label="Verification"
+        tools:layout="@layout/fragment_verification">
 
         <argument
             android:name="qrCodeText"

@@ -44,7 +44,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-private const val TAG = "DGCA"
+private const val TAG = "VerificationViewModel"
 
 class VerificationViewModel @ViewModelInject constructor(
     private val prefixValidationService: PrefixValidationService,
