@@ -21,7 +21,7 @@
 
 This repository contains the source code of the Digital Green Certificates Verifier App for Android.
 
-The DGC Verifier Apps are responsible for verifying certificate QR Codes using public keys from national backend servers. Offline verification is supported, if the latest public keys are present in the app's key store. Consequently, once up-to-date keys have been downloaded, the verification works without active internet connection. 
+The DGC Verifier Apps are responsible for scanning and verifying DGCs using public keys from national backend servers. Offline verification is supported, if the latest public keys are present in the app's key store. Consequently, once up-to-date keys have been downloaded, the verification works without active internet connection. 
 
 ## Development
 
