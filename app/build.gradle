@@ -69,6 +69,7 @@ dependencies {
 
     implementation Deps.retrofit2
     implementation Deps.log_interceptor
+    implementation Deps.gson_converter
 
     testImplementation Deps.test_junit
 }

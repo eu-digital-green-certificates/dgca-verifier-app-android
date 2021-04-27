@@ -23,6 +23,7 @@
 package dgca.verifier.app.decoder.chain.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.io.Serializable
 
 data class Vaccination(
 
@@ -55,4 +56,4 @@ data class Vaccination(
 
     @JsonProperty("cou")
     val country: String
-)
+): Serializable

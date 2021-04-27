@@ -22,13 +22,26 @@
 
 package dgca.verifier.app.decoder.chain
 
+import java.io.ByteArrayInputStream
+import java.security.cert.CertificateFactory
+import java.security.cert.X509Certificate
 import java.util.Base64
 
 fun ByteArray.asBase64() = Base64.getEncoder().encodeToString(this)
 
 fun ByteArray.toBase64(): String = Base64.getUrlEncoder().encodeToString(this)
 
-fun ByteArray.toHexString() = joinToString("") { "%02x".format(it) }
+fun ByteArray.toHexString(): String = joinToString("") { "%02x".format(it) }
 
-fun String.fromBase64() = Base64.getDecoder().decode(this)
+fun String.hexToByteArray(): ByteArray = chunked(2)
+    .map { it.toInt(16).toByte() }
+    .toByteArray()
 
+fun String.fromBase64(): ByteArray = Base64.getDecoder().decode(this)
+
+fun String.base64ToX509Certificate(): X509Certificate? {
+    val decoded = android.util.Base64.decode(this, android.util.Base64.NO_WRAP)
+    val inputStream = ByteArrayInputStream(decoded)
+
+    return CertificateFactory.getInstance("X.509").generateCertificate(inputStream) as? X509Certificate
+}

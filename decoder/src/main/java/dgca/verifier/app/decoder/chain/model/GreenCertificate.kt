@@ -23,6 +23,7 @@
 package dgca.verifier.app.decoder.chain.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.io.Serializable
 
 data class GreenCertificate(
 
@@ -42,5 +43,5 @@ data class GreenCertificate(
     val recoveryStatements: List<RecoveryStatement> = listOf(),
 
     @JsonProperty("tst")
-    val tests: List<Test?>? = listOf(),
-)
+    val tests: List<Test> = listOf(),
+) : Serializable

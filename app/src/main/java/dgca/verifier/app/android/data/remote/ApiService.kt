@@ -29,6 +29,13 @@ import retrofit2.http.Path
 
 interface ApiService {
 
+    //    TODO: For test only. Remove when not needed
     @GET("/ehn/cert/{key}")
     suspend fun getCertificates(@Path("key") key: String): Response<ResponseBody>
+
+    @GET("/signercertificateUpdate")
+    suspend fun getCertUpdate(): Response<ResponseBody>
+
+    @GET("/signercertificateStatus")
+    suspend fun getCertStatus(): Response<List<String>>
 }

@@ -23,6 +23,7 @@
 package dgca.verifier.app.decoder.chain.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.io.Serializable
 
 data class RecoveryStatement(
 
@@ -34,4 +35,4 @@ data class RecoveryStatement(
 
     @JsonProperty("cou")
     val country: String
-)
+): Serializable

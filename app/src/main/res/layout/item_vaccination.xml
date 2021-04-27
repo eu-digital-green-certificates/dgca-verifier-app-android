@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/recycler_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/default_padding">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/disease"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="840539006" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/vaccine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="1119305005" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/medicinalProduct"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="EU/1/20/1528" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/authorizationHolder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="ORG-100030215" />
+
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/doseSequence"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="1" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/doseTotalNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="2" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="2021-02-18" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/country"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="AT" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/lotNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="C22-862FF-001" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/administeringCentre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Vaccination centre Vienna 23" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/green_700" />
+
+</LinearLayout>
