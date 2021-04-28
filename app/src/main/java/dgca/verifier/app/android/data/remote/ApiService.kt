@@ -25,6 +25,7 @@ package dgca.verifier.app.android.data.remote
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Path
 
 interface ApiService {
@@ -34,7 +35,9 @@ interface ApiService {
     suspend fun getCertificates(@Path("key") key: String): Response<ResponseBody>
 
     @GET("/signercertificateUpdate")
-    suspend fun getCertUpdate(): Response<ResponseBody>
+    suspend fun getCertUpdate(
+        @Header("x-resume-token") contentRange: String
+    ): Response<ResponseBody>
 
     @GET("/signercertificateStatus")
     suspend fun getCertStatus(): Response<List<String>>

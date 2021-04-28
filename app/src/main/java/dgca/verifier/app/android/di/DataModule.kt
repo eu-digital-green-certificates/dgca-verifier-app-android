@@ -17,29 +17,26 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 4/24/21 2:10 PM
+ *  Created by mykhailo.nester on 4/27/21 10:40 PM
  */
 
-package dgca.verifier.app.android
+package dgca.verifier.app.android.di
 
-import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import dgca.verifier.app.android.data.VerifierRepository
-import kotlinx.coroutines.launch
+import android.content.Context
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import dgca.verifier.app.android.data.local.Preferences
+import dgca.verifier.app.android.data.local.PreferencesImpl
+import javax.inject.Singleton
 
-class MainViewModel @ViewModelInject constructor(
-    private val verifierRepository: VerifierRepository
-) : ViewModel() {
+@InstallIn(SingletonComponent::class)
+@Module
+object DataModule {
 
-    fun init() {
-        refreshData()
-    }
-
-    private fun refreshData() {
-//        TODO: fetch certificates if needed and updated locally.
-        viewModelScope.launch {
-            verifierRepository.fetchCertificates()
-        }
-    }
+    @Singleton
+    @Provides
+    fun providePreferences(@ApplicationContext context: Context): Preferences = PreferencesImpl(context)
 }

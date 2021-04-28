@@ -28,7 +28,5 @@ interface VerifierRepository {
 
     suspend fun getCertificate(key: String): Certificate?
 
-    suspend fun getCertUpdate()
-
-    suspend fun getValidCertIds()
+    suspend fun fetchCertificates()
 }

@@ -23,17 +23,22 @@
 package dgca.verifier.app.android.data
 
 import android.util.Log
+import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.data.remote.ApiService
 import dgca.verifier.app.decoder.chain.base64ToX509Certificate
 import dgca.verifier.app.decoder.chain.toBase64
+import java.net.HttpURLConnection
 import java.security.MessageDigest
 import java.security.cert.Certificate
 import java.security.cert.CertificateFactory
 import javax.inject.Inject
 
 class VerifierRepositoryImpl @Inject constructor(
-    private val apiService: ApiService
+    private val apiService: ApiService,
+    private val preferences: Preferences
 ) : BaseRepository(), VerifierRepository {
+
+    private val validCertSet = mutableListOf<String>()
 
     override suspend fun getCertificate(key: String): Certificate? {
         return execute {
@@ -44,39 +49,61 @@ class VerifierRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCertUpdate() {
+    override suspend fun fetchCertificates() {
         execute {
-            val response = apiService.getCertUpdate()
-            val headers = response.headers()
-            val responseKid = headers["x-kid"]
-            val newResumeToken = headers["x-resume-token"]
-            val responseStr = response.body()?.stringSuspending() ?: return@execute
-            val cert = responseStr.base64ToX509Certificate() ?: return@execute
+            val response = apiService.getCertStatus()
+            val body = response.body() ?: return@execute
+            validCertSet.clear()
+            validCertSet.addAll(body)
 
-            val certKid = MessageDigest.getInstance("SHA-256")
-                .digest(cert.encoded)
-                .copyOfRange(0, 8)
-                .toBase64()
-
-            if (responseKid != certKid) {
-                return@execute
-            }
-
-            Log.d(VerifierRepositoryImpl::class.java.simpleName, "Cert KID verified")
-
-            // TODO: store in storage
-//            LocalData.add(encodedPublicKey: responseStr)
-//            LocalData.set(resumeToken: newResumeToken)
+            val resumeToken = preferences.resumeToken
+            fetchCertificate(resumeToken)
         }
     }
 
-    override suspend fun getValidCertIds() {
-        execute {
-            val result = apiService.getCertStatus()
-            println(result)
+    private suspend fun fetchCertificate(resumeToken: Long) {
+        val tokenFormatted = if (resumeToken == -1L) "" else resumeToken.toString()
+        val response = apiService.getCertUpdate(tokenFormatted)
 
-            // TODO: check local storage and remove all that not match
+        if (!response.isSuccessful || response.code() == HttpURLConnection.HTTP_NO_CONTENT) {
+            Log.i("VerifierRepository", "No content")
+            return
         }
+
+        val headers = response.headers()
+        val responseKid = headers[HEADER_KID]
+        val newResumeToken = headers[HEADER_RESUME_TOKEN]
+        val responseStr = response.body()?.stringSuspending() ?: return
+
+        if (validCertSet.contains(responseKid) && isKidValid(responseKid, responseStr)) {
+            // TODO: store in storage
+//            LocalData.add(encodedPublicKey: responseStr)
+            Log.i(VerifierRepositoryImpl::class.java.simpleName, "Cert KID verified")
+        }
+
+        newResumeToken?.let {
+            val newToken = it.toLong()
+            preferences.resumeToken = newToken
+            fetchCertificate(newToken)
+        }
+    }
+
+    private fun isKidValid(responseKid: String?, responseStr: String): Boolean {
+        if (responseKid == null) return false
+
+        val cert = responseStr.base64ToX509Certificate() ?: return false
+        val certKid = MessageDigest.getInstance("SHA-256")
+            .digest(cert.encoded)
+            .copyOfRange(0, 8)
+            .toBase64()
+
+        return responseKid == certKid
+    }
+
+    companion object {
+
+        const val HEADER_KID = "x-kid"
+        const val HEADER_RESUME_TOKEN = "x-resume-token"
     }
 }
 
