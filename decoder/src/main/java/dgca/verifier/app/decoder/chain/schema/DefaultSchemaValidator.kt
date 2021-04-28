@@ -36,22 +36,28 @@ import dgca.verifier.app.decoder.chain.model.VerificationResult
 class DefaultSchemaValidator : SchemaValidator {
 
     override fun validate(cbor: ByteArray, verificationResult: VerificationResult): Boolean {
-        val map = CBORObject.DecodeFromBytes(cbor)
-        val hcert = map[CwtHeaderKeys.HCERT.AsCBOR()]
-        val json = hcert[CBORObject.FromObject(1)].ToJSONString()
+        var isValid = false
+        try {
+            val map = CBORObject.DecodeFromBytes(cbor)
+            val hcert = map[CwtHeaderKeys.HCERT.AsCBOR()]
+            val json = hcert[CBORObject.FromObject(1)].ToJSONString()
 
-        val mapper = ObjectMapper()
-        val schemaNode: JsonNode = mapper.readTree(JSON_SCHEMA_V1)
-        val jsonNode: JsonNode = mapper.readTree(json)
+            val mapper = ObjectMapper()
+            val schemaNode: JsonNode = mapper.readTree(JSON_SCHEMA_V1)
+            val jsonNode: JsonNode = mapper.readTree(json)
 
-        val factory = JsonSchemaFactory.byDefault()
-        val schema: JsonSchema = factory.getJsonSchema(schemaNode)
+            val factory = JsonSchemaFactory.byDefault()
+            val schema: JsonSchema = factory.getJsonSchema(schemaNode)
 
-        val report: ProcessingReport = schema.validate(jsonNode)
-        Log.d("Schema validation", "report result: ${report.isSuccess}")
+            val report: ProcessingReport = schema.validate(jsonNode)
+            Log.d("Schema validation", "report result: ${report.isSuccess}")
 
-        val isValid = report.isSuccess
-        verificationResult.isSchemaValid = isValid
+            isValid = report.isSuccess
+            verificationResult.isSchemaValid = isValid
+
+        } catch (ex: Exception) {
+            Log.w("Schema validation", ex)
+        }
 
         return isValid
     }
