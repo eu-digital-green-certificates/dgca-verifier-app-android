@@ -22,11 +22,10 @@
 
 package dgca.verifier.app.decoder.chain.cose
 
-import dgca.verifier.app.decoder.chain.model.CoseData
 import dgca.verifier.app.decoder.chain.model.VerificationResult
 import java.security.cert.Certificate
 
 interface CryptoService {
 
-    fun validate(coseData: CoseData, certificate: Certificate, verificationResult: VerificationResult)
+    fun validate(cose: ByteArray, certificate: Certificate, verificationResult: VerificationResult)
 }

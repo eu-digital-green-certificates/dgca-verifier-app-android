@@ -22,57 +22,39 @@
 
 package dgca.verifier.app.decoder.chain.cose
 
-import COSE.KeyKeys
-import COSE.OneKey
 import com.upokecenter.cbor.CBORObject
-import dgca.verifier.app.decoder.chain.model.CoseData
 import dgca.verifier.app.decoder.chain.model.VerificationResult
-import java.math.BigInteger
+import java.security.Signature
 import java.security.cert.Certificate
-import java.security.interfaces.ECPublicKey
-import java.security.interfaces.RSAPublicKey
 
 class VerificationCryptoService : CryptoService {
 
-    override fun validate(coseData: CoseData, certificate: Certificate, verificationResult: VerificationResult) {
-        val verificationKey = when (certificate.publicKey) {
-            is ECPublicKey -> buildEcKey(certificate.publicKey as ECPublicKey)
-            else -> buildRsaKey(certificate.publicKey as RSAPublicKey)
+    override fun validate(cose: ByteArray, certificate: Certificate, verificationResult: VerificationResult) {
+        val verificationKey = certificate.publicKey
+        verificationResult.coseVerified = try {
+            val messageObject = CBORObject.DecodeFromBytes(cose)
+            val coseSignature = messageObject.get(3).GetByteString()
+            val protected = messageObject[0].GetByteString()
+            val content = messageObject[2].GetByteString()
+
+            val dataToBeVerified = getValidationData(protected, content)
+
+            val signature = Signature.getInstance("SHA256withRSA/PSS")
+            signature.initVerify(verificationKey)
+            signature.update(dataToBeVerified)
+            signature.verify(coseSignature)
+
+        } catch (ex: Exception) {
+            false
         }
-        verificationResult.coseVerified = coseData.sign1Message.validate(verificationKey)
     }
 
-    private fun buildRsaKey(rsaPublicKey: RSAPublicKey): OneKey {
-        return OneKey(CBORObject.NewMap().also {
-            it[KeyKeys.KeyType.AsCBOR()] = KeyKeys.KeyType_RSA
-            it[KeyKeys.RSA_N.AsCBOR()] = stripLeadingZero(rsaPublicKey.modulus)
-            it[KeyKeys.RSA_E.AsCBOR()] = stripLeadingZero(rsaPublicKey.publicExponent)
-        })
-    }
-
-    private fun buildEcKey(publicKey: ECPublicKey): OneKey {
-        return OneKey(CBORObject.NewMap().also {
-            it[KeyKeys.KeyType.AsCBOR()] = KeyKeys.KeyType_EC2
-            it[KeyKeys.EC2_Curve.AsCBOR()] = getEcCurve(publicKey)
-            it[KeyKeys.EC2_X.AsCBOR()] = stripLeadingZero(publicKey.w.affineX)
-            it[KeyKeys.EC2_Y.AsCBOR()] = stripLeadingZero(publicKey.w.affineY)
-        })
-    }
-
-    private fun getEcCurve(publicKey: ECPublicKey) = when (publicKey.params.order.bitLength()) {
-        384 -> KeyKeys.EC2_P384
-        521 -> KeyKeys.EC2_P521
-        else -> KeyKeys.EC2_P256
-    }
-
-    // Java's BigInteger adds a leading sign bit
-    private fun stripLeadingZero(bigInteger: BigInteger): CBORObject {
-        val bytes = bigInteger.toByteArray()
-        return when {
-            bytes.size % 8 != 0 && bytes[0] == 0x00.toByte() -> CBORObject.FromObject(
-                bytes.drop(1).toByteArray()
-            )
-            else -> CBORObject.FromObject(bytes)
-        }
+    private fun getValidationData(protected: ByteArray, content: ByteArray): ByteArray {
+        return CBORObject.NewArray().apply {
+            Add("Signature1")
+            Add(protected)
+            Add(ByteArray(0))
+            Add(content)
+        }.EncodeToBytes()
     }
 }

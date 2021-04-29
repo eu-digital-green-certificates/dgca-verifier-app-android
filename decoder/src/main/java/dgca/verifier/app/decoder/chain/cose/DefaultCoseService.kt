@@ -23,8 +23,7 @@
 package dgca.verifier.app.decoder.chain.cose
 
 import COSE.HeaderKeys
-import COSE.MessageTag
-import COSE.Sign1Message
+import com.upokecenter.cbor.CBORObject
 import dgca.verifier.app.decoder.chain.model.CoseData
 import dgca.verifier.app.decoder.chain.model.VerificationResult
 
@@ -33,23 +32,16 @@ class DefaultCoseService : CoseService {
     override fun decode(input: ByteArray, verificationResult: VerificationResult): CoseData? {
         verificationResult.coseVerified = false
         return try {
-            val sign1Message = (Sign1Message.DecodeFromBytes(input, MessageTag.Sign1) as Sign1Message)
-            val kid = getKid(sign1Message)
-            CoseData(sign1Message, sign1Message.GetContent(), kid)
+            val messageObject = CBORObject.DecodeFromBytes(input)
+            val content = messageObject[2].GetByteString()
+            val rgbProtected = messageObject[0].GetByteString()
+            val key = HeaderKeys.KID.AsCBOR()
+            val objProtected = CBORObject.DecodeFromBytes(rgbProtected).get(key).GetByteString()
+            CoseData(content, objProtected)
 
         } catch (e: Throwable) {
             null
         }
-    }
-
-    private fun getKid(sign1Message: Sign1Message): ByteArray? {
-        val key = HeaderKeys.KID.AsCBOR()
-        if (sign1Message.protectedAttributes.ContainsKey(key)) {
-            return sign1Message.protectedAttributes.get(key).GetByteString()
-        } else if (sign1Message.unprotectedAttributes.ContainsKey(key)) {
-            return sign1Message.unprotectedAttributes.get(key).GetByteString()
-        }
-        return null
     }
 }
 

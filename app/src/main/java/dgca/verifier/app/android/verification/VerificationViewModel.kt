@@ -107,7 +107,7 @@ class VerificationViewModel @ViewModelInject constructor(
                     return@withContext
                 }
 
-                cryptoService.validate(coseData, certificate, verificationResult)
+                cryptoService.validate(cose, certificate, verificationResult)
                 schemaValidator.validate(coseData.cbor, verificationResult)
                 greenCertificate = cborService.decode(coseData.cbor, verificationResult)
             }

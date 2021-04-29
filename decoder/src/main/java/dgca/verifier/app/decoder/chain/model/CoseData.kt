@@ -22,10 +22,7 @@
 
 package dgca.verifier.app.decoder.chain.model
 
-import COSE.Sign1Message
-
 data class CoseData(
-    val sign1Message: Sign1Message,
     val cbor: ByteArray,
     val kid: ByteArray? = null
 ) {
@@ -35,7 +32,6 @@ data class CoseData(
 
         other as CoseData
 
-        if (sign1Message != other.sign1Message) return false
         if (!cbor.contentEquals(other.cbor)) return false
         if (kid != null) {
             if (other.kid == null) return false
@@ -46,8 +42,7 @@ data class CoseData(
     }
 
     override fun hashCode(): Int {
-        var result = sign1Message.hashCode()
-        result = 31 * result + cbor.contentHashCode()
+        var result = cbor.contentHashCode()
         result = 31 * result + (kid?.contentHashCode() ?: 0)
         return result
     }
