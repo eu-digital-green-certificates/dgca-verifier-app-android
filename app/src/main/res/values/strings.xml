@@ -29,8 +29,4 @@
     <string name="type_test">Test</string>
     <string name="type_recovered">Recovered</string>
     <string name="type_vaccination">Vaccination</string>
-    <string name="retry">Retry</string>
-    <string name="biometric_dialog_title">Biometric login</string>
-    <string name="biometric_dialog_subtitle">Log in using your biometric credential</string>
-    <string name="biometric_dialog_cancel">Cancel</string>
 </resources>

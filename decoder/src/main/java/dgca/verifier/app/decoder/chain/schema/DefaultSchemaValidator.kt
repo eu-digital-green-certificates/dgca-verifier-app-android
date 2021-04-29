@@ -39,7 +39,7 @@ class DefaultSchemaValidator : SchemaValidator {
         var isValid = false
         try {
             val map = CBORObject.DecodeFromBytes(cbor)
-            val hcert = map[CwtHeaderKeys.HCERT.AsCBOR()]
+            val hcert = map[CwtHeaderKeys.HCERT.asCBOR()]
             val json = hcert[CBORObject.FromObject(1)].ToJSONString()
 
             val mapper = ObjectMapper()

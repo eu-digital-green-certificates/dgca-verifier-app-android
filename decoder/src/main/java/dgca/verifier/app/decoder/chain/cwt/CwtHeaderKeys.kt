@@ -27,11 +27,12 @@ import com.upokecenter.cbor.CBORObject
 /**
  * Adapted from [COSE.HeaderKeys] to use CWT specific ones (https://tools.ietf.org/html/rfc8392)
  */
+@Suppress("ClassName")
 sealed class CwtHeaderKeys(value: Int) {
 
     private val value: CBORObject = CBORObject.FromObject(value)
 
-    fun AsCBOR(): CBORObject {
+    fun asCBOR(): CBORObject {
         return value
     }
 

@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="TextAppearance.Dgca.TabItem" parent="">
-        <item name="android:textSize">@dimen/text_size_medium</item>
-        <item name="fontFamily">sans-serif-medium</item>
-    </style>
-
 </resources>

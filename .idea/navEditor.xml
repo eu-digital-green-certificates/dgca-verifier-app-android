@@ -17,6 +17,15 @@
                             <option name="y" value="9" />
                           </Point>
                         </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_authFragment_to_codeReaderFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
                       </LayoutPositions>
                     </value>
                   </entry>
@@ -31,7 +40,7 @@
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_codeReaderFragment_to_resultFragment">
+                            <entry key="action_codeReaderFragment_to_verificationFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -41,12 +50,12 @@
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="resultFragment">
+                  <entry key="verificationFragment">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="256" />
+                            <option name="x" value="12" />
                             <option name="y" value="12" />
                           </Point>
                         </option>

@@ -27,7 +27,7 @@ import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
 import java.util.Base64
 
-fun ByteArray.asBase64() = Base64.getEncoder().encodeToString(this)
+fun ByteArray.asBase64(): String = Base64.getEncoder().encodeToString(this)
 
 fun ByteArray.toBase64(): String = Base64.getUrlEncoder().encodeToString(this)
 
