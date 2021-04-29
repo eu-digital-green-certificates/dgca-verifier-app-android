@@ -17,15 +17,33 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 4/24/21 2:20 PM
+ *  Created by osarapulov on 4/29/21 11:51 PM
  */
 
-package dgca.verifier.app.android.data
+package dgca.verifier.app.android.data.local
 
-import java.security.cert.Certificate
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
 
-interface VerifierRepository {
+@Dao
+interface KeyDao {
+    @Query("SELECT * FROM keys")
+    fun getAll(): List<Key>
 
-    suspend fun fetchCertificates()
-    suspend fun getCertificate(kid: String): Certificate?
+    @Query("SELECT * FROM keys WHERE kid IN (:keyIds)")
+    fun getAllByIds(keyIds: Array<String>): List<Key>
+
+    @Query("SELECT * FROM keys WHERE kid LIKE :kid LIMIT 1")
+    fun getById(kid: String): Key?
+
+    @Query("DELETE FROM keys WHERE kid = :kid")
+    fun deleteById(kid: String)
+
+    @Insert
+    fun insert(key: Key)
+
+    @Delete
+    fun delete(key: Key)
 }

@@ -16,6 +16,7 @@ local.properties
 .idea/libraries
 .idea/sonarlint/
 .idea/sonarIssues.xml
+.idea/codeStyles/
 
 # User-specific configurations
 .idea/caches/

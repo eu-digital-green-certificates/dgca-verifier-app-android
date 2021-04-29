@@ -34,6 +34,7 @@ import javax.inject.Singleton
 @Module
 abstract class RepositoryModule {
 
+
     @Singleton
     @Binds
     abstract fun bindVerifierRepository(verifierRepository: VerifierRepositoryImpl): VerifierRepository

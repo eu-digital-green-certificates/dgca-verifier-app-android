@@ -17,15 +17,16 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 4/24/21 2:20 PM
+ *  Created by osarapulov on 4/29/21 11:32 PM
  */
 
-package dgca.verifier.app.android.data
+package dgca.verifier.app.android.data.local
 
-import java.security.cert.Certificate
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-interface VerifierRepository {
-
-    suspend fun fetchCertificates()
-    suspend fun getCertificate(kid: String): Certificate?
-}
+@Entity(tableName = "keys")
+data class Key(
+    @PrimaryKey val kid: String,
+    val key: String
+)

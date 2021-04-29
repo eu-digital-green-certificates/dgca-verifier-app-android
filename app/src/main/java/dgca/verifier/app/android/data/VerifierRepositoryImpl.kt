@@ -23,17 +23,22 @@
 package dgca.verifier.app.android.data
 
 import android.util.Log
+import dgca.verifier.app.android.BuildConfig
+import dgca.verifier.app.android.data.local.AppDatabase
+import dgca.verifier.app.android.data.local.Key
 import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.data.remote.ApiService
 import dgca.verifier.app.decoder.chain.base64ToX509Certificate
 import dgca.verifier.app.decoder.chain.toBase64
 import java.net.HttpURLConnection
 import java.security.MessageDigest
+import java.security.cert.Certificate
 import javax.inject.Inject
 
 class VerifierRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
-    private val preferences: Preferences
+    private val preferences: Preferences,
+    private val db: AppDatabase
 ) : BaseRepository(), VerifierRepository {
 
     private val validCertList = mutableListOf<String>()
@@ -48,6 +53,10 @@ class VerifierRepositoryImpl @Inject constructor(
             val resumeToken = preferences.resumeToken
             fetchCertificate(resumeToken)
         }
+    }
+
+    override suspend fun getCertificate(kid: String): Certificate? {
+        return db.keyDao().getById(kid)?.key?.base64ToX509Certificate()
     }
 
     private suspend fun fetchCertificate(resumeToken: Long) {
@@ -65,9 +74,9 @@ class VerifierRepositoryImpl @Inject constructor(
         val responseStr = response.body()?.stringSuspending() ?: return
 
         if (validCertList.contains(responseKid) && isKidValid(responseKid, responseStr)) {
-            // TODO: store in storage
-//            LocalData.add(encodedPublicKey: responseStr)
             Log.i(VerifierRepositoryImpl::class.java.simpleName, "Cert KID verified")
+            val key = Key(responseKid!!, responseStr)
+            db.keyDao().insert(key)
         }
 
         newResumeToken?.let {
