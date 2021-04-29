@@ -14,6 +14,8 @@ local.properties
 .idea/assetWizardSettings.xml
 .idea/dictionaries
 .idea/libraries
+.idea/sonarlint/
+.idea/sonarIssues.xml
 
 # User-specific configurations
 .idea/caches/
