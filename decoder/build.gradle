@@ -44,7 +44,6 @@ dependencies {
     implementation Deps.kotlin_stdlib
     implementation Deps.kotlin_reflect
     implementation Deps.java_cose
-    implementation Deps.bouncy_castle
     implementation Deps.json_validation
     implementation Deps.jackson_cbor
 

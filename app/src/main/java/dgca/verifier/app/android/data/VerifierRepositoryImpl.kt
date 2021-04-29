@@ -29,8 +29,6 @@ import dgca.verifier.app.decoder.chain.base64ToX509Certificate
 import dgca.verifier.app.decoder.chain.toBase64
 import java.net.HttpURLConnection
 import java.security.MessageDigest
-import java.security.cert.Certificate
-import java.security.cert.CertificateFactory
 import javax.inject.Inject
 
 class VerifierRepositoryImpl @Inject constructor(
@@ -38,23 +36,14 @@ class VerifierRepositoryImpl @Inject constructor(
     private val preferences: Preferences
 ) : BaseRepository(), VerifierRepository {
 
-    private val validCertSet = mutableListOf<String>()
-
-    override suspend fun getCertificate(key: String): Certificate? {
-        return execute {
-            val response = apiService.getCertificates(key)
-            response.body()?.byteStream()?.let {
-                return@execute CertificateFactory.getInstance("X.509").generateCertificate(it)
-            }
-        }
-    }
+    private val validCertList = mutableListOf<String>()
 
     override suspend fun fetchCertificates() {
         execute {
             val response = apiService.getCertStatus()
             val body = response.body() ?: return@execute
-            validCertSet.clear()
-            validCertSet.addAll(body)
+            validCertList.clear()
+            validCertList.addAll(body)
 
             val resumeToken = preferences.resumeToken
             fetchCertificate(resumeToken)
@@ -75,7 +64,7 @@ class VerifierRepositoryImpl @Inject constructor(
         val newResumeToken = headers[HEADER_RESUME_TOKEN]
         val responseStr = response.body()?.stringSuspending() ?: return
 
-        if (validCertSet.contains(responseKid) && isKidValid(responseKid, responseStr)) {
+        if (validCertList.contains(responseKid) && isKidValid(responseKid, responseStr)) {
             // TODO: store in storage
 //            LocalData.add(encodedPublicKey: responseStr)
             Log.i(VerifierRepositoryImpl::class.java.simpleName, "Cert KID verified")
@@ -94,7 +83,7 @@ class VerifierRepositoryImpl @Inject constructor(
         val cert = responseStr.base64ToX509Certificate() ?: return false
         val certKid = MessageDigest.getInstance("SHA-256")
             .digest(cert.encoded)
-            .copyOfRange(0, 8)
+            .copyOf(8)
             .toBase64()
 
         return responseKid == certKid

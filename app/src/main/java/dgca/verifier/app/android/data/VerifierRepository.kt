@@ -22,11 +22,7 @@
 
 package dgca.verifier.app.android.data
 
-import java.security.cert.Certificate
-
 interface VerifierRepository {
-
-    suspend fun getCertificate(key: String): Certificate?
 
     suspend fun fetchCertificates()
 }
