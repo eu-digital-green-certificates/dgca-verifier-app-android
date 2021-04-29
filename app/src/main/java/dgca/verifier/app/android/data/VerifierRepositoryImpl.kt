@@ -28,6 +28,7 @@ import dgca.verifier.app.android.data.local.AppDatabase
 import dgca.verifier.app.android.data.local.Key
 import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.data.remote.ApiService
+import dgca.verifier.app.android.security.KeyStoreCryptor
 import dgca.verifier.app.decoder.chain.base64ToX509Certificate
 import dgca.verifier.app.decoder.chain.toBase64
 import java.net.HttpURLConnection
@@ -38,7 +39,8 @@ import javax.inject.Inject
 class VerifierRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val preferences: Preferences,
-    private val db: AppDatabase
+    private val db: AppDatabase,
+    private val keyStoreCryptor: KeyStoreCryptor
 ) : BaseRepository(), VerifierRepository {
 
     private val validCertList = mutableListOf<String>()
@@ -56,7 +58,8 @@ class VerifierRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCertificate(kid: String): Certificate? {
-        return db.keyDao().getById(kid)?.key?.base64ToX509Certificate()
+        val key = db.keyDao().getById(kid)
+        return if(key != null) keyStoreCryptor.decrypt(key.key)!!.base64ToX509Certificate() else null
     }
 
     private suspend fun fetchCertificate(resumeToken: Long) {
@@ -75,7 +78,7 @@ class VerifierRepositoryImpl @Inject constructor(
 
         if (validCertList.contains(responseKid) && isKidValid(responseKid, responseStr)) {
             Log.i(VerifierRepositoryImpl::class.java.simpleName, "Cert KID verified")
-            val key = Key(responseKid!!, responseStr)
+            val key = Key(responseKid!!, keyStoreCryptor.encrypt(responseStr)!!)
             db.keyDao().insert(key)
         }
 
