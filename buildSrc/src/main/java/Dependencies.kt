@@ -34,6 +34,8 @@ object Deps {
     const val androidx_navigation_ui = "androidx.navigation:navigation-ui-ktx:${Versions.androidx_navigation}"
     const val androidx_navigation = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.androidx_navigation}"
     const val androidx_hilt_compiler = "androidx.hilt:hilt-compiler:${Versions.androidx_hilt_compiler}"
+    const val androidx_room_runtime = "androidx.room:room-runtime:${Versions.androidx_room}"
+    const val androidx_room_compiler = "androidx.room:room-compiler:${Versions.androidx_room}"
     const val retrofit2 = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
     const val log_interceptor = "com.squareup.okhttp3:logging-interceptor:${Versions.logging_interceptor}"
     const val gson_converter = "com.squareup.retrofit2:converter-gson:${Versions.gson_converter}"

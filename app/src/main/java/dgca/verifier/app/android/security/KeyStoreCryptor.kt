@@ -17,15 +17,13 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 4/24/21 2:20 PM
+ *  Created by osarapulov on 4/30/21 1:24 AM
  */
 
-package dgca.verifier.app.android.data
+package dgca.verifier.app.android.security
 
-import java.security.cert.Certificate
+interface KeyStoreCryptor {
+    fun encrypt(token: String?): String?
 
-interface VerifierRepository {
-
-    suspend fun fetchCertificates()
-    suspend fun getCertificate(kid: String): Certificate?
+    fun decrypt(token: String?): String?
 }

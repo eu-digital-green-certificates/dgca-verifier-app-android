@@ -17,15 +17,26 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 4/24/21 2:20 PM
+ *  Created by osarapulov on 4/30/21 12:06 AM
  */
 
-package dgca.verifier.app.android.data
+package dgca.verifier.app.android.di
 
-import java.security.cert.Certificate
+import android.content.Context
+import androidx.room.Room
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import dgca.verifier.app.android.data.local.AppDatabase
+import javax.inject.Singleton
 
-interface VerifierRepository {
-
-    suspend fun fetchCertificates()
-    suspend fun getCertificate(kid: String): Certificate?
+@InstallIn(SingletonComponent::class)
+@Module
+object LocalDataSourceModule {
+    @Singleton
+    @Provides
+    fun provideDb(@ApplicationContext context: Context): AppDatabase =
+        Room.databaseBuilder(context, AppDatabase::class.java, "key-db").build()
 }

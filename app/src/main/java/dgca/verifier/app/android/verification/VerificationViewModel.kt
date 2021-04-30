@@ -40,6 +40,7 @@ import dgca.verifier.app.decoder.chain.model.GreenCertificate
 import dgca.verifier.app.decoder.chain.model.VerificationResult
 import dgca.verifier.app.decoder.chain.prefixvalidation.PrefixValidationService
 import dgca.verifier.app.decoder.chain.schema.SchemaValidator
+import dgca.verifier.app.decoder.chain.toBase64
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -95,12 +96,8 @@ class VerificationViewModel @ViewModelInject constructor(
 
                 }
 
-                // Valid Certificate for testing. For QR without CBOR data.
-                val certificate =
-                    "MIICrDCCAZSgAwIBAgIEYH+7ujANBgkqhkiG9w0BAQsFADAYMRYwFAYDVQQDDA1lZGdjX2Rldl90ZXN0MB4XDTIxMDQyMTA1NDQyNloXDTIyMDQyMTA1NDQyNlowGDEWMBQGA1UEAwwNZWRnY19kZXZfdGVzdDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAOAlpphOE0TH2m+jU6prmP1W6N0ajaExs5X+sxxG58hIGnZchxFkLkeYSZqyC2bPQtPiYIDgVFcPJPgfRO4r5ex3W7OxQCFS0TJmYhRkLiVQHQDNHeXFmOpu834x2ErPJ8AK2D9KhVyFKl5OX1euU25IXzXs67vQf30eStArvWFlZGX4E+JUy8yIwrR6WLRe+kgtBdFmJZJywbnnffg/5WT+TEcky8ugBlsEcyTxI5rt6iW5ptNUphui8ZGaE2KtjcnZVaPCvn1IjEv6sdWS/DNDlFySuJ6LQD1OnKsjCXrNVZFVZS5ae9snPu4Y/gapzdgeSDioRk6BWwZ02E9BE+8CAwEAATANBgkqhkiG9w0BAQsFAAOCAQEApE8H9uGtB6DuDL3LEqGslyJKyc6EBqJ+4hDlFtPe+13xEDomJsNwq1Uk3p9F1aHgqqXc1MjJfDWn0l7ZDGh02tfi+EgHyV2vrfqZwXm6vuK/P7fzdb5blLJpKt0NoMCzY+lHhkCxcRGX1R8QOGuuGtnepDrtyeTuoQqsh0mdcMuFgKuTr3c3kKpoQwBWquG/eZ0PhKSkqXy5aEaFAzdXBLq/dh4zn8FVx+STSpKK1WNmoqjtL7EEFcNgxLTjWJFjusTEZL0Yxa4Ot4Gb6+VK7P34olH7pFcBFYfh6DyOESV9uglrE4kdOQ7+x+yS5zR/UTeEfM4mW4I2QIEreUN8Jg==".base64ToX509Certificate()
-
 //                // Load from API for now. Replace with cache logic.
-//                val certificate = verifierRepository.getCertificate(kid.toBase64())
+                val certificate = verifierRepository.getCertificate(kid.toBase64())
 
                 if (certificate == null) {
                     Log.d(TAG, "Verification failed: failed to download remote certificate")

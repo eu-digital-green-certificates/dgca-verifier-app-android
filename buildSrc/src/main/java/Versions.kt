@@ -33,6 +33,7 @@ object Versions {
     const val kotlinx_coroutines = "1.3.9"
     const val androidx_hilt_viewmodel = "1.0.0-alpha01"
     const val androidx_hilt_compiler = "1.0.0-alpha01"
+    const val androidx_room = "2.3.0"
     const val hilt_version = "2.33-beta"
     const val retrofit = "2.9.0"
     const val logging_interceptor = "4.0.1"

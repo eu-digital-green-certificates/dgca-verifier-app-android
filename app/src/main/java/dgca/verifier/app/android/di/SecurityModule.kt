@@ -17,15 +17,23 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 4/24/21 2:20 PM
+ *  Created by osarapulov on 4/30/21 1:53 AM
  */
 
-package dgca.verifier.app.android.data
+package dgca.verifier.app.android.di
 
-import java.security.cert.Certificate
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import dgca.verifier.app.android.security.DefaultKeyStoreCryptor
+import dgca.verifier.app.android.security.KeyStoreCryptor
+import javax.inject.Singleton
 
-interface VerifierRepository {
-
-    suspend fun fetchCertificates()
-    suspend fun getCertificate(kid: String): Certificate?
+@InstallIn(SingletonComponent::class)
+@Module
+abstract class SecurityModule {
+    @Singleton
+    @Binds
+    abstract fun bindKeyStoreCryptor(keyStoreCryptor: DefaultKeyStoreCryptor): KeyStoreCryptor
 }
