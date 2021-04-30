@@ -28,17 +28,16 @@ The DGC Verifier Apps are responsible for scanning and verifying DGCs using publ
 
 ### Prerequisites
 
-- [ ] TODO: Describe prerequisites
+- For development, the latest version of Android Studio is required. The latest version can be downloaded from [here](https://developer.android.com/studio/).
+- Android SDK version 26+
 
 ### Build
 
 Whether you cloned or downloaded the 'zipped' sources you will either find the sources in the chosen checkout-directory or get a zip file with the source code, which you can expand to a folder of your choice.
 
-In either case open a terminal pointing to the directory you put the sources in. The local build process is described afterwards depending on the way you choose.
+#### Android Studio based build
 
-#### XYZ (Maven, Docker ...) based build
-
-- [ ] TODO: Add instructions for different build types
+This project uses the Gradle build system. To build this project, use the `gradlew build` command or use "Run" in Android Studio.
 
 ## Documentation  
 
