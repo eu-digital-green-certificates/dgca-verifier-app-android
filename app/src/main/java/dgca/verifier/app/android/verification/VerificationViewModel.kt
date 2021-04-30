@@ -30,17 +30,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dgca.verifier.app.android.data.VerifierRepository
-import dgca.verifier.app.decoder.chain.base45.Base45Service
-import dgca.verifier.app.decoder.chain.base64ToX509Certificate
-import dgca.verifier.app.decoder.chain.cbor.CborService
-import dgca.verifier.app.decoder.chain.compression.CompressorService
-import dgca.verifier.app.decoder.chain.cose.CoseService
-import dgca.verifier.app.decoder.chain.cose.CryptoService
-import dgca.verifier.app.decoder.chain.model.GreenCertificate
-import dgca.verifier.app.decoder.chain.model.VerificationResult
-import dgca.verifier.app.decoder.chain.prefixvalidation.PrefixValidationService
-import dgca.verifier.app.decoder.chain.schema.SchemaValidator
-import dgca.verifier.app.decoder.chain.toBase64
+import dgca.verifier.app.decoder.base45.Base45Service
+import dgca.verifier.app.decoder.cbor.CborService
+import dgca.verifier.app.decoder.compression.CompressorService
+import dgca.verifier.app.decoder.cose.CoseService
+import dgca.verifier.app.decoder.cose.CryptoService
+import dgca.verifier.app.decoder.model.GreenCertificate
+import dgca.verifier.app.decoder.model.VerificationResult
+import dgca.verifier.app.decoder.prefixvalidation.PrefixValidationService
+import dgca.verifier.app.decoder.schema.SchemaValidator
+import dgca.verifier.app.decoder.toBase64
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -96,6 +95,9 @@ class VerificationViewModel @ViewModelInject constructor(
 
                 }
 
+                schemaValidator.validate(coseData.cbor, verificationResult)
+                greenCertificate = cborService.decode(coseData.cbor, verificationResult)
+
 //                // Load from API for now. Replace with cache logic.
                 val certificate = verifierRepository.getCertificate(kid.toBase64())
 
@@ -103,10 +105,7 @@ class VerificationViewModel @ViewModelInject constructor(
                     Log.d(TAG, "Verification failed: failed to download remote certificate")
                     return@withContext
                 }
-
                 cryptoService.validate(cose, certificate, verificationResult)
-                schemaValidator.validate(coseData.cbor, verificationResult)
-                greenCertificate = cborService.decode(coseData.cbor, verificationResult)
             }
 
             _inProgress.value = false

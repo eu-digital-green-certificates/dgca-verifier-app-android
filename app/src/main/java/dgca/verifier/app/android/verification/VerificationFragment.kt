@@ -36,8 +36,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.R
 import dgca.verifier.app.android.databinding.FragmentVerificationBinding
-import dgca.verifier.app.decoder.chain.model.GreenCertificate
-import dgca.verifier.app.decoder.chain.model.IdentifierType
+import dgca.verifier.app.decoder.model.GreenCertificate
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
@@ -83,25 +82,16 @@ class VerificationFragment : Fragment() {
         })
         viewModel.certificate.observe(viewLifecycleOwner, { certificate ->
             if (certificate != null) {
-                adapter.update(certificate.vaccinations)
-                binding.personFullName.text = "${certificate.subject.givenName} \n ${certificate.subject.familyName}"
+                certificate.vaccinations?.let {
+                    adapter.update(it)
+                }
+                binding.personFullName.text = "${certificate.person.givenName} \n ${certificate.person.familyName}"
                 binding.type.text = getCertType(certificate)
 
                 val personalInfo = StringBuilder()
-                val identifier = certificate.subject.identifiers?.first()
-                when (identifier?.type) {
-                    IdentifierType.PASSPORT -> personalInfo.append("Passport: ${identifier.id}")
-                    IdentifierType.NATIONAL_IDENTIFIER -> { // TODO: update
-                    }
-                    IdentifierType.CITIZENSHIP -> { // TODO: update
-                    }
-                    IdentifierType.HEALTH -> { // TODO: update
-                    }
-                    null -> {
-                    }
-                }
+
                 personalInfo.append("\n")
-                personalInfo.append("Date of Birth: ${certificate.subject.dateOfBirth}")
+                personalInfo.append("Date of Birth: ${certificate.dateOfBirth}")
                 binding.personInfo.text = personalInfo
             }
         })
@@ -119,9 +109,9 @@ class VerificationFragment : Fragment() {
 
     private fun getCertType(certificate: GreenCertificate): String {
         return when {
-            certificate.vaccinations.isNotEmpty() -> getString(R.string.type_vaccination)
-            certificate.recoveryStatements.isNotEmpty() -> getString(R.string.type_recovered)
-            certificate.tests.isNotEmpty() -> getString(R.string.type_test)
+            certificate.vaccinations?.isNotEmpty() == true -> getString(R.string.type_vaccination)
+            certificate.recoveryStatements?.isNotEmpty() == true -> getString(R.string.type_recovered)
+            certificate.tests?.isNotEmpty() == true -> getString(R.string.type_test)
             else -> ""
         }
     }

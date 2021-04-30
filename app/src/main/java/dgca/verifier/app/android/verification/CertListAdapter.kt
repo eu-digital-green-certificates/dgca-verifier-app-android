@@ -27,7 +27,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import dgca.verifier.app.decoder.chain.model.Vaccination
+import dgca.verifier.app.decoder.model.Vaccination
 
 enum class DataType {
     TEST, VACCINATION, RECOVERED
@@ -39,7 +39,7 @@ class CertListAdapter(
 
     private var items = emptyList<Vaccination>()
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = 0 //  items.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -56,7 +56,7 @@ class CertListAdapter(
     }
 
     override fun getItemViewType(position: Int): Int = DataType.VACCINATION.ordinal
-
+//
     fun update(list: List<Vaccination>) {
         notifyChanges(items, list)
         items = list
@@ -69,7 +69,7 @@ fun RecyclerView.Adapter<out RecyclerView.ViewHolder>.notifyChanges(
 ) {
     val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition].date == newList[newItemPosition].date
+            return oldList[oldItemPosition].dateOfVaccination == newList[newItemPosition].dateOfVaccination
         }
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {

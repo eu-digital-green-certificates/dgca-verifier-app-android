@@ -26,20 +26,20 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dgca.verifier.app.decoder.chain.base45.Base45Service
-import dgca.verifier.app.decoder.chain.base45.DefaultBase45Service
-import dgca.verifier.app.decoder.chain.cbor.CborService
-import dgca.verifier.app.decoder.chain.cbor.DefaultCborService
-import dgca.verifier.app.decoder.chain.compression.CompressorService
-import dgca.verifier.app.decoder.chain.compression.DefaultCompressorService
-import dgca.verifier.app.decoder.chain.cose.CoseService
-import dgca.verifier.app.decoder.chain.cose.CryptoService
-import dgca.verifier.app.decoder.chain.cose.DefaultCoseService
-import dgca.verifier.app.decoder.chain.cose.VerificationCryptoService
-import dgca.verifier.app.decoder.chain.prefixvalidation.DefaultPrefixValidationService
-import dgca.verifier.app.decoder.chain.prefixvalidation.PrefixValidationService
-import dgca.verifier.app.decoder.chain.schema.DefaultSchemaValidator
-import dgca.verifier.app.decoder.chain.schema.SchemaValidator
+import dgca.verifier.app.decoder.base45.Base45Service
+import dgca.verifier.app.decoder.base45.DefaultBase45Service
+import dgca.verifier.app.decoder.cbor.CborService
+import dgca.verifier.app.decoder.cbor.DefaultCborService
+import dgca.verifier.app.decoder.compression.CompressorService
+import dgca.verifier.app.decoder.compression.DefaultCompressorService
+import dgca.verifier.app.decoder.cose.CoseService
+import dgca.verifier.app.decoder.cose.CryptoService
+import dgca.verifier.app.decoder.cose.DefaultCoseService
+import dgca.verifier.app.decoder.cose.VerificationCryptoService
+import dgca.verifier.app.decoder.prefixvalidation.DefaultPrefixValidationService
+import dgca.verifier.app.decoder.prefixvalidation.PrefixValidationService
+import dgca.verifier.app.decoder.schema.DefaultSchemaValidator
+import dgca.verifier.app.decoder.schema.SchemaValidator
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
