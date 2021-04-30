@@ -34,7 +34,9 @@
 
         <action
             android:id="@+id/action_codeReaderFragment_to_verificationFragment"
-            app:destination="@id/verificationFragment" />
+            app:destination="@id/verificationFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
 
     </fragment>
 

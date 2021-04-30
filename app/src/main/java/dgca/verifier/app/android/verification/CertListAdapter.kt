@@ -39,7 +39,7 @@ class CertListAdapter(
 
     private var items = emptyList<Vaccination>()
 
-    override fun getItemCount(): Int = 0 //  items.size
+    override fun getItemCount(): Int = items.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -56,7 +56,7 @@ class CertListAdapter(
     }
 
     override fun getItemViewType(position: Int): Int = DataType.VACCINATION.ordinal
-//
+
     fun update(list: List<Vaccination>) {
         notifyChanges(items, list)
         items = list

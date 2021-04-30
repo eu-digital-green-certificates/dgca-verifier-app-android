@@ -5,73 +5,92 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="@dimen/default_padding">
+    android:padding="@dimen/default_padding"
+    tools:background="@color/white">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/disease"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="840539006" />
+        android:textAppearance="@style/TextAppearance.Dgca.Info"
+        tools:text="disease or agent targeted" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/vaccine"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="1119305005" />
+        android:layout_marginTop="10dp"
+        android:textAppearance="@style/TextAppearance.Dgca.Info"
+        tools:text="vaccine or prophylaxis" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/medicinalProduct"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="EU/1/20/1528" />
+        android:layout_marginTop="10dp"
+        android:textAppearance="@style/TextAppearance.Dgca.Info"
+        tools:text="vaccine medicinal product" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/authorizationHolder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="ORG-100030215" />
-
+        android:layout_marginTop="10dp"
+        android:textAppearance="@style/TextAppearance.Dgca.Info"
+        tools:text="Holder" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/doseSequence"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="1" />
+        android:layout_marginTop="10dp"
+        android:textAppearance="@style/TextAppearance.Dgca.Info"
+        tools:text="Dose Number" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/doseTotalNumber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="2" />
+        android:layout_marginTop="10dp"
+        android:textAppearance="@style/TextAppearance.Dgca.Info"
+        tools:text="Total Series of Doses" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="2021-02-18" />
+        android:layout_marginTop="10dp"
+        android:textAppearance="@style/TextAppearance.Dgca.Info"
+        tools:text="Date of Vaccination" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/country"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="AT" />
+        android:layout_marginTop="10dp"
+        android:textAppearance="@style/TextAppearance.Dgca.Info"
+        tools:text="Country of Vaccination" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/lotNumber"
+        android:id="@+id/certificate_issuer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="C22-862FF-001" />
+        android:layout_marginTop="10dp"
+        android:textAppearance="@style/TextAppearance.Dgca.Info"
+        tools:text="Issuer" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/administeringCentre"
+        android:id="@+id/cert_identifier"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Vaccination centre Vienna 23" />
+        android:layout_marginTop="10dp"
+        android:textAppearance="@style/TextAppearance.Dgca.Info"
+        tools:text="Unique Certificate Identifier: UVCI" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="5dp"
-        android:background="@color/green_700" />
+        android:background="@color/blue" />
 
 </LinearLayout>

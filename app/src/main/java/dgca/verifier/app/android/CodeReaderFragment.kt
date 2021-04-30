@@ -88,9 +88,6 @@ class CodeReaderFragment : Fragment() {
         binding.barcodeScanner.initializeFromIntent(requireActivity().intent)
         binding.barcodeScanner.decodeContinuous(callback)
         beepManager = BeepManager(requireActivity())
-
-        binding.resume.setOnClickListener { binding.barcodeScanner.resume() }
-        binding.pause.setOnClickListener { binding.barcodeScanner.pause() }
     }
 
     override fun onDestroyView() {

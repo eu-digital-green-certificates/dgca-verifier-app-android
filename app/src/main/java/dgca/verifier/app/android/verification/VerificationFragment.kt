@@ -23,11 +23,11 @@
 package dgca.verifier.app.android.verification
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -72,12 +72,12 @@ class VerificationFragment : Fragment() {
         viewModel.verificationResult.observe(viewLifecycleOwner, {
             if (it.isValid()) {
                 binding.status.text = getString(R.string.cert_valid)
-                binding.status.setTextColor(Color.GREEN)
                 binding.certStatusIcon.setImageResource(R.drawable.ic_baseline_check_24)
+                binding.statusContainer.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.green))
             } else {
                 binding.status.text = getString(R.string.cert_invalid)
-                binding.status.setTextColor(Color.RED)
                 binding.certStatusIcon.setImageResource(R.drawable.ic_baseline_close_24)
+                binding.statusContainer.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red))
             }
         })
         viewModel.certificate.observe(viewLifecycleOwner, { certificate ->
@@ -85,13 +85,11 @@ class VerificationFragment : Fragment() {
                 certificate.vaccinations?.let {
                     adapter.update(it)
                 }
-                binding.personFullName.text = "${certificate.person.givenName} \n ${certificate.person.familyName}"
-                binding.type.text = getCertType(certificate)
-
+                binding.personFullName.text = "${certificate.person.givenName} \n${certificate.person.familyName}"
                 val personalInfo = StringBuilder()
-
-                personalInfo.append("\n")
                 personalInfo.append("Date of Birth: ${certificate.dateOfBirth}")
+                personalInfo.append("\n")
+                personalInfo.append("Certificate Type: ${getCertType(certificate)}")
                 binding.personInfo.text = personalInfo
             }
         })
