@@ -23,14 +23,13 @@
 package dgca.verifier.app.android.data
 
 import android.util.Log
-import dgca.verifier.app.android.BuildConfig
 import dgca.verifier.app.android.data.local.AppDatabase
 import dgca.verifier.app.android.data.local.Key
 import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.data.remote.ApiService
 import dgca.verifier.app.android.security.KeyStoreCryptor
-import dgca.verifier.app.decoder.chain.base64ToX509Certificate
-import dgca.verifier.app.decoder.chain.toBase64
+import dgca.verifier.app.decoder.base64ToX509Certificate
+import dgca.verifier.app.decoder.toBase64
 import java.net.HttpURLConnection
 import java.security.MessageDigest
 import java.security.cert.Certificate
