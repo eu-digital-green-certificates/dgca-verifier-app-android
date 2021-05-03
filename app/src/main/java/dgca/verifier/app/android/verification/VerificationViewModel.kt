@@ -24,11 +24,11 @@ package dgca.verifier.app.android.verification
 
 import android.annotation.SuppressLint
 import android.util.Log
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.decoder.base45.Base45Service
 import dgca.verifier.app.decoder.cbor.CborService
@@ -43,10 +43,12 @@ import dgca.verifier.app.decoder.toBase64
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 private const val TAG = "VerificationViewModel"
 
-class VerificationViewModel @ViewModelInject constructor(
+@HiltViewModel
+class VerificationViewModel @Inject constructor(
     private val prefixValidationService: PrefixValidationService,
     private val base45Service: Base45Service,
     private val compressorService: CompressorService,

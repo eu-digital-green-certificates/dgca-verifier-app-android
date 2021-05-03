@@ -36,6 +36,7 @@ object Deps {
     const val androidx_hilt_compiler = "androidx.hilt:hilt-compiler:${Versions.androidx_hilt_compiler}"
     const val androidx_room_runtime = "androidx.room:room-runtime:${Versions.androidx_room}"
     const val androidx_room_compiler = "androidx.room:room-compiler:${Versions.androidx_room}"
+    const val androidx_worker_ktx = "androidx.work:work-runtime-ktx:${Versions.androidx_worker_ktx}"
     const val retrofit2 = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
     const val log_interceptor = "com.squareup.okhttp3:logging-interceptor:${Versions.logging_interceptor}"
     const val gson_converter = "com.squareup.retrofit2:converter-gson:${Versions.gson_converter}"
@@ -44,8 +45,10 @@ object Deps {
     const val hilt = "com.google.dagger:hilt-android:${Versions.hilt_version}"
     const val hilt_compiler = "com.google.dagger:hilt-android-compiler:${Versions.hilt_version}"
     const val hilt_viewmodel = "androidx.hilt:hilt-lifecycle-viewmodel:${Versions.androidx_hilt_viewmodel}"
+    const val hilt_work = "androidx.hilt:hilt-work:${Versions.androidx_hilt_work}"
 
     const val zxing = "com.journeyapps:zxing-android-embedded:${Versions.zxing}"
+    const val guava_conflict_resolver = "com.google.guava:listenablefuture:${Versions.guave_conflict_resolver_version}"
     const val kotlin_reflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin_reflect}"
     const val java_cose = "com.augustcellars.cose:cose-java:${Versions.java_cose}"
     const val json_validation = "com.github.fge:json-schema-validator:${Versions.json_validation}"
