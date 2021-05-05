@@ -30,18 +30,4 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
-    private val verifierRepository: VerifierRepository
-) : ViewModel() {
-
-    fun init() {
-        refreshData()
-    }
-
-    private fun refreshData() {
-//        TODO: fetch certificates if needed and updated locally.
-        viewModelScope.launch {
-            verifierRepository.fetchCertificates()
-        }
-    }
-}
+class MainViewModel @Inject constructor() : ViewModel()
