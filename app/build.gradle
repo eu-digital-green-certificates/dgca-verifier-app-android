@@ -66,12 +66,15 @@ dependencies {
     implementation Deps.androidx_navigation_fragment
     implementation Deps.androidx_navigation_ui
     implementation Deps.androidx_room_runtime
+    implementation Deps.androidx_worker_ktx
     implementation Deps.kotlinx_coroutines
     implementation Deps.zxing
+    implementation Deps.guava_conflict_resolver
 
     implementation Deps.hilt
     kapt Deps.hilt_compiler
     implementation Deps.hilt_viewmodel
+    implementation Deps.hilt_work
     kapt Deps.androidx_hilt_compiler
     kapt Deps.androidx_room_compiler
 

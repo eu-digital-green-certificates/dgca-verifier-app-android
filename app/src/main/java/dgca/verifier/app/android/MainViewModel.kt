@@ -22,24 +22,12 @@
 
 package dgca.verifier.app.android
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.VerifierRepository
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainViewModel @ViewModelInject constructor(
-    private val verifierRepository: VerifierRepository
-) : ViewModel() {
-
-    fun init() {
-        refreshData()
-    }
-
-    private fun refreshData() {
-//        TODO: fetch certificates if needed and updated locally.
-        viewModelScope.launch {
-            verifierRepository.fetchCertificates()
-        }
-    }
-}
+@HiltViewModel
+class MainViewModel @Inject constructor() : ViewModel()
