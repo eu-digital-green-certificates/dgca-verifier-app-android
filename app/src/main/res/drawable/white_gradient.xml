@@ -1,9 +1,9 @@
-<!--
-  ~  license-start
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~  -license-start
   ~  eu-digital-green-certificates / dgca-verifier-app-android
-  ~
+  ~  -
   ~  Copyright (C) 2021 T-Systems International GmbH and all other contributors
-  ~
+  ~  -
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
   ~  You may obtain a copy of the License at
@@ -15,22 +15,15 @@
   ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
-  ~  license-end
+  ~  -license-end
   ~
-  ~  Created by Mykhailo Nester on 4/23/21 9:53 AM
+  ~  Created by mykhailo.nester on 4/30/21 5:40 PM
   -->
 
-<resources>
-    <color name="blue">#043181</color>
-    <color name="blue_dark">#032A6E</color>
-    <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>
-    <color name="green">#38692B</color>
-    <color name="red">#CE0426</color>
-
-    <color name="grey_7_light_alpha_30">#4DEBEBF5</color>
-    <color name="grey_7_light_alpha_60">#99EBEBF5</color>
-    <color name="grey_8_dark_alpha_30">#4D3C3C43</color>
-    <color name="grey_8_dark_alpha_60">#993C3C43</color>
-
-</resources>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:angle="-90"
+        android:centerColor="#96ffffff"
+        android:endColor="#ffffff"
+        android:startColor="#65ffffff" />
+</shape>

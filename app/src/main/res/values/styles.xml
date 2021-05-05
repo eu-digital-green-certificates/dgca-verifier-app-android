@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="TextAppearance.Dgca.Info" parent="">
+        <item name="android:textSize">@dimen/text_size_big</item>
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:letterSpacing">-0.03</item>
+        <item name="android:typeface">normal</item>
+    </style>
 </resources>

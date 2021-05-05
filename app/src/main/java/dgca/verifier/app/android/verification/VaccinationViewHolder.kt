@@ -39,15 +39,15 @@ class VaccinationViewHolder(private val binding: ItemVaccinationBinding) :
 
     @SuppressLint("SetTextI18n")
     fun bind(data: Vaccination) {
-        binding.disease.text = "disease: ${data.disease}"
-        binding.vaccine.text = "vaccine: ${data.vaccine}"
-        binding.medicinalProduct.text = "medicinalProduct: ${data.medicinalProduct}"
-//        binding.authorizationHolder.text = "authorizationHolder: ${data.authorizationHolder}"
-//        binding.doseSequence.text = "doseSequence: ${data.doseSequence}"
-//        binding.doseTotalNumber.text = "doseTotalNumber: ${data.doseTotalNumber}"
-//        binding.lotNumber.text = "lotNumber: ${data.lotNumber}"
-//        binding.date.text = "date: ${data.date}"
-//        binding.administeringCentre.text = "administeringCentre: ${data.administeringCentre}"
-//        binding.country.text = "country: ${data.country}"
+        binding.disease.text = "Disease or agent targeted: \n${data.disease}"
+        binding.vaccine.text = "Vaccine or prophylaxis: \n${data.vaccine}"
+        binding.medicinalProduct.text = "Vaccine medicinal product: \n${data.medicinalProduct}"
+        binding.authorizationHolder.text = "Holder / Manufacturer: \n${data.manufacturer}"
+        binding.doseSequence.text = "Dose Number: \n${data.doseNumber}"
+        binding.doseTotalNumber.text = "Total Series of Doses: \n${data.totalSeriesOfDoses}"
+        binding.date.text = "Date of Vaccination: \n${data.dateOfVaccination}"
+        binding.country.text = "Country of Vaccination: \n${data.countryOfVaccination}"
+        binding.certificateIssuer.text = "Issuer: \n${data.certificateIssuer}"
+        binding.certIdentifier.text = "Unique Certificate Identifier: \n${data.certificateIdentifier}"
     }
 }
