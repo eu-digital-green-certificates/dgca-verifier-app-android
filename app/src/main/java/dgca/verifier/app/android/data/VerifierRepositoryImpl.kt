@@ -44,15 +44,17 @@ class VerifierRepositoryImpl @Inject constructor(
 
     private val validCertList = mutableListOf<String>()
 
-    override suspend fun fetchCertificates() {
-        execute {
+    override suspend fun fetchCertificates(): Boolean? {
+        return execute {
             val response = apiService.getCertStatus()
-            val body = response.body() ?: return@execute
+            val body = response.body() ?: return@execute false
             validCertList.clear()
             validCertList.addAll(body)
 
             val resumeToken = preferences.resumeToken
             fetchCertificate(resumeToken)
+            db.keyDao().deleteAllExcept(validCertList.toTypedArray())
+            return@execute true
         }
     }
 
