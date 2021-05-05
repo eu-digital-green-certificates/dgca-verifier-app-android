@@ -23,7 +23,9 @@
 package dgca.verifier.app.decoder.cose
 
 import com.upokecenter.cbor.CBORObject
+import dgca.verifier.app.decoder.convertToDer
 import dgca.verifier.app.decoder.model.VerificationResult
+import dgca.verifier.app.decoder.verify
 import java.security.Signature
 import java.security.cert.Certificate
 
@@ -33,17 +35,29 @@ class VerificationCryptoService : CryptoService {
         val verificationKey = certificate.publicKey
         verificationResult.coseVerified = try {
             val messageObject = CBORObject.DecodeFromBytes(cose)
-            val coseSignature = messageObject.get(3).GetByteString()
-            val protected = messageObject[0].GetByteString()
+            var coseSignature = messageObject.get(3).GetByteString()
+            val protectedHeader = messageObject[0].GetByteString()
             val content = messageObject[2].GetByteString()
+            val dataToBeVerified = getValidationData(protectedHeader, content)
 
-            val dataToBeVerified = getValidationData(protected, content)
-
-            val signature = Signature.getInstance("SHA256withRSA/PSS")
-            signature.initVerify(verificationKey)
-            signature.update(dataToBeVerified)
-            signature.verify(coseSignature)
-
+            // get algorithm from header and verify signature
+            when (CBORObject.DecodeFromBytes(protectedHeader).get(1).AsInt32Value()) {
+                ECDSA_256 -> {
+                    coseSignature = coseSignature.convertToDer()
+                    Signature.getInstance(Algo.ALGO_ECDSA256.value).verify(
+                        verificationKey,
+                        dataToBeVerified,
+                        coseSignature
+                    )
+                }
+                RSA_PSS_256 ->
+                    Signature.getInstance(Algo.ALGO_RSA256_PSS.value).verify(
+                        verificationKey,
+                        dataToBeVerified,
+                        coseSignature
+                    )
+                else -> false
+            }
         } catch (ex: Exception) {
             false
         }
@@ -56,5 +70,15 @@ class VerificationCryptoService : CryptoService {
             Add(ByteArray(0))
             Add(content)
         }.EncodeToBytes()
+    }
+
+    companion object {
+        private const val ECDSA_256 = -7
+        private const val RSA_PSS_256 = -37
+    }
+
+    enum class Algo(val value: String) {
+        ALGO_ECDSA256("SHA256withECDSA"),
+        ALGO_RSA256_PSS("SHA256withRSA/PSS")
     }
 }
