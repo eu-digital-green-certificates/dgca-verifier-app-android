@@ -32,6 +32,8 @@ import androidx.activity.addCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.findNavController
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.ResultPoint
@@ -43,7 +45,7 @@ import dgca.verifier.app.android.databinding.FragmentCodeReaderBinding
 
 private const val CAMERA_REQUEST_CODE = 1003
 
-class CodeReaderFragment : Fragment() {
+class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListener {
 
     private var _binding: FragmentCodeReaderBinding? = null
     private val binding get() = _binding!!
@@ -57,6 +59,8 @@ class CodeReaderFragment : Fragment() {
                 // Prevent duplicate scans
                 return
             }
+            binding.barcodeScanner.pause()
+
             lastText = result.text
             beepManager.playBeepSoundAndVibrate()
 
@@ -97,16 +101,19 @@ class CodeReaderFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        binding.barcodeScanner.resume()
+        findNavController().addOnDestinationChangedListener(this)
         lastText = ""
     }
 
     override fun onPause() {
         super.onPause()
+        findNavController().removeOnDestinationChangedListener(this)
         binding.barcodeScanner.pause()
     }
 
     private fun navigateToVerificationPage(text: String) {
+        findNavController().currentDestination
+
         val action =
             CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationFragment(text)
         findNavController().navigate(action)
@@ -121,6 +128,13 @@ class CodeReaderFragment : Fragment() {
                 arrayOf(Manifest.permission.CAMERA),
                 CAMERA_REQUEST_CODE
             )
+        }
+    }
+
+    override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
+        if (destination.id == R.id.codeReaderFragment) {
+            binding.barcodeScanner.resume()
+            lastText = ""
         }
     }
 }

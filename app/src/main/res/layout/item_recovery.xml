@@ -29,21 +29,6 @@
     tools:background="@color/white">
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/date_title"
-        style="@style/TextAppearance.Dgca.CertificateTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="@string/date_of_vaccination_title" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/date_value"
-        style="@style/TextAppearance.Dgca.CertificateValue"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="Feb 26, 1998" />
-
-    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/disease_title"
         style="@style/TextAppearance.Dgca.CertificateTitle"
         android:layout_width="match_parent"
@@ -59,34 +44,49 @@
         tools:text="840539006" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/dose_total_number_title"
+        android:id="@+id/valid_from_title"
         style="@style/TextAppearance.Dgca.CertificateTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/total_series_of_doses_title" />
+        android:text="@string/certificate_valid_from_title" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/dose_total_number_value"
+        android:id="@+id/valid_from_value"
         style="@style/TextAppearance.Dgca.CertificateValue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="2" />
+        tools:text="Feb 26, 1998" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/dose_sequence_title"
+        android:id="@+id/valid_until_title"
         style="@style/TextAppearance.Dgca.CertificateTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/dose_number_title" />
+        android:text="@string/certificate_valid_until_title" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/dose_sequence_value"
+        android:id="@+id/valid_until_value"
         style="@style/TextAppearance.Dgca.CertificateValue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="1" />
+        tools:text="Feb 26, 1998" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/date_of_positive_title"
+        style="@style/TextAppearance.Dgca.CertificateTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/date_of_positive_title" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/date_of_positive_value"
+        style="@style/TextAppearance.Dgca.CertificateValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Feb 26, 1998" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/country_title"

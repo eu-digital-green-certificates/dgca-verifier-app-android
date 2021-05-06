@@ -23,10 +23,7 @@
 package dgca.verifier.app.android
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dgca.verifier.app.android.data.VerifierRepository
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel

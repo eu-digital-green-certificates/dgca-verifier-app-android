@@ -27,7 +27,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import dgca.verifier.app.decoder.model.Vaccination
+import dgca.verifier.app.android.model.CertificateData
+import dgca.verifier.app.android.model.RecoveryModel
+import dgca.verifier.app.android.model.TestModel
+import dgca.verifier.app.android.model.VaccinationModel
 
 enum class DataType {
     TEST, VACCINATION, RECOVERED
@@ -37,13 +40,15 @@ class CertListAdapter(
     private val inflater: LayoutInflater
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var items = emptyList<Vaccination>()
+    private var items = emptyList<CertificateData>()
 
     override fun getItemCount(): Int = items.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             DataType.VACCINATION.ordinal -> VaccinationViewHolder.create(inflater, parent)
+            DataType.TEST.ordinal -> TestViewHolder.create(inflater, parent)
+            DataType.RECOVERED.ordinal -> RecoveryViewHolder.create(inflater, parent)
             else -> throw IllegalArgumentException("View type not defined")
         }
     }
@@ -51,25 +56,34 @@ class CertListAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val data = items[position]
         when (holder) {
-            is VaccinationViewHolder -> holder.bind(data)
+            is VaccinationViewHolder -> holder.bind(data as VaccinationModel)
+            is TestViewHolder -> holder.bind(data as TestModel)
+            is RecoveryViewHolder -> holder.bind(data as RecoveryModel)
         }
     }
 
-    override fun getItemViewType(position: Int): Int = DataType.VACCINATION.ordinal
+    override fun getItemViewType(position: Int): Int {
+        return when (items[position]) {
+            is VaccinationModel -> DataType.VACCINATION.ordinal
+            is TestModel -> DataType.TEST.ordinal
+            is RecoveryModel -> DataType.RECOVERED.ordinal
+            else -> throw IllegalStateException("Type not supported")
+        }
+    }
 
-    fun update(list: List<Vaccination>) {
+    fun update(list: List<CertificateData>) {
         notifyChanges(items, list)
         items = list
     }
 }
 
 fun RecyclerView.Adapter<out RecyclerView.ViewHolder>.notifyChanges(
-    oldList: List<Vaccination>,
-    newList: List<Vaccination>
+    oldList: List<CertificateData>,
+    newList: List<CertificateData>
 ) {
     val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition].dateOfVaccination == newList[newItemPosition].dateOfVaccination
+            return oldList[oldItemPosition].disease == newList[newItemPosition].disease
         }
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {

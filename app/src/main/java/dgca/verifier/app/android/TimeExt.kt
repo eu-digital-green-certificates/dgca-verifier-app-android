@@ -17,23 +17,23 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 4/24/21 2:50 PM
+ *  Created by mykhailo.nester on 5/5/21 11:57 PM
  */
 
-package dgca.verifier.app.android.data.remote
+package dgca.verifier.app.android
 
-import okhttp3.ResponseBody
-import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Header
+import java.text.SimpleDateFormat
+import java.util.Locale
 
-interface ApiService {
+const val YEAR_MONTH_DAY = "yyyy-MM-dd"
+const val FORMATTED_YEAR_MONTH_DAY = "MMM d, yyyy"
 
-    @GET("/signercertificateUpdate")
-    suspend fun getCertUpdate(
-        @Header("x-resume-token") contentRange: String
-    ): Response<ResponseBody>
-
-    @GET("/signercertificateStatus")
-    suspend fun getCertStatus(): Response<List<String>>
+fun String.parseFromTo(from: String, to: String): String {
+    return try {
+        val parser = SimpleDateFormat(from, Locale.US)
+        val formatter = SimpleDateFormat(to, Locale.US)
+        return formatter.format(parser.parse(this)!!)
+    } catch (ex: Exception) {
+        ""
+    }
 }
