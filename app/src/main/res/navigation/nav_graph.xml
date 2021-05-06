@@ -34,21 +34,21 @@
 
         <action
             android:id="@+id/action_codeReaderFragment_to_verificationFragment"
-            app:destination="@id/verificationFragment"
+            app:destination="@id/verificationDialogFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left" />
 
     </fragment>
 
-    <fragment
-        android:id="@+id/verificationFragment"
-        android:name="dgca.verifier.app.android.verification.VerificationFragment"
+    <dialog
+        android:id="@+id/verificationDialogFragment"
+        android:name="dgca.verifier.app.android.verification.VerificationDialogFragment"
         android:label="Verification"
-        tools:layout="@layout/fragment_verification">
+        tools:layout="@layout/dialog_fragment_verification">
 
         <argument
             android:name="qrCodeText"
             app:argType="string" />
-    </fragment>
+    </dialog>
 
 </navigation>

@@ -25,25 +25,26 @@ package dgca.verifier.app.android.verification
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import dgca.verifier.app.android.FORMATTED_YEAR_MONTH_DAY
-import dgca.verifier.app.android.YEAR_MONTH_DAY
-import dgca.verifier.app.android.databinding.ItemVaccinationBinding
-import dgca.verifier.app.android.model.VaccinationModel
+import dgca.verifier.app.android.DATE_TIME
+import dgca.verifier.app.android.FORMATTED_DATE_TIME
+import dgca.verifier.app.android.databinding.ItemTestBinding
+import dgca.verifier.app.android.model.TestModel
 import dgca.verifier.app.android.parseFromTo
 
-class VaccinationViewHolder(private val binding: ItemVaccinationBinding) :
+class TestViewHolder(private val binding: ItemTestBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
     companion object {
         fun create(inflater: LayoutInflater, parent: ViewGroup) =
-            VaccinationViewHolder(ItemVaccinationBinding.inflate(inflater, parent, false))
+            TestViewHolder(ItemTestBinding.inflate(inflater, parent, false))
     }
 
-    fun bind(data: VaccinationModel) {
-        binding.dateValue.text = data.dateOfVaccination.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
+    fun bind(data: TestModel) {
+        binding.testResultValue.text = data.testResult
+        binding.dateOfCollectionValue.text = data.dateTimeOfCollection.parseFromTo(DATE_TIME, FORMATTED_DATE_TIME)
+        binding.dateOfTestResultValue.text = data.dateTimeOfTestResult?.parseFromTo(DATE_TIME, FORMATTED_DATE_TIME)
         binding.diseaseValue.text = data.disease
-        binding.doseTotalNumberValue.text = data.totalSeriesOfDoses.toString()
-        binding.doseSequenceValue.text = data.doseNumber.toString()
+        binding.typeOfTestValue.text = data.typeOfTest
         binding.countryValue.text = data.countryOfVaccination
     }
 }

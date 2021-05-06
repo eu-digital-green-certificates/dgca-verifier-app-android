@@ -30,6 +30,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.VerifierRepository
+import dgca.verifier.app.android.model.CertificateModel
+import dgca.verifier.app.android.model.toCertificateModel
 import dgca.verifier.app.decoder.base45.Base45Service
 import dgca.verifier.app.decoder.cbor.CborService
 import dgca.verifier.app.decoder.compression.CompressorService
@@ -62,8 +64,8 @@ class VerificationViewModel @Inject constructor(
     private val _verificationResult = MutableLiveData<VerificationResult>()
     val verificationResult: LiveData<VerificationResult> = _verificationResult
 
-    private val _certificate = MutableLiveData<GreenCertificate?>()
-    val certificate: LiveData<GreenCertificate?> = _certificate
+    private val _certificate = MutableLiveData<CertificateModel?>()
+    val certificate: LiveData<CertificateModel?> = _certificate
 
     private val _inProgress = MutableLiveData<Boolean>()
     val inProgress: LiveData<Boolean> = _inProgress
@@ -104,7 +106,7 @@ class VerificationViewModel @Inject constructor(
                 val certificate = verifierRepository.getCertificate(kid.toBase64())
 
                 if (certificate == null) {
-                    Log.d(TAG, "Verification failed: failed to download remote certificate")
+                    Log.d(TAG, "Verification failed: failed to load certificate")
                     return@withContext
                 }
                 cryptoService.validate(cose, certificate, verificationResult)
@@ -112,7 +114,7 @@ class VerificationViewModel @Inject constructor(
 
             _inProgress.value = false
             _verificationResult.value = verificationResult
-            _certificate.value = greenCertificate
+            _certificate.value = greenCertificate?.toCertificateModel()
         }
     }
 }

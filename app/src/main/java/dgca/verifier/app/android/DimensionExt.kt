@@ -17,23 +17,13 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 4/24/21 2:50 PM
+ *  Created by mykhailo.nester on 5/5/21 8:18 PM
  */
 
-package dgca.verifier.app.android.data.remote
+package dgca.verifier.app.android
 
-import okhttp3.ResponseBody
-import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Header
+import android.content.res.Resources
 
-interface ApiService {
+private fun density() = Resources.getSystem().displayMetrics.density
 
-    @GET("/signercertificateUpdate")
-    suspend fun getCertUpdate(
-        @Header("x-resume-token") contentRange: String
-    ): Response<ResponseBody>
-
-    @GET("/signercertificateStatus")
-    suspend fun getCertStatus(): Response<List<String>>
-}
+fun Int.dpToPx() = this * density().toInt()
