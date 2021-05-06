@@ -26,7 +26,9 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 const val YEAR_MONTH_DAY = "yyyy-MM-dd"
+const val DATE_TIME = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 const val FORMATTED_YEAR_MONTH_DAY = "MMM d, yyyy"
+const val FORMATTED_DATE_TIME = "MMM d, yyyy, HH:mm"
 
 fun String.parseFromTo(from: String, to: String): String {
     return try {

@@ -25,8 +25,8 @@ package dgca.verifier.app.android.verification
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import dgca.verifier.app.android.FORMATTED_YEAR_MONTH_DAY
-import dgca.verifier.app.android.YEAR_MONTH_DAY
+import dgca.verifier.app.android.DATE_TIME
+import dgca.verifier.app.android.FORMATTED_DATE_TIME
 import dgca.verifier.app.android.databinding.ItemTestBinding
 import dgca.verifier.app.android.model.TestModel
 import dgca.verifier.app.android.parseFromTo
@@ -41,8 +41,8 @@ class TestViewHolder(private val binding: ItemTestBinding) :
 
     fun bind(data: TestModel) {
         binding.testResultValue.text = data.testResult
-        binding.dateOfCollectionValue.text = data.dateTimeOfCollection.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
-        binding.dateOfTestResultValue.text = data.dateTimeOfTestResult?.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
+        binding.dateOfCollectionValue.text = data.dateTimeOfCollection.parseFromTo(DATE_TIME, FORMATTED_DATE_TIME)
+        binding.dateOfTestResultValue.text = data.dateTimeOfTestResult?.parseFromTo(DATE_TIME, FORMATTED_DATE_TIME)
         binding.diseaseValue.text = data.disease
         binding.typeOfTestValue.text = data.typeOfTest
         binding.countryValue.text = data.countryOfVaccination
