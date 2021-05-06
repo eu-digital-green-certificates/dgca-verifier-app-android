@@ -95,7 +95,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
             }
         })
         viewModel.inProgress.observe(viewLifecycleOwner, {
-            binding.progressBar.isVisible = it
+            binding.progressContainer.isVisible = it
         })
 
         viewModel.init(args.qrCodeText)
