@@ -34,8 +34,9 @@ jobs:
         ./gradlew --no-daemon build
     - name: assets
       run: |-
+        cd ./dgca-verifier-app-android
         gh release upload ${APP_VERSION} \
         --clobber \
-        ./dgca-verifier-app-android/app/build/outputs/apk/release/app-release-unsigned.apk#app-release-unsigned-${APP_VERSION}.apk
+        ./app/build/outputs/apk/release/app-release-unsigned.apk#app-release-unsigned-${APP_VERSION}.apk
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
