@@ -1,0 +1,41 @@
+name: ci-release
+on:
+  release:
+    types:
+    - created
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    env:
+      APP_VERSION: ${{ github.event.release.tag_name }}
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        repository: eu-digital-green-certificates/dgca-app-core-android
+        ref: main
+        path: dgca-app-core-android
+    - uses: actions/checkout@v2
+      with:
+        path: dgca-verifier-app-android
+    - uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+        distribution: adopt
+    - uses: android-actions/setup-android@v2
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+    - name: build
+      run: |-
+        cd ./dgca-verifier-app-android
+        ./gradlew --no-daemon build
+    - name: assets
+      run: |-
+        gh release upload ${APP_VERSION} \
+        --clobber \
+        ./dgca-verifier-app-android/app/build/outputs/apk/release/app-release-unsigned.apk#app-release-unsigned-${APP_VERSION}.apk
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

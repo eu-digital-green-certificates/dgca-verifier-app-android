@@ -1,0 +1,19 @@
+name: ci-release-notes
+on:
+  release:
+    types:
+    - created
+jobs:
+  release-notes:
+    runs-on: ubuntu-20.04
+    env:
+      APP_VERSION: ${{ github.event.release.tag_name }}
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: release-notes
+      run: npx github-release-notes release --override --tags ${APP_VERSION}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GREN_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
