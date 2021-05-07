@@ -34,4 +34,4 @@ jobs:
     - name: build
       run: |-
         cd ./dgca-verifier-app-android
-        ./gradlew build
+        ./gradlew --no-daemon build

@@ -31,7 +31,7 @@ jobs:
     - name: build
       run: |-
         cd ./dgca-verifier-app-android
-        ./gradlew build
+        ./gradlew --no-daemon build
     - name: assets
       run: |-
         gh release upload ${APP_VERSION} \
