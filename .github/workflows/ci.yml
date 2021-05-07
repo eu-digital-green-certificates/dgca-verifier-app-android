@@ -32,6 +32,6 @@ jobs:
           ~/.gradle/wrapper
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
     - name: build
+      working-directory: ./dgca-verifier-app-android
       run: |-
-        cd ./dgca-verifier-app-android
         ./gradlew --no-daemon build

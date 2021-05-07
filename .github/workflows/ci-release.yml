@@ -29,12 +29,12 @@ jobs:
           ~/.gradle/wrapper
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
     - name: build
+      working-directory: ./dgca-verifier-app-android
       run: |-
-        cd ./dgca-verifier-app-android
         ./gradlew --no-daemon build
     - name: assets
+      working-directory: ./dgca-verifier-app-android
       run: |-
-        cd ./dgca-verifier-app-android
         gh release upload ${APP_VERSION} \
         --clobber \
         ./app/build/outputs/apk/release/app-release-unsigned.apk#app-release-unsigned-${APP_VERSION}.apk
