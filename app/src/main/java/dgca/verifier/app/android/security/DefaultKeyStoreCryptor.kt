@@ -24,7 +24,7 @@ package dgca.verifier.app.android.security
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
-import android.util.Log
+import timber.log.Timber
 import java.io.IOException
 import java.security.InvalidAlgorithmParameterException
 import java.security.KeyStore
@@ -44,13 +44,13 @@ class DefaultKeyStoreCryptor @Inject constructor() : KeyStoreCryptor {
                 this.load(null)
             }
         } catch (e: KeyStoreException) {
-            Log.i(TAG, null, e)
+            Timber.w(e)
         } catch (e: CertificateException) {
-            Log.i(TAG, null, e)
+            Timber.w(e)
         } catch (e: NoSuchAlgorithmException) {
-            Log.i(TAG, null, e)
+            Timber.w(e)
         } catch (e: IOException) {
-            Log.i(TAG, null, e)
+            Timber.w(e)
         }
         return null
     }
@@ -86,13 +86,13 @@ class DefaultKeyStoreCryptor @Inject constructor() : KeyStoreCryptor {
                 return SecurityKeyWrapper(keyGenerator.generateKey())
             }
         } catch (e: KeyStoreException) {
-            Log.i(TAG, null, e)
+            Timber.w(e)
         } catch (e: NoSuchProviderException) {
-            Log.i(TAG, null, e)
+            Timber.w(e)
         } catch (e: NoSuchAlgorithmException) {
-            Log.i(TAG, null, e)
+            Timber.w(e)
         } catch (e: InvalidAlgorithmParameterException) {
-            Log.i(TAG, null, e)
+            Timber.w(e)
         }
         try {
             val entry = keyStore.getEntry(
@@ -101,17 +101,16 @@ class DefaultKeyStoreCryptor @Inject constructor() : KeyStoreCryptor {
             ) as KeyStore.SecretKeyEntry
             return SecurityKeyWrapper(entry.secretKey)
         } catch (e: KeyStoreException) {
-            Log.i(TAG, null, e)
+            Timber.w(e)
         } catch (e: NoSuchAlgorithmException) {
-            Log.i(TAG, null, e)
+            Timber.w(e)
         } catch (e: UnrecoverableEntryException) {
-            Log.i(TAG, null, e)
+            Timber.w(e)
         }
         return null
     }
 
     companion object {
-        private val TAG = DefaultKeyStoreCryptor::class.java.simpleName
 
         const val ANDROID_KEY_STORE = "AndroidKeyStore"
         const val KEY_ALIAS = "KEY_ALIAS"

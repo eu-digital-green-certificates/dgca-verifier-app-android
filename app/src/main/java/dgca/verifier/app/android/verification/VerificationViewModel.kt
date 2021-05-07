@@ -22,7 +22,6 @@
 
 package dgca.verifier.app.android.verification
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -44,9 +43,8 @@ import dgca.verifier.app.decoder.toBase64
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
-
-private const val TAG = "VerificationViewModel"
 
 @HiltViewModel
 class VerificationViewModel @Inject constructor(
@@ -86,13 +84,13 @@ class VerificationViewModel @Inject constructor(
 
                 val coseData = coseService.decode(cose, verificationResult)
                 if (coseData == null) {
-                    Log.d(TAG, "Verification failed: COSE not decoded")
+                    Timber.d("Verification failed: COSE not decoded")
                     return@withContext
                 }
 
                 val kid = coseData.kid
                 if (kid == null) {
-                    Log.d(TAG, "Verification failed: cannot extract kid from COSE")
+                    Timber.d("Verification failed: cannot extract kid from COSE")
                     return@withContext
                 }
 
@@ -101,7 +99,7 @@ class VerificationViewModel @Inject constructor(
 
                 val certificate = verifierRepository.getCertificate(kid.toBase64())
                 if (certificate == null) {
-                    Log.d(TAG, "Verification failed: failed to load certificate")
+                    Timber.d("Verification failed: failed to load certificate")
                     return@withContext
                 }
                 cryptoService.validate(cose, certificate, verificationResult)

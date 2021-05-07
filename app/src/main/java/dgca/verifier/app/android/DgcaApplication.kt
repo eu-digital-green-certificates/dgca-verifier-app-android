@@ -32,6 +32,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import dagger.hilt.android.HiltAndroidApp
 import dgca.verifier.app.android.worker.LoadKeysWorker
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -49,6 +50,10 @@ class DgcaApplication : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
+
         val uploadWorkRequest: WorkRequest =
             PeriodicWorkRequestBuilder<LoadKeysWorker>(1, TimeUnit.DAYS)
                 .setConstraints(
@@ -60,5 +65,7 @@ class DgcaApplication : Application(), Configuration.Provider {
         WorkManager
             .getInstance(this)
             .enqueue(uploadWorkRequest)
+
+        Timber.i("DGCA version ${BuildConfig.VERSION_NAME} is starting")
     }
 }

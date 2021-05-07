@@ -22,30 +22,28 @@
 
 package dgca.verifier.app.android.data
 
-import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
+import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-
-private const val TAG = "BaseRepository"
 
 abstract class BaseRepository {
 
     suspend fun <P> execute(doOnAsyncBlock: suspend () -> P): P? {
         return withContext(Dispatchers.IO) {
             return@withContext try {
-                Log.v(TAG, "Do network coroutine work")
+                Timber.d("Do network coroutine work")
                 doOnAsyncBlock.invoke()
             } catch (e: UnknownHostException) {
-                Log.w(TAG, "UnknownHostException", e)
+                Timber.w(e, "UnknownHostException")
                 null
             } catch (e: SocketTimeoutException) {
-                Log.w(TAG, "SocketTimeoutException", e)
+                Timber.w(e, "SocketTimeoutException")
                 null
             } catch (throwable: Throwable) {
-                Log.w(TAG, "Throwable", throwable)
+                Timber.w(throwable, "Throwable")
                 null
             }
         }

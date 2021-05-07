@@ -54,5 +54,7 @@ object Deps {
     const val json_validation = "com.github.fge:json-schema-validator:${Versions.json_validation}"
     const val jackson_cbor = "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${Versions.jackson_cbor}"
 
+    const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
+
     const val test_junit = "junit:junit:${Versions.junit}"
 }

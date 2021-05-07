@@ -27,6 +27,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "keys")
 data class Key(
+
     @PrimaryKey val kid: String,
     val key: String
 )

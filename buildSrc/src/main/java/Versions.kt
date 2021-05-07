@@ -41,6 +41,7 @@ object Versions {
     const val retrofit = "2.9.0"
     const val logging_interceptor = "4.0.1"
     const val gson_converter = "2.6.0"
+    const val timber = "4.7.1"
 
     // QR
     const val zxing = "4.2.0"

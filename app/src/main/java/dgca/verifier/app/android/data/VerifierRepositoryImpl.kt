@@ -22,7 +22,6 @@
 
 package dgca.verifier.app.android.data
 
-import android.util.Log
 import dgca.verifier.app.android.data.local.AppDatabase
 import dgca.verifier.app.android.data.local.Key
 import dgca.verifier.app.android.data.local.Preferences
@@ -30,6 +29,7 @@ import dgca.verifier.app.android.data.remote.ApiService
 import dgca.verifier.app.android.security.KeyStoreCryptor
 import dgca.verifier.app.decoder.base64ToX509Certificate
 import dgca.verifier.app.decoder.toBase64
+import timber.log.Timber
 import java.net.HttpURLConnection
 import java.security.MessageDigest
 import java.security.cert.Certificate
@@ -68,7 +68,7 @@ class VerifierRepositoryImpl @Inject constructor(
         val response = apiService.getCertUpdate(tokenFormatted)
 
         if (!response.isSuccessful || response.code() == HttpURLConnection.HTTP_NO_CONTENT) {
-            Log.i(VerifierRepositoryImpl::class.java.simpleName, "No content")
+            Timber.d("No content")
             return
         }
 
@@ -78,7 +78,7 @@ class VerifierRepositoryImpl @Inject constructor(
         val responseStr = response.body()?.stringSuspending() ?: return
 
         if (validCertList.contains(responseKid) && isKidValid(responseKid, responseStr)) {
-            Log.i(VerifierRepositoryImpl::class.java.simpleName, "Cert KID verified")
+            Timber.d("Cert KID verified")
             val key = Key(responseKid!!, keyStoreCryptor.encrypt(responseStr)!!)
             db.keyDao().insert(key)
         }

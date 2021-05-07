@@ -23,7 +23,7 @@
 package dgca.verifier.app.android.security
 
 import android.util.Base64
-import android.util.Log
+import timber.log.Timber
 import java.security.GeneralSecurityException
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
@@ -41,7 +41,7 @@ class SecurityKeyWrapper(private val secretKey: SecretKey) {
             val encrypted = cipher.doFinal(token.toByteArray())
             return Base64.encodeToString(encrypted, Base64.URL_SAFE)
         } catch (e: GeneralSecurityException) {
-            Log.i(TAG, null, e)
+            Timber.w(e)
         }
         return null
     }
@@ -54,7 +54,7 @@ class SecurityKeyWrapper(private val secretKey: SecretKey) {
             val original = cipher.doFinal(decoded)
             return String(original)
         } catch (e: GeneralSecurityException) {
-            Log.i(TAG, null, e)
+            Timber.w(e)
         }
         return null
     }
@@ -70,7 +70,6 @@ class SecurityKeyWrapper(private val secretKey: SecretKey) {
 
     companion object {
 
-        private val TAG = SecurityKeyWrapper::class.java.simpleName
         private const val AES_GCM_NO_PADDING = "AES/GCM/NoPadding"
     }
 }

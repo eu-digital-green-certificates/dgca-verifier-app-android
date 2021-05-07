@@ -27,5 +27,6 @@ import androidx.room.RoomDatabase
 
 @Database(entities = [Key::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
+
     abstract fun keyDao(): KeyDao
 }

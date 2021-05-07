@@ -82,5 +82,7 @@ dependencies {
     implementation Deps.log_interceptor
     implementation Deps.gson_converter
 
+    implementation Deps.timber
+
     testImplementation Deps.test_junit
 }

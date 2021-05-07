@@ -23,13 +23,13 @@
 package dgca.verifier.app.android.worker
 
 import android.content.Context
-import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dgca.verifier.app.android.data.VerifierRepository
+import timber.log.Timber
 
 @HiltWorker
 class LoadKeysWorker @AssistedInject constructor(
@@ -39,13 +39,9 @@ class LoadKeysWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workParams) {
 
     override suspend fun doWork(): Result {
-        Log.d(TAG, "key fetching start")
+        Timber.d("key fetching start")
         val res = verifierRepository.fetchCertificates()
-        Log.d(TAG, "key fetching result: ${res == true}")
+        Timber.d("key fetching result: ${res == true}")
         return if (res == true) Result.success() else Result.retry()
-    }
-
-    companion object {
-        val TAG = LoadKeysWorker::class.java.simpleName
     }
 }
