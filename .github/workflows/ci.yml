@@ -1,0 +1,28 @@
+name: ci
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    types:
+    - opened
+    - synchronize
+    - reopened
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        repository: eu-digital-green-certificates/dgca-app-core-android
+        ref: main
+        path: dgca-app-core-android
+    - uses: actions/checkout@v2
+      with:
+        path: dgca-verifier-app-android
+    - name: debug
+      run: |-
+        ls -la .
+    - name: build
+      run: |-
+        ./gradlew build
