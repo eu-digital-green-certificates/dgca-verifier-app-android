@@ -1,0 +1,88 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.4.30'
+    id 'androidx.navigation.safeargs.kotlin'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+}
+
+android {
+    compileSdkVersion Config.compileSdk
+
+    defaultConfig {
+        applicationId "dgca.verifier.app.android"
+        minSdkVersion Config.minSdk
+        targetSdkVersion Config.targetSdk
+        versionCode Config.versionCode
+        versionName Config.versionName
+
+        testInstrumentationRunner Config.androidTestInstrumentation
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility Config.javaVersion
+        targetCompatibility Config.javaVersion
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+
+    packagingOptions {
+        pickFirst 'META-INF/ASL-2.0.txt'
+        pickFirst 'draftv4/schema'
+        pickFirst 'draftv3/schema'
+        pickFirst 'META-INF/LGPL-3.0.txt'
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def lintTask = tasks["lint${variant.name.capitalize()}"]
+            output.assemble.dependsOn lintTask
+        }
+    }
+}
+
+dependencies {
+    implementation project(':decoder')
+
+    implementation Deps.kotlin_stdlib
+    implementation Deps.androidx_core
+    implementation Deps.androidx_appcompat
+    implementation Deps.androidx_material
+    implementation Deps.androidx_constraint
+    implementation Deps.androidx_navigation_fragment
+    implementation Deps.androidx_navigation_ui
+    implementation Deps.androidx_room_runtime
+    implementation Deps.androidx_worker_ktx
+    implementation Deps.kotlinx_coroutines
+    implementation Deps.zxing
+    implementation Deps.guava_conflict_resolver
+
+    implementation Deps.hilt
+    kapt Deps.hilt_compiler
+    implementation Deps.hilt_viewmodel
+    implementation Deps.hilt_work
+    kapt Deps.androidx_hilt_compiler
+    kapt Deps.androidx_room_compiler
+
+    implementation Deps.retrofit2
+    implementation Deps.log_interceptor
+    implementation Deps.gson_converter
+
+    implementation Deps.timber
+
+    testImplementation Deps.test_junit
+}

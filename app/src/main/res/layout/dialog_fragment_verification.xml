@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~  license-start
+  ~  eu-digital-green-certificates / dgca-verifier-app-android
+  ~
+  ~  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  ~  license-end
+  ~
+  ~  Created by Mykhailo Nester on 4/23/21 9:53 AM
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="50dp"
+    android:minHeight="500dp">
+
+    <View
+        android:id="@+id/verification_status_bg"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/bottom_sheet_bg"
+        app:layout_constraintBottom_toBottomOf="@+id/toggle_button_group"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:backgroundTint="@color/green" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/person_full_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_margin"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/white"
+        android:textSize="32sp"
+        android:typeface="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Gabriele \nMusterfrau" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/cert_status_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="@dimen/default_margin"
+        android:scaleType="centerInside"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/person_full_name"
+        tools:src="@drawable/ic_check" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/cert_status_icon"
+        app:layout_constraintEnd_toStartOf="@+id/cert_status_icon"
+        app:layout_constraintTop_toTopOf="@+id/cert_status_icon"
+        tools:text="@string/cert_valid" />
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/toggle_button_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cert_status_icon"
+        app:singleSelection="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/test_toggle"
+            style="@style/TextAppearance.Dgca.Toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/type_test" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/vac_toggle"
+            style="@style/TextAppearance.Dgca.Toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/type_vaccination" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/rec_toggle"
+            style="@style/TextAppearance.Dgca.Toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/type_recovered" />
+
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        android:paddingHorizontal="@dimen/default_padding"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/verification_status_bg">
+
+        <LinearLayout
+            android:id="@+id/person_info_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingVertical="10dp">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/person_standardised_family_name_title"
+                style="@style/TextAppearance.Dgca.CertificateTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/standardised_family_name_title" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/person_standardised_family_name"
+                style="@style/TextAppearance.Dgca.CertificateValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="MUSTERFRAU" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/person_standardised_given_name_title"
+                style="@style/TextAppearance.Dgca.CertificateTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/standardised_given_name_title" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/person_standardised_given_name"
+                style="@style/TextAppearance.Dgca.CertificateValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="GABRIELE" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/date_of_birth_title"
+                style="@style/TextAppearance.Dgca.CertificateTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/date_of_birth_title" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/date_of_birth"
+                style="@style/TextAppearance.Dgca.CertificateValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Feb 26, 1988" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:overScrollMode="never" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <View
+        android:id="@+id/gradient"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@drawable/white_gradient"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/bottom_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/default_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/action_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:backgroundTint="@color/green"
+            android:letterSpacing="-0.02"
+            android:text="@string/done"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:visibility="gone" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/logo"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_logo_eu" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/progress_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/white"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_container"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:indeterminateTint="@color/blue" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

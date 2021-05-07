@@ -1,0 +1,48 @@
+<!--
+  ~  license-start
+  ~  eu-digital-green-certificates / dgca-verifier-app-android
+  ~
+  ~  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  ~  license-end
+  ~
+  ~  Created by Mykhailo Nester on 4/23/21 9:53 AM
+  -->
+
+<resources>
+    <string name="app_name">Verifier App</string>
+    <string name="cert_valid">Valid</string>
+    <string name="cert_invalid">Invalid</string>
+    <string name="type_test">Test</string>
+    <string name="type_recovered">Rec</string>
+    <string name="type_vaccination">Vac</string>
+    <string name="done">Done</string>
+    <string name="retry">Retry</string>
+    <string name="standardised_family_name_title">Standardised Family Name</string>
+    <string name="standardised_given_name_title">Standardised Given Name</string>
+    <string name="date_of_birth_title">Date of Birth</string>
+    <string name="person_full_name_placeholder">%1s %2s</string>
+    <string name="date_of_vaccination_title">Date of Vaccination</string>
+    <string name="total_series_of_doses_title">Total Series of Doses</string>
+    <string name="dose_number_title">Dose Number</string>
+    <string name="country_of_vaccination_title">Country of Vaccination</string>
+    <string name="disease_or_agent_targeted_title">Disease or agent targeted</string>
+    <string name="date_of_test_collection_title">Date of Collection</string>
+    <string name="date_of_test_result_title">Date of Test Result</string>
+    <string name="type_of_test_title">Type of Test</string>
+    <string name="test_result_title">Test Result</string>
+    <string name="certificate_valid_from_title">Certificate Valid From</string>
+    <string name="certificate_valid_until_title">Certificate Valid Until</string>
+    <string name="date_of_positive_title">Date of First Positive Test</string>
+</resources>
