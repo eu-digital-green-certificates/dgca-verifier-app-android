@@ -22,6 +22,12 @@ jobs:
         java-version: 1.8
         distribution: adopt
     - uses: android-actions/setup-android@v2
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
     - name: build
       run: |-
         cd ./dgca-verifier-app-android
