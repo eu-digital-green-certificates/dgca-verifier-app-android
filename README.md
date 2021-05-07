@@ -9,6 +9,7 @@
 </p>
 
 <p align="center">
+  <a href="#about">About</a> •
   <a href="#development">Development</a> •
   <a href="#documentation">Documentation</a> •
   <a href="#support-and-feedback">Support</a> •
@@ -17,35 +18,30 @@
   <a href="#licensing">Licensing</a>
 </p>
 
-- [ ] TODO
+## About
+
+This repository contains the source code of the Digital Green Certificates Verifier App for Android.
+
+The DGC Verifier Apps are responsible for scanning and verifying DGCs using public keys from national backend servers. Offline verification is supported, if the latest public keys are present in the app's key store. Consequently, once up-to-date keys have been downloaded, the verification works without active internet connection. 
 
 ## Development
 
 ### Prerequisites
 
-- [ ] TODO
+- For development, the latest version of Android Studio is required. The latest version can be downloaded from [here](https://developer.android.com/studio/).
+- Android SDK version 26+
 
 ### Build
 
 Whether you cloned or downloaded the 'zipped' sources you will either find the sources in the chosen checkout-directory or get a zip file with the source code, which you can expand to a folder of your choice.
 
-In either case open a terminal pointing to the directory you put the sources in. The local build process is described afterwards depending on the way you choose.
+#### Android Studio based build
 
-#### XYZ (Maven, ...) based build
-
-- [ ] TODO
-
-#### Build Docker Image
-
-- [ ] TODO
-
-#### API documentation  
-
-- [ ] TODO
+This project uses the Gradle build system. To build this project, use the `gradlew build` command or use "Run" in Android Studio.
 
 ## Documentation  
 
-- [ ] TODO
+- [ ] TODO: Link to documentation
 
 ## Support and feedback
 
