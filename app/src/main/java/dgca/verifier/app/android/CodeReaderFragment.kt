@@ -75,10 +75,7 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
         requireActivity().onBackPressedDispatcher.addCallback { requireActivity().finish() }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCodeReaderBinding.inflate(inflater, container, false)
         return binding.root
     }

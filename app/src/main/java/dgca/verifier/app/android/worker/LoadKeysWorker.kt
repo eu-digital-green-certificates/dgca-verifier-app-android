@@ -37,14 +37,15 @@ class LoadKeysWorker @AssistedInject constructor(
     @Assisted workParams: WorkerParameters,
     private val verifierRepository: VerifierRepository
 ) : CoroutineWorker(context, workParams) {
-    companion object {
-        val TAG = LoadKeysWorker::class.java.simpleName
-    }
 
     override suspend fun doWork(): Result {
-        Log.i(TAG, "key fetching start")
+        Log.d(TAG, "key fetching start")
         val res = verifierRepository.fetchCertificates()
-        Log.i(TAG, "key fetching result: ${res == true}")
+        Log.d(TAG, "key fetching result: ${res == true}")
         return if (res == true) Result.success() else Result.retry()
+    }
+
+    companion object {
+        val TAG = LoadKeysWorker::class.java.simpleName
     }
 }

@@ -32,10 +32,6 @@ import dgca.verifier.app.android.model.RecoveryModel
 import dgca.verifier.app.android.model.TestModel
 import dgca.verifier.app.android.model.VaccinationModel
 
-enum class DataType {
-    TEST, VACCINATION, RECOVERED
-}
-
 class CertListAdapter(
     private val inflater: LayoutInflater
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -100,4 +96,8 @@ fun RecyclerView.Adapter<out RecyclerView.ViewHolder>.notifyChanges(
     })
 
     diff.dispatchUpdatesTo(this)
+}
+
+enum class DataType {
+    TEST, VACCINATION, RECOVERED
 }

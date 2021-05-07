@@ -26,18 +26,17 @@ import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Log
 import java.io.IOException
-import java.security.*
+import java.security.InvalidAlgorithmParameterException
+import java.security.KeyStore
+import java.security.KeyStoreException
+import java.security.NoSuchAlgorithmException
+import java.security.NoSuchProviderException
+import java.security.UnrecoverableEntryException
 import java.security.cert.CertificateException
 import javax.crypto.KeyGenerator
 import javax.inject.Inject
 
 class DefaultKeyStoreCryptor @Inject constructor() : KeyStoreCryptor {
-    companion object {
-        private val TAG = DefaultKeyStoreCryptor::class.java.simpleName
-
-        const val ANDROID_KEY_STORE = "AndroidKeyStore"
-        const val KEY_ALIAS = "KEY_ALIAS"
-    }
 
     private fun getKeyStore(): KeyStore? {
         try {
@@ -109,5 +108,12 @@ class DefaultKeyStoreCryptor @Inject constructor() : KeyStoreCryptor {
             Log.i(TAG, null, e)
         }
         return null
+    }
+
+    companion object {
+        private val TAG = DefaultKeyStoreCryptor::class.java.simpleName
+
+        const val ANDROID_KEY_STORE = "AndroidKeyStore"
+        const val KEY_ALIAS = "KEY_ALIAS"
     }
 }

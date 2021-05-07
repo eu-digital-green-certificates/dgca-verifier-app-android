@@ -65,10 +65,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         adapter = CertListAdapter(layoutInflater)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = DialogFragmentVerificationBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -123,12 +120,12 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         if (isValid) {
             text = getString(R.string.cert_valid)
             imageId = R.drawable.ic_check
-            statusColor = ColorStateList.valueOf(resources.getColor(R.color.green))
+            statusColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
             actionBtnText = getString(R.string.done)
         } else {
             text = getString(R.string.cert_invalid)
             imageId = R.drawable.ic_baseline_close_24
-            statusColor = ColorStateList.valueOf(resources.getColor(R.color.red))
+            statusColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.red))
             actionBtnText = getString(R.string.retry)
         }
 

@@ -27,5 +27,6 @@ import java.security.cert.Certificate
 interface VerifierRepository {
 
     suspend fun fetchCertificates(): Boolean?
+
     suspend fun getCertificate(kid: String): Certificate?
 }

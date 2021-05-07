@@ -31,7 +31,7 @@ import java.net.UnknownHostException
 
 private const val TAG = "BaseRepository"
 
-abstract class BaseRepository : Repository {
+abstract class BaseRepository {
 
     suspend fun <P> execute(doOnAsyncBlock: suspend () -> P): P? {
         return withContext(Dispatchers.IO) {

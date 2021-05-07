@@ -42,6 +42,9 @@ import dgca.verifier.app.decoder.schema.DefaultSchemaValidator
 import dgca.verifier.app.decoder.schema.SchemaValidator
 import javax.inject.Singleton
 
+/**
+ * Provide QR decoder functionality for injection.
+ */
 @InstallIn(SingletonComponent::class)
 @Module
 object DecoderModule {

@@ -24,7 +24,12 @@ package dgca.verifier.app.android
 
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
-import androidx.work.*
+import androidx.work.Configuration
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import dagger.hilt.android.HiltAndroidApp
 import dgca.verifier.app.android.worker.LoadKeysWorker
 import java.util.concurrent.TimeUnit
@@ -46,9 +51,11 @@ class DgcaApplication : Application(), Configuration.Provider {
         super.onCreate()
         val uploadWorkRequest: WorkRequest =
             PeriodicWorkRequestBuilder<LoadKeysWorker>(1, TimeUnit.DAYS)
-                .setConstraints(Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build())
+                .setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build()
+                )
                 .build()
         WorkManager
             .getInstance(this)

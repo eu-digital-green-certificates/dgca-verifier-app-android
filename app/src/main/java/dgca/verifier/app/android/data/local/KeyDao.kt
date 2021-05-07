@@ -29,6 +29,7 @@ import androidx.room.Query
 
 @Dao
 interface KeyDao {
+
     @Query("SELECT * FROM keys")
     fun getAll(): List<Key>
 

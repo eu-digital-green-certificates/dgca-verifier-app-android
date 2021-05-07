@@ -31,13 +31,7 @@ import dgca.verifier.app.android.databinding.ItemTestBinding
 import dgca.verifier.app.android.model.TestModel
 import dgca.verifier.app.android.parseFromTo
 
-class TestViewHolder(private val binding: ItemTestBinding) :
-    RecyclerView.ViewHolder(binding.root) {
-
-    companion object {
-        fun create(inflater: LayoutInflater, parent: ViewGroup) =
-            TestViewHolder(ItemTestBinding.inflate(inflater, parent, false))
-    }
+class TestViewHolder(private val binding: ItemTestBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(data: TestModel) {
         binding.testResultValue.text = data.testResult
@@ -46,5 +40,10 @@ class TestViewHolder(private val binding: ItemTestBinding) :
         binding.diseaseValue.text = data.disease
         binding.typeOfTestValue.text = data.typeOfTest
         binding.countryValue.text = data.countryOfVaccination
+    }
+
+    companion object {
+        fun create(inflater: LayoutInflater, parent: ViewGroup) =
+            TestViewHolder(ItemTestBinding.inflate(inflater, parent, false))
     }
 }

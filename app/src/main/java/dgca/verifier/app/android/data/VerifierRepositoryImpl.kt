@@ -60,7 +60,7 @@ class VerifierRepositoryImpl @Inject constructor(
 
     override suspend fun getCertificate(kid: String): Certificate? {
         val key = db.keyDao().getById(kid)
-        return if(key != null) keyStoreCryptor.decrypt(key.key)!!.base64ToX509Certificate() else null
+        return if (key != null) keyStoreCryptor.decrypt(key.key)?.base64ToX509Certificate() else null
     }
 
     private suspend fun fetchCertificate(resumeToken: Long) {
@@ -68,7 +68,7 @@ class VerifierRepositoryImpl @Inject constructor(
         val response = apiService.getCertUpdate(tokenFormatted)
 
         if (!response.isSuccessful || response.code() == HttpURLConnection.HTTP_NO_CONTENT) {
-            Log.i("VerifierRepository", "No content")
+            Log.i(VerifierRepositoryImpl::class.java.simpleName, "No content")
             return
         }
 

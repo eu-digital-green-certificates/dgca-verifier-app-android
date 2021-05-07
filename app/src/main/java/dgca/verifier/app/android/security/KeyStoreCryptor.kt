@@ -23,6 +23,7 @@
 package dgca.verifier.app.android.security
 
 interface KeyStoreCryptor {
+
     fun encrypt(token: String?): String?
 
     fun decrypt(token: String?): String?

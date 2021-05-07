@@ -22,7 +22,6 @@
 
 package dgca.verifier.app.android.verification
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -74,8 +73,7 @@ class VerificationViewModel @Inject constructor(
         decode(qrCodeText)
     }
 
-    @SuppressLint("SetTextI18n")
-    fun decode(code: String) {
+    private fun decode(code: String) {
         viewModelScope.launch {
             _inProgress.value = true
             var greenCertificate: GreenCertificate? = null
@@ -96,15 +94,12 @@ class VerificationViewModel @Inject constructor(
                 if (kid == null) {
                     Log.d(TAG, "Verification failed: cannot extract kid from COSE")
                     return@withContext
-
                 }
 
                 schemaValidator.validate(coseData.cbor, verificationResult)
                 greenCertificate = cborService.decode(coseData.cbor, verificationResult)
 
-//                // Load from API for now. Replace with cache logic.
                 val certificate = verifierRepository.getCertificate(kid.toBase64())
-
                 if (certificate == null) {
                     Log.d(TAG, "Verification failed: failed to load certificate")
                     return@withContext

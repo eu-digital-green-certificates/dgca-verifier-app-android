@@ -35,6 +35,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 object LocalDataSourceModule {
+
     @Singleton
     @Provides
     fun provideDb(@ApplicationContext context: Context): AppDatabase =

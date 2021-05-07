@@ -8,18 +8,6 @@
             <LayoutPositions>
               <option name="myPositions">
                 <map>
-                  <entry key="bottomSheet">
-                    <value>
-                      <LayoutPositions>
-                        <option name="myPosition">
-                          <Point>
-                            <option name="x" value="12" />
-                            <option name="y" value="12" />
-                          </Point>
-                        </option>
-                      </LayoutPositions>
-                    </value>
-                  </entry>
                   <entry key="codeReaderFragment">
                     <value>
                       <LayoutPositions>
@@ -41,7 +29,7 @@
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="verificationFragment">
+                  <entry key="verificationDialogFragment">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">

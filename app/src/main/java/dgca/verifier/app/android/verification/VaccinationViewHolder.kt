@@ -31,13 +31,7 @@ import dgca.verifier.app.android.databinding.ItemVaccinationBinding
 import dgca.verifier.app.android.model.VaccinationModel
 import dgca.verifier.app.android.parseFromTo
 
-class VaccinationViewHolder(private val binding: ItemVaccinationBinding) :
-    RecyclerView.ViewHolder(binding.root) {
-
-    companion object {
-        fun create(inflater: LayoutInflater, parent: ViewGroup) =
-            VaccinationViewHolder(ItemVaccinationBinding.inflate(inflater, parent, false))
-    }
+class VaccinationViewHolder(private val binding: ItemVaccinationBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(data: VaccinationModel) {
         binding.dateValue.text = data.dateOfVaccination.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
@@ -45,5 +39,10 @@ class VaccinationViewHolder(private val binding: ItemVaccinationBinding) :
         binding.doseTotalNumberValue.text = data.totalSeriesOfDoses.toString()
         binding.doseSequenceValue.text = data.doseNumber.toString()
         binding.countryValue.text = data.countryOfVaccination
+    }
+
+    companion object {
+        fun create(inflater: LayoutInflater, parent: ViewGroup) =
+            VaccinationViewHolder(ItemVaccinationBinding.inflate(inflater, parent, false))
     }
 }

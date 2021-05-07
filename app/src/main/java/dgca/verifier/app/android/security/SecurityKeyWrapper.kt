@@ -33,11 +33,6 @@ import javax.crypto.spec.GCMParameterSpec
  * Wrapper for {@SecretKey} that provide ability to encrypt/decrypt data using it.
  */
 class SecurityKeyWrapper(private val secretKey: SecretKey) {
-    companion object {
-        private val TAG = SecurityKeyWrapper::class.java.simpleName
-
-        private const val AES_GCM_NO_PADDING = "AES/GCM/NoPadding"
-    }
 
     fun encrypt(token: String?): String? {
         if (token == null) return null
@@ -71,5 +66,11 @@ class SecurityKeyWrapper(private val secretKey: SecretKey) {
             secretKey,
             GCMParameterSpec(128, AES_GCM_NO_PADDING.toByteArray(), 0, 12)
         )
+    }
+
+    companion object {
+
+        private val TAG = SecurityKeyWrapper::class.java.simpleName
+        private const val AES_GCM_NO_PADDING = "AES/GCM/NoPadding"
     }
 }

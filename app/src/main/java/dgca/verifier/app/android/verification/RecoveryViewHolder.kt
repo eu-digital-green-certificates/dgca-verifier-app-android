@@ -31,13 +31,7 @@ import dgca.verifier.app.android.databinding.ItemRecoveryBinding
 import dgca.verifier.app.android.model.RecoveryModel
 import dgca.verifier.app.android.parseFromTo
 
-class RecoveryViewHolder(private val binding: ItemRecoveryBinding) :
-    RecyclerView.ViewHolder(binding.root) {
-
-    companion object {
-        fun create(inflater: LayoutInflater, parent: ViewGroup) =
-            RecoveryViewHolder(ItemRecoveryBinding.inflate(inflater, parent, false))
-    }
+class RecoveryViewHolder(private val binding: ItemRecoveryBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(data: RecoveryModel) {
         binding.diseaseValue.text = data.disease
@@ -45,5 +39,10 @@ class RecoveryViewHolder(private val binding: ItemRecoveryBinding) :
         binding.validUntilValue.text = data.certificateValidUntil.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
         binding.dateOfPositiveValue.text = data.dateOfFirstPositiveTest.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
         binding.countryValue.text = data.countryOfVaccination
+    }
+
+    companion object {
+        fun create(inflater: LayoutInflater, parent: ViewGroup) =
+            RecoveryViewHolder(ItemRecoveryBinding.inflate(inflater, parent, false))
     }
 }
