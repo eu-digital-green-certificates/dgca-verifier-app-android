@@ -51,6 +51,7 @@ jobs:
         --ks-key-alias ${KEY_ALIAS} \
         --key-pass pass:${KEY_PASSWORD} \
         --out ./app/build/outputs/apk/release/app-release-signed.apk
+        ./app/build/outputs/apk/release/app-release-unsigned.apk
         echo debug-3
         ${APKSIGNER} verify ./app/build/outputs/apk/release/app-release-signed.apk
       env:
