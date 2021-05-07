@@ -27,4 +27,5 @@ jobs:
     - uses: android-actions/setup-android@v2
     - name: build
       run: |-
+        cd ./dgca-verifier-app-android
         ./gradlew build
