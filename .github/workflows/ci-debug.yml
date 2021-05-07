@@ -1,0 +1,61 @@
+name: ci-debug
+on:
+  push:
+    branches:
+    - debug
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        repository: eu-digital-green-certificates/dgca-app-core-android
+        ref: main
+        path: dgca-app-core-android
+    - uses: actions/checkout@v2
+      with:
+        path: dgca-verifier-app-android
+    - uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+        distribution: adopt
+    - uses: android-actions/setup-android@v2
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+    - name: build
+      working-directory: ./dgca-verifier-app-android
+      run: |-
+        ./gradlew --no-daemon build
+    - name: sign
+      working-directory: ./dgca-verifier-app-android
+      run: |-
+        echo "${X}" > ./key.base64
+        base64 --decode ./key.base64 > ./key.jks
+        KEY_STORE_FILE=./key.jks
+        ls ${ANDROID_HOME}
+        ls ${ANDROID_HOME}/build-tools
+        ZIPALIGN=${ANDROID_HOME}/build-tools/${BUILD_TOOLS_VERSION}/zipalign
+        APKSIGNER=${ANDROID_HOME}/build-tools/${BUILD_TOOLS_VERSION}/apksigner
+        echo ${ZIPALIGN}
+        echo ${APKSIGNER}
+        ${ZIPALIGN} -c -v 4 ./app/build/outputs/apk/release/app-release-unsigned.apk
+        ${APKSIGNER} sign \
+        --ks ${KEY_STORE_FILE} \
+        --ks-pass pass:${KEY_STORE_PASSWORD} \
+        --ks-key-alias ${KEY_ALIAS} \
+        --key-pass pass:${KEY_PASSWORD} \
+        --out ./app/build/outputs/apk/release/app-release-signed.apk
+        ${APKSIGNER} verify ./app/build/outputs/apk/release/app-release-signed.apk
+      env:
+        BUILD_TOOLS_VERSION: 29.0.3
+        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        KEY_STORE_BASE64: ${{ secrets.KEY_STORE_BASE64 }}
+        KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+    - uses: actions/upload-artifact@v2
+      with:
+        path: ./app/build/outputs/apk/release/app-release-signed.apk
