@@ -85,8 +85,7 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
         requestCameraPermission()
 
         val formats: Collection<BarcodeFormat> = listOf(BarcodeFormat.AZTEC, BarcodeFormat.QR_CODE)
-        binding.barcodeScanner.barcodeView.decoderFactory = DefaultDecoderFactory(formats)
-        binding.barcodeScanner.initializeFromIntent(requireActivity().intent)
+        binding.barcodeScanner.decoderFactory = DefaultDecoderFactory(formats)
         binding.barcodeScanner.decodeContinuous(callback)
         beepManager = BeepManager(requireActivity())
     }

@@ -3,7 +3,7 @@
 
     <dimen name="default_margin">16dp</dimen>
     <dimen name="default_padding">16dp</dimen>
-    <dimen name="text_size_medium">14sp</dimen>
-    <dimen name="text_size_big">18sp</dimen>
+    <dimen name="text_size_medium">16sp</dimen>
+    <dimen name="text_size_big">26sp</dimen>
 
 </resources>

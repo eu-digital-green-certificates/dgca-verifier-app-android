@@ -33,14 +33,14 @@
         android:top="150dp" />
 
     <item
-        android:height="150dp"
+        android:height="84dp"
         android:drawable="@color/white"
         android:gravity="bottom" />
 
     <item
-        android:width="210dp"
-        android:height="60dp"
-        android:bottom="50dp"
-        android:drawable="@drawable/ic_logo_eu"
+        android:width="60dp"
+        android:height="36dp"
+        android:bottom="32dp"
+        android:drawable="@drawable/eu_logo_big"
         android:gravity="bottom|center" />
 </layer-list>

@@ -119,12 +119,12 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
 
         if (isValid) {
             text = getString(R.string.cert_valid)
-            imageId = R.drawable.ic_check
+            imageId = R.drawable.check
             statusColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
             actionBtnText = getString(R.string.done)
         } else {
             text = getString(R.string.cert_invalid)
-            imageId = R.drawable.ic_baseline_close_24
+            imageId = R.drawable.error
             statusColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.red))
             actionBtnText = getString(R.string.retry)
         }
