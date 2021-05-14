@@ -73,6 +73,7 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().onBackPressedDispatcher.addCallback { requireActivity().finish() }
+        (activity as MainActivity).clearBackground()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -88,6 +89,11 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
         binding.barcodeScanner.decoderFactory = DefaultDecoderFactory(formats)
         binding.barcodeScanner.decodeContinuous(callback)
         beepManager = BeepManager(requireActivity())
+
+        binding.settings.setOnClickListener {
+            val action = CodeReaderFragmentDirections.actionCodeReaderFragmentToSettingsFragment()
+            findNavController().navigate(action)
+        }
     }
 
     override fun onDestroyView() {
@@ -108,10 +114,7 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
     }
 
     private fun navigateToVerificationPage(text: String) {
-        findNavController().currentDestination
-
-        val action =
-            CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationFragment(text)
+        val action = CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationFragment(text)
         findNavController().navigate(action)
     }
 
