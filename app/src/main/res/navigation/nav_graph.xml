@@ -38,6 +38,10 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left" />
 
+        <action
+            android:id="@+id/action_codeReaderFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+
     </fragment>
 
     <dialog
@@ -50,5 +54,9 @@
             android:name="qrCodeText"
             app:argType="string" />
     </dialog>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="dgca.verifier.app.android.settings.SettingsFragment"
+        android:label="SettingsFragment" />
 
 </navigation>

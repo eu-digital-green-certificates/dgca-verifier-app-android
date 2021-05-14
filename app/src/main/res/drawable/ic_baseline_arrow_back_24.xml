@@ -1,9 +1,9 @@
 <!--
-  ~  license-start
+  ~  -license-start
   ~  eu-digital-green-certificates / dgca-verifier-app-android
-  ~
+  ~  -
   ~  Copyright (C) 2021 T-Systems International GmbH and all other contributors
-  ~
+  ~  -
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
   ~  You may obtain a copy of the License at
@@ -15,23 +15,19 @@
   ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
-  ~  license-end
+  ~  -license-end
   ~
-  ~  Created by Mykhailo Nester on 4/23/21 9:53 AM
+  ~  Created by mykhailo.nester on 5/14/21 12:16 PM
   -->
 
-<resources>
-    <color name="blue">#004494</color>
-    <color name="blue_dark">#003D84</color>
-    <color name="blue_light">#4073AF</color>
-    <color name="white">#FFFFFF</color>
-    <color name="black">#404040</color>
-    <color name="green">#467A39</color>
-    <color name="red">#DA2131</color>
-
-    <color name="grey_100">#404040</color>
-    <color name="grey_75">#707070</color>
-    <color name="grey_50">#9F9F9F</color>
-    <color name="grey_transparent">#3CD1D0D0</color>
-
-</resources>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:autoMirrored="true"
+    android:tint="#FFFFFF"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M20,11H7.83l5.59,-5.59L12,4l-8,8 8,8 1.41,-1.41L7.83,13H20v-2z" />
+</vector>
