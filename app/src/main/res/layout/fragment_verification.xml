@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/blue_dark">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingTop="@dimen/padding_20dp"
+        android:paddingBottom="@dimen/padding_20dp">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_10dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/padding_20dp">
+
+                <ImageButton
+                    android:id="@+id/close_button"
+                    android:layout_width="@dimen/size_35dp"
+                    android:layout_height="@dimen/size_35dp"
+                    android:background="@drawable/circular"
+                    android:padding="@dimen/padding_10dp"
+                    android:src="@drawable/ic_close"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/checkmark"
+                    android:layout_width="@dimen/size_100dp"
+                    android:layout_height="@dimen/size_100dp"
+                    android:layout_marginTop="@dimen/margin_20dp"
+                    android:background="@android:color/transparent"
+                    tools:background="@drawable/ic_checkmark_filled"
+                    android:padding="@dimen/padding_10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/close_button" />
+
+                <TextView
+                    android:id="@+id/certificate_valid"
+                    style="@style/H1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_20dp"
+                    tools:text="@string/certificateValid"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/checkmark" />
+
+                <TextView
+                    android:id="@+id/subtitle_text"
+                    style="@style/H3.Black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_20dp"
+                    tools:text="@string/subtitle_text"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/certificate_valid" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/container_person_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_20dp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    app:layout_constraintTop_toBottomOf="@+id/subtitle_text">
+
+                    <ImageView
+                        android:id="@+id/user_image"
+                        android:layout_width="@dimen/size_35dp"
+                        android:layout_height="@dimen/size_35dp"
+                        android:src="@drawable/ic_user"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/name_text"
+                        app:layout_constraintBottom_toBottomOf="@+id/name_standardised_text"/>
+
+                    <TextView
+                        android:id="@+id/name_text"
+                        style="@style/H3.Black.Bold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_16dp"
+                        tools:text="Mario Rossi"
+                        app:layout_constraintStart_toEndOf="@+id/user_image"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/name_standardised_text"
+                        style="@style/H3.Black"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_16dp"
+                        tools:text="MARIO ROSSI"
+                        app:layout_constraintTop_toBottomOf="@+id/name_text"
+                        app:layout_constraintStart_toEndOf="@+id/user_image" />
+
+                    <ImageView
+                        android:id="@+id/birthday_image"
+                        android:layout_width="@dimen/size_35dp"
+                        android:layout_height="@dimen/size_35dp"
+                        android:src="@drawable/ic_calendar"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/birthdate_label"
+                        app:layout_constraintBottom_toBottomOf="@+id/birthdate_text" />
+
+                    <TextView
+                        android:id="@+id/birthdate_label"
+                        style="@style/H3.Black.Bold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_20dp"
+                        android:layout_marginStart="@dimen/margin_16dp"
+                        android:text="@string/dateOfBirth"
+                        app:layout_constraintStart_toEndOf="@+id/birthday_image"
+                        app:layout_constraintTop_toBottomOf="@+id/name_standardised_text" />
+
+                    <TextView
+                        android:id="@+id/birthdate_text"
+                        style="@style/H3.Black"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_16dp"
+                        tools:text="10/05/1993"
+                        app:layout_constraintStart_toEndOf="@+id/birthday_image"
+                        app:layout_constraintTop_toBottomOf="@+id/birthdate_label" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <Button
+                    android:id="@+id/next_qr_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_20dp"
+                    android:background="@drawable/background_rounded_blue"
+                    android:padding="@dimen/padding_16dp"
+                    android:text="@string/repeatQR"
+                    android:textColor="@color/white"
+                    app:layout_goneMarginTop="150dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/container_person_details" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="@dimen/size_50dp"
+        android:layout_height="@dimen/size_50dp"
+        android:indeterminateTint="@color/blue_dark"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:visibility="gone" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

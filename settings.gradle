@@ -1,4 +1,4 @@
 include ':app'
 include ':decoder'
-rootProject.name = "dgca-verifier-app-android"
+rootProject.name = "dgp-whitelabel-android"
 project(':decoder').projectDir = new File("../dgca-app-core-android/decoder")

@@ -25,7 +25,7 @@ object Versions {
     // Base
     const val gradle = "4.1.3"
     const val kotlin = "1.4.32"
-    const val androidx_core = "1.3.2"
+    const val androidx_core = "1.4.0-alpha01"
     const val androidx_appcompat = "1.2.0"
     const val androidx_navigation = "2.3.5"
     const val androidx_material = "1.3.0"
@@ -41,7 +41,6 @@ object Versions {
     const val retrofit = "2.9.0"
     const val logging_interceptor = "4.0.1"
     const val gson_converter = "2.6.0"
-    const val timber = "4.7.1"
 
     // QR
     const val zxing = "4.2.0"

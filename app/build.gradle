@@ -11,7 +11,7 @@ android {
     compileSdkVersion Config.compileSdk
 
     defaultConfig {
-        applicationId "dgca.verifier.app.android"
+        applicationId "it.ministerodellasalute.verificaC19"
         minSdkVersion Config.minSdk
         targetSdkVersion Config.targetSdk
         versionCode Config.versionCode
@@ -21,7 +21,15 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField "String", "BASE_URL", "\"https://testaka4.sogei.it/v1/dgc/\""
+            buildConfigField "String", "CERTIFICATE_SHA", "\"sha256/\""
+        }
+
         release {
+            buildConfigField "String", "BASE_URL", "\"https://dgca-verifier-service.cfapps.eu10.hana.ondemand.com/\""
+            buildConfigField "String", "CERTIFICATE_SHA", "\"sha256/\""
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -45,6 +53,7 @@ android {
         pickFirst 'draftv4/schema'
         pickFirst 'draftv3/schema'
         pickFirst 'META-INF/LGPL-3.0.txt'
+        exclude 'META-INF/atomicfu.kotlin_module'
     }
 
     applicationVariants.all { variant ->
@@ -72,6 +81,9 @@ dependencies {
     implementation Deps.guava_conflict_resolver
 
     implementation Deps.hilt
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     kapt Deps.hilt_compiler
     implementation Deps.hilt_viewmodel
     implementation Deps.hilt_work
@@ -81,8 +93,6 @@ dependencies {
     implementation Deps.retrofit2
     implementation Deps.log_interceptor
     implementation Deps.gson_converter
-
-    implementation Deps.timber
 
     testImplementation Deps.test_junit
 }

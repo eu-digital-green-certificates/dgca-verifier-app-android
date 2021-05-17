@@ -21,34 +21,25 @@
   -->
 
 <resources>
-    <string name="app_name">Verifier App</string>
-    <string name="cert_valid">Valid</string>
-    <string name="cert_invalid">Invalid</string>
-    <string name="type_test">Test</string>
-    <string name="type_recovered">Rec</string>
-    <string name="type_vaccination">Vac</string>
-    <string name="done">Done</string>
-    <string name="retry">Retry</string>
-    <string name="standardised_family_name_title">Standardised Family Name</string>
-    <string name="standardised_given_name_title">Standardised Given Name</string>
-    <string name="date_of_birth_title">Date of Birth</string>
-    <string name="person_full_name_placeholder">%1s %2s</string>
-    <string name="date_of_vaccination_title">Date of Vaccination</string>
-    <string name="total_series_of_doses_title">Total Series of Doses</string>
-    <string name="dose_number_title">Dose Number</string>
-    <string name="country_of_vaccination_title">Country of Vaccination</string>
-    <string name="disease_or_agent_targeted_title">Disease or agent targeted</string>
-    <string name="date_of_test_collection_title">Date of Collection</string>
-    <string name="date_of_test_result_title">Date of Test Result</string>
-    <string name="type_of_test_title">Type of Test</string>
-    <string name="test_result_title">Test Result</string>
-    <string name="certificate_valid_from_title">Certificate Valid From</string>
-    <string name="certificate_valid_until_title">Certificate Valid Until</string>
-    <string name="date_of_positive_title">Date of First Positive Test</string>
+    <string name="app_name">VerificaC19</string>
 
-    <string name="settings">Settings</string>
-    <string name="privacy_policy">Privacy</string>
-    <string name="version">Version: %1$s</string>
-    <string name="about">About</string>
-    <string name="settings_version_title">Wallet App</string>
+    <string name="pause">Pause</string>
+    <string name="resume">Resume</string>
+    <string name="scan_green_pass">Scansione Green Pass</string>
+    <string name="controlCertificate">Controlla un certificato</string>
+    <string name="welcome">Benvenuto</string>
+    <string name="systemDescription">Questo è il sistema di scannerizzazione dei QR code delle certificazioni di idoneità Covid19.</string>
+    <string name="codiceFiscale">Codice fiscale</string>
+    <string name="expirationText">Data scandeza certificato</string>
+    <string name="certificateValid">Certificato valido</string>
+    <string name="certificateNonValid">Certificato non valido</string>
+    <string name="subtitle_text">Per sicurezza, confrontare i seguenti dati con un documento ufficiale (es: Carta d\'Identità).</string>
+    <string name="subtitle_text_nonvalid">Il QR code, o firma digitale, non è valido.</string>
+    <string name="subtitle_text_expired">Il certificato è scaduto.</string>
+    <string name="scanQrCertificate">Scannerizza il QR code di una certificazione. </string>
+    <string name="scanQr">Avvia scan </string>
+    <string name="repeatQR">Prossima scansione</string>
+    <string name="dateOfBirth">Data di nascita</string>
+    <string name="lastSyncDate">Ultimo aggiornamento: %1$s</string>
+    <string name="loading">Scaricando…</string>
 </resources>

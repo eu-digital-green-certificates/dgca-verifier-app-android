@@ -28,35 +28,28 @@
 
     <fragment
         android:id="@+id/codeReaderFragment"
-        android:name="dgca.verifier.app.android.CodeReaderFragment"
+        android:name="it.ministerodellasalute.verificaC19.ui.main.codeReader.CodeReaderFragment"
         android:label="CodeReader"
         tools:layout="@layout/fragment_code_reader">
 
         <action
             android:id="@+id/action_codeReaderFragment_to_verificationFragment"
-            app:destination="@id/verificationDialogFragment"
+            app:destination="@id/verificationFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left" />
 
-        <action
-            android:id="@+id/action_codeReaderFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
-
     </fragment>
 
-    <dialog
-        android:id="@+id/verificationDialogFragment"
-        android:name="dgca.verifier.app.android.verification.VerificationDialogFragment"
-        android:label="Verification"
-        tools:layout="@layout/dialog_fragment_verification">
+    <fragment
+        android:id="@+id/verificationFragment"
+        android:name="it.ministerodellasalute.verificaC19.ui.main.verification.VerificationFragment"
+        android:label="VerificationFragment"
+        tools:layout="@layout/fragment_verification">
 
         <argument
             android:name="qrCodeText"
             app:argType="string" />
-    </dialog>
-    <fragment
-        android:id="@+id/settingsFragment"
-        android:name="dgca.verifier.app.android.settings.SettingsFragment"
-        android:label="SettingsFragment" />
+
+    </fragment>
 
 </navigation>
