@@ -34,7 +34,7 @@ import dgca.verifier.app.android.parseFromTo
 class TestViewHolder(private val binding: ItemTestBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(data: TestModel) {
-        binding.testResultValue.text = data.testResult
+        binding.testResultValue.text = data.resultType.value
         binding.dateOfCollectionValue.text = data.dateTimeOfCollection.parseFromTo(DATE_TIME, FORMATTED_DATE_TIME)
         binding.dateOfTestResultValue.text = data.dateTimeOfTestResult?.parseFromTo(DATE_TIME, FORMATTED_DATE_TIME)
         binding.diseaseValue.text = data.disease

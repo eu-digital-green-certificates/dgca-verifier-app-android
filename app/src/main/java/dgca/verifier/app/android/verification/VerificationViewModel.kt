@@ -36,6 +36,7 @@ import dgca.verifier.app.decoder.compression.CompressorService
 import dgca.verifier.app.decoder.cose.CoseService
 import dgca.verifier.app.decoder.cose.CryptoService
 import dgca.verifier.app.decoder.model.GreenCertificate
+import dgca.verifier.app.decoder.model.TestVerificationResult
 import dgca.verifier.app.decoder.model.VerificationResult
 import dgca.verifier.app.decoder.prefixvalidation.PrefixValidationService
 import dgca.verifier.app.decoder.schema.SchemaValidator
@@ -96,6 +97,7 @@ class VerificationViewModel @Inject constructor(
 
                 schemaValidator.validate(coseData.cbor, verificationResult)
                 greenCertificate = cborService.decode(coseData.cbor, verificationResult)
+                validateCertData(greenCertificate, verificationResult)
 
                 val certificate = verifierRepository.getCertificate(kid.toBase64())
                 if (certificate == null) {
@@ -108,6 +110,14 @@ class VerificationViewModel @Inject constructor(
             _inProgress.value = false
             _verificationResult.value = verificationResult
             _certificate.value = greenCertificate?.toCertificateModel()
+        }
+    }
+
+    private fun validateCertData(certificate: GreenCertificate?, verificationResult: VerificationResult) {
+        certificate?.tests?.let {
+            if (it.isNotEmpty()) {
+                verificationResult.testVerification = TestVerificationResult(it.first().isTestValid())
+            }
         }
     }
 }

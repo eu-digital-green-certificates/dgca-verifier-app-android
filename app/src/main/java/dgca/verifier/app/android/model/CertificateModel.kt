@@ -61,8 +61,14 @@ data class TestModel(
     val testingCentre: String,
     val countryOfVaccination: String,
     val certificateIssuer: String,
-    val certificateIdentifier: String
+    val certificateIdentifier: String,
+    val resultType: TestResult
 ) : CertificateData
+
+enum class TestResult(val value: String) {
+    DETECTED("DETECTED"),
+    NOT_DETECTED("NOT DETECTED")
+}
 
 data class RecoveryModel(
     override val disease: String,

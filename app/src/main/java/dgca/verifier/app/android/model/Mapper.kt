@@ -62,8 +62,16 @@ fun Test.toTestModel(): TestModel {
         testingCentre,
         countryOfVaccination,
         certificateIssuer,
-        certificateIdentifier
+        certificateIdentifier,
+        getTestResultType().toTestResult()
     )
+}
+
+fun Test.TestResult.toTestResult(): TestResult {
+    return when (this) {
+        Test.TestResult.DETECTED -> TestResult.DETECTED
+        Test.TestResult.NOT_DETECTED -> TestResult.NOT_DETECTED
+    }
 }
 
 fun Vaccination.toVaccinationModel(): VaccinationModel {
