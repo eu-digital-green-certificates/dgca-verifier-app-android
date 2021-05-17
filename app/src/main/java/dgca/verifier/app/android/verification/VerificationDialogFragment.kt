@@ -135,6 +135,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         binding.actionBtn.isVisible = true
         binding.actionBtn.backgroundTintList = statusColor
         binding.actionBtn.text = actionBtnText
+        binding.actionBtn.isVisible = true
     }
 
     private fun getCertificateListData(certificate: CertificateModel): List<CertificateData> {
