@@ -105,7 +105,8 @@ class VerificationViewModel @Inject constructor(
                     return@withContext
                 }
                 certificates.forEach { innerCertificate ->
-                    if (cryptoService.validate(cose, innerCertificate, verificationResult)) {
+                    cryptoService.validate(cose, innerCertificate, verificationResult)
+                    if (verificationResult.coseVerified) {
                         return@forEach
                     }
                 }
