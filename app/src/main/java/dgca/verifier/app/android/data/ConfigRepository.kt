@@ -17,28 +17,15 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 4/24/21 2:50 PM
+ *  Created by osarapulov on 5/17/21 8:25 AM
  */
 
-package dgca.verifier.app.android.data.remote
+package dgca.verifier.app.android.data
 
-import dgca.verifier.app.android.data.Config
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Header
+interface ConfigRepository : ConfigDataSource {
 
-interface ApiService {
-
-    @GET("/context")
-    fun context(): Call<Config>
-
-    @GET("/signercertificateUpdate")
-    suspend fun getCertUpdate(
-        @Header("x-resume-token") contentRange: String
-    ): Response<ResponseBody>
-
-    @GET("/signercertificateStatus")
-    suspend fun getCertStatus(): Response<List<String>>
+    /**
+     * Provides specifically local data source version.
+     */
+    fun local(): ConfigDataSource
 }
