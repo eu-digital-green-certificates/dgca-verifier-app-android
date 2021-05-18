@@ -49,14 +49,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class VerificationViewModel @Inject constructor(
-    private val prefixValidationService: PrefixValidationService,
-    private val base45Service: Base45Service,
-    private val compressorService: CompressorService,
-    private val cryptoService: CryptoService,
-    private val coseService: CoseService,
-    private val schemaValidator: SchemaValidator,
-    private val cborService: CborService,
-    private val verifierRepository: VerifierRepository
+        private val prefixValidationService: PrefixValidationService,
+        private val base45Service: Base45Service,
+        private val compressorService: CompressorService,
+        private val cryptoService: CryptoService,
+        private val coseService: CoseService,
+        private val schemaValidator: SchemaValidator,
+        private val cborService: CborService,
+        private val verifierRepository: VerifierRepository
 ) : ViewModel() {
 
     private val _verificationResult = MutableLiveData<VerificationResult>()
@@ -99,12 +99,16 @@ class VerificationViewModel @Inject constructor(
                 greenCertificate = cborService.decode(coseData.cbor, verificationResult)
                 validateCertData(greenCertificate, verificationResult)
 
-                val certificate = verifierRepository.getCertificate(kid.toBase64())
-                if (certificate == null) {
+                val certificates = verifierRepository.getCertificatesBy(kid.toBase64())
+                if (certificates.isEmpty()) {
                     Timber.d("Verification failed: failed to load certificate")
                     return@withContext
                 }
-                cryptoService.validate(cose, certificate, verificationResult)
+                certificates.forEach { innerCertificate ->
+                    if (cryptoService.validate(cose, innerCertificate, verificationResult)) {
+                        return@forEach
+                    }
+                }
             }
 
             _inProgress.value = false

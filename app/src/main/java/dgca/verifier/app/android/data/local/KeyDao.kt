@@ -36,8 +36,8 @@ interface KeyDao {
     @Query("SELECT * FROM keys WHERE kid IN (:keyIds)")
     fun getAllByIds(keyIds: Array<String>): List<Key>
 
-    @Query("SELECT * FROM keys WHERE kid LIKE :kid LIMIT 1")
-    fun getById(kid: String): Key?
+    @Query("SELECT * FROM keys WHERE kid LIKE :kid")
+    fun getByKid(kid: String): List<Key>
 
     @Query("DELETE FROM keys WHERE kid = :kid")
     fun deleteById(kid: String)

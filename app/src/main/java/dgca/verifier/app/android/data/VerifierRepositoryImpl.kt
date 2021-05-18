@@ -36,10 +36,10 @@ import java.security.cert.Certificate
 import javax.inject.Inject
 
 class VerifierRepositoryImpl @Inject constructor(
-    private val apiService: ApiService,
-    private val preferences: Preferences,
-    private val db: AppDatabase,
-    private val keyStoreCryptor: KeyStoreCryptor
+        private val apiService: ApiService,
+        private val preferences: Preferences,
+        private val db: AppDatabase,
+        private val keyStoreCryptor: KeyStoreCryptor
 ) : BaseRepository(), VerifierRepository {
 
     private val validCertList = mutableListOf<String>()
@@ -58,9 +58,8 @@ class VerifierRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCertificate(kid: String): Certificate? {
-        val key = db.keyDao().getById(kid)
-        return if (key != null) keyStoreCryptor.decrypt(key.key)?.base64ToX509Certificate() else null
+    override suspend fun getCertificatesBy(kid: String): List<Certificate> {
+        return db.keyDao().getByKid(kid).map { keyStoreCryptor.decrypt(it.key)?.base64ToX509Certificate()!! }
     }
 
     private suspend fun fetchCertificate(resumeToken: Long) {
@@ -79,7 +78,7 @@ class VerifierRepositoryImpl @Inject constructor(
 
         if (validCertList.contains(responseKid) && isKidValid(responseKid, responseStr)) {
             Timber.d("Cert KID verified")
-            val key = Key(responseKid!!, keyStoreCryptor.encrypt(responseStr)!!)
+            val key = Key(kid = responseKid!!, key = keyStoreCryptor.encrypt(responseStr)!!)
             db.keyDao().insert(key)
         }
 
@@ -95,9 +94,9 @@ class VerifierRepositoryImpl @Inject constructor(
 
         val cert = responseStr.base64ToX509Certificate() ?: return false
         val certKid = MessageDigest.getInstance("SHA-256")
-            .digest(cert.encoded)
-            .copyOf(8)
-            .toBase64()
+                .digest(cert.encoded)
+                .copyOf(8)
+                .toBase64()
 
         return responseKid == certKid
     }

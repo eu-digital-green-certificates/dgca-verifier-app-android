@@ -28,5 +28,5 @@ interface VerifierRepository {
 
     suspend fun fetchCertificates(): Boolean?
 
-    suspend fun getCertificate(kid: String): Certificate?
+    suspend fun getCertificatesBy(kid: String): List<Certificate>
 }
