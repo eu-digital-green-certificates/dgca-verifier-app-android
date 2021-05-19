@@ -59,6 +59,10 @@ class VerifierRepositoryImpl @Inject constructor(
                 validCertList.clear()
                 validCertList.addAll(body)
 
+                if (body.isEmpty()) {
+                    preferences.resumeToken = -1L
+                }
+
                 val resumeToken = preferences.resumeToken
                 fetchCertificate(resumeToken)
                 db.keyDao().deleteAllExcept(validCertList.toTypedArray())
