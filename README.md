@@ -35,6 +35,14 @@ The DGC Verifier Apps are responsible for scanning and verifying DGCs using publ
 
 Whether you cloned or downloaded the 'zipped' sources you will either find the sources in the chosen checkout-directory or get a zip file with the source code, which you can expand to a folder of your choice.
 
+In order to successfully build and run the project, you must have also downloaded the corresponding core repository from [here](https://github.com/eu-digital-green-certificates/dgca-app-core-android). Both projects should be at the same folder level as eachother which would look something like
+
+```
+android-app
+|___dgca-verifier-app-android
+|___dgca-app-core-android
+```
+
 #### Android Studio based build
 
 This project uses the Gradle build system. To build this project, use the `gradlew build` command or use "Run" in Android Studio.
