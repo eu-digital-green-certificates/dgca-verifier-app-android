@@ -50,5 +50,5 @@
     <string name="privacy_policy">Privacy</string>
     <string name="version">Version: %1$s</string>
     <string name="about">About</string>
-    <string name="settings_version_title">Wallet App</string>
+    <string name="settings_version_title">Verifier App</string>
 </resources>
