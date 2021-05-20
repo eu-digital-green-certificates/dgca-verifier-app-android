@@ -30,6 +30,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.BuildConfig
@@ -44,10 +45,17 @@ class SettingsFragment : Fragment() {
     private val binding get() = _binding!!
 
     companion object {
-        const val PRIVACY_POLICY = "https://op.europa.eu/en/web/about-us/legal-notices/eu-mobile-apps"
+        const val PRIVACY_POLICY =
+            "https://op.europa.eu/en/web/about-us/legal-notices/eu-mobile-apps"
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    private val viewModel by viewModels<SettingsViewModel>()
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -57,7 +65,14 @@ class SettingsFragment : Fragment() {
         setHasOptionsMenu(true)
         (requireActivity() as MainActivity).setSupportActionBar(binding.toolbar)
         binding.privacyPolicy.setOnClickListener { launchWebIntent() }
+        binding.syncPublicKeys.setOnClickListener { viewModel.syncPublicKeys() }
         binding.version.text = getString(R.string.version, BuildConfig.VERSION_NAME)
+
+        viewModel.inProgress.observe(viewLifecycleOwner, {
+            binding.privacyPolicy.isClickable = it != true
+            binding.syncPublicKeys.isClickable = it != true
+            binding.progressBar.visibility = if (it == true) View.VISIBLE else View.GONE
+        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

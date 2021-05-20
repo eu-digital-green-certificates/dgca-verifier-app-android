@@ -70,6 +70,24 @@
         android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@+id/about_title" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/syncPublicKeys"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/ic_baseline_arrow_forward_24"
+        android:gravity="start|center"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:letterSpacing="0"
+        android:minHeight="48dp"
+        android:paddingHorizontal="@dimen/default_padding"
+        android:text="@string/sync_public_keys"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@+id/privacyPolicy" />
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/materialTextView"
         android:layout_width="match_parent"
@@ -78,7 +96,7 @@
         android:text="@string/settings_version_title"
         android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@+id/privacyPolicy"
+        app:layout_constraintTop_toBottomOf="@+id/syncPublicKeys"
         tools:layout_editor_absoluteX="0dp" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -102,5 +120,16 @@
         android:scaleType="centerInside"
         android:src="@drawable/eu_logo_big"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/blue"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

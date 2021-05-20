@@ -29,6 +29,8 @@ import dgca.verifier.app.android.data.remote.ApiService
 import dgca.verifier.app.android.security.KeyStoreCryptor
 import dgca.verifier.app.decoder.base64ToX509Certificate
 import dgca.verifier.app.decoder.toBase64
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 import java.net.HttpURLConnection
 import java.security.MessageDigest
@@ -36,30 +38,34 @@ import java.security.cert.Certificate
 import javax.inject.Inject
 
 class VerifierRepositoryImpl @Inject constructor(
-        private val apiService: ApiService,
-        private val preferences: Preferences,
-        private val db: AppDatabase,
-        private val keyStoreCryptor: KeyStoreCryptor
+    private val apiService: ApiService,
+    private val preferences: Preferences,
+    private val db: AppDatabase,
+    private val keyStoreCryptor: KeyStoreCryptor
 ) : BaseRepository(), VerifierRepository {
 
     private val validCertList = mutableListOf<String>()
+    private val mutex = Mutex()
 
     override suspend fun fetchCertificates(): Boolean? {
-        return execute {
-            val response = apiService.getCertStatus()
-            val body = response.body() ?: return@execute false
-            validCertList.clear()
-            validCertList.addAll(body)
+        mutex.withLock {
+            return execute {
+                val response = apiService.getCertStatus()
+                val body = response.body() ?: return@execute false
+                validCertList.clear()
+                validCertList.addAll(body)
 
-            val resumeToken = preferences.resumeToken
-            fetchCertificate(resumeToken)
-            db.keyDao().deleteAllExcept(validCertList.toTypedArray())
-            return@execute true
+                val resumeToken = preferences.resumeToken
+                fetchCertificate(resumeToken)
+                db.keyDao().deleteAllExcept(validCertList.toTypedArray())
+                return@execute true
+            }
         }
     }
 
     override suspend fun getCertificatesBy(kid: String): List<Certificate> {
-        return db.keyDao().getByKid(kid).map { keyStoreCryptor.decrypt(it.key)?.base64ToX509Certificate()!! }
+        return db.keyDao().getByKid(kid)
+            .map { keyStoreCryptor.decrypt(it.key)?.base64ToX509Certificate()!! }
     }
 
     private suspend fun fetchCertificate(resumeToken: Long) {
@@ -94,9 +100,9 @@ class VerifierRepositoryImpl @Inject constructor(
 
         val cert = responseStr.base64ToX509Certificate() ?: return false
         val certKid = MessageDigest.getInstance("SHA-256")
-                .digest(cert.encoded)
-                .copyOf(8)
-                .toBase64()
+            .digest(cert.encoded)
+            .copyOf(8)
+            .toBase64()
 
         return responseKid == certKid
     }
