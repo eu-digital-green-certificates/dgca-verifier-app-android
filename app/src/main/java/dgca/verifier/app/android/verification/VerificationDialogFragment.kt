@@ -85,6 +85,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         viewModel.verificationResult.observe(viewLifecycleOwner, {
             setCertStatusUI(it.isValid())
             setCertStatusError(it)
+            setCertDataVisibility(it.isValid())
         })
         viewModel.certificate.observe(viewLifecycleOwner, { certificate ->
             if (certificate != null) {
@@ -154,6 +155,11 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
             binding.reasonForCertificateInvalidityTitle.visibility = View.GONE
             binding.reasonForCertificateInvalidityName.visibility = View.GONE
         }
+    }
+
+    private fun setCertDataVisibility(isValid: Boolean) {
+        binding.errorDetails.visibility = if (isValid) View.GONE else View.VISIBLE
+        binding.nestedScrollView.visibility = if (isValid) View.VISIBLE else View.GONE
     }
 
     private fun getCertificateListData(certificate: CertificateModel): List<CertificateData> {
