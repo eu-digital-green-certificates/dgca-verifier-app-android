@@ -40,14 +40,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
-import dgca.verifier.app.android.FORMATTED_YEAR_MONTH_DAY
-import dgca.verifier.app.android.R
-import dgca.verifier.app.android.YEAR_MONTH_DAY
+import dgca.verifier.app.android.*
 import dgca.verifier.app.android.databinding.DialogFragmentVerificationBinding
-import dgca.verifier.app.android.dpToPx
 import dgca.verifier.app.android.model.CertificateData
 import dgca.verifier.app.android.model.CertificateModel
-import dgca.verifier.app.android.parseFromTo
+import dgca.verifier.app.decoder.model.VerificationResult
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
@@ -65,7 +62,11 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         adapter = CertListAdapter(layoutInflater)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = DialogFragmentVerificationBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -81,7 +82,11 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         binding.recyclerView.adapter = adapter
         binding.actionBtn.setOnClickListener { dismiss() }
 
-        viewModel.verificationResult.observe(viewLifecycleOwner, { setCertStatusUI(it.isValid()) })
+        viewModel.verificationResult.observe(viewLifecycleOwner, {
+            setCertStatusUI(it.isValid())
+            setCertStatusError(it)
+            setCertDataVisibility(it.isValid())
+        })
         viewModel.certificate.observe(viewLifecycleOwner, { certificate ->
             if (certificate != null) {
                 toggleButton(certificate)
@@ -120,12 +125,14 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         if (isValid) {
             text = getString(R.string.cert_valid)
             imageId = R.drawable.check
-            statusColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
+            statusColor =
+                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
             actionBtnText = getString(R.string.done)
         } else {
             text = getString(R.string.cert_invalid)
             imageId = R.drawable.error
-            statusColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.red))
+            statusColor =
+                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.red))
             actionBtnText = getString(R.string.retry)
         }
 
@@ -136,6 +143,23 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         binding.actionBtn.backgroundTintList = statusColor
         binding.actionBtn.text = actionBtnText
         binding.actionBtn.isVisible = true
+    }
+
+    private fun setCertStatusError(verificationResult: VerificationResult) {
+        if (verificationResult.isSignatureInvalid()) {
+            binding.reasonForCertificateInvalidityTitle.visibility = View.VISIBLE
+            binding.reasonForCertificateInvalidityName.visibility = View.VISIBLE
+            binding.reasonForCertificateInvalidityName.text =
+                getString(R.string.cryptographic_signature_not_valid)
+        } else {
+            binding.reasonForCertificateInvalidityTitle.visibility = View.GONE
+            binding.reasonForCertificateInvalidityName.visibility = View.GONE
+        }
+    }
+
+    private fun setCertDataVisibility(isValid: Boolean) {
+        binding.errorDetails.visibility = if (isValid) View.GONE else View.VISIBLE
+        binding.nestedScrollView.visibility = if (isValid) View.VISIBLE else View.GONE
     }
 
     private fun getCertificateListData(certificate: CertificateModel): List<CertificateData> {
@@ -149,10 +173,15 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
 
     private fun showUserData(certificate: CertificateModel) {
         binding.personFullName.text =
-            getString(R.string.person_full_name_placeholder, certificate.person.givenName, certificate.person.familyName)
+            getString(
+                R.string.person_full_name_placeholder,
+                certificate.person.givenName,
+                certificate.person.familyName
+            )
         binding.personStandardisedFamilyName.text = certificate.person.standardisedFamilyName
         binding.personStandardisedGivenName.text = certificate.person.standardisedGivenName
-        binding.dateOfBirth.text = certificate.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
+        binding.dateOfBirth.text =
+            certificate.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
     }
 
     private fun toggleButton(certificate: CertificateModel) {
