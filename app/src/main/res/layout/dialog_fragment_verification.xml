@@ -136,7 +136,6 @@
         style="@style/TextAppearance.Dgca.CertificateValue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/default_margin_top"
         android:paddingStart="@dimen/default_margin"
         android:paddingEnd="@dimen/default_margin"
         android:visibility="gone"
