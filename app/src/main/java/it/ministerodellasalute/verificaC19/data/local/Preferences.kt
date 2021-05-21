@@ -35,6 +35,8 @@ interface Preferences {
 
     var dateLastFetch: Long
 
+    var validationRulesJson: String?
+
     fun clear()
 }
 
@@ -51,6 +53,8 @@ class PreferencesImpl(context: Context) : Preferences {
 
     override var dateLastFetch by LongPreference(preferences, KEY_DATE_LAST_FETCH, -1)
 
+    override var validationRulesJson by StringPreference(preferences, KEY_VALIDATION_RULES, "")
+
     override fun clear() {
         preferences.value.edit().clear().apply()
     }
@@ -59,6 +63,23 @@ class PreferencesImpl(context: Context) : Preferences {
         private const val USER_PREF = "dgca.verifier.app.pref"
         private const val KEY_RESUME_TOKEN = "resume_token"
         private const val KEY_DATE_LAST_FETCH = "date_last_fetch"
+        private const val KEY_VALIDATION_RULES = "validation_rules"
+    }
+}
+
+class StringPreference(
+        private val preferences: Lazy<SharedPreferences>,
+        private val name: String,
+        private val defaultValue: String
+) : ReadWriteProperty<Any, String?> {
+
+    @WorkerThread
+    override fun getValue(thisRef: Any, property: KProperty<*>): String? {
+        return preferences.value.getString(name, defaultValue)
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: String?) {
+        preferences.value.edit { putString(name, value) }
     }
 }
 

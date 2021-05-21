@@ -43,7 +43,7 @@ class LoadKeysWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         Log.i(TAG, "key fetching start")
-        val res = verifierRepository.fetchCertificates()
+        val res = verifierRepository.syncData()
         Log.i(TAG, "key fetching result: ${res == true}")
         return if (res == true) Result.success() else Result.retry()
     }
