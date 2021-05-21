@@ -126,6 +126,23 @@
             android:paddingVertical="10dp">
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/reason_for_certificate_invalidity_title"
+                style="@style/TextAppearance.Dgca.CertificateTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/reason_for_invalidity"
+                android:visibility="gone" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/reason_for_certificate_invalidity_name"
+                style="@style/TextAppearance.Dgca.CertificateValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_marginBottom="10dp"
+                tools:text="@string/cryptographic_signature_not_valid" />
+
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/person_standardised_family_name_title"
                 style="@style/TextAppearance.Dgca.CertificateTitle"
                 android:layout_width="match_parent"

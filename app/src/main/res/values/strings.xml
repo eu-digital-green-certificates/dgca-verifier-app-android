@@ -29,6 +29,7 @@
     <string name="type_vaccination">Vac</string>
     <string name="done">Done</string>
     <string name="retry">Retry</string>
+    <string name="reason_for_invalidity">Reason for Invalidity</string>
     <string name="standardised_family_name_title">Standardised Family Name</string>
     <string name="standardised_given_name_title">Standardised Given Name</string>
     <string name="date_of_birth_title">Date of Birth</string>
@@ -52,4 +53,5 @@
     <string name="version">Version: %1$s</string>
     <string name="about">About</string>
     <string name="settings_version_title">Verifier App</string>
+    <string name="cryptographic_signature_not_valid">Cryptographic signature not valid.</string>
 </resources>
