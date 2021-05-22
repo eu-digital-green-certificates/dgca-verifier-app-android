@@ -22,8 +22,12 @@
 
 package dgca.verifier.app.android
 
-import java.text.SimpleDateFormat
-import java.util.Locale
+import java.time.OffsetDateTime
+import java.time.LocalDateTime
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.TemporalAccessor
+
 
 const val YEAR_MONTH_DAY = "yyyy-MM-dd"
 const val DATE_TIME = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
@@ -32,9 +36,17 @@ const val FORMATTED_DATE_TIME = "MMM d, yyyy, HH:mm"
 
 fun String.parseFromTo(from: String, to: String): String {
     return try {
-        val parser = SimpleDateFormat(from, Locale.US)
-        val formatter = SimpleDateFormat(to, Locale.US)
-        return formatter.format(parser.parse(this)!!)
+        val formatter = DateTimeFormatter.ofPattern(to)
+        val fmt = DateTimeFormatter.ofPattern(
+            "yyyy-MM-dd['T'[HH:mm:ss][.SSS][XXX]]"
+        ) //all anticipated combinations
+        val accessor: TemporalAccessor = fmt.parseBest(
+            this,
+            OffsetDateTime::from,  //most specific
+            LocalDateTime::from,
+            LocalDate::from //least specific
+        )
+        return formatter.format(accessor)
     } catch (ex: Exception) {
         ""
     }
