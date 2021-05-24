@@ -38,7 +38,7 @@ fun String.parseFromTo(from: String, to: String): String {
     return try {
         val formatter = DateTimeFormatter.ofPattern(to)
         val fmt = DateTimeFormatter.ofPattern(
-            "yyyy-MM-dd['T'[HH:mm:ss][.SSS][XXX]]"
+            "yyyy-MM-dd['T'HH:mm:ss[.SSS][XXX]]"
         ) //all anticipated combinations
         val accessor: TemporalAccessor = fmt.parseBest(
             this,
