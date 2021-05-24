@@ -62,6 +62,9 @@ class VerificationViewModel @Inject constructor(
     private val _verificationResult = MutableLiveData<VerificationResult>()
     val verificationResult: LiveData<VerificationResult> = _verificationResult
 
+    private val _verificationError = MutableLiveData<VerificationError>()
+    val verificationError: LiveData<VerificationError> = _verificationError
+
     private val _certificate = MutableLiveData<CertificateModel?>()
     val certificate: LiveData<CertificateModel?> = _certificate
 
@@ -77,6 +80,7 @@ class VerificationViewModel @Inject constructor(
             _inProgress.value = true
             var greenCertificate: GreenCertificate? = null
             val verificationResult = VerificationResult()
+            var noPublicKeysFound = true
 
             withContext(Dispatchers.IO) {
                 val plainInput = prefixValidationService.decode(code, verificationResult)
@@ -104,6 +108,7 @@ class VerificationViewModel @Inject constructor(
                     Timber.d("Verification failed: failed to load certificate")
                     return@withContext
                 }
+                noPublicKeysFound = false
                 certificates.forEach { innerCertificate ->
                     cryptoService.validate(cose, innerCertificate, verificationResult)
                     if (verificationResult.coseVerified) {
@@ -111,6 +116,8 @@ class VerificationViewModel @Inject constructor(
                     }
                 }
             }
+
+            verificationResult.fetchError(noPublicKeysFound)?.apply { _verificationError.value = this }
 
             _inProgress.value = false
             _verificationResult.value = verificationResult

@@ -44,7 +44,6 @@ import dgca.verifier.app.android.*
 import dgca.verifier.app.android.databinding.DialogFragmentVerificationBinding
 import dgca.verifier.app.android.model.CertificateData
 import dgca.verifier.app.android.model.CertificateModel
-import dgca.verifier.app.decoder.model.VerificationResult
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
@@ -84,8 +83,11 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
 
         viewModel.verificationResult.observe(viewLifecycleOwner, {
             setCertStatusUI(it.isValid())
-            setCertStatusError(it)
+
             setCertDataVisibility(it.isValid())
+        })
+        viewModel.verificationError.observe(viewLifecycleOwner, {
+            setCertStatusError(it)
         })
         viewModel.certificate.observe(viewLifecycleOwner, { certificate ->
             if (certificate != null) {
@@ -145,16 +147,17 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         binding.actionBtn.isVisible = true
     }
 
-    private fun setCertStatusError(verificationResult: VerificationResult) {
-        if (verificationResult.isSignatureInvalid()) {
-            binding.reasonForCertificateInvalidityTitle.visibility = View.VISIBLE
-            binding.reasonForCertificateInvalidityName.visibility = View.VISIBLE
-            binding.reasonForCertificateInvalidityName.text =
-                getString(R.string.cryptographic_signature_not_valid)
-        } else {
-            binding.reasonForCertificateInvalidityTitle.visibility = View.GONE
-            binding.reasonForCertificateInvalidityName.visibility = View.GONE
-        }
+    private fun setCertStatusError(verificationError: VerificationError) {
+        binding.reasonForCertificateInvalidityTitle.visibility = View.VISIBLE
+        binding.reasonForCertificateInvalidityName.visibility = View.VISIBLE
+        binding.reasonForCertificateInvalidityName.text = getString(
+            when (verificationError) {
+                VerificationError.CERTIFICATE_EXPIRED -> R.string.certificate_is_expired
+                VerificationError.CERTIFICATE_REVOKED -> R.string.certificate_was_revoked
+                VerificationError.VERIFICATION_FAILED -> R.string.verification_failed
+                VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID -> R.string.cryptographic_signature_invalid
+            }
+        )
     }
 
     private fun setCertDataVisibility(isValid: Boolean) {
