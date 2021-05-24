@@ -60,7 +60,7 @@ object NetworkModule {
             addInterceptor(HeaderInterceptor())
         }
         addLogging(httpClient)
-        //addCertificateSHA(httpClient)
+        addCertificateSHA(httpClient)
 
         return httpClient.build()
     }
@@ -94,9 +94,8 @@ object NetworkModule {
 
     private fun addCertificateSHA(httpClient: OkHttpClient.Builder) {
         val certificatePinner = CertificatePinner.Builder()
-            .add("it.ministerodellasalute.verificaC19", BuildConfig.CERTIFICATE_SHA)
+            .add(BuildConfig.SERVER_HOST, BuildConfig.CERTIFICATE_SHA)
         httpClient.certificatePinner(certificatePinner.build())
-
     }
 
     private fun createRetrofit(okHttpClient: Lazy<OkHttpClient>): Retrofit {

@@ -23,12 +23,14 @@ android {
     buildTypes {
         debug {
             buildConfigField "String", "BASE_URL", "\"https://testaka4.sogei.it/v1/dgc/\""
-            buildConfigField "String", "CERTIFICATE_SHA", "\"sha256/\""
+            buildConfigField "String", "SERVER_HOST", "\"testaka4.sogei.it\""
+            buildConfigField "String", "CERTIFICATE_SHA", "\"sha256/R0d+cI8vTcJ3sCbpfQCH0OmdBbulPH3deYhngzOqJVA=\""
         }
 
         release {
-            buildConfigField "String", "BASE_URL", "\"https://dgca-verifier-service.cfapps.eu10.hana.ondemand.com/\""
-            buildConfigField "String", "CERTIFICATE_SHA", "\"sha256/\""
+            buildConfigField "String", "BASE_URL", "\"https://testaka4.sogei.it/v1/dgc/\""
+            buildConfigField "String", "SERVER_HOST", "\"testaka4.sogei.it\""
+            buildConfigField "String", "CERTIFICATE_SHA", "\"sha256/R0d+cI8vTcJ3sCbpfQCH0OmdBbulPH3deYhngzOqJVA=\""
 
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
