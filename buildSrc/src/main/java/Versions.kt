@@ -51,10 +51,13 @@ object Versions {
     const val kotlin_reflect = "1.4.32"
     const val jackson_cbor = "2.12.3"
     const val java_cose = "1.1.0"
+    const val bouncy_castle = "1.68"
 
     // Validation
     const val json_validation = "2.2.6"
 
     // Tests
     const val junit = "4.13.1"
+    const val junit_jupiter = "5.7.1"
+    const val hamcrest = "2.2"
 }

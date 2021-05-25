@@ -53,8 +53,13 @@ object Deps {
     const val java_cose = "com.augustcellars.cose:cose-java:${Versions.java_cose}"
     const val json_validation = "com.github.fge:json-schema-validator:${Versions.json_validation}"
     const val jackson_cbor = "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${Versions.jackson_cbor}"
+    const val bouncy_castle = "org.bouncycastle:bcpkix-jdk15to18:${Versions.bouncy_castle}"
 
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
 
     const val test_junit = "junit:junit:${Versions.junit}"
+    const val test_junit_jupiter_api = "org.junit.jupiter:junit-jupiter-api:${Versions.junit_jupiter}"
+    const val test_junit_jupiter_params = "org.junit.jupiter:junit-jupiter-params:${Versions.junit_jupiter}"
+    const val test_runtime_only = "org.junit.jupiter:junit-jupiter-engine:${Versions.junit_jupiter}"
+    const val test_hamcrest = "org.hamcrest:hamcrest:${Versions.hamcrest}"
 }
