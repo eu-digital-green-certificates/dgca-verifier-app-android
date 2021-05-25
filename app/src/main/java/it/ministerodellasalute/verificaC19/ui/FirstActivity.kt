@@ -117,10 +117,10 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
 
     fun createForceUpdateDialog(){
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Update")
-        builder.setMessage("Per continuare ad utlizzare l’applicazione, scarica la nuova versione dallo store")
+        builder.setTitle(getString(R.string.updateTitle))
+        builder.setMessage(getString(R.string.updateMessage))
 
-        builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+        builder.setPositiveButton(getString(R.string.updateLabel)) { dialog, which ->
             openGooglePlay()
         }
         val dialog = builder.create()

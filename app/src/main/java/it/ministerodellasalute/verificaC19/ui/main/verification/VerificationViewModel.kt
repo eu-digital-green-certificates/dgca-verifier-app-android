@@ -27,6 +27,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.decoder.toBase64
 import it.ministerodellasalute.verificaC19.data.VerifierRepository
@@ -42,6 +43,9 @@ import dgca.verifier.app.decoder.model.VerificationResult
 import dgca.verifier.app.decoder.prefixvalidation.PrefixValidationService
 import dgca.verifier.app.decoder.schema.SchemaValidator
 import dgca.verifier.app.decoder.toBase64
+import it.ministerodellasalute.verificaC19.data.local.Preferences
+import it.ministerodellasalute.verificaC19.data.remote.model.Rule
+import it.ministerodellasalute.verificaC19.model.ValidationRulesEnum
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -58,7 +62,8 @@ class VerificationViewModel @Inject constructor(
     private val coseService: CoseService,
     private val schemaValidator: SchemaValidator,
     private val cborService: CborService,
-    private val verifierRepository: VerifierRepository
+    private val verifierRepository: VerifierRepository,
+    private val preferences: Preferences
 ) : ViewModel() {
 
     private val _verificationResult = MutableLiveData<VerificationResult>()
@@ -113,8 +118,79 @@ class VerificationViewModel @Inject constructor(
             }
 
             _inProgress.value = false
-            _verificationResult.value = verificationResult
             _certificate.value = greenCertificate?.toCertificateModel()
+            _verificationResult.value = verificationResult
         }
     }
+
+    private fun getValidationRules():Array<Rule>{
+        val jsonString = preferences.validationRulesJson
+        return Gson().fromJson(jsonString, Array<Rule>::class.java)
+    }
+
+    fun getRecoveryCertStartDay(): String{
+        return getValidationRules().find { it.name == ValidationRulesEnum.RECOVERY_CERT_START_DAY.value}?.let {
+            it.value
+        } ?: run {
+            ""
+        }
+    }
+
+    fun getRecoveryCertEndDay(): String{
+        return getValidationRules().find { it.name == ValidationRulesEnum.RECOVERY_CERT_END_DAY.value}?.let {
+            it.value
+        } ?: run {
+            ""
+        }
+    }
+
+    fun getRapidTestStartHour(): String{
+        return getValidationRules().find { it.name == ValidationRulesEnum.RAPID_TEST_START_HOUR.value}?.let {
+            it.value
+        } ?: run {
+            ""
+        }
+    }
+
+    fun getRapidTestEndHour(): String{
+        return getValidationRules().find { it.name == ValidationRulesEnum.RAPID_TEST_END_HOUR.value}?.let {
+            it.value
+        } ?: run {
+            ""
+        }
+    }
+
+    fun getVaccineStartDayNotComplete(): String{
+        return getValidationRules().find { it.name == ValidationRulesEnum.VACCINE_START_DAY_NOT_COMPLETE.value}?.let {
+            it.value
+        } ?: run {
+            ""
+        }
+    }
+
+    fun getVaccineEndDayNotComplete(): String{
+        return getValidationRules().find { it.name == ValidationRulesEnum.VACCINE_START_DAY_NOT_COMPLETE.value}?.let {
+            it.value
+        } ?: run {
+            ""
+        }
+    }
+
+    fun getVaccineStartDayComplete(): String{
+        return getValidationRules().find { it.name == ValidationRulesEnum.VACCINE_START_DAY_COMPLETE.value}?.let {
+            it.value
+        } ?: run {
+            ""
+        }
+    }
+
+    fun getVaccineEndDayComplete(): String{
+        return getValidationRules().find { it.name == ValidationRulesEnum.VACCINE_END_DAY_COMPLETE.value}?.let {
+            it.value
+        } ?: run {
+            ""
+        }
+    }
+
+
 }
