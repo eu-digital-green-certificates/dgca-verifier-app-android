@@ -47,16 +47,16 @@ class VerifierRepositoryImpl @Inject constructor(
     private val validCertList = mutableListOf<String>()
     private val mutex = Mutex()
 
-    override suspend fun fetchCertificates(): Boolean? {
+    override suspend fun fetchCertificates(statusUrl: String, updateUrl: String): Boolean? {
         mutex.withLock {
             return execute {
-                val response = apiService.getCertStatus()
+                val response = apiService.getCertStatus(statusUrl)
                 val body = response.body() ?: return@execute false
                 validCertList.clear()
                 validCertList.addAll(body)
 
                 val resumeToken = preferences.resumeToken
-                fetchCertificate(resumeToken)
+                fetchCertificate(updateUrl, resumeToken)
                 db.keyDao().deleteAllExcept(validCertList.toTypedArray())
                 return@execute true
             }
@@ -68,9 +68,9 @@ class VerifierRepositoryImpl @Inject constructor(
             .map { keyStoreCryptor.decrypt(it.key)?.base64ToX509Certificate()!! }
     }
 
-    private suspend fun fetchCertificate(resumeToken: Long) {
+    private suspend fun fetchCertificate(url: String, resumeToken: Long) {
         val tokenFormatted = if (resumeToken == -1L) "" else resumeToken.toString()
-        val response = apiService.getCertUpdate(tokenFormatted)
+        val response = apiService.getCertUpdate(tokenFormatted, url)
 
         if (!response.isSuccessful || response.code() == HttpURLConnection.HTTP_NO_CONTENT) {
             Timber.d("No content")
@@ -91,7 +91,7 @@ class VerifierRepositoryImpl @Inject constructor(
         newResumeToken?.let {
             val newToken = it.toLong()
             preferences.resumeToken = newToken
-            fetchCertificate(newToken)
+            fetchCertificate(url, newToken)
         }
     }
 

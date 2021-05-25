@@ -22,18 +22,24 @@
 
 package dgca.verifier.app.android.data
 
+import dgca.verifier.app.android.BuildConfig
 import dgca.verifier.app.android.data.local.MutableConfigDataSource
+import dgca.verifier.app.android.data.remote.RemoteConfigDataSource
 import javax.inject.Inject
 
 class ConfigRepositoryImpl @Inject constructor(
-        private val localConfigDataSource: MutableConfigDataSource,
-        private val remoteConfigDataSource: ConfigDataSource
+    private val localConfigDataSource: MutableConfigDataSource,
+    private val remoteConfigDataSource: RemoteConfigDataSource
 ) : ConfigRepository {
     override fun local(): ConfigDataSource {
         return localConfigDataSource
     }
 
-    override fun getConfig(): Config = remoteConfigDataSource.getConfig().apply {
-        localConfigDataSource.setConfig(this)
+    override fun getConfig(): Config {
+        return remoteConfigDataSource.getConfig(
+            localConfigDataSource.getConfig().getContextUrl(BuildConfig.VERSION_NAME)
+        ).apply {
+            localConfigDataSource.setConfig(this)
+        }
     }
 }

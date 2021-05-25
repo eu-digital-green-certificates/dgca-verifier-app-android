@@ -28,17 +28,19 @@ import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Url
 
 interface ApiService {
 
-    @GET("/context")
-    fun context(): Call<Config>
+    @GET
+    fun context(@Url url: String): Call<Config>
 
-    @GET("/signercertificateUpdate")
+    @GET
     suspend fun getCertUpdate(
-        @Header("x-resume-token") contentRange: String
+        @Header("x-resume-token") contentRange: String,
+        @Url url: String
     ): Response<ResponseBody>
 
-    @GET("/signercertificateStatus")
-    suspend fun getCertStatus(): Response<List<String>>
+    @GET
+    suspend fun getCertStatus(@Url url: String): Response<List<String>>
 }

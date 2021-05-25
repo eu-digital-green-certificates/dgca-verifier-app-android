@@ -26,9 +26,13 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dgca.verifier.app.android.data.*
+import dgca.verifier.app.android.data.ConfigRepository
+import dgca.verifier.app.android.data.ConfigRepositoryImpl
+import dgca.verifier.app.android.data.VerifierRepository
+import dgca.verifier.app.android.data.VerifierRepositoryImpl
 import dgca.verifier.app.android.data.local.LocalConfigDataSource
 import dgca.verifier.app.android.data.local.MutableConfigDataSource
+import dgca.verifier.app.android.data.remote.DefaultRemoteConfigDataSource
 import dgca.verifier.app.android.data.remote.RemoteConfigDataSource
 import javax.inject.Singleton
 
@@ -46,7 +50,8 @@ abstract class RepositoryModule {
 
     @Singleton
     @Binds
-    abstract fun bindRemoteConfigDataSource(configDataSource: RemoteConfigDataSource): ConfigDataSource
+    abstract fun bindRemoteConfigDataSource(configDataSourceDefault: DefaultRemoteConfigDataSource): RemoteConfigDataSource
+
 
     @Singleton
     @Binds
