@@ -27,6 +27,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dgca.verifier.app.android.BuildConfig
+import dgca.verifier.app.android.data.ConfigRepository
 import dgca.verifier.app.android.data.VerifierRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,8 +36,10 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingsViewModel @Inject constructor(private val verifierRepository: VerifierRepository) :
-    ViewModel() {
+class SettingsViewModel @Inject constructor(
+    private val configRepository: ConfigRepository,
+    private val verifierRepository: VerifierRepository
+) : ViewModel() {
 
     private val _inProgress = MutableLiveData<Boolean>()
     val inProgress: LiveData<Boolean> = _inProgress
@@ -44,7 +48,12 @@ class SettingsViewModel @Inject constructor(private val verifierRepository: Veri
         viewModelScope.launch {
             _inProgress.value = true
             withContext(Dispatchers.IO) {
-                verifierRepository.fetchCertificates()
+                val config = configRepository.local().getConfig()
+                val versionName = BuildConfig.VERSION_NAME
+                verifierRepository.fetchCertificates(
+                    config.getStatusUrl(versionName),
+                    config.getUpdateUrl(versionName)
+                )
             }
             _inProgress.value = false
         }
