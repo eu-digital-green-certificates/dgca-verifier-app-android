@@ -41,6 +41,7 @@ import it.ministerodellasalute.verificaC19.model.CertificateModel
 import it.ministerodellasalute.verificaC19.model.PersonModel
 import it.ministerodellasalute.verificaC19.model.TestResult
 import it.ministerodellasalute.verificaC19.parseFromTo
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -58,7 +59,7 @@ class VerificationFragment : Fragment(), View.OnClickListener {
 
     private var _binding: FragmentVerificationBinding? = null
     private val binding get() = _binding!!
-    private var isAnyTestExpired: Boolean = true
+    private lateinit var certificateModel: CertificateModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -80,7 +81,7 @@ class VerificationFragment : Fragment(), View.OnClickListener {
 
         viewModel.certificate.observe(viewLifecycleOwner) { certificate ->
             certificate?.let {
-                isAnyTestExpired = isAnyTestExpired(it)
+                certificateModel = it
                 setPersonData(it.person, it.dateOfBirth)
             }
         }
@@ -92,74 +93,98 @@ class VerificationFragment : Fragment(), View.OnClickListener {
         viewModel.init(args.qrCodeText)
     }
 
-    private fun isAnyTestExpired(it: CertificateModel): Boolean {
+    private fun isAnyTestExpired(it: CertificateModel): TestExpiryValues {
         it.recoveryStatements?.let {
-            val startDate: LocalDate = LocalDate.parse(it.last().certificateValidFrom)
-                .plusDays(Integer.parseInt(viewModel.getRecoveryCertStartDay()).toLong())
 
-            val endDate: LocalDate = LocalDate.parse(it.last().certificateValidFrom)
-                .plusDays(Integer.parseInt(viewModel.getRecoveryCertEndDay()).toLong())
-            if (startDate.isBefore(LocalDate.now()) && LocalDate.now().isBefore(endDate)) {
-                return false
+            try {
+                val startDate: LocalDate = LocalDate.parse(it.last().certificateValidFrom)
+                    .plusDays(Integer.parseInt(viewModel.getRecoveryCertStartDay()).toLong())
+
+                val endDate: LocalDate = LocalDate.parse(it.last().certificateValidFrom)
+                    .plusDays(Integer.parseInt(viewModel.getRecoveryCertEndDay()).toLong())
+                if (startDate.isBefore(LocalDate.now()) && LocalDate.now().isBefore(endDate)) {
+                    return TestExpiryValues.VALID
+                }
+            } catch (e: Exception) {
+                return TestExpiryValues.TECHNICAL_ERROR
             }
-            return true
+
+            return TestExpiryValues.EXPIRED
         }
         it.tests?.let {
-            if (it.last().resultType == TestResult.DETECTED){
-                return true
-            }
-            val formatter = ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.ITALY)
 
-            val startDate: LocalDateTime = LocalDateTime.parse(it.last().dateTimeOfCollection, formatter)
-                .plusHours(Integer.parseInt(viewModel.getRapidTestStartHour()).toLong())
-
-            val endDate: LocalDateTime = LocalDateTime.parse(it.last().dateTimeOfCollection, formatter)
-                .plusHours(Integer.parseInt(viewModel.getRapidTestEndHour()).toLong())
-            if (startDate.isBefore(LocalDateTime.now()) && LocalDateTime.now().isBefore(endDate)) {
-                return false
+            if (it.last().resultType == TestResult.DETECTED) {
+                return TestExpiryValues.TECHNICAL_ERROR
             }
-            return true
+            try {
+                val formatter = ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.ITALY)
+
+                val startDate: LocalDateTime =
+                    LocalDateTime.parse(it.last().dateTimeOfCollection, formatter)
+                        .plusHours(Integer.parseInt(viewModel.getRapidTestStartHour()).toLong())
+
+                val endDate: LocalDateTime =
+                    LocalDateTime.parse(it.last().dateTimeOfCollection, formatter)
+                        .plusHours(Integer.parseInt(viewModel.getRapidTestEndHour()).toLong())
+                if (startDate.isBefore(LocalDateTime.now()) && LocalDateTime.now()
+                        .isBefore(endDate)
+                ) {
+                    return TestExpiryValues.VALID
+                }
+            } catch (e: Exception) {
+                return TestExpiryValues.TECHNICAL_ERROR
+            }
+
+            return TestExpiryValues.EXPIRED
         }
 
         it.vaccinations?.let {
-            if (it.last().doseNumber < it.last().totalSeriesOfDoses){
-                val startDate: LocalDate = LocalDate.parse(it.last().dateOfVaccination)
-                    .plusDays(Integer.parseInt(viewModel.getVaccineStartDayNotComplete()).toLong())
+            try {
+                if (it.last().doseNumber < it.last().totalSeriesOfDoses) {
+                    val startDate: LocalDate = LocalDate.parse(it.last().dateOfVaccination)
+                        .plusDays(Integer.parseInt(viewModel.getVaccineStartDayNotComplete(it.last().medicinalProduct)).toLong())
 
-                val endDate: LocalDate = LocalDate.parse(it.last().dateOfVaccination)
-                    .plusDays(Integer.parseInt(viewModel.getVaccineEndDayNotComplete()).toLong())
-                if (startDate.isBefore(LocalDate.now()) && LocalDate.now().isBefore(endDate)) {
-                    return false
-                }
-            } else if (it.last().doseNumber == it.last().totalSeriesOfDoses){
-                val startDate: LocalDate = LocalDate.parse(it.last().dateOfVaccination)
-                    .plusDays(Integer.parseInt(viewModel.getVaccineStartDayComplete()).toLong())
+                    val endDate: LocalDate = LocalDate.parse(it.last().dateOfVaccination)
+                        .plusDays(Integer.parseInt(viewModel.getVaccineEndDayNotComplete(it.last().medicinalProduct)).toLong())
+                    if (startDate.isBefore(LocalDate.now()) && LocalDate.now().isBefore(endDate)) {
+                        return TestExpiryValues.VALID
+                    }
+                } else if (it.last().doseNumber == it.last().totalSeriesOfDoses) {
+                    val startDate: LocalDate = LocalDate.parse(it.last().dateOfVaccination)
+                        .plusDays(Integer.parseInt(viewModel.getVaccineStartDayComplete(it.last().medicinalProduct)).toLong())
 
-                val endDate: LocalDate = LocalDate.parse(it.last().dateOfVaccination)
-                    .plusDays(Integer.parseInt(viewModel.getVaccineEndDayComplete()).toLong())
-                if (startDate.isBefore(LocalDate.now()) && LocalDate.now().isBefore(endDate)) {
-                    return false
+                    val endDate: LocalDate = LocalDate.parse(it.last().dateOfVaccination)
+                        .plusDays(Integer.parseInt(viewModel.getVaccineEndDayComplete(it.last().medicinalProduct)).toLong())
+                    if (startDate.isBefore(LocalDate.now()) && LocalDate.now().isBefore(endDate)) {
+                        return TestExpiryValues.VALID
+                    }
                 }
+            } catch (e: Exception) {
+                return TestExpiryValues.TECHNICAL_ERROR
             }
         }
+        return TestExpiryValues.EXPIRED
+    }
 
-        return true
+    private enum class TestExpiryValues {
+        TECHNICAL_ERROR,
+        EXPIRED,
+        VALID
     }
 
     private fun setCertStatusUI(verificationResult: VerificationResult) {
-        if (isAnyTestExpired) {
-            binding.containerPersonDetails.visibility = View.GONE
-            binding.checkmark.background =
-                ContextCompat.getDrawable(requireContext(), R.drawable.ic_misuse)
-            binding.certificateValid.text = getString(R.string.expirationText)
-            binding.subtitleText.text = getString(R.string.subtitle_text_expired)
-        } else if (verificationResult.isValid()) {
-            binding.containerPersonDetails.visibility = View.VISIBLE
-            binding.checkmark.background =
-                ContextCompat.getDrawable(requireContext(), R.drawable.ic_checkmark_filled)
-            binding.certificateValid.text = getString(R.string.certificateValid)
-            binding.subtitleText.text = getString(R.string.subtitle_text)
-
+        if (verificationResult.isValid()) {
+            if (isAnyTestExpired(certificateModel) == TestExpiryValues.EXPIRED) {
+                setTestErrorMessage(true)
+            } else if (isAnyTestExpired(certificateModel) == TestExpiryValues.TECHNICAL_ERROR) {
+                setTestErrorMessage(false)
+            } else {
+                binding.containerPersonDetails.visibility = View.VISIBLE
+                binding.checkmark.background =
+                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_checkmark_filled)
+                binding.certificateValid.text = getString(R.string.certificateValid)
+                binding.subtitleText.text = getString(R.string.subtitle_text)
+            }
         } else {
             binding.containerPersonDetails.visibility = View.GONE
             binding.checkmark.background =
@@ -167,6 +192,16 @@ class VerificationFragment : Fragment(), View.OnClickListener {
             binding.certificateValid.text = getString(R.string.certificateNonValid)
             binding.subtitleText.text = getString(R.string.subtitle_text_nonvalid)
         }
+    }
+
+    private fun setTestErrorMessage(isExpired: Boolean) {
+        binding.containerPersonDetails.visibility = View.GONE
+        binding.checkmark.background =
+            ContextCompat.getDrawable(requireContext(), R.drawable.ic_misuse)
+        binding.certificateValid.text =
+            if (isExpired) getString(R.string.expirationText) else getString(R.string.certificateNonValid)
+        binding.subtitleText.text =
+            if (isExpired) getString(R.string.subtitle_text_expired) else getString(R.string.technicalErrorMessage)
     }
 
     private fun setPersonData(person: PersonModel, dateOfBirth: String) {

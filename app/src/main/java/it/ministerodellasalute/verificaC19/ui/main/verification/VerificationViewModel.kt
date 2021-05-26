@@ -160,37 +160,36 @@ class VerificationViewModel @Inject constructor(
         }
     }
 
-    fun getVaccineStartDayNotComplete(): String{
-        return getValidationRules().find { it.name == ValidationRulesEnum.VACCINE_START_DAY_NOT_COMPLETE.value}?.let {
+    fun getVaccineStartDayNotComplete(vaccinType: String): String{
+
+        return getValidationRules().find { it.name == ValidationRulesEnum.VACCINE_START_DAY_NOT_COMPLETE.value && it.type == vaccinType }?.let {
             it.value
         } ?: run {
             ""
         }
     }
 
-    fun getVaccineEndDayNotComplete(): String{
-        return getValidationRules().find { it.name == ValidationRulesEnum.VACCINE_START_DAY_NOT_COMPLETE.value}?.let {
+    fun getVaccineEndDayNotComplete(vaccinType: String): String{
+        return getValidationRules().find { it.name == ValidationRulesEnum.VACCINE_END_DAY_NOT_COMPLETE.value && it.type == vaccinType }?.let {
             it.value
         } ?: run {
             ""
         }
     }
 
-    fun getVaccineStartDayComplete(): String{
-        return getValidationRules().find { it.name == ValidationRulesEnum.VACCINE_START_DAY_COMPLETE.value}?.let {
+    fun getVaccineStartDayComplete(vaccinType: String): String{
+        return getValidationRules().find { it.name == ValidationRulesEnum.VACCINE_START_DAY_COMPLETE.value && it.type == vaccinType }?.let {
             it.value
         } ?: run {
             ""
         }
     }
 
-    fun getVaccineEndDayComplete(): String{
-        return getValidationRules().find { it.name == ValidationRulesEnum.VACCINE_END_DAY_COMPLETE.value}?.let {
+    fun getVaccineEndDayComplete(vaccinType: String): String{
+        return getValidationRules().find { it.name == ValidationRulesEnum.VACCINE_END_DAY_COMPLETE.value && it.type == vaccinType}?.let {
             it.value
         } ?: run {
             ""
         }
     }
-
-
 }

@@ -45,5 +45,8 @@
     <string name="updateTitle">Aggiornamento richiesto…</string>
     <string name="updateMessage">Per continuare ad utlizzare l’applicazione, scarica la nuova versione dallo store</string>
     <string name="updateLabel">Aggiorna</string>
+    <string name="technicalErrorMessage">Il certificato non è valido o non è stato possibile verificarlo.</string>
+
+
 
 </resources>
