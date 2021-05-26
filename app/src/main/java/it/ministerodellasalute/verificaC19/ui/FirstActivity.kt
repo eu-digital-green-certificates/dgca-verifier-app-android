@@ -22,22 +22,28 @@
 package it.ministerodellasalute.verificaC19.ui
 
 import android.Manifest
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.observe
 import dagger.hilt.android.AndroidEntryPoint
+import it.ministerodellasalute.verificaC19.BuildConfig
 import it.ministerodellasalute.verificaC19.FORMATTED_DATE_LAST_SYNC
 import it.ministerodellasalute.verificaC19.R
 import it.ministerodellasalute.verificaC19.databinding.ActivityFirstBinding
 import it.ministerodellasalute.verificaC19.parseTo
 import it.ministerodellasalute.verificaC19.ui.main.MainActivity
+import it.ministerodellasalute.verificaC19.util.Utility
 
 @AndroidEntryPoint
 class FirstActivity : AppCompatActivity(), View.OnClickListener {
@@ -66,11 +72,13 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
             binding.dateLastSyncText.text = getString(R.string.lastSyncDate, it.parseTo(FORMATTED_DATE_LAST_SYNC))
         }
 
+
+
         viewModel.fetchStatus.observe(this){
             if(it){
                 binding.qrButton.isEnabled = false
                 binding.dateLastSyncText.text = getString(R.string.lastSyncDate, getString(R.string.loading))
-            }else{
+            } else{
                 binding.qrButton.isEnabled = true
                 viewModel.getDateLastSync().let{ date ->
                     binding.dateLastSyncText.text = getString(R.string.lastSyncDate, date.parseTo(FORMATTED_DATE_LAST_SYNC))
@@ -82,8 +90,17 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
     private fun checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
             requestPermissionLauncher.launch(Manifest.permission.CAMERA)
-        }else{
+        } else{
             openQrCodeReader()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getAppMinVersion().let{
+            if (Utility.versionCompare(it, BuildConfig.VERSION_NAME) > 0){
+                createForceUpdateDialog()
+            }
         }
     }
 
@@ -95,6 +112,27 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.qrButton -> checkCameraPermission()
+        }
+    }
+
+    fun createForceUpdateDialog(){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.updateTitle))
+        builder.setMessage(getString(R.string.updateMessage))
+
+        builder.setPositiveButton(getString(R.string.updateLabel)) { dialog, which ->
+            openGooglePlay()
+        }
+        val dialog = builder.create()
+        dialog.setCancelable(false)
+        dialog.show()
+    }
+
+    fun openGooglePlay(){
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")))
+        } catch (e: ActivityNotFoundException) {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
         }
     }
 }

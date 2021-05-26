@@ -23,15 +23,18 @@ package it.ministerodellasalute.verificaC19.ui
 
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.ministerodellasalute.verificaC19.data.VerifierRepository
 import it.ministerodellasalute.verificaC19.data.local.Preferences
+import it.ministerodellasalute.verificaC19.data.remote.model.Rule
+import it.ministerodellasalute.verificaC19.model.ValidationRulesEnum
 import javax.inject.Inject
 
 @HiltViewModel
 class FirstViewModel @Inject constructor(
     verifierRepository: VerifierRepository,
-    private val preferances: Preferences
+    private val preferences: Preferences
 ) : ViewModel(){
 
     val fetchStatus: MediatorLiveData<Boolean> = MediatorLiveData()
@@ -42,8 +45,19 @@ class FirstViewModel @Inject constructor(
         }
     }
 
-    fun getDateLastSync() = preferances.dateLastFetch
+    fun getDateLastSync() = preferences.dateLastFetch
 
+    private fun getValidationRules():Array<Rule>{
+        val jsonString = preferences.validationRulesJson
+        return Gson().fromJson(jsonString, Array<Rule>::class.java)
+    }
 
+    fun getAppMinVersion(): String{
+        return getValidationRules().find { it.name == ValidationRulesEnum.APP_MIN_VERSION.value}?.let {
+            it.value
+        } ?: run {
+            ""
+        }
+    }
 
 }

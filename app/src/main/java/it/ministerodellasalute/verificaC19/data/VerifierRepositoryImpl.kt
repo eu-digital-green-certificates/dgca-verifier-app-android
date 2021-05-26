@@ -25,35 +25,61 @@ package it.ministerodellasalute.verificaC19.data
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.gson.Gson
+import dgca.verifier.app.decoder.base64ToX509Certificate
+import dgca.verifier.app.decoder.toBase64
 import it.ministerodellasalute.verificaC19.data.local.AppDatabase
 import it.ministerodellasalute.verificaC19.data.local.Key
 import it.ministerodellasalute.verificaC19.data.local.Preferences
 import it.ministerodellasalute.verificaC19.data.remote.ApiService
+import it.ministerodellasalute.verificaC19.data.remote.model.Rule
+import it.ministerodellasalute.verificaC19.model.ValidationRulesEnum
 import it.ministerodellasalute.verificaC19.security.KeyStoreCryptor
-import dgca.verifier.app.decoder.base64ToX509Certificate
-import dgca.verifier.app.decoder.toBase64
 import java.net.HttpURLConnection
 import java.security.MessageDigest
 import java.security.cert.Certificate
 import javax.inject.Inject
 
+
 class VerifierRepositoryImpl @Inject constructor(
-    private val apiService: ApiService,
-    private val preferences: Preferences,
-    private val db: AppDatabase,
-    private val keyStoreCryptor: KeyStoreCryptor
+        private val apiService: ApiService,
+        private val preferences: Preferences,
+        private val db: AppDatabase,
+        private val keyStoreCryptor: KeyStoreCryptor
 ) : BaseRepository(), VerifierRepository {
 
     private val validCertList = mutableListOf<String>()
     private val fetchStatus: MutableLiveData<Boolean> = MutableLiveData()
 
-    override suspend fun fetchCertificates(): Boolean? {
+    override suspend fun syncData(): Boolean?{
         return execute {
             fetchStatus.postValue(true)
 
+            fetchValidationRules()
+
+            if(fetchCertificates() == false) {
+                fetchStatus.postValue(false)
+                return@execute false
+            }
+
+            fetchStatus.postValue(false)
+            return@execute true
+        }
+    }
+
+    private suspend fun fetchValidationRules() {
+        val response = apiService.getValidationRules()
+        val body = response.body() ?: run {
+            return
+        }
+        preferences.validationRulesJson = body.stringSuspending()
+    }
+
+    private suspend fun fetchCertificates(): Boolean? {
+        return execute {
+
             val response = apiService.getCertStatus()
             val body = response.body() ?: run {
-                fetchStatus.postValue(false)
                 return@execute false
             }
                 validCertList.clear()
@@ -68,7 +94,6 @@ class VerifierRepositoryImpl @Inject constructor(
                 db.keyDao().deleteAllExcept(validCertList.toTypedArray())
 
                 preferences.dateLastFetch = System.currentTimeMillis()
-                fetchStatus.postValue(false)
 
                 return@execute true
         }
