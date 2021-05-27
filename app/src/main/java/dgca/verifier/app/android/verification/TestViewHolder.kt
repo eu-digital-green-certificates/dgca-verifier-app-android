@@ -23,20 +23,28 @@
 package dgca.verifier.app.android.verification
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import dgca.verifier.app.android.DATE_TIME
-import dgca.verifier.app.android.FORMATTED_DATE_TIME
 import dgca.verifier.app.android.databinding.ItemTestBinding
 import dgca.verifier.app.android.model.TestModel
-import dgca.verifier.app.android.parseFromTo
+import dgca.verifier.app.android.toFormattedDateTime
 
 class TestViewHolder(private val binding: ItemTestBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(data: TestModel) {
         binding.testResultValue.text = data.resultType.value
-        binding.dateOfCollectionValue.text = data.dateTimeOfCollection.parseFromTo(DATE_TIME, FORMATTED_DATE_TIME)
-        binding.dateOfTestResultValue.text = data.dateTimeOfTestResult?.parseFromTo(DATE_TIME, FORMATTED_DATE_TIME)
+        val dateOfCollectionString: String? =
+            data.dateTimeOfCollection.toFormattedDateTime()?.apply {
+                binding.dateOfCollectionValue.text = this
+            }
+        binding.dateOfCollectionValue.visibility =
+            if (dateOfCollectionString?.isNotEmpty() == true) View.VISIBLE else View.GONE
+        val dateOfTestResultString: String? =
+            data.dateTimeOfTestResult?.toFormattedDateTime()?.apply {
+                binding.dateOfTestResultValue.text = this
+            }
+        binding.dateOfTestResultValue.visibility = if(dateOfTestResultString?.isNotEmpty() == true) View.VISIBLE else View.GONE
         binding.diseaseValue.text = data.disease
         binding.typeOfTestValue.text = data.typeOfTest
         binding.countryValue.text = data.countryOfVaccination

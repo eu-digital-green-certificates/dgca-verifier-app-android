@@ -23,12 +23,23 @@
 package dgca.verifier.app.android
 
 import java.text.SimpleDateFormat
-import java.util.Locale
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 const val YEAR_MONTH_DAY = "yyyy-MM-dd"
-const val DATE_TIME = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 const val FORMATTED_YEAR_MONTH_DAY = "MMM d, yyyy"
-const val FORMATTED_DATE_TIME = "MMM d, yyyy, HH:mm"
+private const val FORMATTED_DATE_TIME = "MMM d, yyyy, HH:mm"
+
+private fun String.toZonedDateTime(): ZonedDateTime? = try {
+    ZonedDateTime.parse(this)
+} catch (error: Throwable) {
+    null
+}
+
+private val DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(FORMATTED_DATE_TIME)
+fun String.toFormattedDateTime(): String? =
+    this.toZonedDateTime()?.let { DATE_TIME_FORMATTER.format(it) }
 
 fun String.parseFromTo(from: String, to: String): String {
     return try {
