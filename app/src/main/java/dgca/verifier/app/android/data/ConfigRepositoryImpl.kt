@@ -31,6 +31,7 @@ class ConfigRepositoryImpl @Inject constructor(
     private val localConfigDataSource: MutableConfigDataSource,
     private val remoteConfigDataSource: RemoteConfigDataSource
 ) : ConfigRepository {
+
     override fun local(): ConfigDataSource {
         return localConfigDataSource
     }

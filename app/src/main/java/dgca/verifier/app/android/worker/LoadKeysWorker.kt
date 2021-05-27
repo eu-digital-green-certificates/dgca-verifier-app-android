@@ -50,6 +50,7 @@ class LoadKeysWorker @AssistedInject constructor(
             config.getUpdateUrl(versionName)
         )
         Timber.d("key fetching result: ${res == true}")
+
         return if (res == true) Result.success() else Result.retry()
     }
 }

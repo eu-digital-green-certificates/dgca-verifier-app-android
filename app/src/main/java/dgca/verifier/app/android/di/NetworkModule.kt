@@ -33,7 +33,12 @@ import dgca.verifier.app.android.BuildConfig
 import dgca.verifier.app.android.data.ConfigRepository
 import dgca.verifier.app.android.data.remote.ApiService
 import dgca.verifier.app.android.network.HeaderInterceptor
-import okhttp3.*
+import okhttp3.Cache
+import okhttp3.Call
+import okhttp3.CertificatePinner
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -84,8 +89,8 @@ object NetworkModule {
     @Singleton
     @Provides
     internal fun provideOkhttpClient(
-            cache: Cache, interceptor: Interceptor,
-            certificatePinner: CertificatePinner
+        cache: Cache, interceptor: Interceptor,
+        certificatePinner: CertificatePinner
     ): OkHttpClient {
         val httpClient = getHttpClient(cache).apply {
             addInterceptor(HeaderInterceptor())
@@ -110,9 +115,9 @@ object NetworkModule {
 
     private fun getHttpClient(cache: Cache): OkHttpClient.Builder {
         return OkHttpClient.Builder()
-                .cache(cache)
-                .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
-                .readTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
+            .cache(cache)
+            .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
     }
 
     private fun addLogging(httpClient: OkHttpClient.Builder) {
@@ -125,16 +130,16 @@ object NetworkModule {
 
     private fun createRetrofit(okHttpClient: Provider<OkHttpClient>): Retrofit {
         return Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create(Gson()))
-                .baseUrl(BASE_URL)
-                .callFactory { okHttpClient.get().newCall(it) }
-                .build()
+            .addConverterFactory(GsonConverterFactory.create(Gson()))
+            .baseUrl(BASE_URL)
+            .callFactory { okHttpClient.get().newCall(it) }
+            .build()
     }
 }
 
 @PublishedApi
 internal inline fun Retrofit.Builder.callFactory(
-        crossinline body: (Request) -> Call
+    crossinline body: (Request) -> Call
 ) = callFactory(object : Call.Factory {
     override fun newCall(request: Request): Call = body(request)
 })

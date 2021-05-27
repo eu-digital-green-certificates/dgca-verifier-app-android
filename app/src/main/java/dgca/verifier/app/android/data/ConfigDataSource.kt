@@ -23,5 +23,6 @@
 package dgca.verifier.app.android.data
 
 interface ConfigDataSource {
+
     fun getConfig(): Config
 }

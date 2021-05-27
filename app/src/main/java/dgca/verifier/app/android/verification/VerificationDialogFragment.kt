@@ -65,11 +65,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         adapter = CertListAdapter(layoutInflater)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = DialogFragmentVerificationBinding.inflate(inflater, container, false)
         return binding.root
     }

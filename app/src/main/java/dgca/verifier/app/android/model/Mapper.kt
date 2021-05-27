@@ -30,40 +30,40 @@ import dgca.verifier.app.decoder.model.Vaccination
 
 fun GreenCertificate.toCertificateModel(): CertificateModel {
     return CertificateModel(
-        person.toPersonModel(),
-        dateOfBirth,
-        vaccinations?.map { it.toVaccinationModel() },
-        tests?.map { it.toTestModel() },
-        recoveryStatements?.map { it.toRecoveryModel() }
+        person = person.toPersonModel(),
+        dateOfBirth = dateOfBirth,
+        vaccinations = vaccinations?.map { it.toVaccinationModel() },
+        tests = tests?.map { it.toTestModel() },
+        recoveryStatements = recoveryStatements?.map { it.toRecoveryModel() }
     )
 }
 
 fun RecoveryStatement.toRecoveryModel(): RecoveryModel {
     return RecoveryModel(
-        disease,
-        dateOfFirstPositiveTest,
-        countryOfVaccination,
-        certificateIssuer,
-        certificateValidFrom,
-        certificateValidUntil,
-        certificateIdentifier
+        disease = disease,
+        dateOfFirstPositiveTest = dateOfFirstPositiveTest,
+        countryOfVaccination = countryOfVaccination,
+        certificateIssuer = certificateIssuer,
+        certificateValidFrom = certificateValidFrom,
+        certificateValidUntil = certificateValidUntil,
+        certificateIdentifier = certificateIdentifier
     )
 }
 
 fun Test.toTestModel(): TestModel {
     return TestModel(
-        disease,
-        typeOfTest,
-        testName,
-        testNameAndManufacturer,
-        dateTimeOfCollection,
-        dateTimeOfTestResult,
-        testResult,
-        testingCentre,
-        countryOfVaccination,
-        certificateIssuer,
-        certificateIdentifier,
-        getTestResultType().toTestResult()
+        disease = disease,
+        typeOfTest = typeOfTest,
+        testName = testName,
+        testNameAndManufacturer = testNameAndManufacturer,
+        dateTimeOfCollection = dateTimeOfCollection,
+        dateTimeOfTestResult = dateTimeOfTestResult,
+        testResult = testResult,
+        testingCentre = testingCentre,
+        countryOfVaccination = countryOfVaccination,
+        certificateIssuer = certificateIssuer,
+        certificateIdentifier = certificateIdentifier,
+        resultType = getTestResultType().toTestResult()
     )
 }
 
@@ -76,24 +76,24 @@ fun Test.TestResult.toTestResult(): TestResult {
 
 fun Vaccination.toVaccinationModel(): VaccinationModel {
     return VaccinationModel(
-        disease,
-        vaccine,
-        medicinalProduct,
-        manufacturer,
-        doseNumber,
-        totalSeriesOfDoses,
-        dateOfVaccination,
-        countryOfVaccination,
-        certificateIssuer,
-        certificateIdentifier
+        disease = disease,
+        vaccine = vaccine,
+        medicinalProduct = medicinalProduct,
+        manufacturer = manufacturer,
+        doseNumber = doseNumber,
+        totalSeriesOfDoses = totalSeriesOfDoses,
+        dateOfVaccination = dateOfVaccination,
+        countryOfVaccination = countryOfVaccination,
+        certificateIssuer = certificateIssuer,
+        certificateIdentifier = certificateIdentifier
     )
 }
 
 fun Person.toPersonModel(): PersonModel {
     return PersonModel(
-        standardisedFamilyName,
-        familyName,
-        standardisedGivenName,
-        givenName
+        standardisedFamilyName = standardisedFamilyName,
+        familyName = familyName,
+        standardisedGivenName = standardisedGivenName,
+        givenName = givenName
     )
 }

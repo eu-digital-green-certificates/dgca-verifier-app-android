@@ -27,11 +27,15 @@ import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dgca.verifier.app.android.data.Config
 import timber.log.Timber
-import java.io.*
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileWriter
+import java.io.InputStreamReader
 import javax.inject.Inject
 
-
 class LocalConfigDataSource @Inject constructor(@ApplicationContext private val context: Context) : MutableConfigDataSource {
+
     private lateinit var config: Config
     private val gson = Gson()
 
@@ -72,7 +76,8 @@ class LocalConfigDataSource @Inject constructor(@ApplicationContext private val 
         return config
     }
 
-    private fun defaultConfig(): Config {
-        return context.assets.open(DEFAULT_CONFIG_FILE).bufferedReader().use { gson.fromJson(it.readText(), Config::class.java) }
-    }
+    private fun defaultConfig(): Config =
+        context.assets.open(DEFAULT_CONFIG_FILE).bufferedReader().use {
+            gson.fromJson(it.readText(), Config::class.java)
+        }
 }

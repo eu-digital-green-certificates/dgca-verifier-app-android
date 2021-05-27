@@ -63,10 +63,10 @@ class VerifierRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCertificatesBy(kid: String): List<Certificate> {
-        return db.keyDao().getByKid(kid)
-            .map { keyStoreCryptor.decrypt(it.key)?.base64ToX509Certificate()!! }
-    }
+    override suspend fun getCertificatesBy(kid: String): List<Certificate> =
+        db.keyDao().getByKid(kid).map {
+            keyStoreCryptor.decrypt(it.key)?.base64ToX509Certificate()!!
+        }
 
     private suspend fun fetchCertificate(url: String, resumeToken: Long) {
         val tokenFormatted = if (resumeToken == -1L) "" else resumeToken.toString()

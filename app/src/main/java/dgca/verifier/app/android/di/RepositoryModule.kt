@@ -52,7 +52,6 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindRemoteConfigDataSource(configDataSourceDefault: DefaultRemoteConfigDataSource): RemoteConfigDataSource
 
-
     @Singleton
     @Binds
     abstract fun bindConfigRepository(configRepository: ConfigRepositoryImpl): ConfigRepository
