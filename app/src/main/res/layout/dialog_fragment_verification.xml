@@ -112,7 +112,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/white"
-        app:layout_constraintBottom_toTopOf="@id/bottom_container"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/verification_status_bg" />
@@ -126,7 +126,6 @@
         android:paddingStart="@dimen/default_margin"
         android:paddingEnd="@dimen/default_margin"
         android:text="@string/reason_for_invalidity"
-        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/verification_status_bg" />
@@ -138,16 +137,16 @@
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/default_margin"
         android:paddingEnd="@dimen/default_margin"
-        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/reason_for_certificate_invalidity_title"
-        tools:text="@string/cryptographic_signature_not_valid" />
+        tools:text="Test error" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/errorDetails"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:visibility="gone"
         app:constraint_referenced_ids="reason_for_certificate_invalidity_title, reason_for_certificate_invalidity_name" />
 
     <androidx.core.widget.NestedScrollView
@@ -155,6 +154,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:paddingHorizontal="@dimen/default_padding"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/bottom_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -230,11 +230,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <View
+        android:id="@+id/timer_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/grey_transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:id="@+id/bottom_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingBottom="@dimen/default_margin"
@@ -263,21 +272,14 @@
             android:src="@drawable/eu_logo_big" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/progress_container"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="20dp"
-        android:background="@color/white"
-        android:gravity="center"
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:indeterminateTint="@color/blue"
         app:layout_constraintBottom_toTopOf="@+id/bottom_container"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:indeterminateTint="@color/blue" />
-    </LinearLayout>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

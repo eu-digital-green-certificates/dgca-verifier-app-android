@@ -40,10 +40,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
-import dgca.verifier.app.android.*
+import dgca.verifier.app.android.FORMATTED_YEAR_MONTH_DAY
+import dgca.verifier.app.android.R
+import dgca.verifier.app.android.YEAR_MONTH_DAY
 import dgca.verifier.app.android.databinding.DialogFragmentVerificationBinding
+import dgca.verifier.app.android.dpToPx
 import dgca.verifier.app.android.model.CertificateData
 import dgca.verifier.app.android.model.CertificateModel
+import dgca.verifier.app.android.parseFromTo
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
@@ -72,7 +76,13 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setViewHeight()
+        val displayMetrics = DisplayMetrics()
+        requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val height = displayMetrics.heightPixels
+        val params = binding.content.layoutParams as FrameLayout.LayoutParams
+        params.height = height - TOP_MARGIN.dpToPx()
+
+        binding.timerView.translationX = -displayMetrics.widthPixels.toFloat()
 
         dialog.expand()
 
@@ -83,7 +93,6 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
 
         viewModel.verificationResult.observe(viewLifecycleOwner, {
             setCertStatusUI(it.isValid())
-
             setCertDataVisibility(it.isValid())
         })
         viewModel.verificationError.observe(viewLifecycleOwner, {
@@ -96,10 +105,12 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
 
                 val list = getCertificateListData(certificate)
                 adapter.update(list)
+
+                startTimer()
             }
         })
         viewModel.inProgress.observe(viewLifecycleOwner, {
-            binding.progressContainer.isVisible = it
+            binding.progressBar.isVisible = it
         })
 
         viewModel.init(args.qrCodeText)
@@ -108,14 +119,6 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun setViewHeight() {
-        val displayMetrics = DisplayMetrics()
-        requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
-        val height = displayMetrics.heightPixels
-        val params = binding.content.layoutParams as FrameLayout.LayoutParams
-        params.height = height - TOP_MARGIN.dpToPx()
     }
 
     private fun setCertStatusUI(isValid: Boolean) {
@@ -200,8 +203,21 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         button.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
     }
 
+    private fun startTimer() {
+        binding.timerView.animate()
+            .setDuration(COLLAPSE_TIME)
+            .translationX(0F)
+            .withEndAction {
+                if (isVisible) {
+                    dismiss()
+                }
+            }
+            .start()
+    }
+
     companion object {
         private const val TOP_MARGIN = 50
+        private const val COLLAPSE_TIME = 15000L // 15 sec
     }
 }
 
