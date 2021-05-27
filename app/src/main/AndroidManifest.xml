@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".ui.FirstActivity">
+        <activity android:name=".ui.SplashScreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,6 +24,7 @@
         </activity>
 
         <activity android:name=".ui.main.MainActivity"/>
+        <activity android:name=".ui.FirstActivity"/>
 
         <provider
             android:name="androidx.work.impl.WorkManagerInitializer"
