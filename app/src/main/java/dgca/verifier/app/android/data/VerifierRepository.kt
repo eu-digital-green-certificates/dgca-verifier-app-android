@@ -22,6 +22,7 @@
 
 package dgca.verifier.app.android.data
 
+import androidx.lifecycle.LiveData
 import java.security.cert.Certificate
 
 interface VerifierRepository {
@@ -29,4 +30,6 @@ interface VerifierRepository {
     suspend fun fetchCertificates(statusUrl: String, updateUrl: String): Boolean?
 
     suspend fun getCertificatesBy(kid: String): List<Certificate>
+
+    fun getLastSyncTimeMillis(): LiveData<Long>
 }

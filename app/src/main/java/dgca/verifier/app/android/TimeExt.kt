@@ -23,7 +23,9 @@
 package dgca.verifier.app.android
 
 import java.text.SimpleDateFormat
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -58,3 +60,8 @@ fun String.parseFromTo(from: String, to: String): String {
         ""
     }
 }
+
+fun Long.toLocalDateTime(): LocalDateTime =
+    LocalDateTime.ofInstant(Instant.ofEpochMilli(this), ZoneId.systemDefault())
+
+fun LocalDateTime.formatWith(pattern: String): String = DateTimeFormatter.ofPattern(pattern).format(this)

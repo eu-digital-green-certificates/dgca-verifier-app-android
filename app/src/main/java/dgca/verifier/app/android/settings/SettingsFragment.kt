@@ -34,9 +34,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import dagger.hilt.android.AndroidEntryPoint
-import dgca.verifier.app.android.BuildConfig
-import dgca.verifier.app.android.MainActivity
-import dgca.verifier.app.android.R
+import dgca.verifier.app.android.*
 import dgca.verifier.app.android.databinding.FragmentSettingsBinding
 
 @AndroidEntryPoint
@@ -65,6 +63,17 @@ class SettingsFragment : Fragment() {
             binding.licenses.isClickable = it != true
             binding.syncPublicKeys.isClickable = it != true
             binding.progressBar.visibility = if (it == true) View.VISIBLE else View.GONE
+        })
+        viewModel.lastSyncLiveData.observe(viewLifecycleOwner, {
+            if (it <= 0) {
+                binding.lastUpdate.visibility = View.GONE
+            } else {
+                binding.lastUpdate.visibility = View.VISIBLE
+                binding.lastUpdate.text = getString(
+                    R.string.last_updated,
+                    it.toLocalDateTime().formatWith(LAST_UPDATE_DATE_TIME_FORMAT)
+                )
+            }
         })
     }
 
@@ -97,5 +106,6 @@ class SettingsFragment : Fragment() {
 
     companion object {
         const val PRIVACY_POLICY = "https://op.europa.eu/en/web/about-us/legal-notices/eu-mobile-apps"
+        private const val LAST_UPDATE_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm"
     }
 }

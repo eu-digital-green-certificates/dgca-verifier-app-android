@@ -88,33 +88,61 @@
         android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@+id/privacyInformation" />
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/trustedPublicKeys"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_margin"
+        android:layout_marginTop="@dimen/default_margin"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/trusted_public_keys"
+        android:textColor="@color/grey_50"
+        android:textSize="@dimen/text_size_medium"
+        app:layout_constraintTop_toBottomOf="@+id/licenses"
+        tools:layout_editor_absoluteX="16dp" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/syncPublicKeys"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableEnd="@drawable/ic_baseline_arrow_forward_24"
+        android:drawableEnd="@drawable/ic_synchronize_solid"
         android:gravity="start|center"
         android:insetTop="0dp"
         android:insetBottom="0dp"
         android:letterSpacing="0"
         android:minHeight="48dp"
         android:paddingHorizontal="@dimen/default_padding"
-        android:text="@string/sync_public_keys"
+        android:text="@string/reload"
         android:textAllCaps="false"
         android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@+id/licenses" />
+        app:layout_constraintTop_toBottomOf="@+id/trustedPublicKeys" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/lastUpdate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_margin"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@color/grey_50"
+        android:textSize="@dimen/text_size_medium"
+        app:layout_constraintTop_toBottomOf="@+id/syncPublicKeys"
+        tools:layout_editor_absoluteX="16dp"
+        tools:text="Last Updated: 2021-05-27 09:44" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/materialTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/default_margin"
+        android:layout_marginTop="@dimen/default_margin"
         android:text="@string/settings_version_title"
         android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@+id/syncPublicKeys"
+        app:layout_constraintTop_toBottomOf="@+id/lastUpdate"
         tools:layout_editor_absoluteX="0dp" />
 
     <com.google.android.material.textview.MaterialTextView
