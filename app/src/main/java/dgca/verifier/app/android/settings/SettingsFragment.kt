@@ -44,19 +44,9 @@ class SettingsFragment : Fragment() {
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
-
-    companion object {
-        const val PRIVACY_POLICY =
-            "https://op.europa.eu/en/web/about-us/legal-notices/eu-mobile-apps"
-    }
-
     private val viewModel by viewModels<SettingsViewModel>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -103,5 +93,9 @@ class SettingsFragment : Fragment() {
         requireContext().apply {
             startActivity(Intent(this, OssLicensesMenuActivity::class.java))
         }
+    }
+
+    companion object {
+        const val PRIVACY_POLICY = "https://op.europa.eu/en/web/about-us/legal-notices/eu-mobile-apps"
     }
 }

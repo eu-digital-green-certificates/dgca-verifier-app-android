@@ -49,14 +49,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class VerificationViewModel @Inject constructor(
-        private val prefixValidationService: PrefixValidationService,
-        private val base45Service: Base45Service,
-        private val compressorService: CompressorService,
-        private val cryptoService: CryptoService,
-        private val coseService: CoseService,
-        private val schemaValidator: SchemaValidator,
-        private val cborService: CborService,
-        private val verifierRepository: VerifierRepository
+    private val prefixValidationService: PrefixValidationService,
+    private val base45Service: Base45Service,
+    private val compressorService: CompressorService,
+    private val cryptoService: CryptoService,
+    private val coseService: CoseService,
+    private val schemaValidator: SchemaValidator,
+    private val cborService: CborService,
+    private val verifierRepository: VerifierRepository
 ) : ViewModel() {
 
     private val _verificationResult = MutableLiveData<VerificationResult>()

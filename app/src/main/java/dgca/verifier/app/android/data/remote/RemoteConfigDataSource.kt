@@ -25,5 +25,6 @@ package dgca.verifier.app.android.data.remote
 import dgca.verifier.app.android.data.Config
 
 interface RemoteConfigDataSource {
+
     fun getConfig(url: String): Config
 }

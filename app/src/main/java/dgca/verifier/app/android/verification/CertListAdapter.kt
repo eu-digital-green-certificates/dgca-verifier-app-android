@@ -32,9 +32,7 @@ import dgca.verifier.app.android.model.RecoveryModel
 import dgca.verifier.app.android.model.TestModel
 import dgca.verifier.app.android.model.VaccinationModel
 
-class CertListAdapter(
-    private val inflater: LayoutInflater
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class CertListAdapter(private val inflater: LayoutInflater) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var items = emptyList<CertificateData>()
 

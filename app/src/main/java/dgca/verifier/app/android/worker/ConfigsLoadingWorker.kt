@@ -11,10 +11,11 @@ import timber.log.Timber
 
 @HiltWorker
 class ConfigsLoadingWorker @AssistedInject constructor(
-        @Assisted context: Context,
-        @Assisted workParams: WorkerParameters,
-        private val configRepository: ConfigRepository
+    @Assisted context: Context,
+    @Assisted workParams: WorkerParameters,
+    private val configRepository: ConfigRepository
 ) : Worker(context, workParams) {
+
     override fun doWork(): Result {
         try {
             val config = configRepository.getConfig()
