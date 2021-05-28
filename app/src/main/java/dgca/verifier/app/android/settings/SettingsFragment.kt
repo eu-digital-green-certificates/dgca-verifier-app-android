@@ -32,6 +32,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.BuildConfig
 import dgca.verifier.app.android.MainActivity
@@ -64,12 +65,14 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         (requireActivity() as MainActivity).setSupportActionBar(binding.toolbar)
-        binding.privacyPolicy.setOnClickListener { launchWebIntent() }
+        binding.privacyInformation.setOnClickListener { launchWebIntent() }
+        binding.licenses.setOnClickListener { openLicenses() }
         binding.syncPublicKeys.setOnClickListener { viewModel.syncPublicKeys() }
         binding.version.text = getString(R.string.version, BuildConfig.VERSION_NAME)
 
         viewModel.inProgress.observe(viewLifecycleOwner, {
-            binding.privacyPolicy.isClickable = it != true
+            binding.privacyInformation.isClickable = it != true
+            binding.licenses.isClickable = it != true
             binding.syncPublicKeys.isClickable = it != true
             binding.progressBar.visibility = if (it == true) View.VISIBLE else View.GONE
         })
@@ -93,5 +96,12 @@ class SettingsFragment : Fragment() {
             return
         }
         requireContext().startActivity(intent)
+    }
+
+    private fun openLicenses() {
+        OssLicensesMenuActivity.setActivityTitle(getString(R.string.licenses))
+        requireContext().apply {
+            startActivity(Intent(this, OssLicensesMenuActivity::class.java))
+        }
     }
 }
