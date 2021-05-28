@@ -33,6 +33,8 @@ interface Preferences {
 
     var resumeToken: Long
 
+    var lastKeysSyncTimeMillis: Long
+
     fun clear()
 }
 
@@ -46,6 +48,7 @@ class PreferencesImpl(context: Context) : Preferences {
     }
 
     override var resumeToken by LongPreference(preferences, KEY_RESUME_TOKEN, -1)
+    override var lastKeysSyncTimeMillis by LongPreference(preferences, KEY_LAST_KEYS_SYNC_TIME_MILLIS, -1)
 
     override fun clear() {
         preferences.value.edit().clear().apply()
@@ -54,6 +57,7 @@ class PreferencesImpl(context: Context) : Preferences {
     companion object {
         private const val USER_PREF = "dgca.verifier.app.pref"
         private const val KEY_RESUME_TOKEN = "resume_token"
+        private const val KEY_LAST_KEYS_SYNC_TIME_MILLIS = "last_keys_sync_time_millis"
     }
 }
 

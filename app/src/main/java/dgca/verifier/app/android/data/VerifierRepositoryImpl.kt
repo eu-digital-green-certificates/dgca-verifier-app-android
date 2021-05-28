@@ -22,6 +22,8 @@
 
 package dgca.verifier.app.android.data
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import dgca.verifier.app.android.data.local.AppDatabase
 import dgca.verifier.app.android.data.local.Key
 import dgca.verifier.app.android.data.local.Preferences
@@ -46,6 +48,7 @@ class VerifierRepositoryImpl @Inject constructor(
 
     private val validCertList = mutableListOf<String>()
     private val mutex = Mutex()
+    private val lastSyncLiveData: MutableLiveData<Long> = MutableLiveData(preferences.lastKeysSyncTimeMillis)
 
     override suspend fun fetchCertificates(statusUrl: String, updateUrl: String): Boolean? {
         mutex.withLock {
@@ -58,6 +61,8 @@ class VerifierRepositoryImpl @Inject constructor(
                 val resumeToken = preferences.resumeToken
                 fetchCertificate(updateUrl, resumeToken)
                 db.keyDao().deleteAllExcept(validCertList.toTypedArray())
+                preferences.lastKeysSyncTimeMillis = System.currentTimeMillis()
+                lastSyncLiveData.postValue(preferences.lastKeysSyncTimeMillis)
                 return@execute true
             }
         }
@@ -67,6 +72,8 @@ class VerifierRepositoryImpl @Inject constructor(
         db.keyDao().getByKid(kid).map {
             keyStoreCryptor.decrypt(it.key)?.base64ToX509Certificate()!!
         }
+
+    override fun getLastSyncTimeMillis(): LiveData<Long> = lastSyncLiveData
 
     private suspend fun fetchCertificate(url: String, resumeToken: Long) {
         val tokenFormatted = if (resumeToken == -1L) "" else resumeToken.toString()

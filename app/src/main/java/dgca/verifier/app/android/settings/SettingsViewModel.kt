@@ -43,6 +43,7 @@ class SettingsViewModel @Inject constructor(
 
     private val _inProgress = MutableLiveData<Boolean>()
     val inProgress: LiveData<Boolean> = _inProgress
+    val lastSyncLiveData: LiveData<Long> = verifierRepository.getLastSyncTimeMillis()
 
     fun syncPublicKeys() {
         viewModelScope.launch {
