@@ -201,7 +201,7 @@ class VerificationFragment : Fragment(), View.OnClickListener {
         binding.certificateValid.text =
             if (isExpired) getString(R.string.expirationText) else getString(R.string.certificateNonValid)
         binding.subtitleText.text =
-            if (isExpired) getString(R.string.subtitle_text_expired) else getString(R.string.technicalErrorMessage)
+            if (isExpired) getString(R.string.subtitle_text_expired) else getString(R.string.subtitle_text_technicalError)
     }
 
     private fun setPersonData(person: PersonModel, dateOfBirth: String) {

@@ -30,23 +30,21 @@
     <string name="welcome">Benvenuto</string>
     <string name="systemDescription">Questo è il sistema di scannerizzazione dei QR code delle certificazioni di idoneità Covid19.</string>
     <string name="codiceFiscale">Codice fiscale</string>
-    <string name="expirationText">Data scandeza certificato</string>
+    <string name="expirationText">Data scandenza certificato</string>
     <string name="certificateValid">Certificato valido</string>
     <string name="certificateNonValid">Certificato non valido</string>
     <string name="subtitle_text">Per sicurezza, confrontare i seguenti dati con un documento ufficiale (es: Carta d\'Identità).</string>
     <string name="subtitle_text_nonvalid">Il QR code, o firma digitale, non è valido.</string>
     <string name="subtitle_text_expired">Il certificato è scaduto.</string>
+    <string name="subtitle_text_technicalError">Il certificato non è valido o non è stato possibile verificarlo.</string>
     <string name="scanQrCertificate">Scannerizza il QR code di una certificazione. </string>
     <string name="scanQr">Avvia scan </string>
     <string name="repeatQR">Prossima scansione</string>
     <string name="dateOfBirth">Data di nascita</string>
     <string name="lastSyncDate">Ultimo aggiornamento: %1$s</string>
     <string name="loading">Scaricando…</string>
-    <string name="updateTitle">Aggiornamento richiesto…</string>
-    <string name="updateMessage">Per continuare ad utlizzare l’applicazione, scarica la nuova versione dallo store</string>
+    <string name="updateTitle">Aggiornamento richiesto</string>
+    <string name="updateMessage">Per continuare ad utilizzare l’applicazione, scarica la nuova versione dallo store</string>
     <string name="updateLabel">Aggiorna</string>
-    <string name="technicalErrorMessage">Il certificato non è valido o non è stato possibile verificarlo.</string>
-
-
 
 </resources>
