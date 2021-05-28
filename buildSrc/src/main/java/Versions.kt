@@ -38,10 +38,12 @@ object Versions {
     const val androidx_room = "2.3.0"
     const val androidx_worker_ktx = "2.5.0"
     const val hilt_version = "2.33-beta"
+    const val google_licenses_version = "0.10.4"
     const val retrofit = "2.9.0"
     const val logging_interceptor = "4.0.1"
     const val gson_converter = "2.6.0"
     const val timber = "4.7.1"
+    const val google_licenses = "17.0.0"
 
     // QR
     const val zxing = "4.2.0"
