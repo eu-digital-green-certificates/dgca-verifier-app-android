@@ -47,6 +47,8 @@ object Deps {
     const val hilt_viewmodel = "androidx.hilt:hilt-lifecycle-viewmodel:${Versions.androidx_hilt_viewmodel}"
     const val hilt_work = "androidx.hilt:hilt-work:${Versions.androidx_hilt_work}"
 
+    const val google_licenses_plugin = "com.google.android.gms:oss-licenses-plugin:${Versions.google_licenses_version}"
+
     const val zxing = "com.journeyapps:zxing-android-embedded:${Versions.zxing}"
     const val guava_conflict_resolver = "com.google.guava:listenablefuture:${Versions.guave_conflict_resolver_version}"
     const val kotlin_reflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin_reflect}"
@@ -56,6 +58,8 @@ object Deps {
     const val bouncy_castle = "org.bouncycastle:bcpkix-jdk15to18:${Versions.bouncy_castle}"
 
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
+
+    const val google_licenses = "com.google.android.gms:play-services-oss-licenses:${Versions.google_licenses}"
 
     const val test_junit = "junit:junit:${Versions.junit}"
     const val test_junit_jupiter_api = "org.junit.jupiter:junit-jupiter-api:${Versions.junit_jupiter}"

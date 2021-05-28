@@ -53,7 +53,7 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/privacyPolicy"
+        android:id="@+id/privacyInformation"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -64,11 +64,29 @@
         android:letterSpacing="0"
         android:minHeight="48dp"
         android:paddingHorizontal="@dimen/default_padding"
-        android:text="@string/privacy_policy"
+        android:text="@string/privacy_information"
         android:textAllCaps="false"
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@+id/about_title" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/licenses"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/ic_baseline_arrow_forward_24"
+        android:gravity="start|center"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:letterSpacing="0"
+        android:minHeight="48dp"
+        android:paddingHorizontal="@dimen/default_padding"
+        android:text="@string/licenses"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@+id/privacyInformation" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/syncPublicKeys"
@@ -86,7 +104,7 @@
         android:textAllCaps="false"
         android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@+id/privacyPolicy" />
+        app:layout_constraintTop_toBottomOf="@+id/licenses" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/materialTextView"

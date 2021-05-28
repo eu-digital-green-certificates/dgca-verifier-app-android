@@ -23,6 +23,7 @@
 package dgca.verifier.app.android
 
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -37,9 +38,16 @@ private fun String.toZonedDateTime(): ZonedDateTime? = try {
     null
 }
 
+private fun String.toLocalDateTime(): LocalDateTime? = try {
+    LocalDateTime.parse(this)
+} catch (error: Throwable) {
+    null
+}
+
 private val DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(FORMATTED_DATE_TIME)
 fun String.toFormattedDateTime(): String? =
     this.toZonedDateTime()?.let { DATE_TIME_FORMATTER.format(it) }
+        ?: this.toLocalDateTime()?.let { DATE_TIME_FORMATTER.format(it) }
 
 fun String.parseFromTo(from: String, to: String): String {
     return try {
