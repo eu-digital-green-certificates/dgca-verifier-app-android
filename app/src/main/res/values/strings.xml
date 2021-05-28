@@ -30,7 +30,7 @@
     <string name="welcome">Benvenuto</string>
     <string name="systemDescription">Questo è il sistema di scannerizzazione dei QR code delle certificazioni di idoneità Covid19.</string>
     <string name="codiceFiscale">Codice fiscale</string>
-    <string name="expirationText">Data scandenza certificato</string>
+    <string name="expirationText">Data scadenza certificato</string>
     <string name="certificateValid">Certificato valido</string>
     <string name="certificateNonValid">Certificato non valido</string>
     <string name="subtitle_text">Per sicurezza, confrontare i seguenti dati con un documento ufficiale (es: Carta d\'Identità).</string>
