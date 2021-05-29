@@ -45,6 +45,7 @@ import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ofPattern
 import java.util.*
@@ -117,15 +118,18 @@ class VerificationFragment : Fragment(), View.OnClickListener {
                 return TestExpiryValues.TECHNICAL_ERROR
             }
             try {
-                val formatter = ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.ITALY)
+
+                val odtDateTimeOfCollection = OffsetDateTime.parse(it.last().dateTimeOfCollection)
+                val ldtDateTimeOfCollection = odtDateTimeOfCollection.toLocalDateTime()
 
                 val startDate: LocalDateTime =
-                    LocalDateTime.parse(it.last().dateTimeOfCollection, formatter)
+                    ldtDateTimeOfCollection
                         .plusHours(Integer.parseInt(viewModel.getRapidTestStartHour()).toLong())
 
                 val endDate: LocalDateTime =
-                    LocalDateTime.parse(it.last().dateTimeOfCollection, formatter)
+                    ldtDateTimeOfCollection
                         .plusHours(Integer.parseInt(viewModel.getRapidTestEndHour()).toLong())
+
                 if (startDate.isBefore(LocalDateTime.now()) && LocalDateTime.now()
                         .isBefore(endDate)
                 ) {
