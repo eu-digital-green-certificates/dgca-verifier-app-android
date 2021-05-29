@@ -15,7 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".ui.SplashScreenActivity">
+        <activity android:name=".ui.SplashScreenActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,8 +25,14 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.main.MainActivity"/>
-        <activity android:name=".ui.FirstActivity"/>
+        <activity android:name=".ui.main.MainActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+        />
+        <activity android:name=".ui.FirstActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+        />
 
         <provider
             android:name="androidx.work.impl.WorkManagerInitializer"
