@@ -39,7 +39,8 @@
     <string name="subtitle_text_technicalError">Il certificato non è valido o non è stato possibile verificarlo.</string>
     <string name="scanQrCertificate">Scannerizza il QR code di una certificazione. </string>
     <string name="scanQr">Avvia scan </string>
-    <string name="repeatQR">Prossima scansione</string>
+    <string name="nextQR">Prossima scansione</string>
+    <string name="repeatQR">Ripeti scansione</string>
     <string name="dateOfBirth">Data di nascita</string>
     <string name="lastSyncDate">Ultimo aggiornamento: %1$s</string>
     <string name="loading">Scaricando…</string>

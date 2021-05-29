@@ -184,6 +184,7 @@ class VerificationFragment : Fragment(), View.OnClickListener {
                     ContextCompat.getDrawable(requireContext(), R.drawable.ic_checkmark_filled)
                 binding.certificateValid.text = getString(R.string.certificateValid)
                 binding.subtitleText.text = getString(R.string.subtitle_text)
+                binding.nextQrButton.text = getString(R.string.nextQR)
             }
         } else {
             binding.containerPersonDetails.visibility = View.GONE
