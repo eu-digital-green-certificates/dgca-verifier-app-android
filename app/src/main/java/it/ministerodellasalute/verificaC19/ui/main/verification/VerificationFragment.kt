@@ -103,7 +103,7 @@ class VerificationFragment : Fragment(), View.OnClickListener {
 
                 val endDate: LocalDate = LocalDate.parse(it.last().certificateValidFrom)
                     .plusDays(Integer.parseInt(viewModel.getRecoveryCertEndDay()).toLong())
-                if (startDate.isBefore(LocalDate.now()) && LocalDate.now().isBefore(endDate)) {
+                if (!startDate.isAfter(LocalDate.now()) && !LocalDate.now().isAfter(endDate)) {
                     return TestExpiryValues.VALID
                 }
             } catch (e: Exception) {
@@ -130,8 +130,8 @@ class VerificationFragment : Fragment(), View.OnClickListener {
                     ldtDateTimeOfCollection
                         .plusHours(Integer.parseInt(viewModel.getRapidTestEndHour()).toLong())
 
-                if (startDate.isBefore(LocalDateTime.now()) && LocalDateTime.now()
-                        .isBefore(endDate)
+                if (!startDate.isAfter(LocalDateTime.now()) && !LocalDateTime.now()
+                        .isAfter(endDate)
                 ) {
                     return TestExpiryValues.VALID
                 }
@@ -159,7 +159,7 @@ class VerificationFragment : Fragment(), View.OnClickListener {
 
                     val endDate: LocalDate = LocalDate.parse(it.last().dateOfVaccination)
                         .plusDays(Integer.parseInt(viewModel.getVaccineEndDayComplete(it.last().medicinalProduct)).toLong())
-                    if (startDate.isBefore(LocalDate.now()) && LocalDate.now().isBefore(endDate)) {
+                    if (!startDate.isAfter(LocalDate.now()) && !LocalDate.now().isAfter(endDate)) {
                         return TestExpiryValues.VALID
                     }
                 }
