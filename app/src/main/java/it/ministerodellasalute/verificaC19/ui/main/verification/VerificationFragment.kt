@@ -200,11 +200,10 @@ class VerificationFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setTestErrorMessage(isExpired: Boolean) {
-        binding.containerPersonDetails.visibility = View.GONE
+        binding.containerPersonDetails.visibility = View.VISIBLE
         binding.checkmark.background =
             ContextCompat.getDrawable(requireContext(), R.drawable.ic_misuse)
-        binding.certificateValid.text =
-            if (isExpired) getString(R.string.expirationText) else getString(R.string.certificateNonValid)
+        binding.certificateValid.text = getString(R.string.certificateNonValid)
         binding.subtitleText.text =
             if (isExpired) getString(R.string.subtitle_text_expired) else getString(R.string.subtitle_text_technicalError)
     }
