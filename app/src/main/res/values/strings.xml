@@ -48,5 +48,8 @@
     <string name="updateTitle">Aggiornamento richiesto</string>
     <string name="updateMessage">Per continuare ad utilizzare l’applicazione, scarica la nuova versione dallo store</string>
     <string name="updateLabel">Aggiorna</string>
+    <string name="noKeyAlertTitle">Impossibile scansionare</string>
+    <string name="noKeyAlertMessage">L\'applicazione deve connettersi alla rete almeno una volta per essere utilizzata</string>
+    <string name="ok">OK</string>
 
 </resources>

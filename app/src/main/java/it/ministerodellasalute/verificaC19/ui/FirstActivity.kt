@@ -110,9 +110,25 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
+        viewModel.getDateLastSync().let{
+            if (it == -1L) {
+                createNoKeyAlert()
+                return
+            }
+        }
         when(v?.id){
             R.id.qrButton -> checkCameraPermission()
         }
+    }
+
+    fun createNoKeyAlert(){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.noKeyAlertTitle))
+        builder.setMessage(getString(R.string.noKeyAlertMessage))
+        builder.setPositiveButton(getString(R.string.ok)) { dialog, which ->
+        }
+        val dialog = builder.create()
+        dialog.show()
     }
 
     fun createForceUpdateDialog(){
