@@ -154,6 +154,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
                 VerificationError.CERTIFICATE_EXPIRED -> R.string.certificate_is_expired
                 VerificationError.CERTIFICATE_REVOKED -> R.string.certificate_was_revoked
                 VerificationError.VERIFICATION_FAILED -> R.string.verification_failed
+                VerificationError.TEST_RESULT_POSITIVE -> R.string.test_result_positive
                 VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID -> R.string.cryptographic_signature_invalid
             }
         )
