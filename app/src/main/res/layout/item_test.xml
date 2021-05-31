@@ -109,7 +109,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/country_of_vaccination_title" />
+        android:text="@string/issuer_country" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/country_value"

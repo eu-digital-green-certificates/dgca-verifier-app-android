@@ -37,7 +37,7 @@
     <string name="date_of_vaccination_title">Date of Vaccination</string>
     <string name="total_series_of_doses_title">Total Series of Doses</string>
     <string name="dose_number_title">Dose Number</string>
-    <string name="country_of_vaccination_title">Country of Vaccination</string>
+    <string name="issuer_country">Issuer Country</string>
     <string name="disease_or_agent_targeted_title">Disease or agent targeted</string>
     <string name="date_of_test_collection_title">Date of Collection</string>
     <string name="date_of_test_result_title">Date of Test Result</string>
