@@ -69,7 +69,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
         binding.qrButton.setOnClickListener(this)
 
         viewModel.getDateLastSync().let{
-            binding.dateLastSyncText.text = getString(R.string.lastSyncDate, it.parseTo(FORMATTED_DATE_LAST_SYNC))
+            binding.dateLastSyncText.text = getString(R.string.lastSyncDate, if (it == -1L) getString(R.string.notAvailable) else it.parseTo(FORMATTED_DATE_LAST_SYNC))
         }
 
 
@@ -81,7 +81,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
             } else{
                 binding.qrButton.isEnabled = true
                 viewModel.getDateLastSync().let{ date ->
-                    binding.dateLastSyncText.text = getString(R.string.lastSyncDate, date.parseTo(FORMATTED_DATE_LAST_SYNC))
+                    binding.dateLastSyncText.text = getString(R.string.lastSyncDate, if (date == -1L) getString(R.string.notAvailable) else date.parseTo(FORMATTED_DATE_LAST_SYNC))
                 }
             }
         }
