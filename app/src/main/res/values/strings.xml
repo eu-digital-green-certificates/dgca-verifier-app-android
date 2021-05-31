@@ -43,7 +43,7 @@
     <string name="repeatQR">Ripeti scansione</string>
     <string name="dateOfBirth">Data di nascita</string>
     <string name="lastSyncDate">Ultimo aggiornamento: %1$s</string>
-    <string name="loading">Scaricando…</string>
+    <string name="loading">Caricamento certificati in corso…</string>
     <string name="notAvailable">N/A</string>
     <string name="updateTitle">Aggiornamento richiesto</string>
     <string name="updateMessage">Per continuare ad utilizzare l’applicazione, scarica la nuova versione dallo store</string>

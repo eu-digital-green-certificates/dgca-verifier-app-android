@@ -77,7 +77,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
         viewModel.fetchStatus.observe(this){
             if(it){
                 binding.qrButton.isEnabled = false
-                binding.dateLastSyncText.text = getString(R.string.lastSyncDate, getString(R.string.loading))
+                binding.dateLastSyncText.text = getString(R.string.loading)
             } else{
                 binding.qrButton.isEnabled = true
                 viewModel.getDateLastSync().let{ date ->
