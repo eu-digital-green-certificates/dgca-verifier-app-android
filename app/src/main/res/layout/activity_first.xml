@@ -22,10 +22,10 @@
             <TextView
                 android:id="@+id/scanText"
                 style="@style/H1"
-                android:fontFamily="@font/titiliumfont"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_40dp"
+                android:fontFamily="@font/titilliumweb_bold"
                 android:text="@string/scan_green_pass"
                 app:layout_constraintStart_toStartOf="@+id/guidelineStart"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -56,8 +56,9 @@
                         style="@style/H2.Bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/titiliumfont"
+                        android:fontFamily="@font/titilliumweb_bold"
                         android:text="@string/controlCertificate"
+                        android:textSize="23sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -68,6 +69,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_16dp"
                         android:text="@string/scanQrCertificate"
+                        android:textSize="15sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/controlCertificate" />
 
@@ -83,6 +85,7 @@
                         android:paddingStart="@dimen/padding_20dp"
                         android:paddingEnd="@dimen/padding_20dp"
                         android:text="@string/scanQr"
+                        android:textSize="15sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/scanQrCodeText" />
@@ -115,6 +118,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/titiliumfont"
                         android:text="@string/welcome"
+                        android:textSize="23sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -125,6 +129,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_16dp"
                         android:text="@string/systemDescription"
+                        android:textSize="15sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/welcomeText" />
@@ -163,6 +168,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="@dimen/padding_20dp"
+        android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
