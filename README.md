@@ -1,5 +1,5 @@
 <h1 align="center">
-    EU Digital Green Certificates Verifier App - Android
+    EU Digital COVID Certificate Verifier App - Android
 </h1>
 
 <p align="center">
@@ -20,7 +20,7 @@
 
 ## About
 
-This repository contains the source code of the Digital Green Certificates Verifier App for Android.
+This repository contains the source code of the EU Digital COVID Certificate Verifier App for Android.
 
 The DGC Verifier Apps are responsible for scanning and verifying DGCs using public keys from national backend servers. Offline verification is supported, if the latest public keys are present in the app's key store. Consequently, once up-to-date keys have been downloaded, the verification works without active internet connection. 
 
