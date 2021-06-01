@@ -68,8 +68,10 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
 
         binding.qrButton.setOnClickListener(this)
 
+        binding.versionText.text = getString(R.string.version, BuildConfig.VERSION_NAME)
+
         viewModel.getDateLastSync().let{
-            binding.dateLastSyncText.text = getString(R.string.lastSyncDate, it.parseTo(FORMATTED_DATE_LAST_SYNC))
+            binding.dateLastSyncText.text = getString(R.string.lastSyncDate, if (it == -1L) getString(R.string.notAvailable) else it.parseTo(FORMATTED_DATE_LAST_SYNC))
         }
 
 
@@ -77,11 +79,11 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
         viewModel.fetchStatus.observe(this){
             if(it){
                 binding.qrButton.isEnabled = false
-                binding.dateLastSyncText.text = getString(R.string.lastSyncDate, getString(R.string.loading))
+                binding.dateLastSyncText.text = getString(R.string.loading)
             } else{
                 binding.qrButton.isEnabled = true
                 viewModel.getDateLastSync().let{ date ->
-                    binding.dateLastSyncText.text = getString(R.string.lastSyncDate, date.parseTo(FORMATTED_DATE_LAST_SYNC))
+                    binding.dateLastSyncText.text = getString(R.string.lastSyncDate, if (date == -1L) getString(R.string.notAvailable) else date.parseTo(FORMATTED_DATE_LAST_SYNC))
                 }
             }
         }
@@ -110,9 +112,25 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
+        viewModel.getDateLastSync().let{
+            if (it == -1L) {
+                createNoKeyAlert()
+                return
+            }
+        }
         when(v?.id){
             R.id.qrButton -> checkCameraPermission()
         }
+    }
+
+    fun createNoKeyAlert(){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.noKeyAlertTitle))
+        builder.setMessage(getString(R.string.noKeyAlertMessage))
+        builder.setPositiveButton(getString(R.string.ok)) { dialog, which ->
+        }
+        val dialog = builder.create()
+        dialog.show()
     }
 
     fun createForceUpdateDialog(){

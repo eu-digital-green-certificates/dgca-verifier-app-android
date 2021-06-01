@@ -55,11 +55,12 @@
                     style="@style/H1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/titiliumfont"
                     android:layout_marginTop="@dimen/margin_20dp"
-                    tools:text="@string/certificateValid"
+                    android:fontFamily="@font/titiliumfont"
+                    android:textSize="28sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/checkmark" />
+                    app:layout_constraintTop_toBottomOf="@+id/checkmark"
+                    tools:text="@string/certificateValid" />
 
                 <TextView
                     android:id="@+id/subtitle_text"
@@ -67,9 +68,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_20dp"
-                    tools:text="@string/subtitle_text"
+                    android:textSize="15sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/certificate_valid" />
+                    app:layout_constraintTop_toBottomOf="@+id/certificate_valid"
+                    tools:text="@string/subtitle_text" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/container_person_details"
@@ -95,9 +97,10 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/margin_16dp"
-                        tools:text="Mario Rossi"
+                        android:textSize="15sp"
                         app:layout_constraintStart_toEndOf="@+id/user_image"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Mario Rossi" />
 
                     <TextView
                         android:id="@+id/name_standardised_text"
@@ -105,9 +108,10 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/margin_16dp"
-                        tools:text="MARIO ROSSI"
+                        android:textSize="15sp"
+                        app:layout_constraintStart_toEndOf="@+id/user_image"
                         app:layout_constraintTop_toBottomOf="@+id/name_text"
-                        app:layout_constraintStart_toEndOf="@+id/user_image" />
+                        tools:text="MARIO ROSSI" />
 
                     <ImageView
                         android:id="@+id/birthday_image"
@@ -123,9 +127,10 @@
                         style="@style/H3.Black.Bold"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_20dp"
                         android:layout_marginStart="@dimen/margin_16dp"
+                        android:layout_marginTop="@dimen/margin_20dp"
                         android:text="@string/dateOfBirth"
+                        android:textSize="15sp"
                         app:layout_constraintStart_toEndOf="@+id/birthday_image"
                         app:layout_constraintTop_toBottomOf="@+id/name_standardised_text" />
 
@@ -135,9 +140,10 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/margin_16dp"
-                        tools:text="10/05/1993"
+                        android:textSize="15sp"
                         app:layout_constraintStart_toEndOf="@+id/birthday_image"
-                        app:layout_constraintTop_toBottomOf="@+id/birthdate_label" />
+                        app:layout_constraintTop_toBottomOf="@+id/birthdate_label"
+                        tools:text="10/05/1993" />
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

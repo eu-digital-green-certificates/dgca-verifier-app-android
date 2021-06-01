@@ -25,7 +25,7 @@
 
     <string name="pause">Pause</string>
     <string name="resume">Resume</string>
-    <string name="scan_green_pass">Scansione Green Pass</string>
+    <string name="scan_green_pass">VerificaC19</string>
     <string name="controlCertificate">Controlla un certificato</string>
     <string name="welcome">Benvenuto</string>
     <string name="systemDescription">Questo è il sistema di scannerizzazione dei QR code delle certificazioni di idoneità Covid19.</string>
@@ -43,9 +43,14 @@
     <string name="repeatQR">Ripeti scansione</string>
     <string name="dateOfBirth">Data di nascita</string>
     <string name="lastSyncDate">Ultimo aggiornamento: %1$s</string>
-    <string name="loading">Scaricando…</string>
+    <string name="loading">Caricamento certificati in corso…</string>
+    <string name="notAvailable">N/A</string>
     <string name="updateTitle">Aggiornamento richiesto</string>
     <string name="updateMessage">Per continuare ad utilizzare l’applicazione, scarica la nuova versione dallo store</string>
     <string name="updateLabel">Aggiorna</string>
+    <string name="noKeyAlertTitle">Impossibile scansionare</string>
+    <string name="noKeyAlertMessage">L\'applicazione deve connettersi alla rete almeno una volta per essere utilizzata</string>
+    <string name="ok">OK</string>
+    <string name="version">v. %1$s</string>
 
 </resources>
