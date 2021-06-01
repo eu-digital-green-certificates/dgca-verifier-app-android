@@ -56,7 +56,7 @@
                         style="@style/H2.Bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/titilliumweb_bold"
+                        android:fontFamily="@font/titiliumfont"
                         android:text="@string/controlCertificate"
                         android:textSize="23sp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -167,6 +167,7 @@
         android:id="@+id/date_last_sync_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="14dp"
         android:padding="@dimen/padding_20dp"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -174,6 +175,19 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:text="Last sync" />
 
+    <TextView
+        android:id="@+id/version_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_20dp"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/date_last_sync_text"
+        app:layout_constraintVertical_bias="0.7"
+        tools:text="Version" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -68,6 +68,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
 
         binding.qrButton.setOnClickListener(this)
 
+        binding.versionText.text = getString(R.string.version, BuildConfig.VERSION_NAME)
+
         viewModel.getDateLastSync().let{
             binding.dateLastSyncText.text = getString(R.string.lastSyncDate, if (it == -1L) getString(R.string.notAvailable) else it.parseTo(FORMATTED_DATE_LAST_SYNC))
         }

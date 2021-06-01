@@ -51,5 +51,6 @@
     <string name="noKeyAlertTitle">Impossibile scansionare</string>
     <string name="noKeyAlertMessage">L\'applicazione deve connettersi alla rete almeno una volta per essere utilizzata</string>
     <string name="ok">OK</string>
+    <string name="version">v. %1$s</string>
 
 </resources>
