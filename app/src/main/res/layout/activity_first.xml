@@ -27,6 +27,7 @@
                 android:layout_marginTop="@dimen/margin_40dp"
                 android:fontFamily="@font/titilliumweb_bold"
                 android:text="@string/scan_green_pass"
+                android:textSize="28sp"
                 app:layout_constraintStart_toStartOf="@+id/guidelineStart"
                 app:layout_constraintTop_toTopOf="parent" />
 

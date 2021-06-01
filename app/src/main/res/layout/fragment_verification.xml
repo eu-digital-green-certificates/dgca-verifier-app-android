@@ -55,11 +55,12 @@
                     style="@style/H1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/titiliumfont"
                     android:layout_marginTop="@dimen/margin_20dp"
-                    tools:text="@string/certificateValid"
+                    android:fontFamily="@font/titiliumfont"
+                    android:textSize="28sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/checkmark" />
+                    app:layout_constraintTop_toBottomOf="@+id/checkmark"
+                    tools:text="@string/certificateValid" />
 
                 <TextView
                     android:id="@+id/subtitle_text"
