@@ -25,7 +25,7 @@
 
     <string name="pause">Pause</string>
     <string name="resume">Resume</string>
-    <string name="scan_green_pass">Scansione Green Pass</string>
+    <string name="scan_green_pass">VerificaC19</string>
     <string name="controlCertificate">Controlla un certificato</string>
     <string name="welcome">Benvenuto</string>
     <string name="systemDescription">Questo è il sistema di scannerizzazione dei QR code delle certificazioni di idoneità Covid19.</string>
