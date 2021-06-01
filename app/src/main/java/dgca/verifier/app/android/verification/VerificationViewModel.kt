@@ -104,11 +104,10 @@ class VerificationViewModel @Inject constructor(
                 validateCertData(greenCertificate, verificationResult)
 
                 val certificates = verifierRepository.getCertificatesBy(kid.toBase64())
-                if (false && certificates.isEmpty()) {
+                if (certificates.isEmpty()) {
                     Timber.d("Verification failed: failed to load certificate")
                     return@withContext
                 }
-                verificationResult.coseVerified = true
                 noPublicKeysFound = false
                 certificates.forEach { innerCertificate ->
                     cryptoService.validate(cose, innerCertificate, verificationResult)
@@ -130,7 +129,7 @@ class VerificationViewModel @Inject constructor(
         certificate?.tests?.let {
             if (it.isNotEmpty()) {
                 val test = it.first()
-                verificationResult.testVerification = TestVerificationResult(test.isResultNegative(), test.isDataValid())
+                verificationResult.testVerification = TestVerificationResult(test.isResultNegative(), test.isDateInThePast())
             }
         }
     }
