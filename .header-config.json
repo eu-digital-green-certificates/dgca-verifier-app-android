@@ -1,0 +1,25 @@
+{ 
+    "srcFolders": ["app"],
+    "rules": [
+        {
+            "match": [".*\\.kt"],
+            "skipIfContains": "license-start",
+            "comments": {
+                "start": "/*",
+                "line": " *  ",
+                "end": "*/"
+            },
+            "content": "default_license_header.txt"
+        },
+        {
+            "match": [".*\\.xml"],
+            "skipIfContains": "license-start",
+            "comments": {
+                "start": "<!--",
+                "line": "   ~ ",
+                "end": "-->"
+            },
+            "content": "default_license_header.txt"
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+name: file header update
+
+on:
+  schedule:
+    - cron:  '30 17 * * *'
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Update file headers
+        uses: italia/add-file-header-action@master
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          title: "chore: update files header"
+          branch: feature/licenseheaders-${{ steps.pva.outputs.version }}
