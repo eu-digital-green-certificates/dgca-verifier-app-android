@@ -25,13 +25,15 @@ package dgca.verifier.app.android.verification
 import dgca.verifier.app.decoder.model.VerificationResult
 
 enum class VerificationError {
-    CERTIFICATE_EXPIRED, CERTIFICATE_REVOKED, VERIFICATION_FAILED, CRYPTOGRAPHIC_SIGNATURE_INVALID
+    CERTIFICATE_EXPIRED, CERTIFICATE_REVOKED, VERIFICATION_FAILED, TEST_DATE_IS_IN_THE_FUTURE, TEST_RESULT_POSITIVE, CRYPTOGRAPHIC_SIGNATURE_INVALID
 }
 
 internal fun VerificationResult.fetchError(noPublicKeysFound: Boolean): VerificationError? =
-    when {
-        isValid() -> null
-        !isNotExpired -> VerificationError.CERTIFICATE_EXPIRED
-        noPublicKeysFound -> VerificationError.VERIFICATION_FAILED
-        else -> VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID
-    }
+        when {
+            isValid() -> null
+            !isNotExpired -> VerificationError.CERTIFICATE_EXPIRED
+            noPublicKeysFound -> VerificationError.VERIFICATION_FAILED
+            isTestDateInTheFuture() -> VerificationError.TEST_DATE_IS_IN_THE_FUTURE
+            isTestWithPositiveResult() -> VerificationError.TEST_RESULT_POSITIVE
+            else -> VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID
+        }

@@ -128,7 +128,8 @@ class VerificationViewModel @Inject constructor(
     private fun validateCertData(certificate: GreenCertificate?, verificationResult: VerificationResult) {
         certificate?.tests?.let {
             if (it.isNotEmpty()) {
-                verificationResult.testVerification = TestVerificationResult(it.first().isTestValid())
+                val test = it.first()
+                verificationResult.testVerification = TestVerificationResult(test.isResultNegative(), test.isDateInThePast())
             }
         }
     }

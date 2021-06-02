@@ -40,14 +40,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
-import dgca.verifier.app.android.FORMATTED_YEAR_MONTH_DAY
-import dgca.verifier.app.android.R
-import dgca.verifier.app.android.YEAR_MONTH_DAY
+import dgca.verifier.app.android.*
 import dgca.verifier.app.android.databinding.DialogFragmentVerificationBinding
-import dgca.verifier.app.android.dpToPx
 import dgca.verifier.app.android.model.CertificateData
 import dgca.verifier.app.android.model.CertificateModel
-import dgca.verifier.app.android.parseFromTo
+import dgca.verifier.app.android.model.TestResult
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
@@ -154,13 +151,24 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
                 VerificationError.CERTIFICATE_EXPIRED -> R.string.certificate_is_expired
                 VerificationError.CERTIFICATE_REVOKED -> R.string.certificate_was_revoked
                 VerificationError.VERIFICATION_FAILED -> R.string.verification_failed
+                VerificationError.TEST_DATE_IS_IN_THE_FUTURE -> R.string.the_test_date_is_in_the_future
+                VerificationError.TEST_RESULT_POSITIVE -> R.string.test_result_positive
                 VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID -> R.string.cryptographic_signature_invalid
             }
         )
+        if (verificationError == VerificationError.TEST_RESULT_POSITIVE) {
+            binding.errorTestResult.visibility = View.VISIBLE
+            binding.reasonTestResultValue.text = TestResult.DETECTED.value
+        } else {
+            binding.errorTestResult.visibility = View.GONE
+        }
     }
 
     private fun setCertDataVisibility(isValid: Boolean) {
         binding.errorDetails.visibility = if (isValid) View.GONE else View.VISIBLE
+        if (isValid) {
+            binding.errorTestResult.visibility = View.GONE
+        }
         binding.nestedScrollView.visibility = if (isValid) View.VISIBLE else View.GONE
     }
 
