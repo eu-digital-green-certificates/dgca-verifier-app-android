@@ -45,7 +45,7 @@
                 android:layout_marginTop="@dimen/margin_40dp"
                 android:fontFamily="@font/titilliumweb_bold"
                 android:text="@string/scan_green_pass"
-                android:textSize="28sp"
+                android:textSize="32sp"
                 app:layout_constraintStart_toStartOf="@+id/guidelineStart"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -186,9 +186,9 @@
         android:id="@+id/date_last_sync_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="14dp"
+        android:layout_marginBottom="5dp"
         android:padding="@dimen/padding_20dp"
-        android:textSize="13sp"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
