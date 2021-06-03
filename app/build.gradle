@@ -50,6 +50,20 @@ android {
         }
     }
 
+    flavorDimensions "version"
+
+    productFlavors {
+        flavorTest {
+            dimension "version"
+            versionNameSuffix "-test"
+        }
+
+        flavorAcc {
+            dimension "version"
+            versionNameSuffix "-acc"
+        }
+    }
+
     compileOptions {
         sourceCompatibility Config.javaVersion
         targetCompatibility Config.javaVersion
