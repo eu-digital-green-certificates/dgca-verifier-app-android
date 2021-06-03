@@ -45,7 +45,7 @@ class TestViewHolder(private val binding: ItemTestBinding) : RecyclerView.ViewHo
                 binding.dateOfTestResultValue.text = this
             }
         binding.dateOfTestResultValue.visibility = if(dateOfTestResultString?.isNotEmpty() == true) View.VISIBLE else View.GONE
-        binding.diseaseValue.text = data.disease
+        binding.diseaseValue.text = data.disease.value
         binding.typeOfTestValue.text = data.typeOfTest
         binding.countryValue.text = data.countryOfVaccination
     }

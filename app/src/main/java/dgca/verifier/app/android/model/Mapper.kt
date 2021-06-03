@@ -22,11 +22,7 @@
 
 package dgca.verifier.app.android.model
 
-import dgca.verifier.app.decoder.model.GreenCertificate
-import dgca.verifier.app.decoder.model.Person
-import dgca.verifier.app.decoder.model.RecoveryStatement
-import dgca.verifier.app.decoder.model.Test
-import dgca.verifier.app.decoder.model.Vaccination
+import dgca.verifier.app.decoder.model.*
 
 fun GreenCertificate.toCertificateModel(): CertificateModel {
     return CertificateModel(
@@ -40,7 +36,7 @@ fun GreenCertificate.toCertificateModel(): CertificateModel {
 
 fun RecoveryStatement.toRecoveryModel(): RecoveryModel {
     return RecoveryModel(
-        disease = disease,
+        disease = disease.toDiseaseCode().toDiseaseType(),
         dateOfFirstPositiveTest = dateOfFirstPositiveTest,
         countryOfVaccination = countryOfVaccination,
         certificateIssuer = certificateIssuer,
@@ -52,7 +48,7 @@ fun RecoveryStatement.toRecoveryModel(): RecoveryModel {
 
 fun Test.toTestModel(): TestModel {
     return TestModel(
-        disease = disease,
+        disease = disease.toDiseaseCode().toDiseaseType(),
         typeOfTest = typeOfTest,
         testName = testName,
         testNameAndManufacturer = testNameAndManufacturer,
@@ -74,9 +70,14 @@ fun Test.TestResult.toTestResult(): TestResult {
     }
 }
 
+fun DiseaseCode.toDiseaseType(): DiseaseType = when (this) {
+    DiseaseCode.COVID_19 -> DiseaseType.COVID_19
+    else -> DiseaseType.UNDEFINED
+}
+
 fun Vaccination.toVaccinationModel(): VaccinationModel {
     return VaccinationModel(
-        disease = disease,
+        disease = disease.toDiseaseCode().toDiseaseType(),
         vaccine = vaccine,
         medicinalProduct = medicinalProduct,
         manufacturer = manufacturer,
@@ -96,4 +97,14 @@ fun Person.toPersonModel(): PersonModel {
         standardisedGivenName = standardisedGivenName,
         givenName = givenName
     )
+}
+
+fun String.toDiseaseCode(): DiseaseCode = when (this) {
+    DiseaseCode.COVID_19.value -> DiseaseCode.COVID_19
+    else -> DiseaseCode.UNDEFINED
+}
+
+enum class DiseaseCode(val value: String) {
+    COVID_19("840539006"),
+    UNDEFINED("")
 }
