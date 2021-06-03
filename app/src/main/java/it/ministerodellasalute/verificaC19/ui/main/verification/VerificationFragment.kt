@@ -209,9 +209,8 @@ class VerificationFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setPersonData(person: PersonModel, dateOfBirth: String) {
-        binding.nameText.text = person.givenName.plus(" ").plus(person.familyName)
-        binding.nameStandardisedText.text =
-            person.standardisedGivenName.plus(" ").plus(person.standardisedFamilyName)
+        binding.nameText.text = person.familyName.plus(" ").plus(person.givenName)
+        binding.nameStandardisedText.text = ""
         binding.birthdateText.text =
             dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_BIRTHDAY_DATE)
     }
