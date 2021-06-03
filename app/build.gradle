@@ -53,12 +53,11 @@ android {
     flavorDimensions "version"
 
     productFlavors {
-        flavorTest {
+        test {
             dimension "version"
             versionNameSuffix "-test"
         }
-
-        flavorAcc {
+        acc {
             dimension "version"
             versionNameSuffix "-acc"
         }
