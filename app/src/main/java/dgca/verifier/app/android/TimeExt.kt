@@ -48,8 +48,8 @@ private fun String.toLocalDateTime(): LocalDateTime? = try {
 
 private val DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(FORMATTED_DATE_TIME)
 fun String.toFormattedDateTime(): String? =
-    this.toZonedDateTime()?.let { DATE_TIME_FORMATTER.format(it) }
-        ?: this.toLocalDateTime()?.let { DATE_TIME_FORMATTER.format(it) }
+    this.toZonedDateTime()?.let { "${DATE_TIME_FORMATTER.format(it)} (UTC)" }
+        ?: this.toLocalDateTime()?.let { "${DATE_TIME_FORMATTER.format(it)} (UTC)" }
 
 fun String.parseFromTo(from: String, to: String): String {
     return try {
