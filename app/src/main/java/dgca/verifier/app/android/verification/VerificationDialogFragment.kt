@@ -85,8 +85,12 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         binding.actionBtn.setOnClickListener { dismiss() }
 
         viewModel.verificationResult.observe(viewLifecycleOwner, {
-            setCertStatusUI(it.isValid())
-            setCertDataVisibility(it.isValid())
+            if (it == null) {
+                dismiss()
+            } else {
+                setCertStatusUI(it.isValid())
+                setCertDataVisibility(it.isValid())
+            }
         })
         viewModel.verificationError.observe(viewLifecycleOwner, {
             setCertStatusError(it)

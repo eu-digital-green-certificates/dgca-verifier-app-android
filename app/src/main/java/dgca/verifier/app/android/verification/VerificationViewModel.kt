@@ -59,8 +59,8 @@ class VerificationViewModel @Inject constructor(
     private val verifierRepository: VerifierRepository
 ) : ViewModel() {
 
-    private val _verificationResult = MutableLiveData<VerificationResult>()
-    val verificationResult: LiveData<VerificationResult> = _verificationResult
+    private val _verificationResult = MutableLiveData<VerificationResult?>()
+    val verificationResult: LiveData<VerificationResult?> = _verificationResult
 
     private val _verificationError = MutableLiveData<VerificationError>()
     val verificationError: LiveData<VerificationError> = _verificationError
@@ -82,6 +82,7 @@ class VerificationViewModel @Inject constructor(
             val verificationResult = VerificationResult()
             var noPublicKeysFound = true
 
+            var isApplicableCode = false
             withContext(Dispatchers.IO) {
                 val plainInput = prefixValidationService.decode(code, verificationResult)
                 val compressedCose = base45Service.decode(plainInput, verificationResult)
@@ -98,6 +99,8 @@ class VerificationViewModel @Inject constructor(
                     Timber.d("Verification failed: cannot extract kid from COSE")
                     return@withContext
                 }
+
+                isApplicableCode = true
 
                 schemaValidator.validate(coseData.cbor, verificationResult)
                 greenCertificate = cborService.decode(coseData.cbor, verificationResult)
@@ -120,7 +123,7 @@ class VerificationViewModel @Inject constructor(
             verificationResult.fetchError(noPublicKeysFound)?.apply { _verificationError.value = this }
 
             _inProgress.value = false
-            _verificationResult.value = verificationResult
+            _verificationResult.value = if(isApplicableCode) verificationResult else null
             _certificate.value = greenCertificate?.toCertificateModel()
         }
     }
