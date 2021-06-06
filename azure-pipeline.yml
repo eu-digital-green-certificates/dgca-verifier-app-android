@@ -1,0 +1,143 @@
+name: dgca-verifier-app-android
+
+trigger:
+- none
+
+resources:
+  repositories:
+  - repository: dgca-app-core-android
+    type: github
+    name: eu-digital-green-certificates/dgca-app-core-android
+    ref: 'refs/tags/1.0.0'
+    endpoint: 'GitHub - it-eucert-team'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+
+    steps:
+    - checkout: self
+      clean: true
+    - checkout: dgca-app-core-android
+    - task: UpdateAndroidVersionGradle@1
+      inputs:
+        buildGradlePath: 'dgca-verifier-app-android/app/build.gradle'
+        versionCode: '$(Build.BuildId)'
+        versionName: '$(versionName)'
+    - task: SonarQubePrepare@4
+      inputs:
+        SonarQube: 'SonarQube Azure 8.9'
+        scannerMode: 'CLI'
+        configMode: 'manual'
+        cliProjectKey: '$(System.TeamProject)_it-dgc-gateway-client'
+        cliProjectName: '$(System.TeamProject)_it-dgc-gateway-client'
+        cliProjectVersion: '$(Build.SourceBranchName)_$(Build.SourceVersion)'
+        cliSources: '.'
+        extraProperties: |
+          sonar.java.binaries=.
+          sonar.exclusions=**/CCReport*/**
+      continueOnError: true
+
+    - task: SonarQubeAnalyze@4
+      continueOnError: true
+      condition: succeeded()
+
+    - task: SonarQubePublish@4
+      inputs:
+        pollingTimeoutSec: '300'
+      continueOnError: true
+      condition: succeeded()
+     
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: 'dgca-verifier-app-android/app/build.gradle'
+        artifact: 'build-gradle'
+        publishLocation: 'pipeline'
+
+    - task: Gradle@2
+      inputs:
+        gradleWrapperFile: 'dgca-verifier-app-android/gradlew'
+        workingDirectory: 'dgca-verifier-app-android'
+        tasks: 'build'
+        publishJUnitResults: false
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.8'
+        gradleOptions: '-Xmx3072m'
+        sonarQubeRunAnalysis: false
+        spotBugsAnalysis: false
+
+    - task: CopyFiles@2
+      inputs:
+        contents: '**/*.apk'
+        targetFolder: '$(build.artifactStagingDirectory)'
+
+    - task: AndroidSigning@3
+      inputs:
+        apkFiles: '$(build.artifactStagingDirectory)/dgca-verifier-app-android/app/build/outputs/apk/release/app-release-unsigned.apk'
+        apksignerKeystoreFile: 'android-c19-key.jks'
+        apksignerKeystorePassword: '$(keystorepassword)'
+        apksignerKeystoreAlias: '$(keystorealias)'
+        apksignerKeyPassword: '$(keystorepassword)'
+        zipalign: false
+
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(build.artifactStagingDirectory)/dgca-verifier-app-android/app/build/outputs/apk/release/app-release-unsigned.apk'
+        artifact: 'apk'
+        publishLocation: 'pipeline'
+    
+    - task: AppCenterDistribute@3
+      inputs:
+          serverEndpoint: 'DGC-App'
+          appSlug: 'sogei/dgca-verifier-app-android'
+          appFile: '$(build.artifactStagingDirectory)/dgca-verifier-app-android/app/build/outputs/apk/release/app-release-unsigned.apk'
+          symbolsOption: 'Android'
+          releaseNotesOption: 'input'
+          releaseNotesInput: 'Prova'
+          destinationType: 'groups'
+          isSilent: true
+
+    - task: Gradle@2
+      inputs:
+        gradleWrapperFile: 'dgca-verifier-app-android/gradlew'
+        workingDirectory: 'dgca-verifier-app-android'
+        tasks: ':app:bundleRelease'
+        publishJUnitResults: false
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.8'
+        gradleOptions: '-Xmx3072m'
+        sonarQubeRunAnalysis: false
+        spotBugsAnalysis: false
+
+    - task: CopyFiles@2
+      inputs:
+        contents: '**/*.aab'
+        targetFolder: '$(build.artifactStagingDirectory)'
+
+    - task: AndroidSigning@2
+      inputs:
+        apkFiles: '$(build.artifactStagingDirectory)/dgca-verifier-app-android/app/build/outputs/bundle/release/app-release.aab'
+        jarsignerKeystoreFile: 'android-c19-key.jks'
+        jarsignerKeystorePassword: '$(keystorepassword)'
+        jarsignerKeystoreAlias: '$(keystorealias)'
+        jarsignerKeyPassword: '$(keystorepassword)'
+        jarsignerArguments: '-sigalg SHA256withRSA -digestalg SHA-256'
+    
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(build.artifactStagingDirectory)/dgca-verifier-app-android/app/build/outputs/bundle/release/app-release.aab'
+        artifact: 'bundle'
+        publishLocation: 'pipeline'
+    
+    # - task: GooglePlayReleaseBundle@3
+    #   inputs:
+    #     serviceConnection: 'verificac19-google-play'
+    #     applicationId: 'it.ministerodellasalute.verificaC19'
+    #     bundleFile: '$(build.artifactStagingDirectory)/dgca-verifier-app-android/app/build/outputs/bundle/release/app-release.aab'
+    #     track: 'internal'
+    #     languageCode: 'en-GB'
