@@ -34,8 +34,8 @@ stages:
         SonarQube: 'SonarQube Azure 8.9'
         scannerMode: 'CLI'
         configMode: 'manual'
-        cliProjectKey: '$(System.TeamProject)_it-dgc-gateway-client'
-        cliProjectName: '$(System.TeamProject)_it-dgc-gateway-client'
+        cliProjectKey: '$(System.TeamProject)_dgca-verifier-app-android'
+        cliProjectName: '$(System.TeamProject)_dgca-verifier-app-android'
         cliProjectVersion: '$(Build.SourceBranchName)_$(Build.SourceVersion)'
         cliSources: '.'
         extraProperties: |
