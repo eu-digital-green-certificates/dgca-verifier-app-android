@@ -1,16 +1,18 @@
 <h1 align="center">
-    EU Digital Green Certificates Verifier App - Android
+    EU Digital COVID Certificate Verifier App - Android
 </h1>
 
 <p align="center">
-    <a href="/../../commits/" title="Last Commit"><img src="https://img.shields.io/github/last-commit/eu-digital-green-certificates/dgca-verifier-app-android?style=flat"></a>
-    <a href="/../../issues" title="Open Issues"><img src="https://img.shields.io/github/issues/eu-digital-green-certificates/dgca-verifier-app-android?style=flat"></a>
+    <a href="/../../commits/" title="Last Commit"><img src="https://img.shields.io/github/last-commit/ministero-salute/dgca-verifier-app-android?style=flat"></a>
+    <a href="/../../issues" title="Open Issues"><img src="https://img.shields.io/github/issues/ministero-salute/dgca-verifier-app-android?style=flat"></a>
     <a href="./LICENSE" title="License"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg?style=flat"></a>
 </p>
 
 <p align="center">
+  <a href="#about">About</a> •
   <a href="#development">Development</a> •
   <a href="#documentation">Documentation</a> •
+  <a href="#dependencies">Dependencies</a> •
   <a href="#support-and-feedback">Support</a> •
   <a href="#how-to-contribute">Contribute</a> •
   <a href="#contributors">Contributors</a> •
@@ -19,9 +21,10 @@
 
 ## About
 
-This repository contains the source code of the EU Digital COVID Certificate Verifier App for Android.
+This repository contains the source code of the Italian customization of the EU Digital COVID Certificate Verifier App for Android. The repository is forked from the [official EU Digital COVID Certificate Verifier App - Android] (https://github.com/eu-digital-green-certificates/dgca-verifier-app-android)
 
-The DGC Verifier Apps are responsible for scanning and verifying DGCs using public keys from national backend servers. Offline verification is supported, if the latest public keys are present in the app's key store. Consequently, once up-to-date keys have been downloaded, the verification works without active internet connection.
+The DGC Verifier Apps are responsible for scanning and verifying DCCs using public keys from national backend servers. Offline verification is supported, if the latest public keys are present in the app's key store. Consequently, once up-to-date keys have been downloaded, the verification works without active internet connection.
+The Italian version adds some medical rules to the validation of the DCCs, defined by rules downloaded from national backend servers.
 
 ## Development
 
@@ -34,26 +37,30 @@ The DGC Verifier Apps are responsible for scanning and verifying DGCs using publ
 
 Whether you cloned or downloaded the 'zipped' sources you will either find the sources in the chosen checkout-directory or get a zip file with the source code, which you can expand to a folder of your choice.
 
-In either case open a terminal pointing to the directory you put the sources in. The local build process is described afterwards depending on the way you choose.
+In order to successfully build and run the project, you must have also downloaded the corresponding core repository from [here](https://github.com/eu-digital-green-certificates/dgca-app-core-android). Both projects should be at the same folder level as eachother which would look something like
+
+```
+android-app
+|___dgca-verifier-app-android
+|___dgca-app-core-android
+```
 
 #### Android Studio based build
+
 This project uses the Gradle build system. To build this project, use the `gradlew build` command or use "Run" in Android Studio.
-
-#### XYZ (Maven, ...) based build
-
-- [ ] TODO
-
-#### Build Docker Image
-
-- [ ] TODO
-
-#### API documentation  
-
-- [ ] TODO
 
 ## Documentation  
 
-- [ ] TODO
+- [ ] TODO: Link to documentation
+
+## Dependencies
+
+The following dependencies are used in the project  by the verifier app and the core app and are imported as Swift Packages:
+- **[decoder](https://github.com/eu-digital-green-certificates/dgca-app-core-android).** Eurpean core library that contains business logic to decode data from QR code payload and performs technical validations (i.e. correct signature verification, signature expiration verification, correct payload format etc).
+- **[zxing](https://github.com/zxing/zxing).** Library used QR code scanning.
+- **[retrofit2](https://github.com/square/retrofit).** Library used for networking.
+- **[gson](https://github.com/google/gson).** Library used by core module for JSON serialization/deserialization.
+All listed dependencies are already included in the [official EU Digital COVID Certificate Verifier App for Android] (https://github.com/eu-digital-green-certificates/dgca-verifier-app-android). No new dependencies have been included in the Italian customization of the app.
 
 ## Support and feedback
 
@@ -61,8 +68,7 @@ The following channels are available for discussions, feedback, and support requ
 
 | Type                     | Channel                                                |
 | ------------------------ | ------------------------------------------------------ |
-| **Issues**    | <a href="/../../issues" title="Open Issues"><img src="https://img.shields.io/github/issues/eu-digital-green-certificates/dgca-verifier-app-android?style=flat"></a>  |
-| **Other requests**    | <a href="mailto:opensource@telekom.de" title="Email DGC Team"><img src="https://img.shields.io/badge/email-DGC%20team-green?logo=mail.ru&style=flat-square&logoColor=white"></a>   |
+| **Issues**    | <a href="/../../issues" title="Open Issues"><img src="https://img.shields.io/github/issues/ministero-salute/dgca-verifier-app-android?style=flat"></a>  |
 
 ## How to contribute  
 
