@@ -29,7 +29,7 @@ class TimeExtTest {
     @Test
     fun testLocalToFormattedDateTime() {
         val localDateTimeString = "2021-05-25T09:02:07"
-        val expectedFormattedLocalDateTime = "May 25, 2021, 09:02"
+        val expectedFormattedLocalDateTime = "May 25, 2021, 09:02 (UTC)"
 
         val actualFormattedLocalDateTime = localDateTimeString.toFormattedDateTime()
 
@@ -39,7 +39,7 @@ class TimeExtTest {
     @Test
     fun testZonedToFormattedDateTime() {
         val zonedDateTimeString = "2021-05-19T08:20:00Z"
-        val expectedFormattedLocalDateTime = "May 19, 2021, 08:20"
+        val expectedFormattedLocalDateTime = "May 19, 2021, 08:20 (UTC)"
 
         val actualFormattedLocalDateTime = zonedDateTimeString.toFormattedDateTime()
 
