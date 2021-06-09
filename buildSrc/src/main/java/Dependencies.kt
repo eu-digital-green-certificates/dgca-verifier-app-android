@@ -53,7 +53,8 @@ object Deps {
     const val guava_conflict_resolver = "com.google.guava:listenablefuture:${Versions.guave_conflict_resolver_version}"
     const val kotlin_reflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin_reflect}"
     const val java_cose = "com.augustcellars.cose:cose-java:${Versions.java_cose}"
-    const val json_validation = "com.github.fge:json-schema-validator:${Versions.json_validation}"
+    const val json_validation = "com.github.java-json-tools:json-schema-validator:${Versions.json_validation}"
+    const val json_validation_rhino = "io.apisense:rhino-android:${Versions.json_validation_rhino}"
     const val jackson_cbor = "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${Versions.jackson_cbor}"
     const val bouncy_castle = "org.bouncycastle:bcpkix-jdk15to18:${Versions.bouncy_castle}"
 
