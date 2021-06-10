@@ -22,13 +22,31 @@
 
 package dgca.verifier.app.android.model
 
+import java.lang.StringBuilder
+
 data class CertificateModel(
     val person: PersonModel,
     val dateOfBirth: String,
     val vaccinations: List<VaccinationModel>?,
     val tests: List<TestModel>?,
     val recoveryStatements: List<RecoveryModel>?
-)
+) {
+    fun getFullName(): String {
+        val givenName: String? = person.givenName?.trim()
+        val familyName: String? = person.familyName?.trim()
+        val stringBuilder = StringBuilder()
+        if (givenName?.isNotEmpty() == true) {
+            stringBuilder.append(givenName)
+        }
+        if (familyName?.isNotEmpty() == true) {
+            stringBuilder.append(" ").append(familyName)
+        }
+        if (stringBuilder.isEmpty()) {
+            stringBuilder.append(person.standardisedGivenName).append(" ").append(person.standardisedFamilyName)
+        }
+        return stringBuilder.trim().toString()
+    }
+}
 
 data class PersonModel(
     val standardisedFamilyName: String,

@@ -33,7 +33,6 @@
     <string name="standardised_family_name_title">Standardised Family Name</string>
     <string name="standardised_given_name_title">Standardised Given Name</string>
     <string name="date_of_birth_title">Date of Birth</string>
-    <string name="person_full_name_placeholder">%1s %2s</string>
     <string name="date_of_vaccination_title">Date of Vaccination</string>
     <string name="total_series_of_doses_title">Total Series of Doses</string>
     <string name="dose_number_title">Dose Number</string>
