@@ -186,12 +186,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun showUserData(certificate: CertificateModel) {
-        binding.personFullName.text =
-            getString(
-                R.string.person_full_name_placeholder,
-                certificate.person.givenName,
-                certificate.person.familyName
-            )
+        binding.personFullName.text = certificate.getFullName()
         binding.personStandardisedFamilyName.text = certificate.person.standardisedFamilyName
         binding.personStandardisedGivenName.text = certificate.person.standardisedGivenName
         binding.dateOfBirth.text =
