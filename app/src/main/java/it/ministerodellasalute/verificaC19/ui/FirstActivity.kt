@@ -29,7 +29,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -74,8 +73,6 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
             binding.dateLastSyncText.text = getString(R.string.lastSyncDate, if (it == -1L) getString(R.string.notAvailable) else it.parseTo(FORMATTED_DATE_LAST_SYNC))
         }
 
-
-
         viewModel.fetchStatus.observe(this){
             if(it){
                 binding.qrButton.isEnabled = false
@@ -86,6 +83,11 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
                     binding.dateLastSyncText.text = getString(R.string.lastSyncDate, if (date == -1L) getString(R.string.notAvailable) else date.parseTo(FORMATTED_DATE_LAST_SYNC))
                 }
             }
+        }
+
+        binding.privacyPolicy.setOnClickListener {
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dgc.gov.it/web/pn.html"))
+            startActivity(browserIntent)
         }
     }
 
