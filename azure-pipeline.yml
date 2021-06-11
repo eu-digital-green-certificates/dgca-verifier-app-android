@@ -1,7 +1,16 @@
 name: dgca-verifier-app-android
 
 trigger:
-- none
+  branches:
+    include:
+    - develop
+    - feature/*
+    - releases/*
+pr:
+  branches:
+    include:
+    - develop
+    - releases/*
 
 resources:
   repositories:
