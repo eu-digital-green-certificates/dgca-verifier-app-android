@@ -23,6 +23,9 @@ resources:
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+  publishToAppCenter: $[eq(variables['Build.SourceBranch'], 'refs/heads/develop')]
+  publishToStore: $[contains(variables['Build.SourceBranch'], 'refs/heads/releases')]
 
 stages:
 - stage: Build
@@ -33,18 +36,30 @@ stages:
     - checkout: self
       clean: true
     - checkout: dgca-app-core-android
+
+    - task: Bash@3
+      displayName: check pipeline variable value
+      inputs:
+        targetType: 'inline'
+        script: |
+          echo 'Check pipeline var'
+          echo 'publishToAppCenter: $(publishToAppCenter)'
+          echo 'publishToStore $(publishToStore)'
+        failOnStderr: true
+
     - task: UpdateAndroidVersionGradle@1
       inputs:
-        buildGradlePath: 'dgca-verifier-app-android/app/build.gradle'
+        buildGradlePath: 'it-dgc-verificaC19-android/app/build.gradle'
         versionCode: '$(Build.BuildId)'
-        versionName: '$(versionName)'
+        #versionName: '$(versionName)'
+
     - task: SonarQubePrepare@4
       inputs:
         SonarQube: 'SonarQube Azure 8.9'
         scannerMode: 'CLI'
         configMode: 'manual'
-        cliProjectKey: '$(System.TeamProject)_dgca-verifier-app-android'
-        cliProjectName: '$(System.TeamProject)_dgca-verifier-app-android'
+        cliProjectKey: '$(System.TeamProject)_it-dgc-verificaC19-android'
+        cliProjectName: '$(System.TeamProject)_it-dgc-verificaC19-android'
         cliProjectVersion: '$(Build.SourceBranchName)_$(Build.SourceVersion)'
         cliSources: '.'
         extraProperties: |
@@ -64,14 +79,14 @@ stages:
      
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: 'dgca-verifier-app-android/app/build.gradle'
+        targetPath: 'it-dgc-verificaC19-android/app/build.gradle'
         artifact: 'build-gradle'
         publishLocation: 'pipeline'
 
     - task: Gradle@2
       inputs:
-        gradleWrapperFile: 'dgca-verifier-app-android/gradlew'
-        workingDirectory: 'dgca-verifier-app-android'
+        gradleWrapperFile: 'it-dgc-verificaC19-android/gradlew'
+        workingDirectory: 'it-dgc-verificaC19-android'
         tasks: 'build'
         publishJUnitResults: false
         javaHomeOption: 'JDKVersion'
@@ -87,7 +102,7 @@ stages:
 
     - task: AndroidSigning@3
       inputs:
-        apkFiles: '$(build.artifactStagingDirectory)/dgca-verifier-app-android/app/build/outputs/apk/release/app-release-unsigned.apk'
+        apkFiles: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk/release/app-release-unsigned.apk'
         apksignerKeystoreFile: 'android-c19-key.jks'
         apksignerKeystorePassword: '$(keystorepassword)'
         apksignerKeystoreAlias: '$(keystorealias)'
@@ -96,25 +111,26 @@ stages:
 
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(build.artifactStagingDirectory)/dgca-verifier-app-android/app/build/outputs/apk/release/app-release-unsigned.apk'
+        targetPath: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk/release/app-release-unsigned.apk'
         artifact: 'apk'
         publishLocation: 'pipeline'
     
     - task: AppCenterDistribute@3
       inputs:
           serverEndpoint: 'DGC-App'
-          appSlug: 'sogei/dgca-verifier-app-android'
-          appFile: '$(build.artifactStagingDirectory)/dgca-verifier-app-android/app/build/outputs/apk/release/app-release-unsigned.apk'
+          appSlug: 'sogei/it-dgc-verificaC19-android'
+          appFile: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk/release/app-release-unsigned.apk'
           symbolsOption: 'Android'
           releaseNotesOption: 'input'
           releaseNotesInput: 'Prova'
           destinationType: 'groups'
           isSilent: true
+      condition: eq(variables.publishToAppCenter, true)
 
     - task: Gradle@2
       inputs:
-        gradleWrapperFile: 'dgca-verifier-app-android/gradlew'
-        workingDirectory: 'dgca-verifier-app-android'
+        gradleWrapperFile: 'it-dgc-verificaC19-android/gradlew'
+        workingDirectory: 'it-dgc-verificaC19-android'
         tasks: ':app:bundleRelease'
         publishJUnitResults: false
         javaHomeOption: 'JDKVersion'
@@ -130,7 +146,7 @@ stages:
 
     - task: AndroidSigning@2
       inputs:
-        apkFiles: '$(build.artifactStagingDirectory)/dgca-verifier-app-android/app/build/outputs/bundle/release/app-release.aab'
+        apkFiles: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
         jarsignerKeystoreFile: 'android-c19-key.jks'
         jarsignerKeystorePassword: '$(keystorepassword)'
         jarsignerKeystoreAlias: '$(keystorealias)'
@@ -139,7 +155,7 @@ stages:
     
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(build.artifactStagingDirectory)/dgca-verifier-app-android/app/build/outputs/bundle/release/app-release.aab'
+        targetPath: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
         artifact: 'bundle'
         publishLocation: 'pipeline'
     
@@ -147,6 +163,6 @@ stages:
     #   inputs:
     #     serviceConnection: 'verificac19-google-play'
     #     applicationId: 'it.ministerodellasalute.verificaC19'
-    #     bundleFile: '$(build.artifactStagingDirectory)/dgca-verifier-app-android/app/build/outputs/bundle/release/app-release.aab'
+    #     bundleFile: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
     #     track: 'internal'
     #     languageCode: 'en-GB'
