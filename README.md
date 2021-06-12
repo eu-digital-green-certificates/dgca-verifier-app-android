@@ -51,7 +51,7 @@ This project uses the Gradle build system. To build this project, use the `gradl
 
 ## Documentation  
 
-- [ ] TODO: Link to documentation
+- [High level documentation](https://github.com/ministero-salute/it-dgc-documentation)
 
 ## Dependencies
 
