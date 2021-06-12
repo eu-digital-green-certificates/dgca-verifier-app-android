@@ -45,6 +45,7 @@ import dgca.verifier.app.decoder.schema.SchemaValidator
 import dgca.verifier.app.decoder.toBase64
 import it.ministerodellasalute.verificaC19.data.local.Preferences
 import it.ministerodellasalute.verificaC19.data.remote.model.Rule
+import it.ministerodellasalute.verificaC19.di.DispatcherProvider
 import it.ministerodellasalute.verificaC19.model.ValidationRulesEnum
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -63,7 +64,8 @@ class VerificationViewModel @Inject constructor(
     private val schemaValidator: SchemaValidator,
     private val cborService: CborService,
     private val verifierRepository: VerifierRepository,
-    private val preferences: Preferences
+    private val preferences: Preferences,
+    private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
 
     private val _verificationResult = MutableLiveData<VerificationResult>()
@@ -86,7 +88,7 @@ class VerificationViewModel @Inject constructor(
             var greenCertificate: GreenCertificate? = null
             val verificationResult = VerificationResult()
 
-            withContext(Dispatchers.IO) {
+            withContext(dispatcherProvider.getIO()) {
                 val plainInput = prefixValidationService.decode(code, verificationResult)
                 val compressedCose = base45Service.decode(plainInput, verificationResult)
                 val cose = compressorService.decode(compressedCose, verificationResult)

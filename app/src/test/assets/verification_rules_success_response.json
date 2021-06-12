@@ -1,0 +1,126 @@
+[
+  {
+    "name": "android",
+    "type": "APP_MIN_VERSION",
+    "value": "4.1.1"
+  },
+  {
+    "name": "ios",
+    "type": "APP_MIN_VERSION",
+    "value": "4.1.1"
+  },
+  {
+    "name": "recovery_cert_end_day",
+    "type": "GENERIC",
+    "value": "180"
+  },
+  {
+    "name": "recovery_cert_start_day",
+    "type": "GENERIC",
+    "value": "0"
+  },
+  {
+    "name": "molecular_test_end_hours",
+    "type": "GENERIC",
+    "value": "48"
+  },
+  {
+    "name": "molecular_test_start_hours",
+    "type": "GENERIC",
+    "value": "0"
+  },
+  {
+    "name": "rapid_test_end_hours",
+    "type": "GENERIC",
+    "value": "48"
+  },
+  {
+    "name": "rapid_test_start_hours",
+    "type": "GENERIC",
+    "value": "0"
+  },
+
+  {
+    "name": "vaccine_start_day_not_complete",
+    "type": "EU/1/20/1528",
+    "value": "15"
+  },
+  {
+    "name": "vaccine_end_day_not_complete",
+    "type": "EU/1/20/1528",
+    "value": "42"
+  },
+  {
+    "name": "vaccine_start_day_complete",
+    "type": "EU/1/20/1528",
+    "value": "15"
+  },
+  {
+    "name": "vaccine_end_day_complete",
+    "type": "EU/1/20/1528",
+    "value": "270"
+  },
+
+  {
+    "name": "vaccine_start_day_not_complete",
+    "type": "EU/1/20/1507",
+    "value": "15"
+  },
+  {
+    "name": "vaccine_end_day_not_complete",
+    "type": "EU/1/20/1507",
+    "value": "42"
+  },
+  {
+    "name": "vaccine_start_day_complete",
+    "type": "EU/1/20/1507",
+    "value": "15"
+  },
+  {
+    "name": "vaccine_end_day_complete",
+    "type": "EU/1/20/1507",
+    "value": "270"
+  },
+
+  {
+    "name": "vaccine_start_day_not_complete",
+    "type": "EU/1/21/1529",
+    "value": "15"
+  },
+  {
+    "name": "vaccine_end_day_not_complete",
+    "type": "EU/1/21/1529",
+    "value": "84"
+  },
+  {
+    "name": "vaccine_start_day_complete",
+    "type": "EU/1/21/1529",
+    "value": "15"
+  },
+  {
+    "name": "vaccine_end_day_complete",
+    "type": "EU/1/21/1529",
+    "value": "270"
+  },
+
+  {
+    "name": "vaccine_start_day_not_complete",
+    "type": "EU/1/20/1525",
+    "value": "15"
+  },
+  {
+    "name": "vaccine_end_day_not_complete",
+    "type": "EU/1/20/1525",
+    "value": "270"
+  },
+  {
+    "name": "vaccine_start_day_complete",
+    "type": "EU/1/20/1525",
+    "value": "15"
+  },
+  {
+    "name": "vaccine_end_day_complete",
+    "type": "EU/1/20/1525",
+    "value": "270"
+  }
+]
