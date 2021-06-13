@@ -87,8 +87,9 @@ stages:
       inputs:
         gradleWrapperFile: 'it-dgc-verificaC19-android/gradlew'
         workingDirectory: 'it-dgc-verificaC19-android'
-        tasks: 'build'
-        publishJUnitResults: false
+        tasks: 'assembleRelease'
+        publishJUnitResults: true
+        testResultsFiles: '**/TEST-*.xml'
         javaHomeOption: 'JDKVersion'
         jdkVersionOption: '1.8'
         gradleOptions: '-Xmx3072m'
