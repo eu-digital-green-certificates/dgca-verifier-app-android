@@ -29,8 +29,12 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.BaseAdapter
 import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
@@ -45,6 +49,7 @@ import dgca.verifier.app.android.databinding.DialogFragmentVerificationBinding
 import dgca.verifier.app.android.model.CertificateData
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.model.TestResult
+import java.util.*
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
@@ -62,7 +67,11 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         adapter = CertListAdapter(layoutInflater)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = DialogFragmentVerificationBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -111,6 +120,28 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         })
 
         viewModel.init(args.qrCodeText)
+
+        val countries = listOf("at", "de").sortedBy {
+            Locale("", it).displayName
+        }
+        countries.sorted()
+        binding.countrySelector.adapter =
+            object : BaseAdapter() {
+
+                override fun getCount(): Int = countries.size
+
+                override fun getItem(position: Int): String = countries[position]
+
+                override fun getItemId(position: Int): Long = position.toLong()
+
+                override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View = layoutInflater
+                    .inflate(android.R.layout.simple_spinner_item, parent, false).apply {
+                        val textView: TextView = this.findViewById(android.R.id.text1)
+                        val countryIsoCode = countries[position]
+                        val locale = Locale("", countryIsoCode)
+                        textView.text = locale.displayCountry
+                    }
+            }
     }
 
     override fun onDestroyView() {

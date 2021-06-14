@@ -52,6 +52,28 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Gabriele \nMusterfrau" />
 
+    <Button
+        android:id="@+id/validate_with"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_quarter_margin"
+        android:layout_marginEnd="@dimen/default_half_margin"
+        android:elevation="2dp"
+        android:text="@string/validate_with"
+        app:layout_constraintStart_toStartOf="@id/person_full_name"
+        app:layout_constraintTop_toBottomOf="@id/person_full_name" />
+
+    <Spinner
+        android:id="@+id/country_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/default_half_margin"
+        android:background="@color/white"
+        android:elevation="2dp"
+        app:layout_constraintBottom_toBottomOf="@id/validate_with"
+        app:layout_constraintStart_toEndOf="@id/validate_with"
+        app:layout_constraintTop_toTopOf="@id/validate_with" />
+
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/cert_status_icon"
         android:layout_width="48dp"

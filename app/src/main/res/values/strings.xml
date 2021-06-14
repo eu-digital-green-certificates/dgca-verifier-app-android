@@ -61,4 +61,5 @@
     <string name="the_test_date_is_in_the_future">The test date is in the future.</string>
     <string name="test_result_positive">Test result positive.</string>
     <string name="cryptographic_signature_invalid">Cryptographic signature invalid.</string>
+    <string name="validate_with">Validate with</string>
 </resources>
