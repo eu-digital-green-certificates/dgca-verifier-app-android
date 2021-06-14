@@ -65,8 +65,8 @@ class VerificationViewModel @Inject constructor(
     private val _verificationError = MutableLiveData<VerificationError>()
     val verificationError: LiveData<VerificationError> = _verificationError
 
-    private val _certificate = MutableLiveData<CertificateModel?>()
-    val certificate: LiveData<CertificateModel?> = _certificate
+    private val _certificate = MutableLiveData<Pair<String, CertificateModel>?>()
+    val certificate: LiveData<Pair<String, CertificateModel>?> = _certificate
 
     private val _inProgress = MutableLiveData<Boolean>()
     val inProgress: LiveData<Boolean> = _inProgress
@@ -78,7 +78,7 @@ class VerificationViewModel @Inject constructor(
     private fun decode(code: String) {
         viewModelScope.launch {
             _inProgress.value = true
-            var greenCertificate: GreenCertificate? = null
+            var greenCertificate: Pair<String, GreenCertificate>? = null
             val verificationResult = VerificationResult()
             var noPublicKeysFound = true
 
@@ -103,8 +103,8 @@ class VerificationViewModel @Inject constructor(
                 isApplicableCode = true
 
                 schemaValidator.validate(coseData.cbor, verificationResult)
-                greenCertificate = cborService.decode(coseData.cbor, verificationResult)
-                validateCertData(greenCertificate, verificationResult)
+                greenCertificate = cborService.decodeData(coseData.cbor, verificationResult)
+                validateCertData(greenCertificate?.second, verificationResult)
 
                 val certificates = verifierRepository.getCertificatesBy(kid.toBase64())
                 if (certificates.isEmpty()) {
@@ -120,11 +120,13 @@ class VerificationViewModel @Inject constructor(
                 }
             }
 
-            verificationResult.fetchError(noPublicKeysFound)?.apply { _verificationError.value = this }
+            verificationResult.fetchError(noPublicKeysFound)
+                ?.apply { _verificationError.value = this }
 
             _inProgress.value = false
-            _verificationResult.value = if(isApplicableCode) verificationResult else null
-            _certificate.value = greenCertificate?.toCertificateModel()
+            _verificationResult.value = if (isApplicableCode) verificationResult else null
+            _certificate.value =
+                greenCertificate?.let { Pair(it.first, it.second.toCertificateModel()) }
         }
     }
 
@@ -134,6 +136,13 @@ class VerificationViewModel @Inject constructor(
                 val test = it.first()
                 verificationResult.testVerification = TestVerificationResult(test.isResultNegative(), test.isDateInThePast())
             }
+        }
+    }
+
+    fun validate(countryIsoCode: String) {
+        val json = certificate.value?.first
+        if (json?.isNotEmpty() == true) {
+            return
         }
     }
 }

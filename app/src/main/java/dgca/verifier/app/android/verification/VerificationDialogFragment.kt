@@ -104,12 +104,12 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         viewModel.verificationError.observe(viewLifecycleOwner, {
             setCertStatusError(it)
         })
-        viewModel.certificate.observe(viewLifecycleOwner, { certificate ->
-            if (certificate != null) {
-                toggleButton(certificate)
-                showUserData(certificate)
+        viewModel.certificate.observe(viewLifecycleOwner, { pair ->
+            if (pair?.second != null) {
+                toggleButton(pair.second)
+                showUserData(pair.second)
 
-                val list = getCertificateListData(certificate)
+                val list = getCertificateListData(pair.second)
                 adapter.update(list)
 
                 startTimer()
@@ -142,6 +142,9 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
                         textView.text = locale.displayCountry
                     }
             }
+        binding.validateWith.setOnClickListener {
+            viewModel.validate(binding.countrySelector.selectedItem as String)
+        }
     }
 
     override fun onDestroyView() {
