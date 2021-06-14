@@ -42,8 +42,8 @@ import dgca.verifier.app.decoder.prefixvalidation.PrefixValidationService
 import dgca.verifier.app.decoder.schema.SchemaValidator
 import dgca.verifier.app.decoder.toBase64
 import dgca.verifier.app.engine.DefaultCertLogicEngine
-import dgca.verifier.app.engine.ExternalParameter
 import dgca.verifier.app.engine.JsonLogicValidator
+import dgca.verifier.app.engine.data.ExternalParameter
 import dgca.verifier.app.engine.data.source.RulesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -162,7 +162,15 @@ class VerificationViewModel @Inject constructor(
                 withContext(Dispatchers.IO) {
                     val rules = rulesRepository.getRulesBy(countryIsoCode)
                     val engine = DefaultCertLogicEngine(jsonLogicValidator, ENGINE_VERSION, rules)
-                    val results = engine.validate(ExternalParameter(LocalDate.now(), emptyMap(), countryIsoCode, LocalDate.now(), LocalDate.now()), json)
+                    val results = engine.validate(
+                        ExternalParameter(
+                            LocalDate.now(),
+                            emptyMap(),
+                            countryIsoCode,
+                            LocalDate.now(),
+                            LocalDate.now()
+                        ), json
+                    )
                     return@withContext
                 }
                 _inProgress.value = false
