@@ -17,13 +17,29 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 5/5/21 8:18 PM
+ *  Created by climent on 6/14/21 1:49 PM
  */
 
-package it.ministerodellasalute.verificaC19
+package it.ministerodellasalute.verificaC19.util
 
-import android.content.res.Resources
+import org.junit.Assert
+import org.junit.Test
 
-private fun density() = Resources.getSystem().displayMetrics.density
+class UtilityTest {
 
-fun Int.dpToPx() = this * density().toInt()
+    @Test
+    fun `test app version when don't exist an update`() {
+        Assert.assertEquals(Utility.versionCompare("1.1", "1.1"), 0)
+    }
+
+    @Test
+    fun `test app version when exist an update`() {
+        Assert.assertEquals(Utility.versionCompare("1.1", "1.2"), -1)
+    }
+
+    @Test
+    fun `test app version unexpected case`() {
+            Assert.assertEquals(Utility.versionCompare("1.2", "1.1"), 1)
+    }
+
+}
