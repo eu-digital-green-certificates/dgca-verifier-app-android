@@ -41,10 +41,15 @@ import dgca.verifier.app.decoder.model.VerificationResult
 import dgca.verifier.app.decoder.prefixvalidation.PrefixValidationService
 import dgca.verifier.app.decoder.schema.SchemaValidator
 import dgca.verifier.app.decoder.toBase64
+import dgca.verifier.app.engine.DefaultCertLogicEngine
+import dgca.verifier.app.engine.ExternalParameter
+import dgca.verifier.app.engine.JsonLogicValidator
+import dgca.verifier.app.engine.data.source.RulesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -56,8 +61,14 @@ class VerificationViewModel @Inject constructor(
     private val coseService: CoseService,
     private val schemaValidator: SchemaValidator,
     private val cborService: CborService,
-    private val verifierRepository: VerifierRepository
+    private val verifierRepository: VerifierRepository,
+    private val jsonLogicValidator: JsonLogicValidator,
+    private val rulesRepository: RulesRepository
 ) : ViewModel() {
+
+    companion object {
+        private const val ENGINE_VERSION = "1.0.0"
+    }
 
     private val _verificationResult = MutableLiveData<VerificationResult?>()
     val verificationResult: LiveData<VerificationResult?> = _verificationResult
@@ -130,11 +141,15 @@ class VerificationViewModel @Inject constructor(
         }
     }
 
-    private fun validateCertData(certificate: GreenCertificate?, verificationResult: VerificationResult) {
+    private fun validateCertData(
+        certificate: GreenCertificate?,
+        verificationResult: VerificationResult
+    ) {
         certificate?.tests?.let {
             if (it.isNotEmpty()) {
                 val test = it.first()
-                verificationResult.testVerification = TestVerificationResult(test.isResultNegative(), test.isDateInThePast())
+                verificationResult.testVerification =
+                    TestVerificationResult(test.isResultNegative(), test.isDateInThePast())
             }
         }
     }
@@ -142,7 +157,16 @@ class VerificationViewModel @Inject constructor(
     fun validate(countryIsoCode: String) {
         val json = certificate.value?.first
         if (json?.isNotEmpty() == true) {
-            return
+            viewModelScope.launch {
+                _inProgress.value = true
+                withContext(Dispatchers.IO) {
+                    val rules = rulesRepository.getRulesBy(countryIsoCode)
+                    val engine = DefaultCertLogicEngine(jsonLogicValidator, ENGINE_VERSION, rules)
+                    val results = engine.validate(ExternalParameter(LocalDate.now(), emptyMap(), countryIsoCode, LocalDate.now(), LocalDate.now()), json)
+                    return@withContext
+                }
+                _inProgress.value = false
+            }
         }
     }
 }

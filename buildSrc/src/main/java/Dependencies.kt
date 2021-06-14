@@ -57,6 +57,8 @@ object Deps {
     const val json_validation_rhino = "io.apisense:rhino-android:${Versions.json_validation_rhino}"
     const val jackson_cbor = "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${Versions.jackson_cbor}"
     const val bouncy_castle = "org.bouncycastle:bcpkix-jdk15to18:${Versions.bouncy_castle}"
+    const val jackson_kotlin = "com.fasterxml.jackson.module:jackson-module-kotlin:${Versions.jackson_kotlin}"
+    const val appache_commons = "commons-io:commons-io:${Versions.appache_commons}"
 
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
 

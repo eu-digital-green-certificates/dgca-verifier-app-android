@@ -112,7 +112,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
                 val list = getCertificateListData(pair.second)
                 adapter.update(list)
 
-                startTimer()
+//                startTimer()
             }
         })
         viewModel.inProgress.observe(viewLifecycleOwner, {
