@@ -60,7 +60,7 @@ The following dependencies are used in the project  by the verifier app and the 
 - **[zxing](https://github.com/zxing/zxing).** Library used QR code scanning.
 - **[retrofit2](https://github.com/square/retrofit).** Library used for networking.
 - **[gson](https://github.com/google/gson).** Library used by core module for JSON serialization/deserialization.
-All listed dependencies are already included in the [official EU Digital COVID Certificate Verifier App for Android] (https://github.com/eu-digital-green-certificates/dgca-verifier-app-android). No new dependencies have been included in the Italian customization of the app.
+All listed dependencies are already included in the [official EU Digital COVID Certificate Verifier App for Android](https://github.com/eu-digital-green-certificates/dgca-verifier-app-android). No new dependencies have been included in the Italian customization of the app.
 
 ## Support and feedback
 
@@ -80,7 +80,7 @@ Our commitment to open source means that we are enabling -in fact encouraging- a
 
 ## Licensing
 
-Copyright (C) 2021 T-Systems International GmbH and all other contributors
+See the [NOTICE](./NOTICE) for all copyright and licensing details.
 
 Licensed under the **Apache License, Version 2.0** (the "License"); you may not use this file except in compliance with the License.
 
