@@ -22,6 +22,7 @@
 
 package dgca.verifier.app.android.verification
 
+
 import android.app.Dialog
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -29,12 +30,8 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.BaseAdapter
 import android.widget.FrameLayout
-import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
@@ -49,7 +46,6 @@ import dgca.verifier.app.android.databinding.DialogFragmentVerificationBinding
 import dgca.verifier.app.android.model.CertificateData
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.model.TestResult
-import java.util.*
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
@@ -104,47 +100,22 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         viewModel.verificationError.observe(viewLifecycleOwner, {
             setCertStatusError(it)
         })
-        viewModel.certificate.observe(viewLifecycleOwner, { pair ->
-            if (pair?.second != null) {
-                toggleButton(pair.second)
-                showUserData(pair.second)
+        viewModel.certificate.observe(viewLifecycleOwner, { certificateModel ->
+            if (certificateModel != null) {
+                toggleButton(certificateModel)
+                showUserData(certificateModel)
 
-                val list = getCertificateListData(pair.second)
+                val list = getCertificateListData(certificateModel)
                 adapter.update(list)
 
-//                startTimer()
+                startTimer()
             }
         })
         viewModel.inProgress.observe(viewLifecycleOwner, {
             binding.progressBar.isVisible = it
         })
 
-        viewModel.init(args.qrCodeText)
-
-        val countries = listOf("at", "de").sortedBy {
-            Locale("", it).displayName
-        }
-        countries.sorted()
-        binding.countrySelector.adapter =
-            object : BaseAdapter() {
-
-                override fun getCount(): Int = countries.size
-
-                override fun getItem(position: Int): String = countries[position]
-
-                override fun getItemId(position: Int): Long = position.toLong()
-
-                override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View = layoutInflater
-                    .inflate(android.R.layout.simple_spinner_item, parent, false).apply {
-                        val textView: TextView = this.findViewById(android.R.id.text1)
-                        val countryIsoCode = countries[position]
-                        val locale = Locale("", countryIsoCode)
-                        textView.text = locale.displayCountry
-                    }
-            }
-        binding.validateWith.setOnClickListener {
-            viewModel.validate(binding.countrySelector.selectedItem as String)
-        }
+        viewModel.init(args.qrCodeText, args.countryIsoCode)
     }
 
     override fun onDestroyView() {
@@ -191,6 +162,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
                 VerificationError.VERIFICATION_FAILED -> R.string.verification_failed
                 VerificationError.TEST_DATE_IS_IN_THE_FUTURE -> R.string.the_test_date_is_in_the_future
                 VerificationError.TEST_RESULT_POSITIVE -> R.string.test_result_positive
+                VerificationError.RULES_VALIDATION_FAILED -> R.string.rules_validation_failed
                 VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID -> R.string.cryptographic_signature_invalid
             }
         )

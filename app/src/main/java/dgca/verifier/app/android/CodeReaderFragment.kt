@@ -28,6 +28,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.BaseAdapter
+import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -42,6 +44,7 @@ import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import dgca.verifier.app.android.databinding.FragmentCodeReaderBinding
+import java.util.*
 
 private const val CAMERA_REQUEST_CODE = 1003
 
@@ -76,7 +79,11 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
         (activity as MainActivity).clearBackground()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentCodeReaderBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -94,6 +101,28 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
             val action = CodeReaderFragmentDirections.actionCodeReaderFragmentToSettingsFragment()
             findNavController().navigate(action)
         }
+
+        val countries = resources.getStringArray(R.array.countries).sortedBy {
+            Locale("", it).displayName
+        }
+        binding.countrySelector.adapter =
+            object : BaseAdapter() {
+
+                override fun getCount(): Int = countries.size
+
+                override fun getItem(position: Int): String = countries[position]
+
+                override fun getItemId(position: Int): Long = position.toLong()
+
+                override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View =
+                    layoutInflater
+                        .inflate(android.R.layout.simple_spinner_item, parent, false).apply {
+                            val textView: TextView = this.findViewById(android.R.id.text1)
+                            val countryIsoCode = countries[position]
+                            val locale = Locale("", countryIsoCode)
+                            textView.text = locale.displayCountry
+                        }
+            }
     }
 
     override fun onDestroyView() {
@@ -114,7 +143,11 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
     }
 
     private fun navigateToVerificationPage(text: String) {
-        val action = CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationFragment(text)
+        val action =
+            CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationFragment(
+                text,
+                binding.countrySelector.selectedItem.toString()
+            )
         findNavController().navigate(action)
     }
 
@@ -130,7 +163,11 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
         }
     }
 
-    override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
+    override fun onDestinationChanged(
+        controller: NavController,
+        destination: NavDestination,
+        arguments: Bundle?
+    ) {
         if (destination.id == R.id.codeReaderFragment) {
             binding.barcodeScanner.resume()
             lastText = ""

@@ -25,8 +25,6 @@
 
     <dimen name="default_margin_top">10dp</dimen>
     <dimen name="default_margin">16dp</dimen>
-    <dimen name="default_half_margin">8dp</dimen>
-    <dimen name="default_quarter_margin">4dp</dimen>
     <dimen name="default_padding">16dp</dimen>
     <dimen name="text_size_medium">16sp</dimen>
     <dimen name="text_size_big">26sp</dimen>

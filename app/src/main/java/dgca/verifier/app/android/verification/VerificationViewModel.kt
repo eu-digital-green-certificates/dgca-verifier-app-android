@@ -32,6 +32,7 @@ import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.model.toCertificateModel
 import dgca.verifier.app.decoder.base45.Base45Service
 import dgca.verifier.app.decoder.cbor.CborService
+import dgca.verifier.app.decoder.cbor.GreenCertificateData
 import dgca.verifier.app.decoder.compression.CompressorService
 import dgca.verifier.app.decoder.cose.CoseService
 import dgca.verifier.app.decoder.cose.CryptoService
@@ -43,13 +44,16 @@ import dgca.verifier.app.decoder.schema.SchemaValidator
 import dgca.verifier.app.decoder.toBase64
 import dgca.verifier.app.engine.DefaultCertLogicEngine
 import dgca.verifier.app.engine.JsonLogicValidator
+import dgca.verifier.app.engine.Result
 import dgca.verifier.app.engine.data.ExternalParameter
 import dgca.verifier.app.engine.data.source.RulesRepository
+import dgca.verifier.app.engine.data.source.Type
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import javax.inject.Inject
 
 @HiltViewModel
@@ -76,24 +80,25 @@ class VerificationViewModel @Inject constructor(
     private val _verificationError = MutableLiveData<VerificationError>()
     val verificationError: LiveData<VerificationError> = _verificationError
 
-    private val _certificate = MutableLiveData<Pair<String, CertificateModel>?>()
-    val certificate: LiveData<Pair<String, CertificateModel>?> = _certificate
+    private val _certificate = MutableLiveData<CertificateModel?>()
+    val certificate: LiveData<CertificateModel?> = _certificate
 
     private val _inProgress = MutableLiveData<Boolean>()
     val inProgress: LiveData<Boolean> = _inProgress
 
-    fun init(qrCodeText: String) {
-        decode(qrCodeText)
+    fun init(qrCodeText: String, countryIsoCode: String) {
+        decode(qrCodeText, countryIsoCode)
     }
 
-    private fun decode(code: String) {
+    private fun decode(code: String, countryIsoCode: String) {
         viewModelScope.launch {
             _inProgress.value = true
-            var greenCertificate: Pair<String, GreenCertificate>? = null
+            var greenCertificateData: GreenCertificateData? = null
             val verificationResult = VerificationResult()
             var noPublicKeysFound = true
 
             var isApplicableCode = false
+            var rulesValidationFailed = false
             withContext(Dispatchers.IO) {
                 val plainInput = prefixValidationService.decode(code, verificationResult)
                 val compressedCose = base45Service.decode(plainInput, verificationResult)
@@ -114,8 +119,8 @@ class VerificationViewModel @Inject constructor(
                 isApplicableCode = true
 
                 schemaValidator.validate(coseData.cbor, verificationResult)
-                greenCertificate = cborService.decodeData(coseData.cbor, verificationResult)
-                validateCertData(greenCertificate?.second, verificationResult)
+                greenCertificateData = cborService.decodeData(coseData.cbor, verificationResult)
+                validateCertData(greenCertificateData?.greenCertificate, verificationResult)
 
                 val certificates = verifierRepository.getCertificatesBy(kid.toBase64())
                 if (certificates.isEmpty()) {
@@ -129,15 +134,44 @@ class VerificationViewModel @Inject constructor(
                         return@forEach
                     }
                 }
+
+                greenCertificateData?.apply {
+                    val rules = rulesRepository.getRulesBy(countryIsoCode, this.greenCertificate.getType())
+                    val engine = DefaultCertLogicEngine(jsonLogicValidator, ENGINE_VERSION, rules)
+                    val results = engine.validate(
+                        ExternalParameter(
+                            LocalDateTime.now().atOffset(ZoneOffset.UTC).toString(),
+                            emptyMap(),
+                            countryIsoCode,
+                            this.expirationTime.toString(),
+                            this.issuedAt.toString()
+                        ),
+                        this.hcertJson
+                    ).forEach {
+                        if (it.result != Result.PASSED) {
+                            rulesValidationFailed = true
+                            verificationResult.rulesValidationFailed = true
+                            return@forEach
+                        }
+                    }
+                }
             }
 
-            verificationResult.fetchError(noPublicKeysFound)
+            verificationResult.fetchError(noPublicKeysFound, rulesValidationFailed)
                 ?.apply { _verificationError.value = this }
 
             _inProgress.value = false
             _verificationResult.value = if (isApplicableCode) verificationResult else null
-            _certificate.value =
-                greenCertificate?.let { Pair(it.first, it.second.toCertificateModel()) }
+            _certificate.value = greenCertificateData?.greenCertificate?.toCertificateModel()
+        }
+    }
+
+    private fun GreenCertificate.getType(): Type {
+        return when {
+            this.recoveryStatements?.isNotEmpty() == true -> Type.RECOVERY
+            this.vaccinations?.isNotEmpty() == true -> Type.VACCINATION
+            this.tests?.isNotEmpty() == true -> Type.TEST
+            else -> Type.TEST
         }
     }
 
@@ -150,30 +184,6 @@ class VerificationViewModel @Inject constructor(
                 val test = it.first()
                 verificationResult.testVerification =
                     TestVerificationResult(test.isResultNegative(), test.isDateInThePast())
-            }
-        }
-    }
-
-    fun validate(countryIsoCode: String) {
-        val json = certificate.value?.first
-        if (json?.isNotEmpty() == true) {
-            viewModelScope.launch {
-                _inProgress.value = true
-                withContext(Dispatchers.IO) {
-                    val rules = rulesRepository.getRulesBy(countryIsoCode)
-                    val engine = DefaultCertLogicEngine(jsonLogicValidator, ENGINE_VERSION, rules)
-                    val results = engine.validate(
-                        ExternalParameter(
-                            LocalDate.now(),
-                            emptyMap(),
-                            countryIsoCode,
-                            LocalDate.now(),
-                            LocalDate.now()
-                        ), json
-                    )
-                    return@withContext
-                }
-                _inProgress.value = false
             }
         }
     }

@@ -58,4 +58,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+    <TextView
+        android:id="@+id/validate_with"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_margin"
+        android:text="@string/validate_with"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Spinner
+        android:id="@+id/country_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_margin"
+        android:background="@color/white"
+        app:layout_constraintTop_toTopOf="@id/validate_with"
+        app:layout_constraintBottom_toBottomOf="@id/validate_with"
+        app:layout_constraintStart_toEndOf="@id/validate_with" />
 </androidx.constraintlayout.widget.ConstraintLayout>
