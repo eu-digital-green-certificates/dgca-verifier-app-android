@@ -1,10 +1,16 @@
-Copyright (c) 2021 T-Systems International GmbH and all other contributors.
+The copyright of this forked version, which includes new files and changes or additions
+to the existing ones, belongs to the Italian Ministero della Salute
+and all other open source contributors.
+The original copyright belongs to T-Systems International GmbH and all other contributors.
+The copyright notice at the top of each source code file explicits these statements.
 
-This project is licensed under Apache License, Version 2.0; 
-you may not use them except in compliance with the License. 
+This project is licensed under Apache License, Version 2.0;
+you may not use them except in compliance with the License.
 
 Contributors:
 -------------
 
 Daniel Eder [daniel-eder], T-Mobile International Austria GmbH
 Andreas Scheibal [ascheibal], T-Systems International GmbH
+
+The version control system provides attribution for specific lines of code.

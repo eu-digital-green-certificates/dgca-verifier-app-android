@@ -29,6 +29,7 @@
     <string name="controlCertificate">Controlla un certificato</string>
     <string name="welcome">Benvenuto</string>
     <string name="systemDescription">Questo è il sistema di scannerizzazione dei QR code delle certificazioni di idoneità Covid19.</string>
+    <string name="privacyPolicy"><u>Privacy policy</u></string>
     <string name="codiceFiscale">Codice fiscale</string>
     <string name="expirationText">Data scadenza certificato</string>
     <string name="certificateValid">Certificato valido</string>
@@ -52,5 +53,4 @@
     <string name="noKeyAlertMessage">L\'applicazione deve connettersi alla rete almeno una volta per essere utilizzata</string>
     <string name="ok">OK</string>
     <string name="version">v. %1$s</string>
-
 </resources>
