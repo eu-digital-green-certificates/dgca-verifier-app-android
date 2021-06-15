@@ -23,6 +23,7 @@
 package it.ministerodellasalute.verificaC19.data
 
 import android.util.Log
+import it.ministerodellasalute.verificaC19.di.DispatcherProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
@@ -31,10 +32,10 @@ import java.net.UnknownHostException
 
 private const val TAG = "BaseRepository"
 
-abstract class BaseRepository : Repository {
+abstract class BaseRepository(private val dispatcherProvider: DispatcherProvider) : Repository {
 
     suspend fun <P> execute(doOnAsyncBlock: suspend () -> P): P? {
-        return withContext(Dispatchers.IO) {
+        return withContext(dispatcherProvider.getIO()) {
             return@withContext try {
                 Log.v(TAG, "Do network coroutine work")
                 doOnAsyncBlock.invoke()
@@ -53,5 +54,5 @@ abstract class BaseRepository : Repository {
 }
 
 @Suppress("BlockingMethodInNonBlockingContext")
-suspend fun ResponseBody.stringSuspending() =
-    withContext(Dispatchers.IO) { string() }
+suspend fun ResponseBody.stringSuspending(dispatcherProvider: DispatcherProvider) =
+    withContext(dispatcherProvider.getIO()) { string() }

@@ -25,15 +25,13 @@ package it.ministerodellasalute.verificaC19.data
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.gson.Gson
 import dgca.verifier.app.decoder.base64ToX509Certificate
 import dgca.verifier.app.decoder.toBase64
 import it.ministerodellasalute.verificaC19.data.local.AppDatabase
 import it.ministerodellasalute.verificaC19.data.local.Key
 import it.ministerodellasalute.verificaC19.data.local.Preferences
 import it.ministerodellasalute.verificaC19.data.remote.ApiService
-import it.ministerodellasalute.verificaC19.data.remote.model.Rule
-import it.ministerodellasalute.verificaC19.model.ValidationRulesEnum
+import it.ministerodellasalute.verificaC19.di.DispatcherProvider
 import it.ministerodellasalute.verificaC19.security.KeyStoreCryptor
 import java.net.HttpURLConnection
 import java.security.MessageDigest
@@ -45,8 +43,9 @@ class VerifierRepositoryImpl @Inject constructor(
         private val apiService: ApiService,
         private val preferences: Preferences,
         private val db: AppDatabase,
-        private val keyStoreCryptor: KeyStoreCryptor
-) : BaseRepository(), VerifierRepository {
+        private val keyStoreCryptor: KeyStoreCryptor,
+        private val dispatcherProvider: DispatcherProvider
+) : BaseRepository(dispatcherProvider), VerifierRepository {
 
     private val validCertList = mutableListOf<String>()
     private val fetchStatus: MutableLiveData<Boolean> = MutableLiveData()
@@ -72,7 +71,7 @@ class VerifierRepositoryImpl @Inject constructor(
         val body = response.body() ?: run {
             return
         }
-        preferences.validationRulesJson = body.stringSuspending()
+        preferences.validationRulesJson = body.stringSuspending(dispatcherProvider)
     }
 
     private suspend fun fetchCertificates(): Boolean? {
@@ -120,7 +119,7 @@ class VerifierRepositoryImpl @Inject constructor(
         val headers = response.headers()
         val responseKid = headers[HEADER_KID]
         val newResumeToken = headers[HEADER_RESUME_TOKEN]
-        val responseStr = response.body()?.stringSuspending() ?: return
+        val responseStr = response.body()?.stringSuspending(dispatcherProvider) ?: return
 
         if (validCertList.contains(responseKid) && isKidValid(responseKid, responseStr)) {
             Log.i(VerifierRepositoryImpl::class.java.simpleName, "Cert KID verified")
