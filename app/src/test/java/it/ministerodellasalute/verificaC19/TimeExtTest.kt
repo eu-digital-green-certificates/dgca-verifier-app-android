@@ -48,14 +48,4 @@ class TimeExtTest {
         Assert.assertEquals(expectedFormattedLocalDateTime, actualFormattedLocalDateTime)
     }
 
-    @Test
-    fun `test timestamp to last update format`() {
-        val localDateTime = 1623668633998
-        val expectedFormattedLocalDateTime = "14/06/2021, 14:03"
-
-        val actualFormattedLocalDateTime = localDateTime.parseTo(FORMATTED_DATE_LAST_SYNC)
-
-        Assert.assertEquals(expectedFormattedLocalDateTime, actualFormattedLocalDateTime)
-    }
-
 }
