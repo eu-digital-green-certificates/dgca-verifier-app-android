@@ -53,7 +53,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -140,11 +142,11 @@ class VerificationViewModel @Inject constructor(
                     val engine = DefaultCertLogicEngine(jsonLogicValidator, ENGINE_VERSION, rules)
                     val results = engine.validate(
                         ExternalParameter(
-                            LocalDateTime.now().atOffset(ZoneOffset.UTC).toString(),
+                            ZonedDateTime.now(ZoneId.of(ZoneOffset.UTC.id)),
                             emptyMap(),
                             countryIsoCode,
-                            this.expirationTime.toString(),
-                            this.issuedAt.toString()
+                            this.expirationTime,
+                            this.issuedAt
                         ),
                         this.hcertJson
                     ).forEach {
