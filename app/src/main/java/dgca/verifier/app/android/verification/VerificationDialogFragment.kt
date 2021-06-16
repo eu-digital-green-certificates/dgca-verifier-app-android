@@ -189,6 +189,18 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         binding.personFullName.text = certificate.getFullName()
         binding.personStandardisedFamilyName.text = certificate.person.standardisedFamilyName
         binding.personStandardisedGivenName.text = certificate.person.standardisedGivenName
+        if (certificate.person.standardisedGivenName?.isNotBlank() == true) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }.apply {
+            binding.personStandardisedGivenNameTitle.visibility = this
+            binding.personStandardisedGivenName.visibility = this
+        }
+
+        binding.dateOfBirth.text =
+            certificate.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
+        
         val dateOfBirth = certificate.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
         if (dateOfBirth.isBlank()) {
             View.GONE
