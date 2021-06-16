@@ -42,7 +42,14 @@ data class CertificateModel(
             stringBuilder.append(" ").append(familyName)
         }
         if (stringBuilder.isEmpty()) {
-            stringBuilder.append(person.standardisedGivenName).append(" ").append(person.standardisedFamilyName)
+            val standardisedGivenName = person.standardisedGivenName
+            if (standardisedGivenName?.isNotEmpty() == true) {
+                stringBuilder.append(standardisedGivenName)
+            }
+            val standardisedFamilyName = person.standardisedFamilyName
+            if (standardisedFamilyName.isNotEmpty()) {
+                stringBuilder.append(" ").append(standardisedFamilyName)
+            }
         }
         return stringBuilder.trim().toString()
     }
