@@ -199,13 +199,6 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
             binding.dateOfBirthTitle.visibility = this
             binding.dateOfBirth.visibility = this
         }
-        if (dateOfBirth.isEmpty()) {
-            binding.dateOfBirth.visibility = View.GONE
-        } else {
-            binding.dateOfBirth.visibility = View.VISIBLE
-            binding.dateOfBirth.text = dateOfBirth
-        }
-
     }
 
     private fun toggleButton(certificate: CertificateModel) {
