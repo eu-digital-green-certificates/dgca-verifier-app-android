@@ -42,17 +42,15 @@ import dgca.verifier.app.decoder.model.VerificationResult
 import dgca.verifier.app.decoder.prefixvalidation.PrefixValidationService
 import dgca.verifier.app.decoder.schema.SchemaValidator
 import dgca.verifier.app.decoder.toBase64
-import dgca.verifier.app.engine.DefaultCertLogicEngine
-import dgca.verifier.app.engine.JsonLogicValidator
-import dgca.verifier.app.engine.Result
+import dgca.verifier.app.engine.*
+import dgca.verifier.app.engine.data.CertificateType
 import dgca.verifier.app.engine.data.ExternalParameter
+import dgca.verifier.app.engine.data.Type
 import dgca.verifier.app.engine.data.source.RulesRepository
-import dgca.verifier.app.engine.data.source.Type
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -68,7 +66,7 @@ class VerificationViewModel @Inject constructor(
     private val schemaValidator: SchemaValidator,
     private val cborService: CborService,
     private val verifierRepository: VerifierRepository,
-    private val jsonLogicValidator: JsonLogicValidator,
+    private val engine: CertLogicEngine,
     private val rulesRepository: RulesRepository
 ) : ViewModel() {
 
@@ -138,9 +136,15 @@ class VerificationViewModel @Inject constructor(
                 }
 
                 greenCertificateData?.apply {
-                    val rules = rulesRepository.getRulesBy(countryIsoCode, this.greenCertificate.getType())
-                    val engine = DefaultCertLogicEngine(jsonLogicValidator, ENGINE_VERSION, rules)
+                    val rules =
+                        rulesRepository.getRulesBy(
+                            countryIsoCode, ZonedDateTime.now().withZoneSameInstant(
+                                UTC_ZONE_ID
+                            ), Type.ACCEPTANCE, this.greenCertificate.getType()
+                        )
                     val results = engine.validate(
+                        ENGINE_VERSION,
+                        rules,
                         ExternalParameter(
                             ZonedDateTime.now(ZoneId.of(ZoneOffset.UTC.id)),
                             emptyMap(),
@@ -168,12 +172,12 @@ class VerificationViewModel @Inject constructor(
         }
     }
 
-    private fun GreenCertificate.getType(): Type {
+    private fun GreenCertificate.getType(): CertificateType {
         return when {
-            this.recoveryStatements?.isNotEmpty() == true -> Type.RECOVERY
-            this.vaccinations?.isNotEmpty() == true -> Type.VACCINATION
-            this.tests?.isNotEmpty() == true -> Type.TEST
-            else -> Type.TEST
+            this.recoveryStatements?.isNotEmpty() == true -> CertificateType.RECOVERY
+            this.vaccinations?.isNotEmpty() == true -> CertificateType.VACCINATION
+            this.tests?.isNotEmpty() == true -> CertificateType.TEST
+            else -> CertificateType.TEST
         }
     }
 

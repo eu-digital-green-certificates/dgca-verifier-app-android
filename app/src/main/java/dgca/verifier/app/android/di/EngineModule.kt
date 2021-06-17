@@ -22,15 +22,22 @@
 
 package dgca.verifier.app.android.di
 
+import android.content.Context
+import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dgca.verifier.app.engine.CertLogicEngine
+import dgca.verifier.app.engine.DefaultCertLogicEngine
 import dgca.verifier.app.engine.DefaultJsonLogicValidator
 import dgca.verifier.app.engine.JsonLogicValidator
 import dgca.verifier.app.engine.data.source.DefaultRulesRepository
 import dgca.verifier.app.engine.data.source.RulesRepository
 import dgca.verifier.app.engine.data.source.local.DefaultRulesLocalDataSource
+import dgca.verifier.app.engine.data.source.local.RulesDao
+import dgca.verifier.app.engine.data.source.local.RulesDatabase
 import dgca.verifier.app.engine.data.source.local.RulesLocalDataSource
 import dgca.verifier.app.engine.data.source.remote.DefaultRulesRemoteDataSource
 import dgca.verifier.app.engine.data.source.remote.RulesRemoteDataSource
@@ -45,7 +52,17 @@ object EngineModule {
 
     @Singleton
     @Provides
-    fun provideRulesLocalDataSource(): RulesLocalDataSource = DefaultRulesLocalDataSource()
+    fun provideRulesDb(@ApplicationContext context: Context): RulesDatabase =
+        Room.databaseBuilder(context, RulesDatabase::class.java, "rule-db").build()
+
+    @Singleton
+    @Provides
+    fun provideRulesDao(rulesDatabase: RulesDatabase): RulesDao = rulesDatabase.rulesDao()
+
+    @Singleton
+    @Provides
+    fun provideRulesLocalDataSource(rulesDao: RulesDao): RulesLocalDataSource =
+        DefaultRulesLocalDataSource(rulesDao)
 
     @Singleton
     @Provides
@@ -61,4 +78,9 @@ object EngineModule {
     @Singleton
     @Provides
     fun provideCryptoService(): JsonLogicValidator = DefaultJsonLogicValidator()
+
+    @Singleton
+    @Provides
+    fun provideCertLogicEngine(jsonLogicValidator: JsonLogicValidator): CertLogicEngine =
+        DefaultCertLogicEngine(jsonLogicValidator)
 }
