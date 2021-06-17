@@ -40,11 +40,16 @@ class TestViewHolder(private val binding: ItemTestBinding) : RecyclerView.ViewHo
             }
         binding.dateOfCollectionValue.visibility =
             if (dateOfCollectionString?.isNotEmpty() == true) View.VISIBLE else View.GONE
-        val dateOfTestResultString: String? =
-            data.dateTimeOfTestResult?.toFormattedDateTime()?.apply {
-                binding.dateOfTestResultValue.text = this
-            }
-        binding.dateOfTestResultValue.visibility = if(dateOfTestResultString?.isNotEmpty() == true) View.VISIBLE else View.GONE
+        val dateOfTestResult = data.dateTimeOfTestResult?.toFormattedDateTime()
+        if (dateOfTestResult?.isNotBlank() == true) {
+            binding.dateOfTestResultValue.text = dateOfTestResult
+            View.VISIBLE
+        } else {
+            View.GONE
+        }.apply {
+            binding.dateOfTestResultTitle.visibility = this
+            binding.dateOfTestResultValue.visibility = this
+        }
         binding.diseaseValue.text = data.disease.value
         binding.typeOfTestValue.text = data.typeOfTest
         binding.countryValue.text = data.countryOfVaccination
