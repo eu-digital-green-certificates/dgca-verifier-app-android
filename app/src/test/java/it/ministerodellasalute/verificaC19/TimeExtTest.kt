@@ -55,16 +55,18 @@ class TimeExtTest {
     @Test
     fun `test timestamp to last update format`() {
         val localDateTime = 1623668633998
-        val expectedFormattedLocalDateTime = "14/06/2021, 15:03"
+        val expectedFormattedLocalDateTime = "14/06/2021, 13:03"
 
         val actualFormattedLocalDateTime = localDateTime.parseTo(FORMATTED_DATE_LAST_SYNC)
 
         val sdf = SimpleDateFormat("dd/MM/yyyy', 'HH:mm")
         sdf.timeZone = TimeZone.getTimeZone("UTC")
         val dateObj: Date = sdf.parse(actualFormattedLocalDateTime)
-        val formattedDateObj = SimpleDateFormat("dd/MM/yyyy', 'HH:mm").format(dateObj);
+        val expectedFormattedLocalDateTimeToUTC: Date = sdf.parse(expectedFormattedLocalDateTime)
+        val formattedDateObj = SimpleDateFormat("dd/MM/yyyy', 'HH:mm").format(dateObj)
+        val formattedExpectedFormattedLocalDateTimeToUTC = SimpleDateFormat("dd/MM/yyyy', 'HH:mm").format(expectedFormattedLocalDateTimeToUTC);
 
-        Assert.assertEquals(expectedFormattedLocalDateTime, formattedDateObj)
+        Assert.assertEquals(formattedExpectedFormattedLocalDateTimeToUTC, formattedDateObj)
     }
 
 }
