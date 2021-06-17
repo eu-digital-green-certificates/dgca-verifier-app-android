@@ -24,6 +24,10 @@ package it.ministerodellasalute.verificaC19
 
 import org.junit.Assert
 import org.junit.Test
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.util.*
+
 
 class TimeExtTest {
 
@@ -46,6 +50,21 @@ class TimeExtTest {
         val actualFormattedLocalDateTime = localDateTimeString.parseFromTo(YEAR_MONTH_DAY, FORMATTED_BIRTHDAY_DATE)
 
         Assert.assertEquals(expectedFormattedLocalDateTime, actualFormattedLocalDateTime)
+    }
+
+    @Test
+    fun `test timestamp to last update format`() {
+        val localDateTime = 1623668633998
+        val expectedFormattedLocalDateTime = "14/06/2021, 15:03"
+
+        val actualFormattedLocalDateTime = localDateTime.parseTo(FORMATTED_DATE_LAST_SYNC)
+
+        val sdf = SimpleDateFormat("dd/MM/yyyy', 'HH:mm")
+        sdf.timeZone = TimeZone.getTimeZone("UTC")
+        val dateObj: Date = sdf.parse(actualFormattedLocalDateTime)
+        val formattedDateObj = SimpleDateFormat("dd/MM/yyyy', 'HH:mm").format(dateObj);
+
+        Assert.assertEquals(expectedFormattedLocalDateTime, formattedDateObj)
     }
 
 }
