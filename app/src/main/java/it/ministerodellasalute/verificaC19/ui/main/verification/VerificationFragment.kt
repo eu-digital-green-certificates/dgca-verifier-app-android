@@ -103,8 +103,10 @@ class VerificationFragment : Fragment(), View.OnClickListener {
 
                 val endDate: LocalDate = LocalDate.parse(it.last().certificateValidFrom)
                     .plusDays(Integer.parseInt(viewModel.getRecoveryCertEndDay()).toLong())
-                if (!startDate.isAfter(LocalDate.now()) && !LocalDate.now().isAfter(endDate)) {
-                    return TestExpiryValues.VALID
+                return when {
+                    startDate.isAfter(LocalDate.now()) -> TestExpiryValues.FUTURE
+                    LocalDate.now().isAfter(endDate) -> TestExpiryValues.EXPIRED
+                    else -> TestExpiryValues.VALID
                 }
             } catch (e: Exception) {
                 return TestExpiryValues.TECHNICAL_ERROR
@@ -130,10 +132,10 @@ class VerificationFragment : Fragment(), View.OnClickListener {
                     ldtDateTimeOfCollection
                         .plusHours(Integer.parseInt(viewModel.getRapidTestEndHour()).toLong())
 
-                if (!startDate.isAfter(LocalDateTime.now()) && !LocalDateTime.now()
-                        .isAfter(endDate)
-                ) {
-                    return TestExpiryValues.VALID
+                return when {
+                    startDate.isAfter(LocalDateTime.now()) -> TestExpiryValues.FUTURE
+                    LocalDateTime.now().isAfter(endDate) -> TestExpiryValues.EXPIRED
+                    else -> TestExpiryValues.VALID
                 }
             } catch (e: Exception) {
                 return TestExpiryValues.TECHNICAL_ERROR
@@ -150,8 +152,10 @@ class VerificationFragment : Fragment(), View.OnClickListener {
 
                     val endDate: LocalDate = LocalDate.parse(it.last().dateOfVaccination)
                         .plusDays(Integer.parseInt(viewModel.getVaccineEndDayNotComplete(it.last().medicinalProduct)).toLong())
-                    if (startDate.isBefore(LocalDate.now()) && LocalDate.now().isBefore(endDate)) {
-                        return TestExpiryValues.VALID
+                    return when {
+                        startDate.isAfter(LocalDate.now()) -> TestExpiryValues.FUTURE
+                        LocalDate.now().isAfter(endDate) -> TestExpiryValues.EXPIRED
+                        else -> TestExpiryValues.VALID
                     }
                 } else if (it.last().doseNumber == it.last().totalSeriesOfDoses) {
                     val startDate: LocalDate = LocalDate.parse(it.last().dateOfVaccination)
@@ -159,8 +163,10 @@ class VerificationFragment : Fragment(), View.OnClickListener {
 
                     val endDate: LocalDate = LocalDate.parse(it.last().dateOfVaccination)
                         .plusDays(Integer.parseInt(viewModel.getVaccineEndDayComplete(it.last().medicinalProduct)).toLong())
-                    if (!startDate.isAfter(LocalDate.now()) && !LocalDate.now().isAfter(endDate)) {
-                        return TestExpiryValues.VALID
+                    return when {
+                        startDate.isAfter(LocalDate.now()) -> TestExpiryValues.FUTURE
+                        LocalDate.now().isAfter(endDate) -> TestExpiryValues.EXPIRED
+                        else -> TestExpiryValues.VALID
                     }
                 }
             } catch (e: Exception) {
@@ -173,22 +179,22 @@ class VerificationFragment : Fragment(), View.OnClickListener {
     private enum class TestExpiryValues {
         TECHNICAL_ERROR,
         EXPIRED,
+        FUTURE,
         VALID
     }
 
     private fun setCertStatusUI(verificationResult: VerificationResult) {
         if (verificationResult.isValid()) {
-            if (isAnyTestExpired(certificateModel) == TestExpiryValues.EXPIRED) {
-                setTestErrorMessage(true)
-            } else if (isAnyTestExpired(certificateModel) == TestExpiryValues.TECHNICAL_ERROR) {
-                setTestErrorMessage(false)
-            } else {
+            val certificateValidityResult = isAnyTestExpired(certificateModel)
+            if (certificateValidityResult == TestExpiryValues.VALID) {
                 binding.containerPersonDetails.visibility = View.VISIBLE
                 binding.checkmark.background =
                     ContextCompat.getDrawable(requireContext(), R.drawable.ic_checkmark_filled)
                 binding.certificateValid.text = getString(R.string.certificateValid)
                 binding.subtitleText.text = getString(R.string.subtitle_text)
                 binding.nextQrButton.text = getString(R.string.nextQR)
+            } else {
+                setTestErrorMessage(certificateValidityResult)
             }
         } else {
             binding.containerPersonDetails.visibility = View.GONE
@@ -199,13 +205,18 @@ class VerificationFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun setTestErrorMessage(isExpired: Boolean) {
+    private fun setTestErrorMessage(certificateValidityResult: TestExpiryValues) {
         binding.containerPersonDetails.visibility = View.VISIBLE
         binding.checkmark.background =
             ContextCompat.getDrawable(requireContext(), R.drawable.ic_misuse)
         binding.certificateValid.text = getString(R.string.certificateNonValid)
         binding.subtitleText.text =
-            if (isExpired) getString(R.string.subtitle_text_expired) else getString(R.string.subtitle_text_technicalError)
+            when (certificateValidityResult) {
+                TestExpiryValues.TECHNICAL_ERROR -> getString(R.string.subtitle_text_technicalError)
+                TestExpiryValues.EXPIRED -> getString(R.string.subtitle_text_expired)
+                TestExpiryValues.FUTURE -> getString(R.string.subtitle_text_future)
+                else -> getString(R.string.subtitle_text_technicalError)
+            }
     }
 
     private fun setPersonData(person: PersonModel, dateOfBirth: String) {
