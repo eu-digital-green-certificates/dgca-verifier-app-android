@@ -45,6 +45,7 @@ import dgca.verifier.app.decoder.toBase64
 import dgca.verifier.app.engine.*
 import dgca.verifier.app.engine.data.CertificateType
 import dgca.verifier.app.engine.data.ExternalParameter
+import dgca.verifier.app.engine.data.Rule
 import dgca.verifier.app.engine.data.Type
 import dgca.verifier.app.engine.data.source.RulesRepository
 import kotlinx.coroutines.Dispatchers
@@ -139,12 +140,24 @@ class VerificationViewModel @Inject constructor(
                 }
 
                 greenCertificateData?.apply {
-                    val rules =
+                    val rules = mutableListOf<Rule>()
+                    rules.addAll(
                         rulesRepository.getRulesBy(
                             countryIsoCode, ZonedDateTime.now().withZoneSameInstant(
                                 UTC_ZONE_ID
                             ), Type.ACCEPTANCE, this.greenCertificate.getType()
                         )
+                    )
+                    val issuingCountry = this.greenCertificate.getIssuingCountry()
+                    if (issuingCountry.isNotBlank()) {
+                        rules.addAll(
+                            rulesRepository.getRulesBy(
+                                issuingCountry, ZonedDateTime.now().withZoneSameInstant(
+                                    UTC_ZONE_ID
+                                ), Type.INVALIDATION, this.greenCertificate.getType()
+                            )
+                        )
+                    }
                     validationResults = engine.validate(
                         ENGINE_VERSION,
                         rules,
@@ -169,7 +182,10 @@ class VerificationViewModel @Inject constructor(
                 }
             }
 
-            verificationResult.fetchError(noPublicKeysFound, verificationResult.rulesValidationFailed)
+            verificationResult.fetchError(
+                noPublicKeysFound,
+                verificationResult.rulesValidationFailed
+            )
                 ?.apply { _verificationError.value = this }
 
             _inProgress.value = false
