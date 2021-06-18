@@ -5,16 +5,83 @@ plugins {
     id 'androidx.navigation.safeargs.kotlin'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'jacoco'
 }
 
 tasks.whenTaskAdded { task ->
     if (task.name == 'assembleDebug')
-        task.dependsOn test
+        task.dependsOn codeCoverageDebugReport
 }
 
 tasks.whenTaskAdded { task ->
     if (task.name == 'assembleRelease')
-        task.dependsOn test
+        task.dependsOn codeCoverageReleaseReport
+}
+
+def androidExclusion = [
+        '**/databinding/**/*.*',
+        '**/android/databinding/*Binding.*',
+        '**/BR.*',
+        '**/R.*',
+        '**/R$*.*',
+        '**/BuildConfig.*',
+        '**/Manifest*.*',
+        '**/*_MembersInjector.*',
+        '**/Dagger*Component.*',
+        '**/Dagger*Component$Builder.*',
+        '**/*Module_*Factory.*',
+        '**/*Fragment*.*',
+        '**/*Activity*.*',
+        '**/*Adapter*.*',
+        '**/*ViewPager*.*',
+        '**/*ViewHolder*.*',
+        '**/*ModuleKt*.*',
+        '**/network/**',
+        '**/model/**',
+        '**/security/**',
+        '**/worker/**',
+        '**/VerificaApplication*.*',
+        '**/Key*.*'
+]
+
+task codeCoverageDebugReport(type: JacocoReport, dependsOn: 'testDebugUnitTest') {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+    getClassDirectories().setFrom(fileTree(
+            dir: 'build/tmp/kotlin-classes/debug',
+            excludes: androidExclusion
+    ))
+    getSourceDirectories().setFrom(files('src/main/java/it/ministerodellasalute/verificaC19'))
+    getExecutionData().setFrom(files('build/jacoco/testDebugUnitTest.exec'))
+}
+
+task getDebugCoverage(type: Exec, dependsOn: 'codeCoverageDebugReport') {
+    group = "Reporting"
+    commandLine "open", "$buildDir/reports/jacoco/codeCoverageReport/html/index.html"
+}
+
+task codeCoverageReleaseReport(type: JacocoReport, dependsOn: 'testReleaseUnitTest') {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+    getClassDirectories().setFrom(fileTree(
+            dir: 'build/tmp/kotlin-classes/release',
+            excludes: androidExclusion
+    ))
+    getSourceDirectories().setFrom(files('src/main/java/it/ministerodellasalute/verificaC19'))
+    getExecutionData().setFrom(files('build/jacoco/testReleaseUnitTest.exec'))
+}
+
+task getReleaseCoverage(type: org.gradle.api.tasks.Exec, dependsOn: 'codeCoverageReleaseReport') {
+    group = "Reporting"
+    commandLine "open", "$buildDir/reports/jacoco/codeCoverageReport/html/index.html"
 }
 
 
@@ -32,9 +99,9 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField "String", "BASE_URL", "\"https://testaka4.sogei.it/v1/dgc/\""
-            buildConfigField "String", "SERVER_HOST", "\"testaka4.sogei.it\""
-            buildConfigField "String", "CERTIFICATE_SHA", "\"sha256/R0d+cI8vTcJ3sCbpfQCH0OmdBbulPH3deYhngzOqJVA=\""
+            buildConfigField "String", "BASE_URL", "\"https://get.dgc.gov.it/v1/dgc/\""
+            buildConfigField "String", "SERVER_HOST", "\"get.dgc.gov.it\""
+            buildConfigField "String", "CERTIFICATE_SHA", "\"sha256/7cZJIDPacG8FS3pq6Mvxg+7yBDM/VYc2alOcbVe/e74=\""
         }
 
         release {

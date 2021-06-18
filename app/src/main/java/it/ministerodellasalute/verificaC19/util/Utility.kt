@@ -22,39 +22,38 @@
 
 package it.ministerodellasalute.verificaC19.util
 
-class Utility {
-    companion object {
-        fun versionCompare(v1: String, v2: String): Int {
-            // vnum stores each numeric part of version
-            var vnum1 = 0
-            var vnum2 = 0
+object Utility {
+    fun versionCompare(v1: String, v2: String): Int {
+        // vnum stores each numeric part of version
+        var vnum1 = 0
+        var vnum2 = 0
 
-            // loop until both String are processed
-            var i = 0
-            var j = 0
-            while (i < v1.length || j < v2.length) {
+        // loop until both String are processed
+        var i = 0
+        var j = 0
+        while (i < v1.length || j < v2.length) {
 
-                // Store numeric part of version 1 in vnum1
-                while (i < v1.length && v1[i] != '.') {
-                    vnum1 = (vnum1 * 10 + (v1[i] - '0'))
-                    i++
-                }
-
-                // store numeric part of version 2 in vnum2
-                while (j < v2.length && v2[j] != '.') {
-                    vnum2 = (vnum2 * 10 + (v2[j] - '0'))
-                    j++
-                }
-                if (vnum1 > vnum2) return 1
-                if (vnum2 > vnum1) return -1
-
-                // if equal, reset variables and go for next numeric part
-                vnum2 = 0
-                vnum1 = vnum2
+            // Store numeric part of version 1 in vnum1
+            while (i < v1.length && v1[i] != '.') {
+                vnum1 = (vnum1 * 10 + (v1[i] - '0'))
                 i++
+            }
+
+            // store numeric part of version 2 in vnum2
+            while (j < v2.length && v2[j] != '.') {
+                vnum2 = (vnum2 * 10 + (v2[j] - '0'))
                 j++
             }
-            return 0
+            if (vnum1 > vnum2) return 1
+            if (vnum2 > vnum1) return -1
+
+            // if equal, reset variables and go for next numeric part
+            vnum2 = 0
+            vnum1 = vnum2
+            i++
+            j++
         }
+        return 0
     }
+
 }

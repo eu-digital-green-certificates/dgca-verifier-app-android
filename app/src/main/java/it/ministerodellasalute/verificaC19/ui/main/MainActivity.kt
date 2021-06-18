@@ -31,8 +31,6 @@ import it.ministerodellasalute.verificaC19.R
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel by viewModels<MainViewModel>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
