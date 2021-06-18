@@ -46,6 +46,9 @@ import dgca.verifier.app.android.databinding.DialogFragmentVerificationBinding
 import dgca.verifier.app.android.model.CertificateData
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.model.TestResult
+import dgca.verifier.app.android.verification.rules.RuleValidationResultCard
+import dgca.verifier.app.android.verification.rules.RuleValidationResultsAdapter
+import dgca.verifier.app.android.verification.rules.toRuleValidationResultCard
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
@@ -87,6 +90,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         val layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.adapter = adapter
+        binding.rulesValidationResultsList.layoutManager = LinearLayoutManager(requireContext())
         binding.actionBtn.setOnClickListener { dismiss() }
 
         viewModel.verificationResult.observe(viewLifecycleOwner, {
@@ -172,12 +176,26 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         } else {
             binding.errorTestResult.visibility = View.GONE
         }
+
+        if (verificationError == VerificationError.RULES_VALIDATION_FAILED) {
+            val ruleValidationResultCards = mutableListOf<RuleValidationResultCard>()
+            viewModel.validationResults.value?.forEach {
+                ruleValidationResultCards.add(it.toRuleValidationResultCard())
+            }
+            binding.rulesValidationResultsList.adapter =  RuleValidationResultsAdapter(layoutInflater, ruleValidationResultCards)
+            View.VISIBLE
+        } else {
+            View.GONE
+        }.apply {
+            binding.rulesValidationResultsList.visibility = this
+        }
     }
 
     private fun setCertDataVisibility(isValid: Boolean) {
         binding.errorDetails.visibility = if (isValid) View.GONE else View.VISIBLE
         if (isValid) {
             binding.errorTestResult.visibility = View.GONE
+            binding.rulesValidationResultsList.visibility = View.GONE
         }
         binding.nestedScrollView.visibility = if (isValid) View.VISIBLE else View.GONE
     }
@@ -206,8 +224,9 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
 
         binding.dateOfBirth.text =
             certificate.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
-        
-        val dateOfBirth = certificate.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
+
+        val dateOfBirth =
+            certificate.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
         if (dateOfBirth.isBlank()) {
             View.GONE
         } else {

@@ -17,7 +17,7 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 4/24/21 5:18 PM
+ *  Created by osarapulov on 6/18/21 8:58 AM
  */
 
 package dgca.verifier.app.android.verification
@@ -31,6 +31,9 @@ import dgca.verifier.app.android.model.CertificateData
 import dgca.verifier.app.android.model.RecoveryModel
 import dgca.verifier.app.android.model.TestModel
 import dgca.verifier.app.android.model.VaccinationModel
+import dgca.verifier.app.android.verification.certs.RecoveryViewHolder
+import dgca.verifier.app.android.verification.certs.TestViewHolder
+import dgca.verifier.app.android.verification.certs.VaccinationViewHolder
 
 class CertListAdapter(private val inflater: LayoutInflater) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 

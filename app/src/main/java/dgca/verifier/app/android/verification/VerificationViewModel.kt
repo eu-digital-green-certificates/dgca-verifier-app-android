@@ -83,6 +83,9 @@ class VerificationViewModel @Inject constructor(
     private val _certificate = MutableLiveData<CertificateModel?>()
     val certificate: LiveData<CertificateModel?> = _certificate
 
+    private val _validationResults = MutableLiveData<List<ValidationResult>>()
+    val validationResults: LiveData<List<ValidationResult>> = _validationResults
+
     private val _inProgress = MutableLiveData<Boolean>()
     val inProgress: LiveData<Boolean> = _inProgress
 
@@ -98,7 +101,7 @@ class VerificationViewModel @Inject constructor(
             var noPublicKeysFound = true
 
             var isApplicableCode = false
-            var rulesValidationFailed = false
+            var validationResults: List<ValidationResult> = emptyList()
             withContext(Dispatchers.IO) {
                 val plainInput = prefixValidationService.decode(code, verificationResult)
                 val compressedCose = base45Service.decode(plainInput, verificationResult)
@@ -142,7 +145,7 @@ class VerificationViewModel @Inject constructor(
                                 UTC_ZONE_ID
                             ), Type.ACCEPTANCE, this.greenCertificate.getType()
                         )
-                    val results = engine.validate(
+                    validationResults = engine.validate(
                         ENGINE_VERSION,
                         rules,
                         ExternalParameter(
@@ -153,9 +156,12 @@ class VerificationViewModel @Inject constructor(
                             this.issuedAt
                         ),
                         this.hcertJson
-                    ).forEach {
+                    )
+
+                    _validationResults.postValue(validationResults)
+
+                    validationResults.forEach {
                         if (it.result != Result.PASSED) {
-                            rulesValidationFailed = true
                             verificationResult.rulesValidationFailed = true
                             return@forEach
                         }
@@ -163,7 +169,7 @@ class VerificationViewModel @Inject constructor(
                 }
             }
 
-            verificationResult.fetchError(noPublicKeysFound, rulesValidationFailed)
+            verificationResult.fetchError(noPublicKeysFound, verificationResult.rulesValidationFailed)
                 ?.apply { _verificationError.value = this }
 
             _inProgress.value = false

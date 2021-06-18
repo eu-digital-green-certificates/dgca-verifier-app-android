@@ -142,6 +142,17 @@
         app:layout_constraintTop_toBottomOf="@+id/reason_for_certificate_invalidity_title"
         tools:text="Test error" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rules_validation_results_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/default_margin_top"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/bottom_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/reason_for_certificate_invalidity_name" />
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/reason_test_result_title"
         style="@style/TextAppearance.Dgca.CertificateTitle"
@@ -150,10 +161,10 @@
         android:layout_marginTop="10dp"
         android:paddingStart="@dimen/default_margin"
         android:paddingEnd="@dimen/default_margin"
+        android:text="@string/test_result_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/reason_for_certificate_invalidity_name"
-        android:text="@string/test_result_title" />
+        app:layout_constraintTop_toBottomOf="@+id/reason_for_certificate_invalidity_name" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/reason_test_result_value"
@@ -162,10 +173,10 @@
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/default_margin"
         android:paddingEnd="@dimen/default_margin"
+        android:text="Negative"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/reason_test_result_title"
-        android:text="Negative" />
+        app:layout_constraintTop_toBottomOf="@+id/reason_test_result_title" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/errorDetails"
