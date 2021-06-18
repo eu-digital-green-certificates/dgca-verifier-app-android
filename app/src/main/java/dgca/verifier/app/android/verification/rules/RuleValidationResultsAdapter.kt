@@ -109,7 +109,7 @@ class RuleValidationResultsAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if (holder is ViewHolder.CardViewHolder) {
-            holder.bind(ruleValidationResultCards[position])
+            holder.bind(ruleValidationResultCards[position - 1])
         }
     }
 
