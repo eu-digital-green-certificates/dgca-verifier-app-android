@@ -22,7 +22,11 @@
 
 package dgca.verifier.app.android.verification.rules
 
+import android.content.Context
+import dgca.verifier.app.android.R
+import dgca.verifier.app.engine.Result
 import dgca.verifier.app.engine.ValidationResult
+import java.util.*
 
 /*-
  * ---license-start
@@ -45,6 +49,19 @@ import dgca.verifier.app.engine.ValidationResult
  *
  * Created by osarapulov on 18.06.21 9:12
  */
-fun ValidationResult.toRuleValidationResultCard(): RuleValidationResultCard {
-    return RuleValidationResultCard()
+fun ValidationResult.toRuleValidationResultCard(context: Context): RuleValidationResultCard {
+    return RuleValidationResultCard(
+        this.rule.identifier,
+        this.rule.getDescriptionFor(Locale.getDefault().language),
+        this.result.getLocalizedText(context),
+        "Current"
+    )
 }
+
+fun Result.getLocalizedText(context: Context): String = context.getString(
+    when (this) {
+        Result.PASSED -> R.string.passed
+        Result.FAIL -> R.string.failed
+        Result.OPEN -> R.string.open
+    }
+)

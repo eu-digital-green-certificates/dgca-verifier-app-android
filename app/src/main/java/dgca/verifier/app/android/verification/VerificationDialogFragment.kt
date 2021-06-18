@@ -179,8 +179,9 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
 
         if (verificationError == VerificationError.RULES_VALIDATION_FAILED) {
             val ruleValidationResultCards = mutableListOf<RuleValidationResultCard>()
+            val context = requireContext()
             viewModel.validationResults.value?.forEach {
-                ruleValidationResultCards.add(it.toRuleValidationResultCard())
+                ruleValidationResultCards.add(it.toRuleValidationResultCard(context))
             }
             binding.rulesValidationResultsList.adapter =  RuleValidationResultsAdapter(layoutInflater, ruleValidationResultCards)
             View.VISIBLE

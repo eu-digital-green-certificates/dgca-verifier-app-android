@@ -80,7 +80,10 @@ class RuleValidationResultsAdapter(
         class CardViewHolder(private val binding: ItemRuleValidationResultBinding) :
             ViewHolder(binding.root) {
             fun bind(ruleValidationResultCard: RuleValidationResultCard) {
-
+                binding.identifier.text = ruleValidationResultCard.identifier
+                binding.description.text = ruleValidationResultCard.description
+                binding.result.text = ruleValidationResultCard.result
+                binding.current.text = ruleValidationResultCard.current
             }
 
             companion object {
@@ -93,7 +96,7 @@ class RuleValidationResultsAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position > 1) CARD_TYPE else HEADER_TYPE
+        return if (position > 0) CARD_TYPE else HEADER_TYPE
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

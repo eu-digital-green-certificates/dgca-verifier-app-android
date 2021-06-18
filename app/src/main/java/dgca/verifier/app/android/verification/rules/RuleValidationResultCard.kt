@@ -43,5 +43,9 @@ package dgca.verifier.app.android.verification.rules
  *
  * Created by osarapulov on 18.06.21 8:59
  */
-class RuleValidationResultCard {
-}
+data class RuleValidationResultCard(
+    val identifier: String,
+    val description: String,
+    val result: String,
+    val current: String
+)

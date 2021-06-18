@@ -63,6 +63,13 @@
     <string name="rules_validation_failed">Country rules validation failed.</string>
     <string name="cryptographic_signature_invalid">Cryptographic signature invalid.</string>
     <string name="validate_with">Validate with:</string>
+    <string name="rule_identifier">Rule Identifier</string>
+    <string name="rule_description">Rule Description</string>
+    <string name="result">Result</string>
+    <string name="current">Current</string>
+    <string name="passed">Passed</string>
+    <string name="failed">Failed</string>
+    <string name="open">Open</string>
 
     <string-array name="countries">
         <item>at</item>
