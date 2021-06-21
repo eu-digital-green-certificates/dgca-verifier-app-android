@@ -28,12 +28,14 @@ enum class VerificationError {
     CERTIFICATE_EXPIRED, CERTIFICATE_REVOKED, VERIFICATION_FAILED, TEST_DATE_IS_IN_THE_FUTURE, TEST_RESULT_POSITIVE, CRYPTOGRAPHIC_SIGNATURE_INVALID
 }
 
-internal fun VerificationResult.fetchError(noPublicKeysFound: Boolean): VerificationError? =
+fun VerificationResult.fetchError(noPublicKeysFound: Boolean): VerificationError? =
         when {
             isValid() -> null
+            noPublicKeysFound-> VerificationError.VERIFICATION_FAILED
+            !coseVerified -> VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID
             !isNotExpired -> VerificationError.CERTIFICATE_EXPIRED
-            noPublicKeysFound -> VerificationError.VERIFICATION_FAILED
             isTestDateInTheFuture() -> VerificationError.TEST_DATE_IS_IN_THE_FUTURE
             isTestWithPositiveResult() -> VerificationError.TEST_RESULT_POSITIVE
-            else -> VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID
+            isRecoveryInThePast()->VerificationError.CERTIFICATE_EXPIRED
+            else -> VerificationError.VERIFICATION_FAILED
         }

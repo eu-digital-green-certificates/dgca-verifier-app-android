@@ -36,6 +36,7 @@ import dgca.verifier.app.decoder.compression.CompressorService
 import dgca.verifier.app.decoder.cose.CoseService
 import dgca.verifier.app.decoder.cose.CryptoService
 import dgca.verifier.app.decoder.model.GreenCertificate
+import dgca.verifier.app.decoder.model.RecoveryVerificationResult
 import dgca.verifier.app.decoder.model.TestVerificationResult
 import dgca.verifier.app.decoder.model.VerificationResult
 import dgca.verifier.app.decoder.prefixvalidation.PrefixValidationService
@@ -127,12 +128,24 @@ class VerificationViewModel @Inject constructor(
             _certificate.value = greenCertificate?.toCertificateModel()
         }
     }
-
-    private fun validateCertData(certificate: GreenCertificate?, verificationResult: VerificationResult) {
-        certificate?.tests?.let {
-            if (it.isNotEmpty()) {
-                val test = it.first()
-                verificationResult.testVerification = TestVerificationResult(test.isResultNegative(), test.isDateInThePast())
+    companion object {
+        fun validateCertData(
+            certificate: GreenCertificate?,
+            verificationResult: VerificationResult
+        ) {
+            certificate?.tests?.let {
+                if (it.isNotEmpty()) {
+                    val test = it.first()
+                    verificationResult.testVerification =
+                        TestVerificationResult(test.isResultNegative(), test.isDateInThePast())
+                }
+            }
+            certificate?.recoveryStatements?.let {
+                if (it.isNotEmpty()) {
+                    val recovery = it.first()
+                    verificationResult.recoveryVerification =
+                        RecoveryVerificationResult(recovery.isDateInThePast())
+                }
             }
         }
     }
