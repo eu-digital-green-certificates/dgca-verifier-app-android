@@ -17,7 +17,7 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Exotronic on 22.06.21, 00:13
+ *  Created by SchulzeStTSI on 22.06.21, 00:13
  */
 
 package dgca.verifier.app.android;
