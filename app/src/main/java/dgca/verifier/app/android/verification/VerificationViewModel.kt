@@ -144,7 +144,7 @@ class VerificationViewModel @Inject constructor(
                 if (it.isNotEmpty()) {
                     val recovery = it.first()
                     verificationResult.recoveryVerification =
-                        RecoveryVerificationResult(recovery.isDateInThePast())
+                        RecoveryVerificationResult(recovery.isCertificateNotValidSoFar() == true, recovery.isCertificateNotValidAnymore() == true)
                 }
             }
         }
