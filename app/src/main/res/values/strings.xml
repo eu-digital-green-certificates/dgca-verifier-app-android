@@ -37,6 +37,7 @@
     <string name="subtitle_text">Per sicurezza, confrontare i seguenti dati con un documento ufficiale (es: Carta d\'Identità).</string>
     <string name="subtitle_text_nonvalid">Il QR code, o firma digitale, non è valido.</string>
     <string name="subtitle_text_expired">Il certificato è scaduto.</string>
+    <string name="subtitle_text_future">Il certificato non è ancora valido.</string>
     <string name="subtitle_text_technicalError">Il certificato non è valido o non è stato possibile verificarlo.</string>
     <string name="scanQrCertificate">Scannerizza il QR code di una certificazione. </string>
     <string name="scanQr">Avvia scan </string>
