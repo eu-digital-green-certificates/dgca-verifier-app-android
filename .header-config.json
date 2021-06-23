@@ -9,7 +9,7 @@
                 "line": " *  ",
                 "end": "*/"
             },
-            "content": "default_license_header.txt"
+            "content": ".github/default_license_header.txt"
         },
         {
             "match": [".*\\.xml"],
@@ -19,7 +19,7 @@
                 "line": "   ~ ",
                 "end": "-->"
             },
-            "content": "default_license_header.txt"
+            "content": ".github/default_license_header.txt"
         }
     ]
 }
