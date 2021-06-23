@@ -40,7 +40,7 @@
         <item name="android:textColorSecondary">@color/grey_75</item>
         <item name="android:textColorTertiary">@color/grey_50</item>
 
-<!--        <item name="android:windowBackground">@drawable/splash_bg</item>-->
+        <item name="android:windowBackground">@drawable/splash_bg</item>
     </style>
 
     <style name="Theme.DgcaVerifierAppAndroid.Licensing" parent="Theme.MaterialComponents.Light">
