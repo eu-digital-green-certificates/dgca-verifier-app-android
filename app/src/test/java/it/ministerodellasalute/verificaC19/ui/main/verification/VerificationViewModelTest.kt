@@ -37,7 +37,6 @@ import io.mockk.impl.annotations.RelaxedMockK
 import it.ministerodellasalute.verificaC19.data.VerifierRepository
 import it.ministerodellasalute.verificaC19.data.local.Preferences
 import it.ministerodellasalute.verificaC19.di.DispatcherProvider
-import it.ministerodellasalute.verificaC19.ui.FirstViewModel
 import it.ministerodellasalute.verificaC19.utils.Base64
 import it.ministerodellasalute.verificaC19.utils.MainCoroutineScopeRule
 import it.ministerodellasalute.verificaC19.utils.mock.ServiceMocks
@@ -49,10 +48,14 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
+import org.mockito.ArgumentMatchers.anyInt
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.Mock
 import java.io.ByteArrayInputStream
 import java.security.cert.Certificate
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
+
 
 class VerificationViewModelTest {
 
@@ -107,6 +110,24 @@ class VerificationViewModelTest {
 
         viewModel = VerificationViewModel(prefixValidationService, base45Service, compressorService,
             cryptoService, coseService, schemaValidator, cborService, verifierRepository, preferences, dispatcherProvider)
+    }
+
+    @Before
+    fun `Bypass android_util_Base64 to java_util_Base64`() {
+        mockkStatic(android.util.Base64::class)
+        val arraySlot = slot<ByteArray>()
+        every {
+            android.util.Base64.encodeToString(capture(arraySlot), android.util.Base64.NO_WRAP)
+        } answers {
+            java.util.Base64.getEncoder().encodeToString(arraySlot.captured)
+        }
+
+        val stringSlot = slot<String>()
+        every {
+            android.util.Base64.decode(capture(stringSlot), android.util.Base64.NO_WRAP)
+        } answers {
+            java.util.Base64.getDecoder().decode(stringSlot.captured)
+        }
     }
 
     @ExperimentalCoroutinesApi
