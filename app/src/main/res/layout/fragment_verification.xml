@@ -118,6 +118,7 @@
                         android:textSize="15sp"
                         app:layout_constraintStart_toEndOf="@+id/user_image"
                         app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="@id/container_person_details"
                         tools:text="Mario Rossi" />
 
                     <TextView
