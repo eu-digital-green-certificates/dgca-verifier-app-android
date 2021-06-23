@@ -21,9 +21,11 @@
 package it.ministerodellasalute.verificaC19.ui.main.verification
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -99,10 +101,10 @@ class VerificationFragment : Fragment(), View.OnClickListener {
 
             try {
                 val startDate: LocalDate = LocalDate.parse(it.last().certificateValidFrom)
-                    .plusDays(Integer.parseInt(viewModel.getRecoveryCertStartDay()).toLong())
 
-                val endDate: LocalDate = LocalDate.parse(it.last().certificateValidFrom)
-                    .plusDays(Integer.parseInt(viewModel.getRecoveryCertEndDay()).toLong())
+                val endDate: LocalDate = LocalDate.parse(it.last().certificateValidUntil)
+
+                Log.d("dates", "start:" + startDate.toString() +" end: " +endDate.toString())
                 return when {
                     startDate.isAfter(LocalDate.now()) -> TestExpiryValues.FUTURE
                     LocalDate.now().isAfter(endDate) -> TestExpiryValues.EXPIRED
@@ -131,7 +133,7 @@ class VerificationFragment : Fragment(), View.OnClickListener {
                 val endDate: LocalDateTime =
                     ldtDateTimeOfCollection
                         .plusHours(Integer.parseInt(viewModel.getRapidTestEndHour()).toLong())
-
+                Log.d("dates", "start:" + startDate.toString() +" end: " +endDate.toString())
                 return when {
                     startDate.isAfter(LocalDateTime.now()) -> TestExpiryValues.FUTURE
                     LocalDateTime.now().isAfter(endDate) -> TestExpiryValues.EXPIRED
@@ -152,6 +154,7 @@ class VerificationFragment : Fragment(), View.OnClickListener {
 
                     val endDate: LocalDate = LocalDate.parse(it.last().dateOfVaccination)
                         .plusDays(Integer.parseInt(viewModel.getVaccineEndDayNotComplete(it.last().medicinalProduct)).toLong())
+                    Log.d("dates", "start:" + startDate.toString() +" end: " +endDate.toString())
                     return when {
                         startDate.isAfter(LocalDate.now()) -> TestExpiryValues.FUTURE
                         LocalDate.now().isAfter(endDate) -> TestExpiryValues.EXPIRED
@@ -163,6 +166,7 @@ class VerificationFragment : Fragment(), View.OnClickListener {
 
                     val endDate: LocalDate = LocalDate.parse(it.last().dateOfVaccination)
                         .plusDays(Integer.parseInt(viewModel.getVaccineEndDayComplete(it.last().medicinalProduct)).toLong())
+                    Log.d("dates", "start:" + startDate.toString() +" end: " +endDate.toString())
                     return when {
                         startDate.isAfter(LocalDate.now()) -> TestExpiryValues.FUTURE
                         LocalDate.now().isAfter(endDate) -> TestExpiryValues.EXPIRED
