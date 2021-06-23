@@ -52,6 +52,7 @@
         android:layout_margin="@dimen/default_margin"
         android:gravity="center"
         android:text="@string/rule_identifier"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/bottom_vertical"
         app:layout_constraintEnd_toStartOf="@id/identifier_divider"
         app:layout_constraintStart_toStartOf="parent"
@@ -74,6 +75,7 @@
         android:layout_margin="@dimen/default_margin"
         android:gravity="center"
         android:text="@string/rule_description"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/bottom_vertical"
         app:layout_constraintEnd_toStartOf="@id/description_divider"
         app:layout_constraintStart_toEndOf="@id/identifier_divider"
@@ -84,8 +86,8 @@
         android:layout_width="1dp"
         android:layout_height="0dp"
         android:background="@color/black"
-        app:layout_constraintEnd_toStartOf="@id/result"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/result"
         app:layout_constraintStart_toEndOf="@id/description"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -96,6 +98,7 @@
         android:layout_margin="@dimen/default_margin"
         android:gravity="center"
         android:text="@string/result"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/bottom_vertical"
         app:layout_constraintEnd_toStartOf="@id/result_divider"
         app:layout_constraintStart_toEndOf="@id/description_divider"
@@ -106,8 +109,8 @@
         android:layout_width="1dp"
         android:layout_height="0dp"
         android:background="@color/black"
-        app:layout_constraintEnd_toStartOf="@id/current"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/current"
         app:layout_constraintStart_toEndOf="@id/result"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -118,6 +121,7 @@
         android:layout_margin="@dimen/default_margin"
         android:gravity="center"
         android:text="@string/current"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/bottom_vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/result_divider"

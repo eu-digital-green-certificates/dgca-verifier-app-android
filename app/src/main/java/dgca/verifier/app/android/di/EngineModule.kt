@@ -29,6 +29,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dgca.verifier.app.android.data.remote.ApiService
 import dgca.verifier.app.engine.CertLogicEngine
 import dgca.verifier.app.engine.DefaultCertLogicEngine
 import dgca.verifier.app.engine.DefaultJsonLogicValidator
@@ -40,7 +41,9 @@ import dgca.verifier.app.engine.data.source.local.RulesDao
 import dgca.verifier.app.engine.data.source.local.RulesDatabase
 import dgca.verifier.app.engine.data.source.local.RulesLocalDataSource
 import dgca.verifier.app.engine.data.source.remote.DefaultRulesRemoteDataSource
+import dgca.verifier.app.engine.data.source.remote.RulesApiService
 import dgca.verifier.app.engine.data.source.remote.RulesRemoteDataSource
+import retrofit2.Retrofit
 import javax.inject.Singleton
 
 /**
@@ -66,7 +69,14 @@ object EngineModule {
 
     @Singleton
     @Provides
-    fun provideRulesRemoteDataSource(): RulesRemoteDataSource = DefaultRulesRemoteDataSource()
+    internal fun provideRulesApiService(retrofit: Retrofit): RulesApiService {
+        return retrofit.create(RulesApiService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideRulesRemoteDataSource(rulesApiService: RulesApiService): RulesRemoteDataSource =
+        DefaultRulesRemoteDataSource(rulesApiService)
 
     @Singleton
     @Provides

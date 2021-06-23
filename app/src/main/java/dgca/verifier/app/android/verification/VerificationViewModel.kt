@@ -30,6 +30,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.model.toCertificateModel
+import dgca.verifier.app.decoder.JSON_SCHEMA_V1
 import dgca.verifier.app.decoder.base45.Base45Service
 import dgca.verifier.app.decoder.cbor.CborService
 import dgca.verifier.app.decoder.cbor.GreenCertificateData
@@ -158,16 +159,19 @@ class VerificationViewModel @Inject constructor(
                             )
                         )
                     }
+
+                    val externalParameter = ExternalParameter(
+                        ZonedDateTime.now(ZoneId.of(ZoneOffset.UTC.id)),
+                        emptyMap(),
+                        countryIsoCode,
+                        this.expirationTime,
+                        this.issuedAt
+                    )
                     validationResults = engine.validate(
                         ENGINE_VERSION,
+                        JSON_SCHEMA_V1,
                         rules,
-                        ExternalParameter(
-                            ZonedDateTime.now(ZoneId.of(ZoneOffset.UTC.id)),
-                            emptyMap(),
-                            countryIsoCode,
-                            this.expirationTime,
-                            this.issuedAt
-                        ),
+                        externalParameter,
                         this.hcertJson
                     )
 

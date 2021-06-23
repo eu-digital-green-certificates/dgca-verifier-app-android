@@ -23,7 +23,7 @@
 package dgca.verifier.app.android.di
 
 import android.content.Context
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,15 +33,11 @@ import dgca.verifier.app.android.BuildConfig
 import dgca.verifier.app.android.data.ConfigRepository
 import dgca.verifier.app.android.data.remote.ApiService
 import dgca.verifier.app.android.network.HeaderInterceptor
-import okhttp3.Cache
-import okhttp3.Call
-import okhttp3.CertificatePinner
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Converter
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.jackson.JacksonConverterFactory
 import java.net.URL
 import java.util.concurrent.TimeUnit
 import javax.inject.Provider
@@ -74,7 +70,10 @@ object NetworkModule {
         config.versions?.values?.let { versions ->
             versions.forEach { version ->
                 version.contextEndpoint?.pubKeys?.forEach { keyHash ->
-                    pinnerBuilder.add(URL(version.contextEndpoint.url).host, "$SHA256_PREFIX$keyHash")
+                    pinnerBuilder.add(
+                        URL(version.contextEndpoint.url).host,
+                        "$SHA256_PREFIX$keyHash"
+                    )
                 }
                 version.endpoints?.values?.forEach { endpoint ->
                     endpoint.pubKeys?.forEach { keyHash ->
@@ -103,8 +102,8 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    internal fun provideRetrofit(okHttpClient: Provider<OkHttpClient>): Retrofit {
-        return createRetrofit(okHttpClient)
+    internal fun provideRetrofit(converterFactory: Converter.Factory, okHttpClient: Provider<OkHttpClient>): Retrofit {
+        return createRetrofit(converterFactory, okHttpClient)
     }
 
     @Singleton
@@ -128,9 +127,18 @@ object NetworkModule {
         }
     }
 
-    private fun createRetrofit(okHttpClient: Provider<OkHttpClient>): Retrofit {
+    @Singleton
+    @Provides
+    internal fun provideObjectMapper(): ObjectMapper =
+        ObjectMapper().apply { findAndRegisterModules() }
+
+    @Singleton
+    @Provides
+    internal fun provideConverterFactory(objectMapper: ObjectMapper): Converter.Factory = JacksonConverterFactory.create(objectMapper)
+
+    private fun createRetrofit(converterFactory: Converter.Factory, okHttpClient: Provider<OkHttpClient>): Retrofit {
         return Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create(Gson()))
+            .addConverterFactory(converterFactory)
             .baseUrl(BASE_URL)
             .callFactory { okHttpClient.get().newCall(it) }
             .build()

@@ -43,13 +43,12 @@ class RulesLoadWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         Timber.d("rules loading start")
-        val config = configRepository.local().getConfig()
-        val versionName = BuildConfig.VERSION_NAME
-
         return try {
+            val config = configRepository.local().getConfig()
+            val versionName = BuildConfig.VERSION_NAME
             rulesRepository.loadRules(
-    //            config.getStatusUrl(versionName),
-    //            config.getUpdateUrl(versionName)
+                config.getCountriesUrl(versionName),
+                config.getRulesUrl(versionName)
             )
             Timber.d("rules loading succeeded")
             Result.success()

@@ -42,7 +42,7 @@ object Versions {
     const val google_licenses_version = "0.10.4"
     const val retrofit = "2.9.0"
     const val logging_interceptor = "4.0.1"
-    const val gson_converter = "2.6.0"
+    const val gson_converter = "2.1.0"
     const val timber = "4.7.1"
     const val google_licenses = "17.0.0"
 

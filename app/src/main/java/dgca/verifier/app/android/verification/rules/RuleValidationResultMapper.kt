@@ -54,7 +54,7 @@ fun ValidationResult.toRuleValidationResultCard(context: Context): RuleValidatio
         this.rule.identifier,
         this.rule.getDescriptionFor(Locale.getDefault().language),
         this.result.getLocalizedText(context),
-        "Current"
+        this.current
     )
 }
 
