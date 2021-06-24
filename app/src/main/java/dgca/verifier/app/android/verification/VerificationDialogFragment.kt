@@ -157,6 +157,8 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
                 VerificationError.VERIFICATION_FAILED -> R.string.verification_failed
                 VerificationError.TEST_DATE_IS_IN_THE_FUTURE -> R.string.the_test_date_is_in_the_future
                 VerificationError.TEST_RESULT_POSITIVE -> R.string.test_result_positive
+                VerificationError.RECOVERY_NOT_VALID_SO_FAR -> R.string.recovery_not_valid_yet
+                VerificationError.RECOVERY_NOT_VALID_ANYMORE -> R.string.recover_not_valid_anymore
                 VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID -> R.string.cryptographic_signature_invalid
             }
         )
