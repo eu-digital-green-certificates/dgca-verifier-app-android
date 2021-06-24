@@ -33,6 +33,7 @@ import dgca.verifier.app.android.data.VerifierRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,12 +50,16 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             _inProgress.value = true
             withContext(Dispatchers.IO) {
-                val config = configRepository.local().getConfig()
-                val versionName = BuildConfig.VERSION_NAME
-                verifierRepository.fetchCertificates(
-                    config.getStatusUrl(versionName),
-                    config.getUpdateUrl(versionName)
-                )
+                try {
+                    val config = configRepository.local().getConfig()
+                    val versionName = BuildConfig.VERSION_NAME
+                    verifierRepository.fetchCertificates(
+                        config.getStatusUrl(versionName),
+                        config.getUpdateUrl(versionName)
+                    )
+                } catch (error: Throwable) {
+                    Timber.e(error, "error refreshing keys")
+                }
             }
             _inProgress.value = false
         }

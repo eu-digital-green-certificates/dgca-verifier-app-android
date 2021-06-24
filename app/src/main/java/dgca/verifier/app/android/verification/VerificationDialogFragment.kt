@@ -34,6 +34,7 @@ import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -60,6 +61,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
     private var _binding: DialogFragmentVerificationBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: CertListAdapter
+    private val hideLiveData: MutableLiveData<Void> = MutableLiveData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,6 +89,10 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
 
         dialog.expand()
 
+        hideLiveData.observe(viewLifecycleOwner, {
+            dismiss()
+        })
+
         val layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.adapter = adapter
@@ -95,7 +101,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
 
         viewModel.verificationResult.observe(viewLifecycleOwner, {
             if (it == null) {
-                dismiss()
+                hideLiveData.value = null
             } else {
                 setCertStatusUI(it.isValid())
                 setCertDataVisibility(it.isValid())
@@ -259,9 +265,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
             .setDuration(COLLAPSE_TIME)
             .translationX(0F)
             .withEndAction {
-                if (isVisible) {
-                    dismiss()
-                }
+                hideLiveData.value = null
             }
             .start()
     }
