@@ -38,6 +38,7 @@ import dgca.verifier.app.decoder.compression.CompressorService
 import dgca.verifier.app.decoder.cose.CoseService
 import dgca.verifier.app.decoder.cose.CryptoService
 import dgca.verifier.app.decoder.model.GreenCertificate
+import dgca.verifier.app.decoder.model.RecoveryVerificationResult
 import dgca.verifier.app.decoder.model.TestVerificationResult
 import dgca.verifier.app.decoder.model.VerificationResult
 import dgca.verifier.app.decoder.prefixvalidation.PrefixValidationService
@@ -71,10 +72,6 @@ class VerificationViewModel @Inject constructor(
     private val engine: CertLogicEngine,
     private val rulesRepository: RulesRepository
 ) : ViewModel() {
-
-    companion object {
-        private const val ENGINE_VERSION = "1.0.0"
-    }
 
     private val _verificationResult = MutableLiveData<VerificationResult?>()
     val verificationResult: LiveData<VerificationResult?> = _verificationResult
@@ -206,16 +203,26 @@ class VerificationViewModel @Inject constructor(
             else -> CertificateType.TEST
         }
     }
+    companion object {
+        private const val ENGINE_VERSION = "1.0.0"
 
-    private fun validateCertData(
-        certificate: GreenCertificate?,
-        verificationResult: VerificationResult
-    ) {
-        certificate?.tests?.let {
-            if (it.isNotEmpty()) {
-                val test = it.first()
-                verificationResult.testVerification =
-                    TestVerificationResult(test.isResultNegative(), test.isDateInThePast())
+        fun validateCertData(
+            certificate: GreenCertificate?,
+            verificationResult: VerificationResult
+        ) {
+            certificate?.tests?.let {
+                if (it.isNotEmpty()) {
+                    val test = it.first()
+                    verificationResult.testVerification =
+                        TestVerificationResult(test.isResultNegative(), test.isDateInThePast())
+                }
+            }
+            certificate?.recoveryStatements?.let {
+                if (it.isNotEmpty()) {
+                    val recovery = it.first()
+                    verificationResult.recoveryVerification =
+                        RecoveryVerificationResult(recovery.isCertificateNotValidSoFar() == true, recovery.isCertificateNotValidAnymore() == true)
+                }
             }
         }
     }
