@@ -23,6 +23,7 @@
 package dgca.verifier.app.android.data.remote
 
 import dgca.verifier.app.android.data.Config
+import dgca.verifier.app.engine.data.Rule
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
@@ -43,4 +44,7 @@ interface ApiService {
 
     @GET
     suspend fun getCertStatus(@Url url: String): Response<List<String>>
+
+    @GET
+    suspend fun getRules(@Url url: String): Response<List<Rule>>
 }

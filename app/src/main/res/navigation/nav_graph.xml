@@ -53,6 +53,10 @@
         <argument
             android:name="qrCodeText"
             app:argType="string" />
+
+        <argument
+            android:name="countryIsoCode"
+            app:argType="string" />
     </dialog>
     <fragment
         android:id="@+id/settingsFragment"

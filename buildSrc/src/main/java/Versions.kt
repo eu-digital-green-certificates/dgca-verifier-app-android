@@ -42,7 +42,7 @@ object Versions {
     const val google_licenses_version = "0.10.4"
     const val retrofit = "2.9.0"
     const val logging_interceptor = "4.0.1"
-    const val gson_converter = "2.6.0"
+    const val gson_converter = "2.1.0"
     const val timber = "4.7.1"
     const val google_licenses = "17.0.0"
 
@@ -55,6 +55,9 @@ object Versions {
     const val jackson_cbor = "2.12.3"
     const val java_cose = "1.1.0"
     const val bouncy_castle = "1.68"
+    const val jackson_kotlin = "2.12.0"
+    const val jackson_datetype = "jackson-datatype-jsr310"
+    const val appache_commons = "2.9.0"
 
     // Validation
     const val json_validation = "2.2.14"
@@ -64,4 +67,6 @@ object Versions {
     const val junit = "4.13.1"
     const val junit_jupiter = "5.7.1"
     const val hamcrest = "2.2"
+    const val test_version = "1.3.0"
+    const val test_ext_version = "1.1.2"
 }

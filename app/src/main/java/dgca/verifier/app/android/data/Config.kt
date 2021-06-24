@@ -22,21 +22,24 @@
 
 package dgca.verifier.app.android.data
 
-import com.google.gson.annotations.SerializedName
+import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
  * Holds information of public key info hashes for certificate pinning
  * and private policy url info.
  */
 data class Config(
-    @SerializedName("origin") val origin: String?,
-    @SerializedName("versions") val versions: Map<String, Version>?,
+    @JsonProperty("origin") val origin: String?,
+    @JsonProperty("versions") val versions: Map<String, Version>?,
 ) {
 
     private companion object {
         const val DEFAULT_VERSION_NAME = "default"
         const val STATUS_ENDPOINT_NAME = "status"
         const val UPDATE_ENDPOINT_NAME = "update"
+        const val COUNTRIES_ENDPOINT_NAME = "countries"
+        const val COUNTRY_RULES_ENDPOINT_NAME = "country_rules"
+        const val RULES_ENDPOINT_NAME = "rules"
     }
 
     private fun getCurrentVersionOrUseDefault(versionName: String): Version? =
@@ -50,28 +53,40 @@ data class Config(
 
     fun getUpdateUrl(versionName: String): String =
         getCurrentVersionOrUseDefault(versionName)?.endpoints?.get(UPDATE_ENDPOINT_NAME)?.url ?: ""
+
+    fun getCountriesUrl(versionName: String): String =
+        getCurrentVersionOrUseDefault(versionName)?.endpoints?.get(COUNTRIES_ENDPOINT_NAME)?.url
+            ?: "https://dgca-businessrule-service.cfapps.eu10.hana.ondemand.com/countrylist"
+
+    fun getCountryRulesUrl(versionName: String): String =
+        getCurrentVersionOrUseDefault(versionName)?.endpoints?.get(COUNTRY_RULES_ENDPOINT_NAME)?.url
+            ?: "https://dgca-businessrule-service.cfapps.eu10.hana.ondemand.com/countrylist"
+
+    fun getRulesUrl(versionName: String): String =
+        getCurrentVersionOrUseDefault(versionName)?.endpoints?.get(RULES_ENDPOINT_NAME)?.url
+            ?: "https://dgca-businessrule-service.cfapps.eu10.hana.ondemand.com/rules"
 }
 
 data class Endpoint(
 
-    @SerializedName("url")
+    @JsonProperty("url")
     val url: String?,
 
-    @SerializedName("pubKeys")
+    @JsonProperty("pubKeys")
     val pubKeys: Collection<String>?
 )
 
 data class Version(
 
-    @SerializedName("privacyUrl")
+    @JsonProperty("privacyUrl")
     val privacyUrl: String?,
 
-    @SerializedName("context")
+    @JsonProperty("context")
     val contextEndpoint: Endpoint?,
 
-    @SerializedName("outdated")
+    @JsonProperty("outdated")
     val outdated: Boolean?,
 
-    @SerializedName("endpoints")
+    @JsonProperty("endpoints")
     val endpoints: Map<String, Endpoint>?
 )

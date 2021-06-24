@@ -30,8 +30,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.model.toCertificateModel
+import dgca.verifier.app.decoder.JSON_SCHEMA_V1
 import dgca.verifier.app.decoder.base45.Base45Service
 import dgca.verifier.app.decoder.cbor.CborService
+import dgca.verifier.app.decoder.cbor.GreenCertificateData
 import dgca.verifier.app.decoder.compression.CompressorService
 import dgca.verifier.app.decoder.cose.CoseService
 import dgca.verifier.app.decoder.cose.CryptoService
@@ -42,10 +44,19 @@ import dgca.verifier.app.decoder.model.VerificationResult
 import dgca.verifier.app.decoder.prefixvalidation.PrefixValidationService
 import dgca.verifier.app.decoder.schema.SchemaValidator
 import dgca.verifier.app.decoder.toBase64
+import dgca.verifier.app.engine.*
+import dgca.verifier.app.engine.data.CertificateType
+import dgca.verifier.app.engine.data.ExternalParameter
+import dgca.verifier.app.engine.data.Rule
+import dgca.verifier.app.engine.data.Type
+import dgca.verifier.app.engine.data.source.RulesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -57,7 +68,9 @@ class VerificationViewModel @Inject constructor(
     private val coseService: CoseService,
     private val schemaValidator: SchemaValidator,
     private val cborService: CborService,
-    private val verifierRepository: VerifierRepository
+    private val verifierRepository: VerifierRepository,
+    private val engine: CertLogicEngine,
+    private val rulesRepository: RulesRepository
 ) : ViewModel() {
 
     private val _verificationResult = MutableLiveData<VerificationResult?>()
@@ -69,21 +82,25 @@ class VerificationViewModel @Inject constructor(
     private val _certificate = MutableLiveData<CertificateModel?>()
     val certificate: LiveData<CertificateModel?> = _certificate
 
+    private val _validationResults = MutableLiveData<List<ValidationResult>>()
+    val validationResults: LiveData<List<ValidationResult>> = _validationResults
+
     private val _inProgress = MutableLiveData<Boolean>()
     val inProgress: LiveData<Boolean> = _inProgress
 
-    fun init(qrCodeText: String) {
-        decode(qrCodeText)
+    fun init(qrCodeText: String, countryIsoCode: String) {
+        decode(qrCodeText, countryIsoCode)
     }
 
-    private fun decode(code: String) {
+    private fun decode(code: String, countryIsoCode: String) {
         viewModelScope.launch {
             _inProgress.value = true
-            var greenCertificate: GreenCertificate? = null
+            var greenCertificateData: GreenCertificateData? = null
             val verificationResult = VerificationResult()
             var noPublicKeysFound = true
 
             var isApplicableCode = false
+            var validationResults: List<ValidationResult> = emptyList()
             withContext(Dispatchers.IO) {
                 val plainInput = prefixValidationService.decode(code, verificationResult)
                 val compressedCose = base45Service.decode(plainInput, verificationResult)
@@ -104,8 +121,8 @@ class VerificationViewModel @Inject constructor(
                 isApplicableCode = true
 
                 schemaValidator.validate(coseData.cbor, verificationResult)
-                greenCertificate = cborService.decode(coseData.cbor, verificationResult)
-                validateCertData(greenCertificate, verificationResult)
+                greenCertificateData = cborService.decodeData(coseData.cbor, verificationResult)
+                validateCertData(greenCertificateData?.greenCertificate, verificationResult)
 
                 val certificates = verifierRepository.getCertificatesBy(kid.toBase64())
                 if (certificates.isEmpty()) {
@@ -119,16 +136,74 @@ class VerificationViewModel @Inject constructor(
                         return@forEach
                     }
                 }
+
+                greenCertificateData?.apply {
+                    val rules = mutableListOf<Rule>()
+                    rules.addAll(
+                        rulesRepository.getRulesBy(
+                            countryIsoCode, ZonedDateTime.now().withZoneSameInstant(
+                                UTC_ZONE_ID
+                            ), Type.ACCEPTANCE, this.greenCertificate.getType()
+                        )
+                    )
+                    val issuingCountry = this.greenCertificate.getIssuingCountry()
+                    if (issuingCountry.isNotBlank()) {
+                        rules.addAll(
+                            rulesRepository.getRulesBy(
+                                issuingCountry, ZonedDateTime.now().withZoneSameInstant(
+                                    UTC_ZONE_ID
+                                ), Type.INVALIDATION, this.greenCertificate.getType()
+                            )
+                        )
+                    }
+
+                    val externalParameter = ExternalParameter(
+                        ZonedDateTime.now(ZoneId.of(ZoneOffset.UTC.id)),
+                        emptyMap(),
+                        countryIsoCode,
+                        this.expirationTime,
+                        this.issuedAt
+                    )
+                    validationResults = engine.validate(
+                        ENGINE_VERSION,
+                        JSON_SCHEMA_V1,
+                        rules,
+                        externalParameter,
+                        this.hcertJson
+                    )
+
+                    _validationResults.postValue(validationResults)
+
+                    validationResults.forEach {
+                        if (it.result != Result.PASSED) {
+                            verificationResult.rulesValidationFailed = true
+                            return@forEach
+                        }
+                    }
+                }
             }
 
-            verificationResult.fetchError(noPublicKeysFound)?.apply { _verificationError.value = this }
+            verificationResult.fetchError(noPublicKeysFound)
+                ?.apply { _verificationError.value = this }
 
             _inProgress.value = false
-            _verificationResult.value = if(isApplicableCode) verificationResult else null
-            _certificate.value = greenCertificate?.toCertificateModel()
+            _verificationResult.value = if (isApplicableCode) verificationResult else null
+            _certificate.value = greenCertificateData?.greenCertificate?.toCertificateModel()
         }
     }
+
+    private fun GreenCertificate.getType(): CertificateType {
+        return when {
+            this.recoveryStatements?.isNotEmpty() == true -> CertificateType.RECOVERY
+            this.vaccinations?.isNotEmpty() == true -> CertificateType.VACCINATION
+            this.tests?.isNotEmpty() == true -> CertificateType.TEST
+            else -> CertificateType.TEST
+        }
+    }
+
     companion object {
+        private const val ENGINE_VERSION = "1.0.0"
+
         fun validateCertData(
             certificate: GreenCertificate?,
             verificationResult: VerificationResult
@@ -144,7 +219,10 @@ class VerificationViewModel @Inject constructor(
                 if (it.isNotEmpty()) {
                     val recovery = it.first()
                     verificationResult.recoveryVerification =
-                        RecoveryVerificationResult(recovery.isCertificateNotValidSoFar() == true, recovery.isCertificateNotValidAnymore() == true)
+                        RecoveryVerificationResult(
+                            recovery.isCertificateNotValidSoFar() == true,
+                            recovery.isCertificateNotValidAnymore() == true
+                        )
                 }
             }
         }

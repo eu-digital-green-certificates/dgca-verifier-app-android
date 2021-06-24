@@ -23,21 +23,19 @@
 package dgca.verifier.app.android.data.local
 
 import android.content.Context
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dgca.verifier.app.android.data.Config
 import timber.log.Timber
-import java.io.BufferedReader
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileWriter
-import java.io.InputStreamReader
+import java.io.*
 import javax.inject.Inject
 
-class LocalConfigDataSource @Inject constructor(@ApplicationContext private val context: Context) : MutableConfigDataSource {
+class LocalConfigDataSource @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val objectMapper: ObjectMapper
+) : MutableConfigDataSource {
 
     private lateinit var config: Config
-    private val gson = Gson()
 
     companion object {
         const val DEFAULT_CONFIG_FILE = "verifier-context.jsonc"
@@ -65,19 +63,20 @@ class LocalConfigDataSource @Inject constructor(@ApplicationContext private val 
 
     private fun configFile(): File = File(context.filesDir, CONFIG_FILE)
 
-    private fun loadConfig(): Config = BufferedReader(InputStreamReader(FileInputStream(configFile()))).use {
-        gson.fromJson(it.readText(), Config::class.java)
-    }
+    private fun loadConfig(): Config =
+        BufferedReader(InputStreamReader(FileInputStream(configFile()))).use {
+            objectMapper.readValue(it.readText(), Config::class.java)
+        }
 
     private fun saveConfig(config: Config): Config {
         FileWriter(configFile()).use {
-            gson.toJson(config, it)
+            objectMapper.writeValue(it, config)
         }
         return config
     }
 
     private fun defaultConfig(): Config =
         context.assets.open(DEFAULT_CONFIG_FILE).bufferedReader().use {
-            gson.fromJson(it.readText(), Config::class.java)
+            objectMapper.readValue(it.readText(), Config::class.java)
         }
 }

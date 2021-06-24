@@ -1,4 +1,8 @@
 include ':app'
 include ':decoder'
+//include ':certlogic'
+include ':engine'
 rootProject.name = "dgca-verifier-app-android"
 project(':decoder').projectDir = new File("../dgca-app-core-android/decoder")
+//project(':certlogic').projectDir = new File("../dgc-business-rules/certlogic/certlogic-kotlin")
+project(':engine').projectDir = new File("../dgc-certlogic-android/engine")

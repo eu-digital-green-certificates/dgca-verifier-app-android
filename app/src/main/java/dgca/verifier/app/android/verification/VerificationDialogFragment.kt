@@ -22,6 +22,7 @@
 
 package dgca.verifier.app.android.verification
 
+
 import android.app.Dialog
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -45,6 +46,9 @@ import dgca.verifier.app.android.databinding.DialogFragmentVerificationBinding
 import dgca.verifier.app.android.model.CertificateData
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.model.TestResult
+import dgca.verifier.app.android.verification.rules.RuleValidationResultCard
+import dgca.verifier.app.android.verification.rules.RuleValidationResultsAdapter
+import dgca.verifier.app.android.verification.rules.toRuleValidationResultCard
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
@@ -62,7 +66,11 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         adapter = CertListAdapter(layoutInflater)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = DialogFragmentVerificationBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -82,6 +90,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         val layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.adapter = adapter
+        binding.rulesValidationResultsList.layoutManager = LinearLayoutManager(requireContext())
         binding.actionBtn.setOnClickListener { dismiss() }
 
         viewModel.verificationResult.observe(viewLifecycleOwner, {
@@ -95,12 +104,12 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         viewModel.verificationError.observe(viewLifecycleOwner, {
             setCertStatusError(it)
         })
-        viewModel.certificate.observe(viewLifecycleOwner, { certificate ->
-            if (certificate != null) {
-                toggleButton(certificate)
-                showUserData(certificate)
+        viewModel.certificate.observe(viewLifecycleOwner, { certificateModel ->
+            if (certificateModel != null) {
+                toggleButton(certificateModel)
+                showUserData(certificateModel)
 
-                val list = getCertificateListData(certificate)
+                val list = getCertificateListData(certificateModel)
                 adapter.update(list)
 
                 startTimer()
@@ -110,7 +119,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
             binding.progressBar.isVisible = it
         })
 
-        viewModel.init(args.qrCodeText)
+        viewModel.init(args.qrCodeText, args.countryIsoCode)
     }
 
     override fun onDestroyView() {
@@ -159,6 +168,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
                 VerificationError.TEST_RESULT_POSITIVE -> R.string.test_result_positive
                 VerificationError.RECOVERY_NOT_VALID_SO_FAR -> R.string.recovery_not_valid_yet
                 VerificationError.RECOVERY_NOT_VALID_ANYMORE -> R.string.recover_not_valid_anymore
+                VerificationError.RULES_VALIDATION_FAILED -> R.string.rules_validation_failed
                 VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID -> R.string.cryptographic_signature_invalid
             }
         )
@@ -168,12 +178,27 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         } else {
             binding.errorTestResult.visibility = View.GONE
         }
+
+        if (verificationError == VerificationError.RULES_VALIDATION_FAILED) {
+            val ruleValidationResultCards = mutableListOf<RuleValidationResultCard>()
+            val context = requireContext()
+            viewModel.validationResults.value?.forEach {
+                ruleValidationResultCards.add(it.toRuleValidationResultCard(context))
+            }
+            binding.rulesValidationResultsList.adapter =  RuleValidationResultsAdapter(layoutInflater, ruleValidationResultCards)
+            View.VISIBLE
+        } else {
+            View.GONE
+        }.apply {
+            binding.rulesValidationResultsList.visibility = this
+        }
     }
 
     private fun setCertDataVisibility(isValid: Boolean) {
         binding.errorDetails.visibility = if (isValid) View.GONE else View.VISIBLE
         if (isValid) {
             binding.errorTestResult.visibility = View.GONE
+            binding.rulesValidationResultsList.visibility = View.GONE
         }
         binding.nestedScrollView.visibility = if (isValid) View.VISIBLE else View.GONE
     }
@@ -202,8 +227,9 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
 
         binding.dateOfBirth.text =
             certificate.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
-        
-        val dateOfBirth = certificate.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
+
+        val dateOfBirth =
+            certificate.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
         if (dateOfBirth.isBlank()) {
             View.GONE
         } else {

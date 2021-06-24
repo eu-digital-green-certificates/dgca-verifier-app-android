@@ -33,6 +33,7 @@ import androidx.work.WorkRequest
 import dagger.hilt.android.HiltAndroidApp
 import dgca.verifier.app.android.worker.ConfigsLoadingWorker
 import dgca.verifier.app.android.worker.LoadKeysWorker
+import dgca.verifier.app.android.worker.RulesLoadWorker
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -55,10 +56,25 @@ class DgcaApplication : Application(), Configuration.Provider {
             Timber.plant(Timber.DebugTree())
         }
 
+        scheduleRulesLoading()
         scheduleKeysLoading()
         scheduleConfigLoading()
 
         Timber.i("DGCA version ${BuildConfig.VERSION_NAME} is starting")
+    }
+
+    private fun scheduleRulesLoading() {
+        val uploadWorkRequest: WorkRequest =
+            PeriodicWorkRequestBuilder<RulesLoadWorker>(1, TimeUnit.DAYS)
+                .setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build()
+                )
+                .build()
+        WorkManager
+            .getInstance(this)
+            .enqueue(uploadWorkRequest)
     }
 
     private fun scheduleKeysLoading() {

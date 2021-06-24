@@ -17,32 +17,32 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 4/24/21 5:18 PM
+ *  Created by osarapulov on 6/18/21 8:58 AM
  */
 
-package dgca.verifier.app.android.verification
+package dgca.verifier.app.android.verification.certs
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dgca.verifier.app.android.FORMATTED_YEAR_MONTH_DAY
 import dgca.verifier.app.android.YEAR_MONTH_DAY
-import dgca.verifier.app.android.databinding.ItemVaccinationBinding
-import dgca.verifier.app.android.model.VaccinationModel
+import dgca.verifier.app.android.databinding.ItemRecoveryBinding
+import dgca.verifier.app.android.model.RecoveryModel
 import dgca.verifier.app.android.parseFromTo
 
-class VaccinationViewHolder(private val binding: ItemVaccinationBinding) : RecyclerView.ViewHolder(binding.root) {
+class RecoveryViewHolder(private val binding: ItemRecoveryBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(data: VaccinationModel) {
-        binding.dateValue.text = data.dateOfVaccination.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
+    fun bind(data: RecoveryModel) {
         binding.diseaseValue.text = data.disease.value
-        binding.doseTotalNumberValue.text = data.totalSeriesOfDoses.toString()
-        binding.doseSequenceValue.text = data.doseNumber.toString()
+        binding.validFromValue.text = data.certificateValidFrom.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
+        binding.validUntilValue.text = data.certificateValidUntil.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
+        binding.dateOfPositiveValue.text = data.dateOfFirstPositiveTest.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
         binding.countryValue.text = data.countryOfVaccination
     }
 
     companion object {
         fun create(inflater: LayoutInflater, parent: ViewGroup) =
-            VaccinationViewHolder(ItemVaccinationBinding.inflate(inflater, parent, false))
+            RecoveryViewHolder(ItemRecoveryBinding.inflate(inflater, parent, false))
     }
 }
