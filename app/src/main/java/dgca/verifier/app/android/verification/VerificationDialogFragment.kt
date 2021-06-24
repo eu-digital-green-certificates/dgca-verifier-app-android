@@ -59,12 +59,6 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
 
     private var _binding: DialogFragmentVerificationBinding? = null
     private val binding get() = _binding!!
-    private lateinit var adapter: CertListAdapter
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        adapter = CertListAdapter(layoutInflater)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -89,31 +83,29 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
 
         val layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.layoutManager = layoutManager
-        binding.recyclerView.adapter = adapter
-        binding.rulesValidationResultsList.layoutManager = LinearLayoutManager(requireContext())
         binding.actionBtn.setOnClickListener { dismiss() }
 
-        viewModel.verificationResult.observe(viewLifecycleOwner, {
-            if (it == null) {
+        viewModel.verificationData.observe(viewLifecycleOwner, {
+            if (it.verificationResult == null) {
                 dismiss()
             } else {
-                setCertStatusUI(it.isValid())
-                setCertDataVisibility(it.isValid())
+                setCertStatusUI(it.verificationResult.isValid())
+                setCertDataVisibility(it.verificationResult.isValid())
+                it.certificateModel?.let { certificateModel ->
+                    binding.personFullName.text = certificateModel.getFullName()
+                    toggleButton(certificateModel)
+                    if (it.verificationResult.isValid()) {
+                        showUserData(certificateModel)
+
+                        val list = getCertificateListData(certificateModel)
+                        binding.recyclerView.adapter = CertListAdapter(layoutInflater).apply { update(list) }
+                    }
+                }
+                startTimer()
             }
         })
         viewModel.verificationError.observe(viewLifecycleOwner, {
             setCertStatusError(it)
-        })
-        viewModel.certificate.observe(viewLifecycleOwner, { certificateModel ->
-            if (certificateModel != null) {
-                toggleButton(certificateModel)
-                showUserData(certificateModel)
-
-                val list = getCertificateListData(certificateModel)
-                adapter.update(list)
-
-                startTimer()
-            }
         })
         viewModel.inProgress.observe(viewLifecycleOwner, {
             binding.progressBar.isVisible = it
@@ -185,12 +177,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
             viewModel.validationResults.value?.forEach {
                 ruleValidationResultCards.add(it.toRuleValidationResultCard(context))
             }
-            binding.rulesValidationResultsList.adapter =  RuleValidationResultsAdapter(layoutInflater, ruleValidationResultCards)
-            View.VISIBLE
-        } else {
-            View.GONE
-        }.apply {
-            binding.rulesValidationResultsList.visibility = this
+            binding.recyclerView.adapter =  RuleValidationResultsAdapter(layoutInflater, ruleValidationResultCards)
         }
     }
 
@@ -198,9 +185,8 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         binding.errorDetails.visibility = if (isValid) View.GONE else View.VISIBLE
         if (isValid) {
             binding.errorTestResult.visibility = View.GONE
-            binding.rulesValidationResultsList.visibility = View.GONE
         }
-        binding.nestedScrollView.visibility = if (isValid) View.VISIBLE else View.GONE
+        binding.sucessDetails.visibility = if (isValid) View.VISIBLE else View.GONE
     }
 
     private fun getCertificateListData(certificate: CertificateModel): List<CertificateData> {
@@ -213,7 +199,6 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun showUserData(certificate: CertificateModel) {
-        binding.personFullName.text = certificate.getFullName()
         binding.personStandardisedFamilyName.text = certificate.person.standardisedFamilyName
         binding.personStandardisedGivenName.text = certificate.person.standardisedGivenName
         if (certificate.person.standardisedGivenName?.isNotBlank() == true) {
