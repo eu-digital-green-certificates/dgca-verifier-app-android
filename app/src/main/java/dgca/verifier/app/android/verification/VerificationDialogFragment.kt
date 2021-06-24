@@ -34,6 +34,7 @@ import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -59,6 +60,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
 
     private var _binding: DialogFragmentVerificationBinding? = null
     private val binding get() = _binding!!
+    private val hideLiveData: MutableLiveData<Void> = MutableLiveData()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,13 +83,17 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
 
         dialog.expand()
 
+        hideLiveData.observe(viewLifecycleOwner, {
+            dismiss()
+        })
+
         val layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.layoutManager = layoutManager
         binding.actionBtn.setOnClickListener { dismiss() }
 
         viewModel.verificationData.observe(viewLifecycleOwner, {
             if (it.verificationResult == null) {
-                dismiss()
+                hideLiveData.value = null
             } else {
                 setCertStatusUI(it.verificationResult.isValid())
                 setCertDataVisibility(it.verificationResult.isValid())
@@ -98,7 +104,8 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
                         showUserData(certificateModel)
 
                         val list = getCertificateListData(certificateModel)
-                        binding.recyclerView.adapter = CertListAdapter(layoutInflater).apply { update(list) }
+                        binding.recyclerView.adapter =
+                            CertListAdapter(layoutInflater).apply { update(list) }
                     }
                 }
                 startTimer()
@@ -177,7 +184,8 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
             viewModel.validationResults.value?.forEach {
                 ruleValidationResultCards.add(it.toRuleValidationResultCard(context))
             }
-            binding.recyclerView.adapter =  RuleValidationResultsAdapter(layoutInflater, ruleValidationResultCards)
+            binding.recyclerView.adapter =
+                RuleValidationResultsAdapter(layoutInflater, ruleValidationResultCards)
         }
     }
 
@@ -244,9 +252,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
             .setDuration(COLLAPSE_TIME)
             .translationX(0F)
             .withEndAction {
-                if (isVisible) {
-                    dismiss()
-                }
+                hideLiveData.value = null
             }
             .start()
     }
