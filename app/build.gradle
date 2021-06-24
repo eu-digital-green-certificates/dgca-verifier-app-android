@@ -99,9 +99,9 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField "String", "BASE_URL", "\"https://get.dgc.gov.it/v1/dgc/\""
-            buildConfigField "String", "SERVER_HOST", "\"get.dgc.gov.it\""
-            buildConfigField "String", "CERTIFICATE_SHA", "\"sha256/7cZJIDPacG8FS3pq6Mvxg+7yBDM/VYc2alOcbVe/e74=\""
+            buildConfigField "String", "BASE_URL", "\"https://testaka4.sogei.it/v1/dgc/\""
+            buildConfigField "String", "SERVER_HOST", "\"testaka4.sogei.it\""
+            buildConfigField "String", "CERTIFICATE_SHA", "\"sha256/R0d+cI8vTcJ3sCbpfQCH0OmdBbulPH3deYhngzOqJVA=\""
         }
 
         release {
