@@ -183,10 +183,7 @@ class VerificationViewModel @Inject constructor(
                 }
             }
 
-            verificationResult.fetchError(
-                noPublicKeysFound,
-                verificationResult.rulesValidationFailed
-            )
+            verificationResult.fetchError(noPublicKeysFound)
                 ?.apply { _verificationError.value = this }
 
             _inProgress.value = false
@@ -203,6 +200,7 @@ class VerificationViewModel @Inject constructor(
             else -> CertificateType.TEST
         }
     }
+
     companion object {
         private const val ENGINE_VERSION = "1.0.0"
 
@@ -221,7 +219,10 @@ class VerificationViewModel @Inject constructor(
                 if (it.isNotEmpty()) {
                     val recovery = it.first()
                     verificationResult.recoveryVerification =
-                        RecoveryVerificationResult(recovery.isCertificateNotValidSoFar() == true, recovery.isCertificateNotValidAnymore() == true)
+                        RecoveryVerificationResult(
+                            recovery.isCertificateNotValidSoFar() == true,
+                            recovery.isCertificateNotValidAnymore() == true
+                        )
                 }
             }
         }

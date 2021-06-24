@@ -37,10 +37,7 @@ enum class VerificationError {
     CRYPTOGRAPHIC_SIGNATURE_INVALID
 }
 
-fun VerificationResult.fetchError(
-    noPublicKeysFound: Boolean,
-    rulesValidationFailed: Boolean
-): VerificationError? =
+fun VerificationResult.fetchError(noPublicKeysFound: Boolean): VerificationError? =
     when {
         isValid() -> null
         !isNotExpired -> VerificationError.CERTIFICATE_EXPIRED
