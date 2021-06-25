@@ -26,10 +26,7 @@ import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.*
 import dagger.hilt.android.HiltAndroidApp
-import dgca.verifier.app.android.worker.ConfigsLoadingWorker
-import dgca.verifier.app.android.worker.CountriesLoadWorker
-import dgca.verifier.app.android.worker.LoadKeysWorker
-import dgca.verifier.app.android.worker.RulesLoadWorker
+import dgca.verifier.app.android.worker.*
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -58,6 +55,7 @@ class DgcaApplication : Application(), Configuration.Provider {
             schedulePeriodicWorker<RulesLoadWorker>()
             schedulePeriodicWorker<LoadKeysWorker>()
             schedulePeriodicWorker<CountriesLoadWorker>()
+            schedulePeriodicWorker<ValueSetsLoadWorker>()
         }
 
         Timber.i("DGCA version ${BuildConfig.VERSION_NAME} is starting")

@@ -50,6 +50,7 @@ import dgca.verifier.app.engine.data.ExternalParameter
 import dgca.verifier.app.engine.data.Rule
 import dgca.verifier.app.engine.data.Type
 import dgca.verifier.app.engine.data.source.rules.RulesRepository
+import dgca.verifier.app.engine.data.source.valuesets.ValueSetsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -59,7 +60,10 @@ import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
-data class VerificationData(val verificationResult: VerificationResult?, val certificateModel: CertificateModel?)
+data class VerificationData(
+    val verificationResult: VerificationResult?,
+    val certificateModel: CertificateModel?
+)
 
 @HiltViewModel
 class VerificationViewModel @Inject constructor(
@@ -72,7 +76,8 @@ class VerificationViewModel @Inject constructor(
     private val cborService: CborService,
     private val verifierRepository: VerifierRepository,
     private val engine: CertLogicEngine,
-    private val rulesRepository: RulesRepository
+    private val rulesRepository: RulesRepository,
+    private val valueSetsRepository: ValueSetsRepository
 ) : ViewModel() {
 
     private val _verificationData = MutableLiveData<VerificationData>()
@@ -156,10 +161,18 @@ class VerificationViewModel @Inject constructor(
                                 )
                             )
                         }
+                        val valueSetsMap = mutableMapOf<String, List<String>>()
+                        valueSetsRepository.getValueSets().forEach { valueSet ->
+                            val ids = mutableListOf<String>()
+                            valueSet.valueSetValues.fieldNames().forEach { id ->
+                                ids.add(id)
+                            }
+                            valueSetsMap[valueSet.valueSetId] = ids
+                        }
 
                         val externalParameter = ExternalParameter(
                             ZonedDateTime.now(ZoneId.of(ZoneOffset.UTC.id)),
-                            emptyMap(),
+                            valueSetsMap,
                             countryIsoCode,
                             this.expirationTime,
                             this.issuedAt
@@ -188,8 +201,12 @@ class VerificationViewModel @Inject constructor(
                 ?.apply { _verificationError.value = this }
 
             _inProgress.value = false
-            val certificateModel: CertificateModel? = greenCertificateData?.greenCertificate?.toCertificateModel()
-            _verificationData.value = VerificationData(if (isApplicableCode) verificationResult else null, certificateModel)
+            val certificateModel: CertificateModel? =
+                greenCertificateData?.greenCertificate?.toCertificateModel()
+            _verificationData.value = VerificationData(
+                if (isApplicableCode) verificationResult else null,
+                certificateModel
+            )
         }
     }
 

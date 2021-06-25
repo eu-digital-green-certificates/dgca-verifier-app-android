@@ -38,8 +38,8 @@ data class Config(
         const val STATUS_ENDPOINT_NAME = "status"
         const val UPDATE_ENDPOINT_NAME = "update"
         const val COUNTRIES_ENDPOINT_NAME = "countries"
-        const val COUNTRY_RULES_ENDPOINT_NAME = "country_rules"
         const val RULES_ENDPOINT_NAME = "rules"
+        const val VALUE_SETS_ENDPOINT_NAME = "valuesets"
     }
 
     private fun getCurrentVersionOrUseDefault(versionName: String): Version? =
@@ -61,6 +61,10 @@ data class Config(
     fun getRulesUrl(versionName: String): String =
         getCurrentVersionOrUseDefault(versionName)?.endpoints?.get(RULES_ENDPOINT_NAME)?.url
             ?: "https://dgca-businessrule-service.cfapps.eu10.hana.ondemand.com/rules"
+
+    fun getValueSetsUrl(versionName: String): String =
+        getCurrentVersionOrUseDefault(versionName)?.endpoints?.get(VALUE_SETS_ENDPOINT_NAME)?.url
+            ?: "https://dgca-businessrule-service.cfapps.eu10.hana.ondemand.com/valuesets"
 }
 
 data class Endpoint(

@@ -38,18 +38,26 @@ import dgca.verifier.app.engine.data.source.countries.DefaultCountriesRepository
 import dgca.verifier.app.engine.data.source.local.countries.CountriesDao
 import dgca.verifier.app.engine.data.source.local.countries.CountriesLocalDataSource
 import dgca.verifier.app.engine.data.source.local.countries.DefaultCountriesLocalDataSource
-import dgca.verifier.app.engine.data.source.rules.DefaultRulesRepository
-import dgca.verifier.app.engine.data.source.rules.RulesRepository
 import dgca.verifier.app.engine.data.source.local.rules.DefaultRulesLocalDataSource
-import dgca.verifier.app.engine.data.source.local.rules.RulesDao
 import dgca.verifier.app.engine.data.source.local.rules.EngineDatabase
+import dgca.verifier.app.engine.data.source.local.rules.RulesDao
 import dgca.verifier.app.engine.data.source.local.rules.RulesLocalDataSource
+import dgca.verifier.app.engine.data.source.local.valuesets.DefaultValueSetsLocalDataSource
+import dgca.verifier.app.engine.data.source.local.valuesets.ValueSetsDao
+import dgca.verifier.app.engine.data.source.local.valuesets.ValueSetsLocalDataSource
 import dgca.verifier.app.engine.data.source.remote.countries.CountriesApiService
 import dgca.verifier.app.engine.data.source.remote.countries.CountriesRemoteDataSrouce
 import dgca.verifier.app.engine.data.source.remote.countries.DefaultCountriesRemoteDataSource
 import dgca.verifier.app.engine.data.source.remote.rules.DefaultRulesRemoteDataSource
 import dgca.verifier.app.engine.data.source.remote.rules.RulesApiService
 import dgca.verifier.app.engine.data.source.remote.rules.RulesRemoteDataSource
+import dgca.verifier.app.engine.data.source.remote.valuesets.ValueSetsRemoteDataSource
+import dgca.verifier.app.engine.data.source.rules.DefaultRulesRepository
+import dgca.verifier.app.engine.data.source.rules.RulesRepository
+import dgca.verifier.app.engine.data.source.valuesets.DefaultValueSetsRemoteDataSource
+import dgca.verifier.app.engine.data.source.valuesets.DefaultValueSetsRepository
+import dgca.verifier.app.engine.data.source.valuesets.ValueSetsApiService
+import dgca.verifier.app.engine.data.source.valuesets.ValueSetsRepository
 import retrofit2.Retrofit
 import javax.inject.Singleton
 
@@ -109,7 +117,8 @@ object EngineModule {
 
     @Singleton
     @Provides
-    fun provideCountriesDao(engineDatabase: EngineDatabase): CountriesDao = engineDatabase.countriesDao()
+    fun provideCountriesDao(engineDatabase: EngineDatabase): CountriesDao =
+        engineDatabase.countriesDao()
 
     @Singleton
     @Provides
@@ -133,4 +142,34 @@ object EngineModule {
         remoteDataSource: CountriesRemoteDataSrouce,
         localDataSource: CountriesLocalDataSource
     ): CountriesRepository = DefaultCountriesRepository(remoteDataSource, localDataSource)
+
+    // Dependencies for value sets.
+
+    @Singleton
+    @Provides
+    fun provideValueSetsDao(engineDatabase: EngineDatabase): ValueSetsDao =
+        engineDatabase.valueSetsDao()
+
+    @Singleton
+    @Provides
+    fun provideValueSetsLocalDataSource(dao: ValueSetsDao): ValueSetsLocalDataSource =
+        DefaultValueSetsLocalDataSource(dao)
+
+    @Singleton
+    @Provides
+    internal fun provideValueSetsApiService(retrofit: Retrofit): ValueSetsApiService {
+        return retrofit.create(ValueSetsApiService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideValueSetsiRemoteDataSource(apiService: ValueSetsApiService): ValueSetsRemoteDataSource =
+        DefaultValueSetsRemoteDataSource(apiService)
+
+    @Singleton
+    @Provides
+    fun provideValueSetsRepository(
+        remoteDataSource: ValueSetsRemoteDataSource,
+        localDataSource: ValueSetsLocalDataSource
+    ): ValueSetsRepository = DefaultValueSetsRepository(remoteDataSource, localDataSource)
 }
