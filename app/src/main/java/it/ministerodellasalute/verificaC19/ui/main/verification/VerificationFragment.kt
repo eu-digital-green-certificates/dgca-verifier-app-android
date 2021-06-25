@@ -173,6 +173,10 @@ class VerificationFragment : Fragment(), View.OnClickListener {
                         else -> TestExpiryValues.VALID
                     }
                 }
+                else if (it.last().doseNumber > it.last().totalSeriesOfDoses)
+                {
+                    return TestExpiryValues.TECHNICAL_ERROR
+                }
             } catch (e: Exception) {
                 return TestExpiryValues.TECHNICAL_ERROR
             }
