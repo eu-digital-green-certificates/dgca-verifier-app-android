@@ -72,6 +72,7 @@
     <string name="passed">Passed</string>
     <string name="failed">Failed</string>
     <string name="open">Open</string>
+    <string name="negative">Negative</string>
 
     <string-array name="countries">
         <item>at</item>

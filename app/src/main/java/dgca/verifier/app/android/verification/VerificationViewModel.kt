@@ -59,6 +59,8 @@ import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
+data class VerificationData(val verificationResult: VerificationResult?, val certificateModel: CertificateModel?)
+
 @HiltViewModel
 class VerificationViewModel @Inject constructor(
     private val prefixValidationService: PrefixValidationService,
@@ -73,14 +75,11 @@ class VerificationViewModel @Inject constructor(
     private val rulesRepository: RulesRepository
 ) : ViewModel() {
 
-    private val _verificationResult = MutableLiveData<VerificationResult?>()
-    val verificationResult: LiveData<VerificationResult?> = _verificationResult
+    private val _verificationData = MutableLiveData<VerificationData>()
+    val verificationData: LiveData<VerificationData> = _verificationData
 
     private val _verificationError = MutableLiveData<VerificationError>()
     val verificationError: LiveData<VerificationError> = _verificationError
-
-    private val _certificate = MutableLiveData<CertificateModel?>()
-    val certificate: LiveData<CertificateModel?> = _certificate
 
     private val _validationResults = MutableLiveData<List<ValidationResult>>()
     val validationResults: LiveData<List<ValidationResult>> = _validationResults
@@ -187,8 +186,8 @@ class VerificationViewModel @Inject constructor(
                 ?.apply { _verificationError.value = this }
 
             _inProgress.value = false
-            _verificationResult.value = if (isApplicableCode) verificationResult else null
-            _certificate.value = greenCertificateData?.greenCertificate?.toCertificateModel()
+            val certificateModel: CertificateModel? = greenCertificateData?.greenCertificate?.toCertificateModel()
+            _verificationData.value = VerificationData(if (isApplicableCode) verificationResult else null, certificateModel)
         }
     }
 
