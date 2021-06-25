@@ -23,35 +23,14 @@
 package dgca.verifier.app.android
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.asLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.engine.data.source.countries.CountriesRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class CodeReaderViewModel @Inject constructor(private val countriesRepository: CountriesRepository) :
     ViewModel() {
-    private val _countries = MutableLiveData<List<String>>(emptyList())
-    val countries: LiveData<List<String>> = _countries
-
-    init {
-        viewModelScope.launch {
-            val countries: List<String>
-            withContext(Dispatchers.IO) {
-                countries = countriesRepository.getCountries()
-            }
-            _countries.value =
-                countries.map { COUNTRIES_MAP[it] ?: it }.sortedBy { Locale("", it).displayCountry }
-        }
-    }
-
-    companion object {
-        private val COUNTRIES_MAP = mapOf("el" to "gr")
-    }
+    val countries: LiveData<List<String>> = countriesRepository.getCountries().asLiveData()
 }

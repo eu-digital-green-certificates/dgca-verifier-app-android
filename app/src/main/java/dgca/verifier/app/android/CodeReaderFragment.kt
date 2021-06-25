@@ -111,12 +111,13 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
             if (countries.isEmpty()) {
                 View.GONE
             } else {
+                val refinedCountries = countries.map { COUNTRIES_MAP[it] ?: it }.sortedBy { Locale("", it).displayCountry }
                 binding.countrySelector.adapter =
                     object : BaseAdapter() {
 
-                        override fun getCount(): Int = countries.size
+                        override fun getCount(): Int = refinedCountries.size
 
-                        override fun getItem(position: Int): String = countries[position]
+                        override fun getItem(position: Int): String = refinedCountries[position]
 
                         override fun getItemId(position: Int): Long = position.toLong()
 
@@ -129,7 +130,7 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
                                 .inflate(android.R.layout.simple_spinner_item, parent, false)
                                 .apply {
                                     val textView: TextView = this.findViewById(android.R.id.text1)
-                                    val countryIsoCode = countries[position]
+                                    val countryIsoCode = refinedCountries[position]
                                     val locale = Locale("", countryIsoCode)
                                     textView.text = locale.displayCountry
                                 }
@@ -189,5 +190,9 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
             binding.barcodeScanner.resume()
             lastText = ""
         }
+    }
+
+    companion object {
+        private val COUNTRIES_MAP = mapOf("el" to "gr")
     }
 }
