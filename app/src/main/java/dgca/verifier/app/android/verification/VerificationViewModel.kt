@@ -49,7 +49,7 @@ import dgca.verifier.app.engine.data.CertificateType
 import dgca.verifier.app.engine.data.ExternalParameter
 import dgca.verifier.app.engine.data.Rule
 import dgca.verifier.app.engine.data.Type
-import dgca.verifier.app.engine.data.source.RulesRepository
+import dgca.verifier.app.engine.data.source.rules.RulesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -137,46 +137,48 @@ class VerificationViewModel @Inject constructor(
                 }
 
                 greenCertificateData?.apply {
-                    val rules = mutableListOf<Rule>()
-                    rules.addAll(
-                        rulesRepository.getRulesBy(
-                            countryIsoCode, ZonedDateTime.now().withZoneSameInstant(
-                                UTC_ZONE_ID
-                            ), Type.ACCEPTANCE, this.greenCertificate.getType()
-                        )
-                    )
-                    val issuingCountry = this.greenCertificate.getIssuingCountry()
-                    if (issuingCountry.isNotBlank()) {
+                    if (countryIsoCode.isNotBlank()) {
+                        val rules = mutableListOf<Rule>()
                         rules.addAll(
                             rulesRepository.getRulesBy(
-                                issuingCountry, ZonedDateTime.now().withZoneSameInstant(
+                                countryIsoCode, ZonedDateTime.now().withZoneSameInstant(
                                     UTC_ZONE_ID
-                                ), Type.INVALIDATION, this.greenCertificate.getType()
+                                ), Type.ACCEPTANCE, this.greenCertificate.getType()
                             )
                         )
-                    }
+                        val issuingCountry = this.greenCertificate.getIssuingCountry()
+                        if (issuingCountry.isNotBlank()) {
+                            rules.addAll(
+                                rulesRepository.getRulesBy(
+                                    issuingCountry, ZonedDateTime.now().withZoneSameInstant(
+                                        UTC_ZONE_ID
+                                    ), Type.INVALIDATION, this.greenCertificate.getType()
+                                )
+                            )
+                        }
 
-                    val externalParameter = ExternalParameter(
-                        ZonedDateTime.now(ZoneId.of(ZoneOffset.UTC.id)),
-                        emptyMap(),
-                        countryIsoCode,
-                        this.expirationTime,
-                        this.issuedAt
-                    )
-                    validationResults = engine.validate(
-                        ENGINE_VERSION,
-                        JSON_SCHEMA_V1,
-                        rules,
-                        externalParameter,
-                        this.hcertJson
-                    )
+                        val externalParameter = ExternalParameter(
+                            ZonedDateTime.now(ZoneId.of(ZoneOffset.UTC.id)),
+                            emptyMap(),
+                            countryIsoCode,
+                            this.expirationTime,
+                            this.issuedAt
+                        )
+                        validationResults = engine.validate(
+                            ENGINE_VERSION,
+                            JSON_SCHEMA_V1,
+                            rules,
+                            externalParameter,
+                            this.hcertJson
+                        )
 
-                    _validationResults.postValue(validationResults)
+                        _validationResults.postValue(validationResults)
 
-                    validationResults.forEach {
-                        if (it.result != Result.PASSED) {
-                            verificationResult.rulesValidationFailed = true
-                            return@forEach
+                        validationResults.forEach {
+                            if (it.result != Result.PASSED) {
+                                verificationResult.rulesValidationFailed = true
+                                return@forEach
+                            }
                         }
                     }
                 }

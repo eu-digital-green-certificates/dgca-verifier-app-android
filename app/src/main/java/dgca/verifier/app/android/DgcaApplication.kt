@@ -24,19 +24,16 @@ package dgca.verifier.app.android
 
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
-import androidx.work.Configuration
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.WorkRequest
+import androidx.work.*
 import dagger.hilt.android.HiltAndroidApp
 import dgca.verifier.app.android.worker.ConfigsLoadingWorker
+import dgca.verifier.app.android.worker.CountriesLoadWorker
 import dgca.verifier.app.android.worker.LoadKeysWorker
 import dgca.verifier.app.android.worker.RulesLoadWorker
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.reflect.KClass
 
 @HiltAndroidApp
 class DgcaApplication : Application(), Configuration.Provider {
@@ -56,52 +53,24 @@ class DgcaApplication : Application(), Configuration.Provider {
             Timber.plant(Timber.DebugTree())
         }
 
-        scheduleRulesLoading()
-        scheduleKeysLoading()
-        scheduleConfigLoading()
+        WorkManager.getInstance(this).apply {
+            schedulePeriodicWorker<ConfigsLoadingWorker>()
+            schedulePeriodicWorker<RulesLoadWorker>()
+            schedulePeriodicWorker<LoadKeysWorker>()
+            schedulePeriodicWorker<CountriesLoadWorker>()
+        }
 
         Timber.i("DGCA version ${BuildConfig.VERSION_NAME} is starting")
     }
 
-    private fun scheduleRulesLoading() {
-        val uploadWorkRequest: WorkRequest =
-            PeriodicWorkRequestBuilder<RulesLoadWorker>(1, TimeUnit.DAYS)
+    private inline fun <reified T : ListenableWorker> WorkManager.schedulePeriodicWorker() =
+        this.enqueue(
+            PeriodicWorkRequestBuilder<T>(1, TimeUnit.DAYS)
                 .setConstraints(
                     Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED)
                         .build()
                 )
                 .build()
-        WorkManager
-            .getInstance(this)
-            .enqueue(uploadWorkRequest)
-    }
-
-    private fun scheduleKeysLoading() {
-        val uploadWorkRequest: WorkRequest =
-            PeriodicWorkRequestBuilder<LoadKeysWorker>(1, TimeUnit.DAYS)
-                .setConstraints(
-                    Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
-                        .build()
-                )
-                .build()
-        WorkManager
-            .getInstance(this)
-            .enqueue(uploadWorkRequest)
-    }
-
-    private fun scheduleConfigLoading() {
-        val workRequest: WorkRequest =
-            PeriodicWorkRequestBuilder<ConfigsLoadingWorker>(1, TimeUnit.DAYS)
-                .setConstraints(
-                    Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
-                        .build()
-                )
-                .build()
-        WorkManager
-            .getInstance(this)
-            .enqueue(workRequest)
-    }
+        )
 }

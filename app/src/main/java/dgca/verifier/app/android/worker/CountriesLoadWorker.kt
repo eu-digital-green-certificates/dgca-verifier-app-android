@@ -30,30 +30,29 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dgca.verifier.app.android.BuildConfig
 import dgca.verifier.app.android.data.ConfigRepository
-import dgca.verifier.app.engine.data.source.rules.RulesRepository
+import dgca.verifier.app.engine.data.source.countries.CountriesRepository
 import timber.log.Timber
 
 @HiltWorker
-class RulesLoadWorker @AssistedInject constructor(
+class CountriesLoadWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workParams: WorkerParameters,
     private val configRepository: ConfigRepository,
-    private val rulesRepository: RulesRepository
+    private val countriesRepository: CountriesRepository
 ) : CoroutineWorker(context, workParams) {
 
     override suspend fun doWork(): Result {
-        Timber.d("rules loading start")
+        Timber.d("countries loading start")
         return try {
             val config = configRepository.local().getConfig()
             val versionName = BuildConfig.VERSION_NAME
-            rulesRepository.loadRules(
-                config.getCountriesUrl(versionName),
-                config.getRulesUrl(versionName)
+            countriesRepository.preLoadCountries(
+                config.getCountriesUrl(versionName)
             )
-            Timber.d("rules loading succeeded")
+            Timber.d("countries loading succeeded")
             Result.success()
         } catch (error: Throwable) {
-            Timber.d("rules loading retry")
+            Timber.d("countries loading retry")
             Result.retry()
         }
     }

@@ -58,10 +58,6 @@ data class Config(
         getCurrentVersionOrUseDefault(versionName)?.endpoints?.get(COUNTRIES_ENDPOINT_NAME)?.url
             ?: "https://dgca-businessrule-service.cfapps.eu10.hana.ondemand.com/countrylist"
 
-    fun getCountryRulesUrl(versionName: String): String =
-        getCurrentVersionOrUseDefault(versionName)?.endpoints?.get(COUNTRY_RULES_ENDPOINT_NAME)?.url
-            ?: "https://dgca-businessrule-service.cfapps.eu10.hana.ondemand.com/countrylist"
-
     fun getRulesUrl(versionName: String): String =
         getCurrentVersionOrUseDefault(versionName)?.endpoints?.get(RULES_ENDPOINT_NAME)?.url
             ?: "https://dgca-businessrule-service.cfapps.eu10.hana.ondemand.com/rules"

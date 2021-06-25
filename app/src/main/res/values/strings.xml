@@ -73,31 +73,4 @@
     <string name="failed">Failed</string>
     <string name="open">Open</string>
     <string name="negative">Negative</string>
-
-    <string-array name="countries">
-        <item>at</item>
-        <item>be</item>
-        <item>bg</item>
-        <item>ch</item>
-        <item>cy</item>
-        <item>cz</item>
-        <item>de</item>
-        <item>dk</item>
-        <item>ee</item>
-        <item>gr</item>
-        <item>es</item>
-        <item>hr</item>
-        <item>ie</item>
-        <item>is</item>
-        <item>it</item>
-        <item>li</item>
-        <item>lt</item>
-        <item>lu</item>
-        <item>nl</item>
-        <item>pl</item>
-        <item>pt</item>
-        <item>se</item>
-        <item>si</item>
-        <item>sk</item>
-    </string-array>
 </resources>

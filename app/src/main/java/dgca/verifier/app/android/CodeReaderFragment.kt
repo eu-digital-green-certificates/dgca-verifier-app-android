@@ -34,6 +34,7 @@ import androidx.activity.addCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.findNavController
@@ -43,15 +44,19 @@ import com.google.zxing.client.android.BeepManager
 import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.DefaultDecoderFactory
+import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.databinding.FragmentCodeReaderBinding
 import java.util.*
 
 private const val CAMERA_REQUEST_CODE = 1003
 
+@AndroidEntryPoint
 class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListener {
 
     private var _binding: FragmentCodeReaderBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel by viewModels<CodeReaderViewModel>()
 
     private lateinit var beepManager: BeepManager
     private var lastText: String? = null
@@ -102,27 +107,39 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
             findNavController().navigate(action)
         }
 
-        val countries = resources.getStringArray(R.array.countries).sortedBy {
-            Locale("", it).displayName
-        }
-        binding.countrySelector.adapter =
-            object : BaseAdapter() {
+        viewModel.countries.observe(viewLifecycleOwner, { countries ->
+            if (countries.isEmpty()) {
+                View.GONE
+            } else {
+                binding.countrySelector.adapter =
+                    object : BaseAdapter() {
 
-                override fun getCount(): Int = countries.size
+                        override fun getCount(): Int = countries.size
 
-                override fun getItem(position: Int): String = countries[position]
+                        override fun getItem(position: Int): String = countries[position]
 
-                override fun getItemId(position: Int): Long = position.toLong()
+                        override fun getItemId(position: Int): Long = position.toLong()
 
-                override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View =
-                    layoutInflater
-                        .inflate(android.R.layout.simple_spinner_item, parent, false).apply {
-                            val textView: TextView = this.findViewById(android.R.id.text1)
-                            val countryIsoCode = countries[position]
-                            val locale = Locale("", countryIsoCode)
-                            textView.text = locale.displayCountry
-                        }
+                        override fun getView(
+                            position: Int,
+                            convertView: View?,
+                            parent: ViewGroup?
+                        ): View =
+                            layoutInflater
+                                .inflate(android.R.layout.simple_spinner_item, parent, false)
+                                .apply {
+                                    val textView: TextView = this.findViewById(android.R.id.text1)
+                                    val countryIsoCode = countries[position]
+                                    val locale = Locale("", countryIsoCode)
+                                    textView.text = locale.displayCountry
+                                }
+                    }
+                View.VISIBLE
+            }.apply {
+                binding.validateWith.visibility = this
+                binding.countrySelector.visibility = this
             }
+        })
     }
 
     override fun onDestroyView() {
@@ -146,7 +163,7 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
         val action =
             CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationFragment(
                 text,
-                binding.countrySelector.selectedItem.toString()
+                binding.countrySelector.selectedItem?.toString() ?: ""
             )
         findNavController().navigate(action)
     }
