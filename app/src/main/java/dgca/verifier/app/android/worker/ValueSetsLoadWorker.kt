@@ -30,27 +30,29 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dgca.verifier.app.android.BuildConfig
 import dgca.verifier.app.android.data.ConfigRepository
-import dgca.verifier.app.engine.data.source.rules.RulesRepository
+import dgca.verifier.app.engine.data.source.valuesets.ValueSetsRepository
 import timber.log.Timber
 
 @HiltWorker
-class RulesLoadWorker @AssistedInject constructor(
+class ValueSetsLoadWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workParams: WorkerParameters,
     private val configRepository: ConfigRepository,
-    private val rulesRepository: RulesRepository
+    private val valueSetsRepository: ValueSetsRepository
 ) : CoroutineWorker(context, workParams) {
 
     override suspend fun doWork(): Result {
-        Timber.d("rules loading start")
+        Timber.d("value sets loading start")
         return try {
             val config = configRepository.local().getConfig()
             val versionName = BuildConfig.VERSION_NAME
-            rulesRepository.loadRules(config.getRulesUrl(versionName))
-            Timber.d("rules loading succeeded")
+            valueSetsRepository.preLoad(
+                config.getValueSetsUrl(versionName)
+            )
+            Timber.d("value sets loading succeeded")
             Result.success()
         } catch (error: Throwable) {
-            Timber.d("rules loading retry")
+            Timber.d("value sets loading retry")
             Result.retry()
         }
     }

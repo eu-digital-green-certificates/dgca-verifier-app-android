@@ -107,6 +107,7 @@ dependencies {
     implementation Deps.kotlinx_coroutines
     implementation Deps.zxing
     implementation Deps.guava_conflict_resolver
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.4.0-alpha02"
 
     implementation Deps.hilt
     kapt Deps.hilt_compiler

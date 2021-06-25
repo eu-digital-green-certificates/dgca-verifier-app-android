@@ -17,20 +17,20 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:49 AM
+ *  Created by mykhailo.nester on 4/24/21 2:54 PM
  */
 
-import org.gradle.api.JavaVersion
+package dgca.verifier.app.android
 
-object Config {
-    const val minSdk = 26
-    const val compileSdk = 29
-    const val targetSdk = 29
-    val javaVersion = JavaVersion.VERSION_1_8
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dgca.verifier.app.engine.data.source.countries.CountriesRepository
+import javax.inject.Inject
 
-    const val versionCode = 10
-    const val versionName = "1.1.2"
-
-    const val androidTestInstrumentation = "androidx.test.runner.AndroidJUnitRunner"
-    const val proguardConsumerRules = "consumer-rules.pro"
+@HiltViewModel
+class CodeReaderViewModel @Inject constructor(private val countriesRepository: CountriesRepository) :
+    ViewModel() {
+    val countries: LiveData<List<String>> = countriesRepository.getCountries().asLiveData()
 }

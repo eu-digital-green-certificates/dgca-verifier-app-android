@@ -60,7 +60,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
 
     private var _binding: DialogFragmentVerificationBinding? = null
     private val binding get() = _binding!!
-    private val hideLiveData: MutableLiveData<Void> = MutableLiveData()
+    private val hideLiveData: MutableLiveData<Void?> = MutableLiveData()
 
     override fun onCreateView(
         inflater: LayoutInflater,

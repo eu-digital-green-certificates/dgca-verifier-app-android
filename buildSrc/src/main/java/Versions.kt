@@ -37,6 +37,7 @@ object Versions {
     const val androidx_hilt_work = work_hilt
     const val androidx_hilt_compiler = work_hilt
     const val androidx_room = "2.3.0"
+    const val room_ktx = "2.4.0-alpha03"
     const val androidx_worker_ktx = "2.5.0"
     const val hilt_version = "2.33-beta"
     const val google_licenses_version = "0.10.4"
@@ -45,6 +46,7 @@ object Versions {
     const val gson_converter = "2.1.0"
     const val timber = "4.7.1"
     const val google_licenses = "17.0.0"
+    const val lifecycle_livedata_version = "2.4.0-alpha02"
 
     // QR
     const val zxing = "4.2.0"

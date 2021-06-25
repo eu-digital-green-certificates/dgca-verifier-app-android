@@ -29,20 +29,35 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import dgca.verifier.app.android.data.remote.ApiService
 import dgca.verifier.app.engine.CertLogicEngine
 import dgca.verifier.app.engine.DefaultCertLogicEngine
 import dgca.verifier.app.engine.DefaultJsonLogicValidator
 import dgca.verifier.app.engine.JsonLogicValidator
-import dgca.verifier.app.engine.data.source.DefaultRulesRepository
-import dgca.verifier.app.engine.data.source.RulesRepository
-import dgca.verifier.app.engine.data.source.local.DefaultRulesLocalDataSource
-import dgca.verifier.app.engine.data.source.local.RulesDao
-import dgca.verifier.app.engine.data.source.local.RulesDatabase
-import dgca.verifier.app.engine.data.source.local.RulesLocalDataSource
-import dgca.verifier.app.engine.data.source.remote.DefaultRulesRemoteDataSource
-import dgca.verifier.app.engine.data.source.remote.RulesApiService
-import dgca.verifier.app.engine.data.source.remote.RulesRemoteDataSource
+import dgca.verifier.app.engine.data.source.countries.CountriesRepository
+import dgca.verifier.app.engine.data.source.countries.DefaultCountriesRepository
+import dgca.verifier.app.engine.data.source.local.countries.CountriesDao
+import dgca.verifier.app.engine.data.source.local.countries.CountriesLocalDataSource
+import dgca.verifier.app.engine.data.source.local.countries.DefaultCountriesLocalDataSource
+import dgca.verifier.app.engine.data.source.local.rules.DefaultRulesLocalDataSource
+import dgca.verifier.app.engine.data.source.local.rules.EngineDatabase
+import dgca.verifier.app.engine.data.source.local.rules.RulesDao
+import dgca.verifier.app.engine.data.source.local.rules.RulesLocalDataSource
+import dgca.verifier.app.engine.data.source.local.valuesets.DefaultValueSetsLocalDataSource
+import dgca.verifier.app.engine.data.source.local.valuesets.ValueSetsDao
+import dgca.verifier.app.engine.data.source.local.valuesets.ValueSetsLocalDataSource
+import dgca.verifier.app.engine.data.source.remote.countries.CountriesApiService
+import dgca.verifier.app.engine.data.source.remote.countries.CountriesRemoteDataSrouce
+import dgca.verifier.app.engine.data.source.remote.countries.DefaultCountriesRemoteDataSource
+import dgca.verifier.app.engine.data.source.remote.rules.DefaultRulesRemoteDataSource
+import dgca.verifier.app.engine.data.source.remote.rules.RulesApiService
+import dgca.verifier.app.engine.data.source.remote.rules.RulesRemoteDataSource
+import dgca.verifier.app.engine.data.source.remote.valuesets.ValueSetsRemoteDataSource
+import dgca.verifier.app.engine.data.source.rules.DefaultRulesRepository
+import dgca.verifier.app.engine.data.source.rules.RulesRepository
+import dgca.verifier.app.engine.data.source.valuesets.DefaultValueSetsRemoteDataSource
+import dgca.verifier.app.engine.data.source.valuesets.DefaultValueSetsRepository
+import dgca.verifier.app.engine.data.source.valuesets.ValueSetsApiService
+import dgca.verifier.app.engine.data.source.valuesets.ValueSetsRepository
 import retrofit2.Retrofit
 import javax.inject.Singleton
 
@@ -53,14 +68,16 @@ import javax.inject.Singleton
 @Module
 object EngineModule {
 
-    @Singleton
-    @Provides
-    fun provideRulesDb(@ApplicationContext context: Context): RulesDatabase =
-        Room.databaseBuilder(context, RulesDatabase::class.java, "rule-db").build()
+    // Dependencies for rules.
 
     @Singleton
     @Provides
-    fun provideRulesDao(rulesDatabase: RulesDatabase): RulesDao = rulesDatabase.rulesDao()
+    fun provideRulesDb(@ApplicationContext context: Context): EngineDatabase =
+        Room.databaseBuilder(context, EngineDatabase::class.java, "engine-db").build()
+
+    @Singleton
+    @Provides
+    fun provideRulesDao(engineDatabase: EngineDatabase): RulesDao = engineDatabase.rulesDao()
 
     @Singleton
     @Provides
@@ -85,6 +102,8 @@ object EngineModule {
         localDataSource: RulesLocalDataSource
     ): RulesRepository = DefaultRulesRepository(remoteDataSource, localDataSource)
 
+    // Dependencies for engine.
+
     @Singleton
     @Provides
     fun provideCryptoService(): JsonLogicValidator = DefaultJsonLogicValidator()
@@ -93,4 +112,64 @@ object EngineModule {
     @Provides
     fun provideCertLogicEngine(jsonLogicValidator: JsonLogicValidator): CertLogicEngine =
         DefaultCertLogicEngine(jsonLogicValidator)
+
+    // Dependencies for countries.
+
+    @Singleton
+    @Provides
+    fun provideCountriesDao(engineDatabase: EngineDatabase): CountriesDao =
+        engineDatabase.countriesDao()
+
+    @Singleton
+    @Provides
+    fun provideCountriesLocalDataSource(countriesDao: CountriesDao): CountriesLocalDataSource =
+        DefaultCountriesLocalDataSource(countriesDao)
+
+    @Singleton
+    @Provides
+    internal fun provideCountriesApiService(retrofit: Retrofit): CountriesApiService {
+        return retrofit.create(CountriesApiService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideCountriesRemoteDataSource(countriesApiService: CountriesApiService): CountriesRemoteDataSrouce =
+        DefaultCountriesRemoteDataSource(countriesApiService)
+
+    @Singleton
+    @Provides
+    fun provideCountriesRepository(
+        remoteDataSource: CountriesRemoteDataSrouce,
+        localDataSource: CountriesLocalDataSource
+    ): CountriesRepository = DefaultCountriesRepository(remoteDataSource, localDataSource)
+
+    // Dependencies for value sets.
+
+    @Singleton
+    @Provides
+    fun provideValueSetsDao(engineDatabase: EngineDatabase): ValueSetsDao =
+        engineDatabase.valueSetsDao()
+
+    @Singleton
+    @Provides
+    fun provideValueSetsLocalDataSource(dao: ValueSetsDao): ValueSetsLocalDataSource =
+        DefaultValueSetsLocalDataSource(dao)
+
+    @Singleton
+    @Provides
+    internal fun provideValueSetsApiService(retrofit: Retrofit): ValueSetsApiService {
+        return retrofit.create(ValueSetsApiService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideValueSetsiRemoteDataSource(apiService: ValueSetsApiService): ValueSetsRemoteDataSource =
+        DefaultValueSetsRemoteDataSource(apiService)
+
+    @Singleton
+    @Provides
+    fun provideValueSetsRepository(
+        remoteDataSource: ValueSetsRemoteDataSource,
+        localDataSource: ValueSetsLocalDataSource
+    ): ValueSetsRepository = DefaultValueSetsRepository(remoteDataSource, localDataSource)
 }
