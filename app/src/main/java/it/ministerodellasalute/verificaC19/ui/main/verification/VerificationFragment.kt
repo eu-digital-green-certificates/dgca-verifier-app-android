@@ -96,13 +96,28 @@ class VerificationFragment : Fragment(), View.OnClickListener {
         viewModel.init(args.qrCodeText)
     }
 
+    private fun clearExtraTime(strDateTime: String): String {
+        try {
+
+            if (strDateTime.contains("T")) {
+                return strDateTime.substring(0, strDateTime.indexOf("T"))
+            }
+            return strDateTime
+        }
+        catch (e : Exception)
+        {
+            return strDateTime
+        }
+    }
+
     private fun isAnyTestExpired(it: CertificateModel): TestExpiryValues {
         it.recoveryStatements?.let {
 
             try {
-                val startDate: LocalDate = LocalDate.parse(it.last().certificateValidFrom)
 
-                val endDate: LocalDate = LocalDate.parse(it.last().certificateValidUntil)
+                val startDate: LocalDate = LocalDate.parse(clearExtraTime(it.last().certificateValidFrom))
+
+                val endDate: LocalDate = LocalDate.parse(clearExtraTime(it.last().certificateValidUntil))
 
                 Log.d("dates", "start:" + startDate.toString() +" end: " +endDate.toString())
                 return when {
@@ -149,10 +164,10 @@ class VerificationFragment : Fragment(), View.OnClickListener {
         it.vaccinations?.let {
             try {
                 if (it.last().doseNumber < it.last().totalSeriesOfDoses) {
-                    val startDate: LocalDate = LocalDate.parse(it.last().dateOfVaccination)
+                    val startDate: LocalDate = LocalDate.parse(clearExtraTime(it.last().dateOfVaccination))
                         .plusDays(Integer.parseInt(viewModel.getVaccineStartDayNotComplete(it.last().medicinalProduct)).toLong())
 
-                    val endDate: LocalDate = LocalDate.parse(it.last().dateOfVaccination)
+                    val endDate: LocalDate = LocalDate.parse(clearExtraTime(it.last().dateOfVaccination))
                         .plusDays(Integer.parseInt(viewModel.getVaccineEndDayNotComplete(it.last().medicinalProduct)).toLong())
                     Log.d("dates", "start:" + startDate.toString() +" end: " +endDate.toString())
                     return when {
@@ -161,10 +176,10 @@ class VerificationFragment : Fragment(), View.OnClickListener {
                         else -> TestExpiryValues.VALID
                     }
                 } else if (it.last().doseNumber == it.last().totalSeriesOfDoses) {
-                    val startDate: LocalDate = LocalDate.parse(it.last().dateOfVaccination)
+                    val startDate: LocalDate = LocalDate.parse(clearExtraTime(it.last().dateOfVaccination))
                         .plusDays(Integer.parseInt(viewModel.getVaccineStartDayComplete(it.last().medicinalProduct)).toLong())
 
-                    val endDate: LocalDate = LocalDate.parse(it.last().dateOfVaccination)
+                    val endDate: LocalDate = LocalDate.parse(clearExtraTime(it.last().dateOfVaccination))
                         .plusDays(Integer.parseInt(viewModel.getVaccineEndDayComplete(it.last().medicinalProduct)).toLong())
                     Log.d("dates", "start:" + startDate.toString() +" end: " +endDate.toString())
                     return when {
@@ -172,6 +187,10 @@ class VerificationFragment : Fragment(), View.OnClickListener {
                         LocalDate.now().isAfter(endDate) -> TestExpiryValues.EXPIRED
                         else -> TestExpiryValues.VALID
                     }
+                }
+                else if (it.last().doseNumber > it.last().totalSeriesOfDoses)
+                {
+                    return TestExpiryValues.TECHNICAL_ERROR
                 }
             } catch (e: Exception) {
                 return TestExpiryValues.TECHNICAL_ERROR

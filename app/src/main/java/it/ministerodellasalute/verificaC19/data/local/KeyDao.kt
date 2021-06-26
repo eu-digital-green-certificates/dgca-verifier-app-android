@@ -26,6 +26,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.OnConflictStrategy
 
 @Dao
 interface KeyDao {
@@ -41,7 +42,7 @@ interface KeyDao {
     @Query("DELETE FROM keys WHERE kid = :kid")
     fun deleteById(kid: String)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(key: Key)
 
     @Delete
