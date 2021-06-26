@@ -22,7 +22,7 @@
 
 package it.ministerodellasalute.verificaC19.data.local
 
-import androidx.room.*
+import androidx.room.OnConflictStrategy
 
 @Dao
 interface KeyDao {
