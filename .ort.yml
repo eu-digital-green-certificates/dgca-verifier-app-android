@@ -1,0 +1,8 @@
+excludes:
+  scopes:
+  - pattern: "test.*"
+    reason: "TEST_DEPENDENCY_OF"
+    comment: "Packages for testing only."
+  - pattern: ".*Test.*"
+    reason: "TEST_DEPENDENCY_OF"
+    comment: "Packages for testing only."
