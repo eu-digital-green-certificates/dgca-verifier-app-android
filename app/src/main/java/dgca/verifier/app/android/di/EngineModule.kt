@@ -73,7 +73,8 @@ object EngineModule {
     @Singleton
     @Provides
     fun provideRulesDb(@ApplicationContext context: Context): EngineDatabase =
-        Room.databaseBuilder(context, EngineDatabase::class.java, "engine-db").build()
+        Room.databaseBuilder(context, EngineDatabase::class.java, "engine-db")
+            .fallbackToDestructiveMigration().build()
 
     @Singleton
     @Provides
