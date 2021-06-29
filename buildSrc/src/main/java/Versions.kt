@@ -71,4 +71,7 @@ object Versions {
     const val hamcrest = "2.2"
     const val test_version = "1.3.0"
     const val test_ext_version = "1.1.2"
+
+    const val mockito_core = "3.9.0"
+    const val mockito_kotlin = "3.2.0"
 }
