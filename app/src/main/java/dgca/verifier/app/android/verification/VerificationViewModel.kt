@@ -128,7 +128,8 @@ class VerificationViewModel @Inject constructor(
                 greenCertificateData = cborService.decodeData(coseData.cbor, verificationResult)
                 validateCertData(greenCertificateData?.greenCertificate, verificationResult)
 
-                val certificates = verifierRepository.getCertificatesBy(kid.toBase64())
+                val base64EncodedKid = kid.toBase64()
+                val certificates = verifierRepository.getCertificatesBy(base64EncodedKid)
                 if (certificates.isEmpty()) {
                     Timber.d("Verification failed: failed to load certificate")
                     return@withContext
@@ -171,6 +172,7 @@ class VerificationViewModel @Inject constructor(
                         }
 
                         val externalParameter = ExternalParameter(
+                            base64EncodedKid,
                             ZonedDateTime.now(ZoneId.of(ZoneOffset.UTC.id)),
                             valueSetsMap,
                             countryIsoCode,
