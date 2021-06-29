@@ -181,7 +181,7 @@ class VerificationViewModel @Inject constructor(
                             this.issuedAt
                         )
                         validationResults = engine.validate(
-                            ENGINE_VERSION,
+                            this.greenCertificate.schemaVersion,
                             JSON_SCHEMA_V1,
                             rules,
                             externalParameter,
