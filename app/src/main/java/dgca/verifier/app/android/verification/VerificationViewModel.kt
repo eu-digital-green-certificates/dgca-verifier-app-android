@@ -152,8 +152,9 @@ class VerificationViewModel @Inject constructor(
                                 ), Type.ACCEPTANCE, this.greenCertificate.getType()
                             )
                         )
-                        val issuingCountry = this.greenCertificate.getIssuingCountry()
-                        if (issuingCountry.isNotBlank()) {
+                        val issuingCountry: String? =
+                            if (this.issuingCountry?.isNotBlank() == true) this.issuingCountry else this.greenCertificate.getIssuingCountry()
+                        if (issuingCountry?.isNotBlank() == true) {
                             rules.addAll(
                                 rulesRepository.getRulesBy(
                                     issuingCountry, ZonedDateTime.now().withZoneSameInstant(
