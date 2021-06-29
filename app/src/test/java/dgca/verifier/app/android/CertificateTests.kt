@@ -92,7 +92,7 @@ class CertificateTests {
 
     @Test
     fun TestSignatureInvalid() {
-        val result = VerificationResult(isNotExpired = true, coseVerified = true)
+        val result = VerificationResult(isNotExpired = true, coseVerified = false)
         val error = result.fetchError(false)
         Assert.assertTrue(error === VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID)
     }
@@ -104,13 +104,13 @@ class CertificateTests {
         result.coseVerified = true
         result.base45Decoded = false
         var error = result.fetchError(false)
-        Assert.assertTrue(error === VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID)
+        Assert.assertTrue(error === VerificationError.VERIFICATION_FAILED)
         result = result.copy(base45Decoded = true, cborDecoded = false)
         error = result.fetchError(false)
-        Assert.assertTrue(error === VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID)
+        Assert.assertTrue(error === VerificationError.VERIFICATION_FAILED)
         result = result.copy(cborDecoded =  true, isSchemaValid = false)
         error = result.fetchError(false)
-        Assert.assertTrue(error === VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID)
+        Assert.assertTrue(error === VerificationError.VERIFICATION_FAILED)
     }
 
     @Test
@@ -121,5 +121,13 @@ class CertificateTests {
         result.recoveryVerification = RecoveryVerificationResult(false, true)
         val error = result.fetchError(false)
         Assert.assertTrue(error === VerificationError.RECOVERY_NOT_VALID_ANYMORE)
+    }
+
+    @Test
+    fun TestPublicKeyNotFound() {
+        val result = VerificationResult()
+        result.isNotExpired = false
+        val error = result.fetchError(true)
+        Assert.assertTrue(error === VerificationError.VERIFICATION_FAILED)
     }
 }

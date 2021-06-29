@@ -40,12 +40,13 @@ enum class VerificationError {
 fun VerificationResult.fetchError(noPublicKeysFound: Boolean): VerificationError? =
     when {
         isValid() -> null
+        noPublicKeysFound-> VerificationError.VERIFICATION_FAILED
+        !coseVerified -> VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID
         !isNotExpired -> VerificationError.CERTIFICATE_EXPIRED
-        noPublicKeysFound -> VerificationError.VERIFICATION_FAILED
         isTestDateInTheFuture() -> VerificationError.TEST_DATE_IS_IN_THE_FUTURE
         isTestWithPositiveResult() -> VerificationError.TEST_RESULT_POSITIVE
         isRecoveryNotValidSoFar() -> VerificationError.RECOVERY_NOT_VALID_SO_FAR
         isRecoveryNotValidAnymore() -> VerificationError.RECOVERY_NOT_VALID_ANYMORE
         rulesValidationFailed -> VerificationError.RULES_VALIDATION_FAILED
-        else -> VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID
+        else -> VerificationError.VERIFICATION_FAILED
     }
