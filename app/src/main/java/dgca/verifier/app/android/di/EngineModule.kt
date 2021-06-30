@@ -58,6 +58,8 @@ import dgca.verifier.app.engine.data.source.valuesets.DefaultValueSetsRemoteData
 import dgca.verifier.app.engine.data.source.valuesets.DefaultValueSetsRepository
 import dgca.verifier.app.engine.data.source.valuesets.ValueSetsApiService
 import dgca.verifier.app.engine.data.source.valuesets.ValueSetsRepository
+import dgca.verifier.app.engine.domain.rules.DefaultGetRulesUseCase
+import dgca.verifier.app.engine.domain.rules.GetRulesUseCase
 import retrofit2.Retrofit
 import javax.inject.Singleton
 
@@ -173,4 +175,10 @@ object EngineModule {
         remoteDataSource: ValueSetsRemoteDataSource,
         localDataSource: ValueSetsLocalDataSource
     ): ValueSetsRepository = DefaultValueSetsRepository(remoteDataSource, localDataSource)
+
+    @Singleton
+    @Provides
+    fun provideGetRulesUseCase(
+        rulesRepository: RulesRepository
+    ): GetRulesUseCase = DefaultGetRulesUseCase(rulesRepository)
 }
