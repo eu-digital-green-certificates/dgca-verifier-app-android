@@ -2,7 +2,7 @@ name: ci-release
 on:
   release:
     types:
-    - created
+    - [created, prereleased]
 jobs:
   build:
     runs-on: ubuntu-20.04
