@@ -2,7 +2,8 @@ name: ci-release
 on:
   release:
     types:
-    - created|prereleased
+    - created
+    - prereleased
 jobs:
   build:
     runs-on: ubuntu-20.04
