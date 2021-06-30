@@ -125,6 +125,6 @@ dependencies {
     implementation Deps.google_licenses
 
     testImplementation Deps.test_junit
-    testImplementation Deps.mockito_core
-    testImplementation Deps.mockito_kotlin
+//    testImplementation Deps.mockito_core
+//    testImplementation Deps.mockito_kotlin
 }
