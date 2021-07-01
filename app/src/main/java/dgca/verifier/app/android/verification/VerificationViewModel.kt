@@ -46,6 +46,7 @@ import dgca.verifier.app.decoder.schema.SchemaValidator
 import dgca.verifier.app.decoder.toBase64
 import dgca.verifier.app.engine.*
 import dgca.verifier.app.engine.data.CertificateType
+import dgca.verifier.app.engine.data.RuleCertificateType
 import dgca.verifier.app.engine.data.ExternalParameter
 import dgca.verifier.app.engine.data.source.valuesets.ValueSetsRepository
 import dgca.verifier.app.engine.domain.rules.GetRulesUseCase
@@ -147,13 +148,14 @@ class VerificationViewModel @Inject constructor(
                 }
 
                 greenCertificateData?.apply {
+                    val engineCertificateType = this.greenCertificate.getEngineCertificateType()
                     if (countryIsoCode.isNotBlank()) {
                         val issuingCountry: String =
                             if (this.issuingCountry?.isNotBlank() == true && this.issuingCountry != null) this.issuingCountry!! else this.greenCertificate.getIssuingCountry()
                         val rules = getRulesUseCase.invoke(
                             countryIsoCode,
                             issuingCountry,
-                            this.greenCertificate.getEngineCertificateType()
+                            engineCertificateType
                         )
                         val valueSetsMap = mutableMapOf<String, List<String>>()
                         valueSetsRepository.getValueSets().forEach { valueSet ->
@@ -173,8 +175,8 @@ class VerificationViewModel @Inject constructor(
                             this.issuedAt
                         )
                         validationResults = engine.validate(
+                            engineCertificateType,
                             this.greenCertificate.schemaVersion,
-                            JSON_SCHEMA_V1,
                             rules,
                             externalParameter,
                             this.hcertJson
