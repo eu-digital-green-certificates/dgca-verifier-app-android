@@ -47,10 +47,8 @@ import dgca.verifier.app.decoder.toBase64
 import dgca.verifier.app.engine.*
 import dgca.verifier.app.engine.data.CertificateType
 import dgca.verifier.app.engine.data.ExternalParameter
-import dgca.verifier.app.engine.data.Rule
-import dgca.verifier.app.engine.data.Type
-import dgca.verifier.app.engine.data.source.rules.RulesRepository
 import dgca.verifier.app.engine.data.source.valuesets.ValueSetsRepository
+import dgca.verifier.app.engine.domain.rules.GetRulesUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -76,7 +74,7 @@ class VerificationViewModel @Inject constructor(
     private val cborService: CborService,
     private val verifierRepository: VerifierRepository,
     private val engine: CertLogicEngine,
-    private val rulesRepository: RulesRepository,
+    private val getRulesUseCase: GetRulesUseCase,
     private val valueSetsRepository: ValueSetsRepository
 ) : ViewModel() {
 
@@ -136,7 +134,13 @@ class VerificationViewModel @Inject constructor(
                 }
                 noPublicKeysFound = false
                 certificates.forEach { innerCertificate ->
-                    cryptoService.validate(cose, innerCertificate, verificationResult)
+                    cryptoService.validate(
+                        cose,
+                        innerCertificate,
+                        verificationResult,
+                        greenCertificateData?.greenCertificate?.getType()
+                            ?: dgca.verifier.app.decoder.model.CertificateType.UNKNOWN
+                    )
                     if (verificationResult.coseVerified) {
                         return@forEach
                     }
@@ -144,25 +148,13 @@ class VerificationViewModel @Inject constructor(
 
                 greenCertificateData?.apply {
                     if (countryIsoCode.isNotBlank()) {
-                        val rules = mutableListOf<Rule>()
-                        rules.addAll(
-                            rulesRepository.getRulesBy(
-                                countryIsoCode, ZonedDateTime.now().withZoneSameInstant(
-                                    UTC_ZONE_ID
-                                ), Type.ACCEPTANCE, this.greenCertificate.getType()
-                            )
+                        val issuingCountry: String =
+                            if (this.issuingCountry?.isNotBlank() == true && this.issuingCountry != null) this.issuingCountry!! else this.greenCertificate.getIssuingCountry()
+                        val rules = getRulesUseCase.invoke(
+                            countryIsoCode,
+                            issuingCountry,
+                            this.greenCertificate.getEngineCertificateType()
                         )
-                        val issuingCountry: String? =
-                            if (this.issuingCountry?.isNotBlank() == true) this.issuingCountry else this.greenCertificate.getIssuingCountry()
-                        if (issuingCountry?.isNotBlank() == true) {
-                            rules.addAll(
-                                rulesRepository.getRulesBy(
-                                    issuingCountry, ZonedDateTime.now().withZoneSameInstant(
-                                        UTC_ZONE_ID
-                                    ), Type.INVALIDATION, this.greenCertificate.getType()
-                                )
-                            )
-                        }
                         val valueSetsMap = mutableMapOf<String, List<String>>()
                         valueSetsRepository.getValueSets().forEach { valueSet ->
                             val ids = mutableListOf<String>()
@@ -213,7 +205,7 @@ class VerificationViewModel @Inject constructor(
         }
     }
 
-    private fun GreenCertificate.getType(): CertificateType {
+    private fun GreenCertificate.getEngineCertificateType(): CertificateType {
         return when {
             this.recoveryStatements?.isNotEmpty() == true -> CertificateType.RECOVERY
             this.vaccinations?.isNotEmpty() == true -> CertificateType.VACCINATION
