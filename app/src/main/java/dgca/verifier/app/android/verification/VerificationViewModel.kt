@@ -147,7 +147,7 @@ class VerificationViewModel @Inject constructor(
                     if (countryIsoCode.isNotBlank()) {
                         val issuingCountry: String =
                             if (this.issuingCountry?.isNotBlank() == true && this.issuingCountry != null) this.issuingCountry!! else this.greenCertificate.getIssuingCountry()
-                        val rules = getRulesUseCase.invoke(countryIsoCode, issuingCountry, this.greenCertificate.getType())
+                        val rules = getRulesUseCase.invoke(countryIsoCode, issuingCountry, this.greenCertificate.getEngineCertificateType())
                         val valueSetsMap = mutableMapOf<String, List<String>>()
                         valueSetsRepository.getValueSets().forEach { valueSet ->
                             val ids = mutableListOf<String>()
@@ -198,7 +198,7 @@ class VerificationViewModel @Inject constructor(
         }
     }
 
-    private fun GreenCertificate.getType(): CertificateType {
+    private fun GreenCertificate.getEngineCertificateType(): CertificateType {
         return when {
             this.recoveryStatements?.isNotEmpty() == true -> CertificateType.RECOVERY
             this.vaccinations?.isNotEmpty() == true -> CertificateType.VACCINATION
