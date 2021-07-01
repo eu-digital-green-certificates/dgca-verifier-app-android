@@ -58,5 +58,5 @@
     <string name="version">v. %1$s</string>
     <string name="privacyTitle"></string>
     <string name="privacy">VerificaC19 è l\'app ufficiale del Ministero della Salute per la verifica di validità e autenticità delle Certificazioni Verdi Covid19. La verifica avviene scansionando il QRcode presente sulla certificazione tramite la fotocamera del dispositivo. Nessun dato letto dalla Certificazione viene memorizzato sul dispositivo con cui si effettua la verifica.
-\n\nPer utilizzarle l\'App è necessario fornire il consenso all\'uso della telecamera.</string>
+\n\nPer utilizzare l\'App è necessario fornire il consenso all\'uso della fotocamera.</string>
 </resources>
