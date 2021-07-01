@@ -43,6 +43,7 @@ import it.ministerodellasalute.verificaC19.databinding.ActivityFirstBinding
 import it.ministerodellasalute.verificaC19.parseTo
 import it.ministerodellasalute.verificaC19.ui.main.MainActivity
 import it.ministerodellasalute.verificaC19.util.Utility
+import java.lang.Exception
 
 @AndroidEntryPoint
 class FirstActivity : AppCompatActivity(), View.OnClickListener {
@@ -93,11 +94,31 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
-            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+            createPermissionAlert()
         } else{
             openQrCodeReader()
         }
     }
+
+    fun createPermissionAlert() {
+        try {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(getString(R.string.privacyTitle))
+            builder.setMessage(getString(R.string.privacy))
+            builder.setPositiveButton(getString(R.string.next)) { dialog, which ->
+                requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+            builder.setNegativeButton(getString(R.string.back)) { dialog, which ->
+            }
+            val dialog = builder.create()
+            dialog.show()
+        }
+        catch (e: Exception)
+        {
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
 
     override fun onResume() {
         super.onResume()
