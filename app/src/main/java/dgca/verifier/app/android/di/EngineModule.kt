@@ -24,15 +24,14 @@ package dgca.verifier.app.android.di
 
 import android.content.Context
 import androidx.room.Room
+import com.fasterxml.jackson.databind.ObjectMapper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import dgca.verifier.app.engine.CertLogicEngine
-import dgca.verifier.app.engine.DefaultCertLogicEngine
-import dgca.verifier.app.engine.DefaultJsonLogicValidator
-import dgca.verifier.app.engine.JsonLogicValidator
+import dgca.verifier.app.decoder.JSON_SCHEMA_V1
+import dgca.verifier.app.engine.*
 import dgca.verifier.app.engine.data.source.countries.CountriesRepository
 import dgca.verifier.app.engine.data.source.countries.DefaultCountriesRepository
 import dgca.verifier.app.engine.data.source.local.countries.CountriesDao
@@ -113,8 +112,13 @@ object EngineModule {
 
     @Singleton
     @Provides
-    fun provideCertLogicEngine(jsonLogicValidator: JsonLogicValidator): CertLogicEngine =
-        DefaultCertLogicEngine(jsonLogicValidator)
+    fun provideAffectedFieldsDataRetriever(objectMapper: ObjectMapper): AffectedFieldsDataRetriever =
+        DefaultAffectedFieldsDataRetriever(objectMapper.readTree(JSON_SCHEMA_V1), objectMapper)
+
+    @Singleton
+    @Provides
+    fun provideCertLogicEngine(affectedFieldsDataRetriever: AffectedFieldsDataRetriever, jsonLogicValidator: JsonLogicValidator): CertLogicEngine =
+        DefaultCertLogicEngine(affectedFieldsDataRetriever, jsonLogicValidator)
 
     // Dependencies for countries.
 
