@@ -47,9 +47,6 @@ import dgca.verifier.app.decoder.toBase64
 import dgca.verifier.app.engine.*
 import dgca.verifier.app.engine.data.CertificateType
 import dgca.verifier.app.engine.data.ExternalParameter
-import dgca.verifier.app.engine.data.Rule
-import dgca.verifier.app.engine.data.Type
-import dgca.verifier.app.engine.data.source.rules.RulesRepository
 import dgca.verifier.app.engine.data.source.valuesets.ValueSetsRepository
 import dgca.verifier.app.engine.domain.rules.GetRulesUseCase
 import kotlinx.coroutines.Dispatchers
@@ -137,7 +134,13 @@ class VerificationViewModel @Inject constructor(
                 }
                 noPublicKeysFound = false
                 certificates.forEach { innerCertificate ->
-                    cryptoService.validate(cose, innerCertificate, verificationResult)
+                    cryptoService.validate(
+                        cose,
+                        innerCertificate,
+                        verificationResult,
+                        greenCertificateData?.greenCertificate?.getType()
+                            ?: dgca.verifier.app.decoder.model.CertificateType.UNKNOWN
+                    )
                     if (verificationResult.coseVerified) {
                         return@forEach
                     }
@@ -147,7 +150,11 @@ class VerificationViewModel @Inject constructor(
                     if (countryIsoCode.isNotBlank()) {
                         val issuingCountry: String =
                             if (this.issuingCountry?.isNotBlank() == true && this.issuingCountry != null) this.issuingCountry!! else this.greenCertificate.getIssuingCountry()
-                        val rules = getRulesUseCase.invoke(countryIsoCode, issuingCountry, this.greenCertificate.getEngineCertificateType())
+                        val rules = getRulesUseCase.invoke(
+                            countryIsoCode,
+                            issuingCountry,
+                            this.greenCertificate.getEngineCertificateType()
+                        )
                         val valueSetsMap = mutableMapOf<String, List<String>>()
                         valueSetsRepository.getValueSets().forEach { valueSet ->
                             val ids = mutableListOf<String>()
