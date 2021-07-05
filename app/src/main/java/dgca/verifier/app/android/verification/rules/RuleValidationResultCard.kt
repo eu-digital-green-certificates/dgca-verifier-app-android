@@ -22,6 +22,8 @@
 
 package dgca.verifier.app.android.verification.rules
 
+import dgca.verifier.app.engine.Result
+
 /*-
  * ---license-start
  * eu-digital-green-certificates / dgc-certlogic-android
@@ -44,8 +46,8 @@ package dgca.verifier.app.android.verification.rules
  * Created by osarapulov on 18.06.21 8:59
  */
 data class RuleValidationResultCard(
-    val identifier: String,
     val description: String,
-    val result: String,
-    val current: String
+    val result: Result,
+    val current: String,
+    val countryIsoCode: String
 )

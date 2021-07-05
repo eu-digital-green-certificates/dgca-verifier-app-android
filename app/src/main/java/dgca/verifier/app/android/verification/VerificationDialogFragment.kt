@@ -40,7 +40,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.*
 import dgca.verifier.app.android.databinding.DialogFragmentVerificationBinding
@@ -87,25 +86,24 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
             dismiss()
         })
 
-        val layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerView.layoutManager = layoutManager
+        binding.rulesList.layoutManager = LinearLayoutManager(requireContext())
         binding.actionBtn.setOnClickListener { dismiss() }
 
         viewModel.verificationData.observe(viewLifecycleOwner, {
             if (it.verificationResult == null) {
                 hideLiveData.value = null
             } else {
-                setCertStatusUI(it.verificationResult.isValid())
-                setCertDataVisibility(it.verificationResult.isValid())
+                setCertStatusUI(it.verificationResult.getGeneralResult())
+                setCertDataVisibility(it.verificationResult.getGeneralResult())
                 it.certificateModel?.let { certificateModel ->
                     binding.personFullName.text = certificateModel.getFullName()
                     toggleButton(certificateModel)
-                    if (it.verificationResult.isValid()) {
+                    if (it.verificationResult.getGeneralResult() != GeneralVerificationResult.FAILED) {
                         showUserData(certificateModel)
 
                         val list = getCertificateListData(certificateModel)
-                        binding.recyclerView.adapter =
-                            CertListAdapter(layoutInflater).apply { update(list) }
+//                        binding.recyclerView.adapter =
+//                            CertListAdapter(layoutInflater).apply { update(list) }
                     }
                 }
                 startTimer()
@@ -126,18 +124,24 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         _binding = null
     }
 
-    private fun setCertStatusUI(isValid: Boolean) {
+    private fun setCertStatusUI(generalVerificationResult: GeneralVerificationResult) {
         val text: String
         val imageId: Int
         val statusColor: ColorStateList
         val actionBtnText: String
 
-        if (isValid) {
+        if (generalVerificationResult == GeneralVerificationResult.SUCCESS) {
             text = getString(R.string.cert_valid)
             imageId = R.drawable.check
             statusColor =
                 ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
             actionBtnText = getString(R.string.done)
+        } else if (generalVerificationResult == GeneralVerificationResult.RULES_VALIDATION_FAILED) {
+            text = getString(R.string.cert_limited_validity)
+            imageId = R.drawable.check
+            statusColor =
+                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.yellow))
+            actionBtnText = getString(R.string.retry)
         } else {
             text = getString(R.string.cert_invalid)
             imageId = R.drawable.error
@@ -184,17 +188,25 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
             viewModel.validationResults.value?.forEach {
                 ruleValidationResultCards.add(it.toRuleValidationResultCard(context))
             }
-            binding.recyclerView.adapter =
+            binding.rulesList.adapter =
                 RuleValidationResultsAdapter(layoutInflater, ruleValidationResultCards)
+            binding.reasonForCertificateInvalidityName.setOnClickListener {
+                binding.rulesList.visibility =
+                    if (binding.rulesList.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+            }
+            binding.reasonForCertificateInvalidityTitle.text =
+                getString(R.string.possible_limitation)
         }
     }
 
-    private fun setCertDataVisibility(isValid: Boolean) {
-        binding.errorDetails.visibility = if (isValid) View.GONE else View.VISIBLE
-        if (isValid) {
+    private fun setCertDataVisibility(generalVerificationResult: GeneralVerificationResult) {
+        binding.errorDetails.visibility =
+            if (generalVerificationResult == GeneralVerificationResult.SUCCESS) View.GONE else View.VISIBLE
+        if (generalVerificationResult == GeneralVerificationResult.SUCCESS) {
             binding.errorTestResult.visibility = View.GONE
         }
-        binding.sucessDetails.visibility = if (isValid) View.VISIBLE else View.GONE
+        binding.sucessDetails.visibility =
+            if (generalVerificationResult != GeneralVerificationResult.FAILED) View.VISIBLE else View.GONE
     }
 
     private fun getCertificateListData(certificate: CertificateModel): List<CertificateData> {
@@ -235,16 +247,16 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun toggleButton(certificate: CertificateModel) {
-        when {
-            certificate.vaccinations?.isNotEmpty() == true -> enableToggleBtn(binding.vacToggle)
-            certificate.recoveryStatements?.isNotEmpty() == true -> enableToggleBtn(binding.recToggle)
-            certificate.tests?.isNotEmpty() == true -> enableToggleBtn(binding.testToggle)
+        binding.certificateTypeText.text = when {
+            certificate.vaccinations?.isNotEmpty() == true -> getString(
+                R.string.type_vaccination,
+                certificate.vaccinations.first().doseNumber
+            )
+            certificate.recoveryStatements?.isNotEmpty() == true -> getString(R.string.type_recovered)
+            certificate.tests?.isNotEmpty() == true -> getString(R.string.type_test)
+            else -> getString(R.string.type_test)
         }
-    }
-
-    private fun enableToggleBtn(button: MaterialButton) {
-        button.toggle()
-        button.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+        binding.generalInfo.visibility = View.VISIBLE
     }
 
     private fun startTimer() {
