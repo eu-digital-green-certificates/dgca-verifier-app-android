@@ -255,7 +255,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
                     null,
                     ResourcesCompat.getDrawable(
                         resources,
-                        if (binding.rulesList.visibility == View.VISIBLE) R.drawable.icon_expanded else R.drawable.icon_collapsed,
+                        if (binding.rulesList.visibility == View.VISIBLE) R.drawable.icon_collapsed else R.drawable.icon_expanded,
                         null
                     ),
                     null
@@ -273,7 +273,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
             binding.reasonForCertificateInvalidityName.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 null,
                 null,
-                ResourcesCompat.getDrawable(resources, R.drawable.icon_collapsed, null),
+                ResourcesCompat.getDrawable(resources, R.drawable.icon_expanded, null),
                 null
             )
         }
