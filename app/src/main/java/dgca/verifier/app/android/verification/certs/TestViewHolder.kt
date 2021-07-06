@@ -22,7 +22,6 @@
 
 package dgca.verifier.app.android.verification.certs
 
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -56,7 +55,7 @@ class TestViewHolder(private val binding: ItemTestBinding) : RecyclerView.ViewHo
     }
 
     companion object {
-        fun create(inflater: LayoutInflater, parent: ViewGroup) =
-            TestViewHolder(ItemTestBinding.inflate(inflater, parent, false))
+        fun create(parent: ViewGroup) =
+            TestViewHolder(ItemTestBinding.bind(parent))
     }
 }

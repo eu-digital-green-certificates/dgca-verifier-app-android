@@ -22,7 +22,6 @@
 
 package dgca.verifier.app.android.verification.certs
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dgca.verifier.app.android.FORMATTED_YEAR_MONTH_DAY
@@ -31,18 +30,22 @@ import dgca.verifier.app.android.databinding.ItemRecoveryBinding
 import dgca.verifier.app.android.model.RecoveryModel
 import dgca.verifier.app.android.parseFromTo
 
-class RecoveryViewHolder(private val binding: ItemRecoveryBinding) : RecyclerView.ViewHolder(binding.root) {
+class RecoveryViewHolder(private val binding: ItemRecoveryBinding) :
+    RecyclerView.ViewHolder(binding.root) {
 
     fun bind(data: RecoveryModel) {
         binding.diseaseValue.text = data.disease.value
-        binding.validFromValue.text = data.certificateValidFrom.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
-        binding.validUntilValue.text = data.certificateValidUntil.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
-        binding.dateOfPositiveValue.text = data.dateOfFirstPositiveTest.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
+        binding.validFromValue.text =
+            data.certificateValidFrom.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
+        binding.validUntilValue.text =
+            data.certificateValidUntil.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
+        binding.dateOfPositiveValue.text =
+            data.dateOfFirstPositiveTest.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
         binding.countryValue.text = data.countryOfVaccination
     }
 
     companion object {
-        fun create(inflater: LayoutInflater, parent: ViewGroup) =
-            RecoveryViewHolder(ItemRecoveryBinding.inflate(inflater, parent, false))
+        fun create(parent: ViewGroup) =
+            RecoveryViewHolder(ItemRecoveryBinding.bind(parent))
     }
 }

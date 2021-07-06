@@ -43,9 +43,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.*
 import dgca.verifier.app.android.databinding.DialogFragmentVerificationBinding
-import dgca.verifier.app.android.model.CertificateData
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.model.TestResult
+import dgca.verifier.app.android.verification.certs.RecoveryViewHolder
+import dgca.verifier.app.android.verification.certs.TestViewHolder
+import dgca.verifier.app.android.verification.certs.VaccinationViewHolder
 import dgca.verifier.app.android.verification.rules.RuleValidationResultCard
 import dgca.verifier.app.android.verification.rules.RuleValidationResultsAdapter
 import dgca.verifier.app.android.verification.rules.toRuleValidationResultCard
@@ -101,9 +103,43 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
                     if (it.verificationResult.getGeneralResult() != GeneralVerificationResult.FAILED) {
                         showUserData(certificateModel)
 
-                        val list = getCertificateListData(certificateModel)
-//                        binding.recyclerView.adapter =
-//                            CertListAdapter(layoutInflater).apply { update(list) }
+
+                        if (binding.greenCertificate.parent != null) {
+                            when {
+                                certificateModel.vaccinations?.size == 1 -> {
+                                    binding.greenCertificate.layoutResource =
+                                        R.layout.item_vaccination
+                                    binding.greenCertificate.setOnInflateListener { stub, inflated ->
+                                        VaccinationViewHolder.create(
+                                            inflated as ViewGroup
+                                        ).bind(certificateModel.vaccinations.first())
+                                    }
+                                    binding.greenCertificate.inflate()
+                                }
+                                certificateModel.recoveryStatements?.size == 1 -> {
+                                    binding.greenCertificate.layoutResource = R.layout.item_recovery
+
+                                    binding.greenCertificate.setOnInflateListener { stub, inflated ->
+                                        RecoveryViewHolder.create(
+                                            inflated as ViewGroup
+                                        ).bind(certificateModel.recoveryStatements.first())
+                                    }
+                                    binding.greenCertificate.inflate()
+                                }
+                                certificateModel.tests?.size == 1 -> {
+                                    binding.greenCertificate.layoutResource = R.layout.item_test
+
+                                    binding.greenCertificate.setOnInflateListener { stub, inflated ->
+                                        TestViewHolder.create(
+                                            inflated as ViewGroup
+                                        ).bind(certificateModel.tests.first())
+                                    }
+                                    binding.greenCertificate.inflate()
+                                }
+                            }
+                        }
+
+
                     }
                 }
                 startTimer()
@@ -209,14 +245,6 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
             if (generalVerificationResult != GeneralVerificationResult.FAILED) View.VISIBLE else View.GONE
     }
 
-    private fun getCertificateListData(certificate: CertificateModel): List<CertificateData> {
-        val list = mutableListOf<CertificateData>()
-        list.addAll(certificate.vaccinations ?: emptyList())
-        list.addAll(certificate.tests ?: emptyList())
-        list.addAll(certificate.recoveryStatements ?: emptyList())
-
-        return list
-    }
 
     private fun showUserData(certificate: CertificateModel) {
         binding.personStandardisedFamilyName.text = certificate.person.standardisedFamilyName

@@ -287,11 +287,22 @@
                 style="@style/TextAppearance.Dgca.CertificateValue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/greenCertificate"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/date_of_birth_title"
                 tools:text="Feb 26, 1988" />
+
+            <ViewStub
+                android:id="@+id/greenCertificate"
+                android:inflatedId="@+id/inflatedGreenCertificate"
+                android:layout_width="0dp"
+                android:layout="@layout/item_recovery"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/date_of_birth" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
