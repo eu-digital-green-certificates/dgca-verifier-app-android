@@ -27,11 +27,13 @@ import android.app.Dialog
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
@@ -51,6 +53,7 @@ import dgca.verifier.app.android.verification.certs.VaccinationViewHolder
 import dgca.verifier.app.android.verification.rules.RuleValidationResultCard
 import dgca.verifier.app.android.verification.rules.RuleValidationResultsAdapter
 import dgca.verifier.app.android.verification.rules.toRuleValidationResultCard
+
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
@@ -247,9 +250,32 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
             binding.reasonForCertificateInvalidityName.setOnClickListener {
                 binding.rulesList.visibility =
                     if (binding.rulesList.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                binding.reasonForCertificateInvalidityName.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    null,
+                    null,
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        if (binding.rulesList.visibility == View.VISIBLE) R.drawable.icon_expanded else R.drawable.icon_collapsed,
+                        null
+                    ),
+                    null
+                )
             }
             binding.reasonForCertificateInvalidityTitle.text =
                 getString(R.string.possible_limitation)
+            val outValue = TypedValue()
+            requireContext().theme.resolveAttribute(
+                android.R.attr.selectableItemBackground,
+                outValue,
+                true
+            )
+            binding.reasonForCertificateInvalidityName.setBackgroundResource(outValue.resourceId)
+            binding.reasonForCertificateInvalidityName.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                null,
+                null,
+                ResourcesCompat.getDrawable(resources, R.drawable.icon_collapsed, null),
+                null
+            )
         }
     }
 

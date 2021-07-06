@@ -78,6 +78,7 @@ class RuleValidationResultsAdapter(
                 ruleValidationResultCard.result.getLocalizedText(
                     itemView.context
                 )
+            
             binding.ruleVerificationResultHeader.setTextColor(
                 ResourcesCompat.getColor(
                     itemView.resources,
