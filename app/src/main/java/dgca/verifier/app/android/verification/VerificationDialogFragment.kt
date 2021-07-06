@@ -100,9 +100,24 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
                 it.certificateModel?.let { certificateModel ->
                     binding.personFullName.text = certificateModel.getFullName()
                     toggleButton(certificateModel)
+
+
+                    // TODO remove before release
+                    if (it.verificationResult.getGeneralResult() == GeneralVerificationResult.SUCCESS) {
+                        val ruleValidationResultCards = mutableListOf<RuleValidationResultCard>()
+                        val context = requireContext()
+                        binding.rulesList.visibility = View.VISIBLE
+                        viewModel.validationResults.value?.forEach {
+                            ruleValidationResultCards.add(
+                                it.toRuleValidationResultCard(context)
+                            )
+                        }
+                        binding.rulesList.adapter =
+                            RuleValidationResultsAdapter(layoutInflater, ruleValidationResultCards)
+                    }
+
                     if (it.verificationResult.getGeneralResult() != GeneralVerificationResult.FAILED) {
                         showUserData(certificateModel)
-
 
                         if (binding.greenCertificate.parent != null) {
                             when {
@@ -222,7 +237,10 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
             val ruleValidationResultCards = mutableListOf<RuleValidationResultCard>()
             val context = requireContext()
             viewModel.validationResults.value?.forEach {
-                ruleValidationResultCards.add(it.toRuleValidationResultCard(context))
+                ruleValidationResultCards.add(
+                    it.toRuleValidationResultCard(context)
+                )
+
             }
             binding.rulesList.adapter =
                 RuleValidationResultsAdapter(layoutInflater, ruleValidationResultCards)
