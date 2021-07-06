@@ -25,111 +25,95 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/recycler_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/default_half_margin"
+    android:background="@color/rule_card_background_color"
+    android:paddingStart="@dimen/default_quarter_margin"
+    android:paddingTop="@dimen/default_half_margin"
+    android:paddingEnd="@dimen/default_quarter_margin"
+    android:paddingBottom="@dimen/default_half_margin">
 
-    <View
-        android:id="@+id/left_vertical"
-        android:layout_width="1dp"
-        android:layout_height="0dp"
-        android:background="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/bottom_vertical"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/identifier"
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/ruleVerificationResultHeader"
+        style="@style/TextAppearance.Dgca.RuleTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_margin"
-        android:gravity="center"
-        android:text="@string/rule_identifier"
-        app:layout_constraintBottom_toTopOf="@id/bottom_vertical"
-        app:layout_constraintEnd_toStartOf="@id/identifier_divider"
+        app:layout_constraintBottom_toTopOf="@id/description"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Failed"
+        tools:textColor="@color/red" />
 
-    <View
-        android:id="@+id/identifier_divider"
-        android:layout_width="1dp"
-        android:layout_height="0dp"
-        android:background="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/description"
-        app:layout_constraintStart_toEndOf="@id/identifier"
-        app:layout_constraintTop_toTopOf="parent" />
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/ruleVerificationRuleTitle"
+        style="@style/TextAppearance.Dgca.RuleTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/rule"
+        app:layout_constraintBottom_toBottomOf="@id/description"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/description" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/ruleVerificationCurrentTitle"
+        style="@style/TextAppearance.Dgca.RuleTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/current"
+        app:layout_constraintBottom_toBottomOf="@id/current"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/current" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/ruleVerificationResultTitle"
+        style="@style/TextAppearance.Dgca.RuleTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/result"
+        app:layout_constraintBottom_toBottomOf="@id/result"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/result" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="ruleVerificationRuleTitle,ruleVerificationCurrentTitle, ruleVerificationResultTitle" />
 
     <TextView
         android:id="@+id/description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_margin"
-        android:gravity="center"
-        android:text="@string/rule_description"
-        app:layout_constraintBottom_toTopOf="@id/bottom_vertical"
-        app:layout_constraintEnd_toStartOf="@id/description_divider"
-        app:layout_constraintStart_toEndOf="@id/identifier_divider"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/description_divider"
-        android:layout_width="1dp"
-        android:layout_height="0dp"
-        android:background="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/result"
-        app:layout_constraintStart_toEndOf="@id/description"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/result"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_margin"
-        android:gravity="center"
-        android:text="@string/result"
-        app:layout_constraintBottom_toTopOf="@id/bottom_vertical"
-        app:layout_constraintEnd_toStartOf="@id/result_divider"
-        app:layout_constraintStart_toEndOf="@id/description_divider"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/result_divider"
-        android:layout_width="1dp"
-        android:layout_height="0dp"
-        android:background="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/current"
-        app:layout_constraintStart_toEndOf="@id/result"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginStart="@dimen/default_double_margin"
+        android:layout_marginTop="@dimen/default_half_margin"
+        app:layout_constraintBottom_toTopOf="@id/current"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/barrier"
+        app:layout_constraintTop_toBottomOf="@id/ruleVerificationResultHeader"
+        tools:text="Rule description" />
 
     <TextView
         android:id="@+id/current"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_margin"
-        android:gravity="center"
-        android:text="@string/current"
-        app:layout_constraintBottom_toTopOf="@id/bottom_vertical"
+        android:layout_marginTop="@dimen/default_half_margin"
+        app:layout_constraintBottom_toTopOf="@id/result"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/result_divider"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="@id/description"
+        app:layout_constraintTop_toBottomOf="@id/description"
+        tools:text="Really long current description. Really long current description. Really long current description." />
 
-    <View
-        android:id="@+id/right_vertical"
-        android:layout_width="1dp"
-        android:layout_height="0dp"
-        android:background="@color/black"
+    <TextView
+        android:id="@+id/result"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_half_margin"
+        android:text="@string/result"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="@id/description"
+        app:layout_constraintTop_toBottomOf="@id/current" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

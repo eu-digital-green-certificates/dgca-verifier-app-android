@@ -30,7 +30,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.model.toCertificateModel
-import dgca.verifier.app.decoder.JSON_SCHEMA_V1
 import dgca.verifier.app.decoder.base45.Base45Service
 import dgca.verifier.app.decoder.cbor.CborService
 import dgca.verifier.app.decoder.cbor.GreenCertificateData
@@ -46,7 +45,6 @@ import dgca.verifier.app.decoder.schema.SchemaValidator
 import dgca.verifier.app.decoder.toBase64
 import dgca.verifier.app.engine.*
 import dgca.verifier.app.engine.data.CertificateType
-import dgca.verifier.app.engine.data.RuleCertificateType
 import dgca.verifier.app.engine.data.ExternalParameter
 import dgca.verifier.app.engine.data.source.valuesets.ValueSetsRepository
 import dgca.verifier.app.engine.domain.rules.GetRulesUseCase
@@ -57,7 +55,20 @@ import timber.log.Timber
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import java.util.*
 import javax.inject.Inject
+
+enum class GeneralVerificationResult {
+    SUCCESS, FAILED, RULES_VALIDATION_FAILED
+}
+
+fun VerificationResult.getGeneralResult(): GeneralVerificationResult {
+    return when {
+        isValid() -> GeneralVerificationResult.SUCCESS
+        rulesValidationFailed -> GeneralVerificationResult.RULES_VALIDATION_FAILED
+        else -> GeneralVerificationResult.FAILED
+    }
+}
 
 data class VerificationData(
     val verificationResult: VerificationResult?,
@@ -154,7 +165,7 @@ class VerificationViewModel @Inject constructor(
                             if (this.issuingCountry?.isNotBlank() == true && this.issuingCountry != null) this.issuingCountry!! else this.greenCertificate.getIssuingCountry()
                         val rules = getRulesUseCase.invoke(
                             countryIsoCode,
-                            issuingCountry,
+                            issuingCountry.toLowerCase(Locale.ROOT),
                             engineCertificateType
                         )
                         val valueSetsMap = mutableMapOf<String, List<String>>()

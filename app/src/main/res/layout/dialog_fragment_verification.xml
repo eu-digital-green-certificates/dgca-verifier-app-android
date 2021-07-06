@@ -34,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@drawable/bottom_sheet_bg"
-        app:layout_constraintBottom_toBottomOf="@+id/toggle_button_group"
+        app:layout_constraintBottom_toBottomOf="@id/bottomStatusViewStub"
         app:layout_constraintTop_toTopOf="parent"
         tools:backgroundTint="@color/green" />
 
@@ -43,7 +43,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/default_margin"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="@dimen/default_double_margin"
         android:textColor="@color/white"
         android:textSize="26sp"
         android:typeface="normal"
@@ -56,56 +56,34 @@
         android:id="@+id/cert_status_icon"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="@dimen/default_margin"
+        android:layout_marginStart="@dimen/default_margin"
         android:scaleType="centerInside"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/person_full_name"
+        app:layout_constraintBottom_toBottomOf="@id/status"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/status"
         tools:src="@drawable/check" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/status"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
         android:textColor="@color/white"
         android:textSize="42sp"
-        app:layout_constraintBottom_toBottomOf="@+id/cert_status_icon"
-        app:layout_constraintEnd_toStartOf="@+id/cert_status_icon"
-        app:layout_constraintTop_toTopOf="@+id/cert_status_icon"
+        app:layout_constraintEnd_toEndOf="@id/person_full_name"
+        app:layout_constraintStart_toEndOf="@+id/cert_status_icon"
+        app:layout_constraintTop_toBottomOf="@id/person_full_name"
         tools:text="@string/cert_valid" />
 
-    <com.google.android.material.button.MaterialButtonToggleGroup
-        android:id="@+id/toggle_button_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <View
+        android:id="@+id/bottomStatusViewStub"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/default_double_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cert_status_icon"
-        app:singleSelection="true">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/test_toggle"
-            style="@style/TextAppearance.Dgca.Toggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/type_test" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/vac_toggle"
-            style="@style/TextAppearance.Dgca.Toggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/type_vaccination" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/rec_toggle"
-            style="@style/TextAppearance.Dgca.Toggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/type_recovered" />
-
-    </com.google.android.material.button.MaterialButtonToggleGroup>
+        app:layout_constraintTop_toBottomOf="@id/status" />
 
     <View
         android:id="@+id/whiteBackground"
@@ -135,37 +113,73 @@
             android:paddingVertical="@dimen/default_margin_top">
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/certificateTypeTitle"
+                style="@style/TextAppearance.Dgca.CertificateTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/certificate_type_title"
+                app:layout_constraintBottom_toTopOf="@id/certificateTypeText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/certificateTypeText"
+                style="@style/TextAppearance.Dgca.CertificateValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@id/reason_for_certificate_invalidity_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/certificateTypeTitle"
+                tools:text="@string/type_test" />
+
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/reason_for_certificate_invalidity_title"
                 style="@style/TextAppearance.Dgca.CertificateTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/default_margin_top"
                 android:text="@string/reason_for_invalidity"
                 app:layout_constraintBottom_toTopOf="@id/reason_for_certificate_invalidity_name"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/certificateTypeText" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/reason_for_certificate_invalidity_name"
                 style="@style/TextAppearance.Dgca.CertificateValue"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@id/reason_test_result_title"
+                app:layout_constraintBottom_toTopOf="@id/rulesList"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/reason_for_certificate_invalidity_title"
                 tools:text="Test error" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rulesList"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/default_margin_top"
+                android:overScrollMode="never"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/reason_test_result_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/reason_for_certificate_invalidity_name" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/reason_test_result_title"
                 style="@style/TextAppearance.Dgca.CertificateTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/default_margin_top"
                 android:text="@string/test_result_title"
                 app:layout_constraintBottom_toTopOf="@id/reason_test_result_value"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/reason_for_certificate_invalidity_name" />
+                app:layout_constraintTop_toBottomOf="@+id/rulesList" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/reason_test_result_value"
@@ -179,18 +193,28 @@
                 app:layout_constraintTop_toBottomOf="@+id/reason_test_result_title" />
 
             <androidx.constraintlayout.widget.Group
+                android:id="@+id/generalInfo"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"
+                app:constraint_referenced_ids="certificateTypeTitle, certificateTypeText"
+                tools:visibility="visible" />
+
+            <androidx.constraintlayout.widget.Group
                 android:id="@+id/errorDetails"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:visibility="gone"
-                app:constraint_referenced_ids="reason_for_certificate_invalidity_title, reason_for_certificate_invalidity_name" />
+                app:constraint_referenced_ids="reason_for_certificate_invalidity_title, reason_for_certificate_invalidity_name"
+                tools:visibility="visible" />
 
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/errorTestResult"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:visibility="gone"
-                app:constraint_referenced_ids="reason_test_result_title, reason_test_result_value" />
+                app:constraint_referenced_ids="reason_test_result_title, reason_test_result_value"
+                tools:visibility="visible" />
 
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/sucessDetails"
@@ -205,6 +229,7 @@
                 style="@style/TextAppearance.Dgca.CertificateTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/default_margin_top"
                 android:text="@string/standardised_family_name_title"
                 app:layout_constraintBottom_toTopOf="@id/person_standardised_family_name"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -262,18 +287,18 @@
                 style="@style/TextAppearance.Dgca.CertificateValue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@id/recycler_view"
+                app:layout_constraintBottom_toTopOf="@id/greenCertificate"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/date_of_birth_title"
                 tools:text="Feb 26, 1988" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
+            <ViewStub
+                android:id="@+id/greenCertificate"
+                android:inflatedId="@+id/inflatedGreenCertificate"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/default_margin_top"
-                android:overScrollMode="never"
+                android:layout="@layout/item_recovery"
+                android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -299,7 +324,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/bottom_container"
@@ -341,6 +367,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bottom_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

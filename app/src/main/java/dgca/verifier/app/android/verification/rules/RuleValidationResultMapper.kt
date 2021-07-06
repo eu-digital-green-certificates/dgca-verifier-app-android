@@ -23,8 +23,6 @@
 package dgca.verifier.app.android.verification.rules
 
 import android.content.Context
-import dgca.verifier.app.android.R
-import dgca.verifier.app.engine.Result
 import dgca.verifier.app.engine.ValidationResult
 import java.util.*
 
@@ -51,17 +49,9 @@ import java.util.*
  */
 fun ValidationResult.toRuleValidationResultCard(context: Context): RuleValidationResultCard {
     return RuleValidationResultCard(
-        this.rule.identifier,
         this.rule.getDescriptionFor(Locale.getDefault().language),
-        this.result.getLocalizedText(context),
-        this.current
+        this.result,
+        this.current,
+        this.rule.countryCode
     )
 }
-
-fun Result.getLocalizedText(context: Context): String = context.getString(
-    when (this) {
-        Result.PASSED -> R.string.passed
-        Result.FAIL -> R.string.failed
-        Result.OPEN -> R.string.open
-    }
-)

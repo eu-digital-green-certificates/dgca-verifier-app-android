@@ -23,13 +23,16 @@
 <resources>
     <string name="app_name">Verifier App</string>
     <string name="cert_valid">Valid</string>
+    <string name="cert_limited_validity">Limited validity</string>
     <string name="cert_invalid">Invalid</string>
     <string name="type_test">Test</string>
-    <string name="type_recovered">Rec</string>
-    <string name="type_vaccination">Vac</string>
+    <string name="type_recovered">Recovery</string>
+    <string name="type_vaccination">Vaccination Shot #%1$d</string>
     <string name="done">Done</string>
     <string name="retry">Retry</string>
     <string name="reason_for_invalidity">Reason for Invalidity</string>
+    <string name="possible_limitation">Possible limitation</string>
+    <string name="certificate_type_title">Certificate Type</string>
     <string name="standardised_family_name_title">Standardised Family Name</string>
     <string name="standardised_given_name_title">Standardised Given Name</string>
     <string name="date_of_birth_title">Date of Birth</string>
@@ -65,12 +68,14 @@
     <string name="rules_validation_failed">Country rules validation failed.</string>
     <string name="cryptographic_signature_invalid">Cryptographic signature invalid.</string>
     <string name="validate_with">Validate with:</string>
-    <string name="rule_identifier">Rule Identifier</string>
-    <string name="rule_description">Rule Description</string>
     <string name="result">Result</string>
     <string name="current">Current</string>
     <string name="passed">Passed</string>
     <string name="failed">Failed</string>
     <string name="open">Open</string>
     <string name="negative">Negative</string>
+    <string name="rule">Rule</string>
+    <string name="passed_for">Passed for %1$s (see settings)</string>
+    <string name="open_for">Open for %1$s (see settings)</string>
+    <string name="failed_for">Failed for %1$s (see settings)</string>
 </resources>

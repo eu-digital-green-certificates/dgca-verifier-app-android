@@ -22,12 +22,16 @@
 
 package dgca.verifier.app.android.verification.rules
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
+import dgca.verifier.app.android.R
 import dgca.verifier.app.android.databinding.ItemRuleValidationResultBinding
-import dgca.verifier.app.android.databinding.ItemRuleValidationResultHeaderBinding
+import dgca.verifier.app.engine.Result
+import java.util.*
 
 /*-
  * ---license-start
@@ -54,70 +58,70 @@ class RuleValidationResultsAdapter(
     private val inflater: LayoutInflater,
     ruleValidationResultCards: Collection<RuleValidationResultCard>
 ) :
-    RecyclerView.Adapter<RuleValidationResultsAdapter.ViewHolder>() {
+    RecyclerView.Adapter<RuleValidationResultsAdapter.CardViewHolder>() {
 
     private val ruleValidationResultCards: MutableList<RuleValidationResultCard> =
         ruleValidationResultCards.toMutableList()
 
-    sealed class ViewHolder(itemView: View) :
-        RecyclerView.ViewHolder(itemView) {
-
-
-        class HeaderViewHolder(binding: ItemRuleValidationResultHeaderBinding) :
-            ViewHolder(binding.root) {
-            companion object {
-                fun create(inflater: LayoutInflater, parent: ViewGroup) =
-                    HeaderViewHolder(
-                        ItemRuleValidationResultHeaderBinding.inflate(
-                            inflater,
-                            parent,
-                            false
-                        )
-                    )
+    class CardViewHolder(private val binding: ItemRuleValidationResultBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        private fun Result.getLocalizedText(context: Context): String = context.getString(
+            when (this) {
+                Result.PASSED -> R.string.passed
+                Result.FAIL -> R.string.failed
+                Result.OPEN -> R.string.open
             }
-        }
+        )
 
-        class CardViewHolder(private val binding: ItemRuleValidationResultBinding) :
-            ViewHolder(binding.root) {
-            fun bind(ruleValidationResultCard: RuleValidationResultCard) {
-                binding.identifier.text = ruleValidationResultCard.identifier
-                binding.description.text = ruleValidationResultCard.description
-                binding.result.text = ruleValidationResultCard.result
+        fun bind(ruleValidationResultCard: RuleValidationResultCard) {
+            binding.ruleVerificationResultHeader.text =
+                ruleValidationResultCard.result.getLocalizedText(
+                    itemView.context
+                )
+
+            binding.ruleVerificationResultHeader.setTextColor(
+                ResourcesCompat.getColor(
+                    itemView.resources,
+                    when (ruleValidationResultCard.result) {
+                        Result.PASSED -> R.color.green
+                        Result.OPEN -> R.color.grey_50
+                        Result.FAIL -> R.color.red
+                    },
+                    null
+                )
+            )
+            binding.description.text = ruleValidationResultCard.description
+            binding.result.text = itemView.resources.getString(
+                when (ruleValidationResultCard.result) {
+                    Result.PASSED -> R.string.passed_for
+                    Result.OPEN -> R.string.open_for
+                    Result.FAIL -> R.string.failed_for
+                },
+                Locale("", ruleValidationResultCard.countryIsoCode).displayCountry
+            )
+            if (ruleValidationResultCard.current.isNotBlank()) {
                 binding.current.text = ruleValidationResultCard.current
+                View.VISIBLE
+            } else {
+                View.GONE
+            }.apply {
+                binding.ruleVerificationCurrentTitle.visibility = this
+                binding.current.visibility = this
             }
-
-            companion object {
-                fun create(inflater: LayoutInflater, parent: ViewGroup) =
-                    CardViewHolder(ItemRuleValidationResultBinding.inflate(inflater, parent, false))
-            }
         }
 
-
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return if (position > 0) CARD_TYPE else HEADER_TYPE
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return when (viewType) {
-            HEADER_TYPE -> ViewHolder.HeaderViewHolder.create(inflater, parent)
-            CARD_TYPE -> ViewHolder.CardViewHolder.create(inflater, parent)
-            else -> ViewHolder.CardViewHolder.create(inflater, parent)
+        companion object {
+            fun create(inflater: LayoutInflater, parent: ViewGroup) =
+                CardViewHolder(ItemRuleValidationResultBinding.inflate(inflater, parent, false))
         }
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (holder is ViewHolder.CardViewHolder) {
-            holder.bind(ruleValidationResultCards[position - 1])
-        }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder =
+        CardViewHolder.create(inflater, parent)
+
+    override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
+        holder.bind(ruleValidationResultCards[position])
     }
 
-    override fun getItemCount(): Int =
-        if (ruleValidationResultCards.isEmpty()) 0 else ruleValidationResultCards.size + 1
-
-    companion object {
-        const val HEADER_TYPE = 0
-        const val CARD_TYPE = 1
-    }
+    override fun getItemCount(): Int = ruleValidationResultCards.size
 }
