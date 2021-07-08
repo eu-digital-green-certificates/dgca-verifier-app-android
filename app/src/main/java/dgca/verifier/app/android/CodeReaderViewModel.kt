@@ -22,15 +22,34 @@
 
 package dgca.verifier.app.android
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
+import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.engine.data.source.countries.CountriesRepository
 import javax.inject.Inject
 
 @HiltViewModel
-class CodeReaderViewModel @Inject constructor(private val countriesRepository: CountriesRepository) :
-    ViewModel() {
-    val countries: LiveData<List<String>> = countriesRepository.getCountries().asLiveData()
+class CodeReaderViewModel @Inject constructor(
+    private val countriesRepository: CountriesRepository,
+    private val preferences: Preferences
+) : ViewModel() {
+    private val _countries: MediatorLiveData<Pair<List<String>, String?>> = MediatorLiveData()
+    val countries: LiveData<Pair<List<String>, String?>> = _countries
+    private val _selectedCountry: LiveData<String?> = liveData {
+        emit(preferences.selectedCountryIsoCode)
+    }
+
+    fun selectCountry(countryIsoCode: String) {
+        preferences.selectedCountryIsoCode = countryIsoCode
+    }
+
+    init {
+        _countries.addSource(countriesRepository.getCountries().asLiveData()) {
+            _countries.value = Pair(it, _countries.value?.second)
+        }
+
+        _countries.addSource(_selectedCountry) {
+            _countries.value = Pair(_countries.value?.first ?: emptyList(), it ?: "")
+        }
+    }
 }

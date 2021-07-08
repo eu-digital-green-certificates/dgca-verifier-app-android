@@ -28,8 +28,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.TextView
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
 import androidx.activity.addCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -47,6 +47,7 @@ import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.databinding.FragmentCodeReaderBinding
 import java.util.*
+
 
 private const val CAMERA_REQUEST_CODE = 1003
 
@@ -107,40 +108,7 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
             findNavController().navigate(action)
         }
 
-        viewModel.countries.observe(viewLifecycleOwner, { countries ->
-            if (countries.isEmpty()) {
-                View.GONE
-            } else {
-                val refinedCountries = countries.map { COUNTRIES_MAP[it] ?: it }.sortedBy { Locale("", it).displayCountry }
-                binding.countrySelector.adapter =
-                    object : BaseAdapter() {
-
-                        override fun getCount(): Int = refinedCountries.size
-
-                        override fun getItem(position: Int): String = refinedCountries[position]
-
-                        override fun getItemId(position: Int): Long = position.toLong()
-
-                        override fun getView(
-                            position: Int,
-                            convertView: View?,
-                            parent: ViewGroup?
-                        ): View =
-                            layoutInflater
-                                .inflate(android.R.layout.simple_spinner_item, parent, false)
-                                .apply {
-                                    val textView: TextView = this.findViewById(android.R.id.text1)
-                                    val countryIsoCode = refinedCountries[position]
-                                    val locale = Locale("", countryIsoCode)
-                                    textView.text = locale.displayCountry
-                                }
-                    }
-                View.VISIBLE
-            }.apply {
-                binding.validateWith.visibility = this
-                binding.countrySelector.visibility = this
-            }
-        })
+        setUpCountriesProcessing()
     }
 
     override fun onDestroyView() {
@@ -158,6 +126,43 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
         super.onPause()
         findNavController().removeOnDestinationChangedListener(this)
         binding.barcodeScanner.pause()
+    }
+
+    private fun setUpCountriesProcessing() {
+        viewModel.countries.observe(viewLifecycleOwner, { pair ->
+            if (pair.first.isEmpty() || pair.second == null) {
+                View.GONE
+            } else {
+                val countries = pair.first
+                val refinedCountries = countries.map { COUNTRIES_MAP[it] ?: it }
+                    .sortedBy { Locale("", it).displayCountry }
+                binding.countrySelector.adapter = CountriesAdapter(refinedCountries, layoutInflater)
+                if (pair.second!!.isNotBlank()) {
+                    val selectedCountryIndex =
+                        refinedCountries.indexOf(pair.second!!)
+                    if (selectedCountryIndex >= 0) {
+                        binding.countrySelector.setSelection(selectedCountryIndex)
+                    }
+                }
+                binding.countrySelector.onItemSelectedListener = object : OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parentView: AdapterView<*>?,
+                        selectedItemView: View,
+                        position: Int,
+                        id: Long
+                    ) {
+                        viewModel.selectCountry(refinedCountries[position].toLowerCase(Locale.ROOT))
+                    }
+
+                    override fun onNothingSelected(parentView: AdapterView<*>?) {
+                    }
+                }
+                View.VISIBLE
+            }.apply {
+                binding.validateWith.visibility = this
+                binding.countrySelector.visibility = this
+            }
+        })
     }
 
     private fun navigateToVerificationPage(text: String) {

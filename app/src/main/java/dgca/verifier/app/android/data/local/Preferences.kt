@@ -35,6 +35,8 @@ interface Preferences {
 
     var lastKeysSyncTimeMillis: Long
 
+    var selectedCountryIsoCode: String?
+
     fun clear()
 }
 
@@ -48,7 +50,15 @@ class PreferencesImpl(context: Context) : Preferences {
     }
 
     override var resumeToken by LongPreference(preferences, KEY_RESUME_TOKEN, -1)
-    override var lastKeysSyncTimeMillis by LongPreference(preferences, KEY_LAST_KEYS_SYNC_TIME_MILLIS, -1)
+    override var lastKeysSyncTimeMillis by LongPreference(
+        preferences,
+        KEY_LAST_KEYS_SYNC_TIME_MILLIS,
+        -1
+    )
+    override var selectedCountryIsoCode: String? by StringPreference(
+        preferences,
+        KEY_SELECTED_COUNTRY_ISO_CODE
+    )
 
     override fun clear() {
         preferences.value.edit().clear().apply()
@@ -58,6 +68,7 @@ class PreferencesImpl(context: Context) : Preferences {
         private const val USER_PREF = "dgca.verifier.app.pref"
         private const val KEY_RESUME_TOKEN = "resume_token"
         private const val KEY_LAST_KEYS_SYNC_TIME_MILLIS = "last_keys_sync_time_millis"
+        private const val KEY_SELECTED_COUNTRY_ISO_CODE = "selected_country_iso_code"
     }
 }
 
@@ -74,5 +85,21 @@ class LongPreference(
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: Long) {
         preferences.value.edit { putLong(name, value) }
+    }
+}
+
+class StringPreference(
+    private val preferences: Lazy<SharedPreferences>,
+    private val name: String,
+    private val defaultValue: String? = null
+) : ReadWriteProperty<Any, String?> {
+
+    @WorkerThread
+    override fun getValue(thisRef: Any, property: KProperty<*>): String? {
+        return preferences.value.getString(name, defaultValue)
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: String?) {
+        preferences.value.edit { putString(name, value) }
     }
 }
