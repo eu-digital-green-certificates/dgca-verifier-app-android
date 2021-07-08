@@ -178,12 +178,14 @@ class VerificationViewModel @Inject constructor(
                         }
 
                         val externalParameter = ExternalParameter(
-                            base64EncodedKid,
-                            ZonedDateTime.now(ZoneId.of(ZoneOffset.UTC.id)),
-                            valueSetsMap,
-                            countryIsoCode,
-                            this.expirationTime,
-                            this.issuedAt
+                            validationClock = ZonedDateTime.now(ZoneId.of(ZoneOffset.UTC.id)),
+                            valueSets = valueSetsMap,
+                            countryCode = countryIsoCode,
+                            exp = this.expirationTime,
+                            iat = this.issuedAt,
+                            issuerCountryCode = issuingCountry,
+                            kid = base64EncodedKid,
+                            region = "",
                         )
                         validationResults = engine.validate(
                             engineCertificateType,
