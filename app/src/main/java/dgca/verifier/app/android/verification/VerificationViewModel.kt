@@ -158,7 +158,7 @@ class VerificationViewModel @Inject constructor(
                     }
                 }
 
-                if (true || verificationResult.isValid()) {
+                if (verificationResult.isValid()) {
                     greenCertificateData?.validateRules(
                         verificationResult,
                         countryIsoCode,
