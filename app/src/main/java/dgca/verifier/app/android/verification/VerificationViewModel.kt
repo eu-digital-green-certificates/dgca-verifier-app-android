@@ -65,6 +65,7 @@ enum class GeneralVerificationResult {
 fun VerificationResult.getGeneralResult(): GeneralVerificationResult {
     return when {
         isValid() -> GeneralVerificationResult.SUCCESS
+        isTestWithPositiveResult() -> GeneralVerificationResult.FAILED
         rulesValidationFailed -> GeneralVerificationResult.RULES_VALIDATION_FAILED
         else -> GeneralVerificationResult.FAILED
     }
@@ -114,7 +115,6 @@ class VerificationViewModel @Inject constructor(
             var noPublicKeysFound = true
 
             var isApplicableCode = false
-            var validationResults: List<ValidationResult> = emptyList()
             withContext(Dispatchers.IO) {
                 val plainInput = prefixValidationService.decode(code, verificationResult)
                 val compressedCose = base45Service.decode(plainInput, verificationResult)
@@ -158,55 +158,14 @@ class VerificationViewModel @Inject constructor(
                     }
                 }
 
-                greenCertificateData?.apply {
-                    val engineCertificateType = this.greenCertificate.getEngineCertificateType()
-                    if (countryIsoCode.isNotBlank()) {
-                        val issuingCountry: String =
-                            (if (this.issuingCountry?.isNotBlank() == true && this.issuingCountry != null) this.issuingCountry!! else this.greenCertificate.getIssuingCountry()).toLowerCase(
-                                Locale.ROOT
-                            )
-                        val rules = getRulesUseCase.invoke(
-                            countryIsoCode,
-                            issuingCountry,
-                            engineCertificateType
-                        )
-                        val valueSetsMap = mutableMapOf<String, List<String>>()
-                        valueSetsRepository.getValueSets().forEach { valueSet ->
-                            val ids = mutableListOf<String>()
-                            valueSet.valueSetValues.fieldNames().forEach { id ->
-                                ids.add(id)
-                            }
-                            valueSetsMap[valueSet.valueSetId] = ids
-                        }
-
-                        val externalParameter = ExternalParameter(
-                            validationClock = ZonedDateTime.now(ZoneId.of(ZoneOffset.UTC.id)),
-                            valueSets = valueSetsMap,
-                            countryCode = countryIsoCode,
-                            exp = this.expirationTime,
-                            iat = this.issuedAt,
-                            issuerCountryCode = issuingCountry,
-                            kid = base64EncodedKid,
-                            region = "",
-                        )
-                        validationResults = engine.validate(
-                            engineCertificateType,
-                            this.greenCertificate.schemaVersion,
-                            rules,
-                            externalParameter,
-                            this.hcertJson
-                        )
-
-                        _validationResults.postValue(validationResults)
-
-                        validationResults.forEach {
-                            if (it.result != Result.PASSED) {
-                                verificationResult.rulesValidationFailed = true
-                                return@forEach
-                            }
-                        }
-                    }
+                if (true || verificationResult.isValid()) {
+                    greenCertificateData?.validateRules(
+                        verificationResult,
+                        countryIsoCode,
+                        base64EncodedKid
+                    )
                 }
+
             }
 
             verificationResult.fetchError(noPublicKeysFound)
@@ -219,6 +178,62 @@ class VerificationViewModel @Inject constructor(
                 if (isApplicableCode) verificationResult else null,
                 certificateModel
             )
+        }
+    }
+
+    private suspend fun GreenCertificateData.validateRules(
+        verificationResult: VerificationResult,
+        countryIsoCode: String,
+        base64EncodedKid: String
+    ) {
+        this.apply {
+            val engineCertificateType = this.greenCertificate.getEngineCertificateType()
+            if (countryIsoCode.isNotBlank()) {
+                val issuingCountry: String =
+                    (if (this.issuingCountry?.isNotBlank() == true && this.issuingCountry != null) this.issuingCountry!! else this.greenCertificate.getIssuingCountry()).toLowerCase(
+                        Locale.ROOT
+                    )
+                val rules = getRulesUseCase.invoke(
+                    countryIsoCode,
+                    issuingCountry,
+                    engineCertificateType
+                )
+                val valueSetsMap = mutableMapOf<String, List<String>>()
+                valueSetsRepository.getValueSets().forEach { valueSet ->
+                    val ids = mutableListOf<String>()
+                    valueSet.valueSetValues.fieldNames().forEach { id ->
+                        ids.add(id)
+                    }
+                    valueSetsMap[valueSet.valueSetId] = ids
+                }
+
+                val externalParameter = ExternalParameter(
+                    validationClock = ZonedDateTime.now(ZoneId.of(ZoneOffset.UTC.id)),
+                    valueSets = valueSetsMap,
+                    countryCode = countryIsoCode,
+                    exp = this.expirationTime,
+                    iat = this.issuedAt,
+                    issuerCountryCode = issuingCountry,
+                    kid = base64EncodedKid,
+                    region = "",
+                )
+                val validationResults = engine.validate(
+                    engineCertificateType,
+                    this.greenCertificate.schemaVersion,
+                    rules,
+                    externalParameter,
+                    this.hcertJson
+                )
+
+                _validationResults.postValue(validationResults)
+
+                validationResults.forEach {
+                    if (it.result != Result.PASSED) {
+                        verificationResult.rulesValidationFailed = true
+                        return@forEach
+                    }
+                }
+            }
         }
     }
 
