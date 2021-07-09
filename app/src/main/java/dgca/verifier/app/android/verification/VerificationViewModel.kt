@@ -162,10 +162,12 @@ class VerificationViewModel @Inject constructor(
                     val engineCertificateType = this.greenCertificate.getEngineCertificateType()
                     if (countryIsoCode.isNotBlank()) {
                         val issuingCountry: String =
-                            if (this.issuingCountry?.isNotBlank() == true && this.issuingCountry != null) this.issuingCountry!! else this.greenCertificate.getIssuingCountry()
+                            (if (this.issuingCountry?.isNotBlank() == true && this.issuingCountry != null) this.issuingCountry!! else this.greenCertificate.getIssuingCountry()).toLowerCase(
+                                Locale.ROOT
+                            )
                         val rules = getRulesUseCase.invoke(
                             countryIsoCode,
-                            issuingCountry.toLowerCase(Locale.ROOT),
+                            issuingCountry,
                             engineCertificateType
                         )
                         val valueSetsMap = mutableMapOf<String, List<String>>()
@@ -178,12 +180,14 @@ class VerificationViewModel @Inject constructor(
                         }
 
                         val externalParameter = ExternalParameter(
-                            base64EncodedKid,
-                            ZonedDateTime.now(ZoneId.of(ZoneOffset.UTC.id)),
-                            valueSetsMap,
-                            countryIsoCode,
-                            this.expirationTime,
-                            this.issuedAt
+                            validationClock = ZonedDateTime.now(ZoneId.of(ZoneOffset.UTC.id)),
+                            valueSets = valueSetsMap,
+                            countryCode = countryIsoCode,
+                            exp = this.expirationTime,
+                            iat = this.issuedAt,
+                            issuerCountryCode = issuingCountry,
+                            kid = base64EncodedKid,
+                            region = "",
                         )
                         validationResults = engine.validate(
                             engineCertificateType,
