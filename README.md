@@ -43,7 +43,7 @@ In order to successfully build and run the project, you must have also downloade
 android-app
 |___dgca-verifier-app-android
 |___dgca-app-core-android
-|___dgca-certlogic-android
+|___dgc-certlogic-android
 ```
 
 #### Android Studio based build
