@@ -165,5 +165,7 @@ stages:
         serviceConnection: 'verificac19-google-play'
         applicationId: 'it.ministerodellasalute.verificaC19'
         bundleFile: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
-        track: 'internal'
-        languageCode: 'en-GB'
+        track: 'alpha'
+        shouldAttachMetadata: true
+        metadataRootPath: 'release-notes.xml'
+      
