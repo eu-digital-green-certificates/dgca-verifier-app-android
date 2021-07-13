@@ -17,7 +17,7 @@ resources:
   - repository: dgca-app-core-android
     type: github
     name: eu-digital-green-certificates/dgca-app-core-android
-    ref: 'refs/tags/1.0.0'
+    ref: 'refs/heads/main'
     endpoint: 'GitHub - it-eucert-team'
 
 pool:
@@ -160,10 +160,10 @@ stages:
         artifact: 'bundle'
         publishLocation: 'pipeline'
     
-    # - task: GooglePlayReleaseBundle@3
-    #   inputs:
-    #     serviceConnection: 'verificac19-google-play'
-    #     applicationId: 'it.ministerodellasalute.verificaC19'
-    #     bundleFile: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
-    #     track: 'internal'
-    #     languageCode: 'en-GB'
+    - task: GooglePlayReleaseBundle@3
+      inputs:
+        serviceConnection: 'verificac19-google-play'
+        applicationId: 'it.ministerodellasalute.verificaC19'
+        bundleFile: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
+        track: 'internal'
+        languageCode: 'en-GB'
