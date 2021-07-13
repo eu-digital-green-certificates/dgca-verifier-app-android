@@ -166,6 +166,6 @@ stages:
         applicationId: 'it.ministerodellasalute.verificaC19'
         bundleFile: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
         track: 'internal'
-        shouldAttachMetadata: true
-        metadataRootPath: 'it-dgc-verificaC19-android/metadata'
+        changeLogFile: 'it-dgc-verificaC19-android/metadata/release-note.xml'
+        languageCode: 'en-GB'
       
