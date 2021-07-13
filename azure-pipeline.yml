@@ -167,5 +167,5 @@ stages:
         bundleFile: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
         track: 'alpha'
         shouldAttachMetadata: true
-        metadataRootPath: 'it-dgc-verificaC19-android/release-notes.xml'
+        metadataRootPath: 'it-dgc-verificaC19-android/metadata'
       
