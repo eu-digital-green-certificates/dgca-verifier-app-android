@@ -49,7 +49,9 @@ class CodeReaderViewModel @Inject constructor(
         }
 
         _countries.addSource(_selectedCountry) {
-            _countries.value = Pair(_countries.value?.first ?: emptyList(), it ?: "")
+            if (_countries.value?.second == null || _countries.value?.second != it) {
+                _countries.value = Pair(_countries.value?.first ?: emptyList(), it ?: "")
+            }
         }
     }
 }
