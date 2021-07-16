@@ -156,7 +156,11 @@ stages:
     - checkout: none
     - task: DownloadPipelineArtifact@2
       inputs:
-        buildType: 'current'
+        buildType: 'specific'
+        project: 'd8761144-9102-412a-9be9-76b96650fb00'
+        definition: '12'
+        specificBuildWithTriggering: true
+        buildVersionToDownload: 'latest'
         artifactName: 'apk'
         targetPath: '$(Pipeline.Workspace)'
 
@@ -182,7 +186,11 @@ stages:
     - checkout: none
     - task: DownloadPipelineArtifact@2
       inputs:
-        buildType: 'current'
+        buildType: 'specific'
+        project: 'd8761144-9102-412a-9be9-76b96650fb00'
+        definition: '12'
+        specificBuildWithTriggering: true
+        buildVersionToDownload: 'latest'
         artifactName: 'bundle'
         targetPath: '$(Pipeline.Workspace)'
     
