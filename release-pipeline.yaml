@@ -27,18 +27,6 @@ stages:
 
   - stage: AppCenterRelease
     jobs:
-    # - job: AppCenterDistribute   
-    #   steps:
-    #   - download: it-dgc-verificaC19-android   # pipeline resource identifier.
-    #     artifact: apk  # artifact to download, optional; defaults to all the artifacts from the resource.
-    #     #patterns: '**/*.zip'  # mini match pattern to download specific files, optional; defaults to all files.
-    #   - script: |
-    #      ls -l
-    #      cd $(PIPELINE.WORKSPACE)/it-dgc-verificaC19-android
-    #      ls -l
-    #      cd apk
-    #      ls -l
-    
     - deployment: AppCenterRelease   # name of the deployment job, A-Z, a-z, 0-9, and underscore. The word "deploy" is a keyword and is unsupported as the deployment name.
       displayName: Release to AppCenter  # friendly name to display in the UI
       # pool:                # see pool schema
@@ -81,17 +69,6 @@ stages:
 
   - stage: GooglePlayTestRelease
     jobs:
-    # - job: GooglePlayTestDistribute 
-    #   steps:
-    #   - download: it-dgc-verificaC19-android   # pipeline resource identifier.
-    #     artifact: bundle  # artifact to download, optional; defaults to all the artifacts from the resource.
-    #     #patterns: '**/*.zip'  # mini match pattern to download specific files, optional; defaults to all files.
-    #   - script: |
-    #      ls -l
-    #      cd $(PIPELINE.WORKSPACE)/it-dgc-verificaC19-android
-    #      ls -l
-    #      cd bundle
-    #      ls -l
     - deployment: GooglePlayRelease   # name of the deployment job, A-Z, a-z, 0-9, and underscore. The word "deploy" is a keyword and is unsupported as the deployment name.
       displayName: Release to Google Play  # friendly name to display in the UI
         # pool:                # see pool schema
