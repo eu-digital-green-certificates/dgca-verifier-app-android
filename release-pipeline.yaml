@@ -4,8 +4,8 @@ trigger: none
 
 resources:        # types: pipelines | builds | repositories | containers | packages
   pipelines:
-  - pipeline: dgca-verifier-app-android  # identifier for the resource used in pipeline resource variables
-    source: dgca-verifier-app-android  # name of the pipeline that produces an artifact
+  - pipeline: it-dgc-verificaC19-android  # identifier for the resource used in pipeline resource variables
+    source: ministero-salute.it-dgc-verificaC19-android  # name of the pipeline that produces an artifact
     # version: string  # the pipeline run number to pick the artifact, defaults to latest pipeline successful across all stages; Used only for manual or scheduled triggers
     # branch: string  # branch to pick the artifact, optional; defaults to all branches; Used only for manual or scheduled triggers
     # tags: [ string ] # list of tags required on the pipeline to pickup default artifacts, optional; Used only for manual or scheduled triggers
