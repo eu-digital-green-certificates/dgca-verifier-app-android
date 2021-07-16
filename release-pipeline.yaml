@@ -45,6 +45,18 @@ stages:
       environment: AppCenter  # target environment name and optionally a resource name to record the deployment history; format: <environment-name>.<resource-name>
       strategy:
         runOnce:    #rolling, canary are the other strategies that are supported
+          preDeploy: 
+           steps:
+            - task: Bash@3
+              displayName: check pipeline variable value
+              inputs:
+                targetType: 'inline'
+                script: |
+                  echo 'Check pipeline var'
+                  echo 'publishToAppCenter: $(publishToAppCenter)'
+                  echo 'publishToStore $(publishToStore)'
+                failOnStderr: true
+                
           deploy:
             steps:
             - script: |
@@ -68,6 +80,7 @@ stages:
 
 
   - stage: GooglePlayTestRelease
+    condition: eq(variables.publishToStore, true)
     jobs:
     - deployment: GooglePlayRelease   # name of the deployment job, A-Z, a-z, 0-9, and underscore. The word "deploy" is a keyword and is unsupported as the deployment name.
       displayName: Release to Google Play  # friendly name to display in the UI
