@@ -44,8 +44,8 @@ stages:
       # pool:                # see pool schema
       #   name: string       # Use only global level variables for defining a pool name. Stage/job level variables are not supported to define pool name.
       #   demands: string | [ string ]
-      # workspace:
-      #   clean: outputs | resources | all # what to clean up before the job runs
+      workspace:
+        clean: all # what to clean up before the job runs
       # dependsOn: string
       # condition: string
       # continueOnError: boolean                # 'true' if future jobs should run even if this job fails; defaults to 'false'
@@ -97,8 +97,8 @@ stages:
         # pool:                # see pool schema
         #   name: string       # Use only global level variables for defining a pool name. Stage/job level variables are not supported to define pool name.
         #   demands: string | [ string ]
-        # workspace:
-        #   clean: outputs | resources | all # what to clean up before the job runs
+        workspace:
+           clean: all # what to clean up before the job runs
         # dependsOn: string
         # condition: string
         # continueOnError: boolean                # 'true' if future jobs should run even if this job fails; defaults to 'false'
