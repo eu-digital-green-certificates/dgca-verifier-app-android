@@ -27,6 +27,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
+import dgca.verifier.app.engine.data.source.countries.COUNTRIES_MAP
 import java.util.*
 
 /*-
@@ -71,7 +72,7 @@ class CountriesAdapter(
             .apply {
                 val textView: TextView = this.findViewById(android.R.id.text1)
                 val countryIsoCode = refinedCountries[position]
-                val locale = Locale("", countryIsoCode)
+                val locale = Locale("", COUNTRIES_MAP[countryIsoCode] ?: countryIsoCode)
                 textView.text = locale.displayCountry
             }
 }
