@@ -46,6 +46,7 @@ import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.databinding.FragmentCodeReaderBinding
+import dgca.verifier.app.engine.data.source.countries.COUNTRIES_MAP
 import java.util.*
 
 
@@ -134,8 +135,8 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
                 View.GONE
             } else {
                 val countries = pair.first
-                val refinedCountries = countries.map { COUNTRIES_MAP[it] ?: it }
-                    .sortedBy { Locale("", it).displayCountry }
+                val refinedCountries =
+                    countries.sortedBy { Locale("", COUNTRIES_MAP[it] ?: it).displayCountry }
                 binding.countrySelector.adapter = CountriesAdapter(refinedCountries, layoutInflater)
                 if (pair.second!!.isNotBlank()) {
                     val selectedCountryIndex =
@@ -195,9 +196,5 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
             binding.barcodeScanner.resume()
             lastText = ""
         }
-    }
-
-    companion object {
-        private val COUNTRIES_MAP = mapOf("el" to "gr")
     }
 }
