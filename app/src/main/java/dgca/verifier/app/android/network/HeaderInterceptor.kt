@@ -24,9 +24,13 @@ package dgca.verifier.app.android.network
 
 import android.os.Build
 import okhttp3.Interceptor
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
 import okhttp3.Response
+import okhttp3.ResponseBody.Companion.toResponseBody
 import java.io.IOException
+import java.net.HttpURLConnection.HTTP_BAD_REQUEST
+import java.security.MessageDigest
 
 class HeaderInterceptor : Interceptor {
 
@@ -36,7 +40,12 @@ class HeaderInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = addHeadersToRequest(chain.request())
 
-        return chain.proceed(request)
+        val response = chain.proceed(request)
+        return if (request.isRuleRequest()) {
+            response.toRuleResponse(request.url.pathSegments[2])
+        } else {
+            response
+        }
     }
 
     private fun addHeadersToRequest(original: Request): Request {
@@ -45,4 +54,38 @@ class HeaderInterceptor : Interceptor {
 
         return requestBuilder.build()
     }
+}
+
+private fun Request.isRuleRequest(): Boolean =
+    this.url.pathSegments.size == 3 && this.url.pathSegments.contains("rules")
+
+private fun Response.toRuleResponse(expectedSha256: String): Response = if (this.isSuccessful) {
+    val newResponse = this.newBuilder()
+    val responseString = this.newBuilder().build().body?.string()
+    val contentType = this.header("Content-Type")
+    val sha256 = responseString!!.sha256()
+    if (sha256 != expectedSha256) newResponse.code(HTTP_BAD_REQUEST)
+    newResponse.body(responseString.toResponseBody(contentType!!.toMediaType()))
+    newResponse.build()
+} else {
+    this
+}
+
+private fun String.sha256(): String {
+    val sb = StringBuilder()
+    try {
+        val digest: MessageDigest = MessageDigest.getInstance("SHA-256")
+        digest.update(this.toByteArray())
+        val byteData: ByteArray = digest.digest()
+        for (x in byteData) {
+            val str = Integer.toHexString(java.lang.Byte.toUnsignedInt(x))
+            if (str.length < 2) {
+                sb.append('0')
+            }
+            sb.append(str)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return sb.toString()
 }
