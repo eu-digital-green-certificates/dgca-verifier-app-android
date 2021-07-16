@@ -30,7 +30,7 @@ variables:
 stages:
 - stage: Build
   jobs:
-  - job: Build
+  - job: BuildApk
 
     steps:
     - checkout: self
@@ -77,11 +77,11 @@ stages:
       continueOnError: true
       condition: succeeded()
      
-    - task: PublishPipelineArtifact@1
-      inputs:
-        targetPath: 'it-dgc-verificaC19-android/app/build.gradle'
-        artifact: 'build-gradle'
-        publishLocation: 'pipeline'
+    # - task: PublishPipelineArtifact@1
+    #   inputs:
+    #     targetPath: 'it-dgc-verificaC19-android/app/build.gradle'
+    #     artifact: 'build-gradle'
+    #     publishLocation: 'pipeline'
 
     - task: Gradle@2
       inputs:
@@ -115,19 +115,12 @@ stages:
         targetPath: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk/release/app-release-unsigned.apk'
         artifact: 'apk'
         publishLocation: 'pipeline'
-    
-    - task: AppCenterDistribute@3
-      inputs:
-          serverEndpoint: 'DGC-App'
-          appSlug: 'sogei/it-dgc-verificaC19-android'
-          appFile: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk/release/app-release-unsigned.apk'
-          symbolsOption: 'Android'
-          releaseNotesOption: 'input'
-          releaseNotesInput: 'Prova'
-          destinationType: 'groups'
-          isSilent: true
-      condition: eq(variables.publishToAppCenter, true)
 
+  - job: BuildBundle
+    dependsOn: BuildApk
+    
+    # verificare eventuali condizioni sui rami per eseguire questo ste (ad esempio non sulla feature, ma solo su develop e release?)
+    steps:
     - task: Gradle@2
       inputs:
         gradleWrapperFile: 'it-dgc-verificaC19-android/gradlew'
@@ -159,13 +152,35 @@ stages:
         targetPath: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
         artifact: 'bundle'
         publishLocation: 'pipeline'
-    
-    - task: GooglePlayReleaseBundle@3
-      inputs:
-        serviceConnection: 'verificac19-google-play'
-        applicationId: 'it.ministerodellasalute.verificaC19'
-        bundleFile: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
-        track: 'internal'
-        changeLogFile: 'it-dgc-verificaC19-android/metadata/release-notes.xml'
-        languageCode: 'en-GB'
+
+- stage: AppCenterRelease
+  jobs:
+  - job: AppCenterDistribute   
+    #steps: 
+
+    # - task: AppCenterDistribute@3
+    #   inputs:
+    #       serverEndpoint: 'DGC-App'
+    #       appSlug: 'sogei/it-dgc-verificaC19-android'
+    #       appFile: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk/release/app-release-unsigned.apk'
+    #       symbolsOption: 'Android'
+    #       releaseNotesOption: 'input'
+    #       releaseNotesInput: 'Prova'
+    #       destinationType: 'groups'
+    #       isSilent: true
+    #   condition: eq(variables.publishToAppCenter, true)
+
+
+- stage: AppCenterRelease
+  jobs:
+  - job: AppCenterDistribute 
+    #steps:   
+    # - task: GooglePlayReleaseBundle@3
+    #   inputs:
+    #     serviceConnection: 'verificac19-google-play'
+    #     applicationId: 'it.ministerodellasalute.verificaC19'
+    #     bundleFile: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
+    #     track: 'internal'
+    #     changeLogFile: 'it-dgc-verificaC19-android/metadata/release-notes.xml'
+    #     languageCode: 'en-GB'
       
