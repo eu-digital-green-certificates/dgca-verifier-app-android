@@ -34,7 +34,7 @@ stages:
         #patterns: '**/*.zip'  # mini match pattern to download specific files, optional; defaults to all files.
       - script: |
          ls -l
-         cd it-dgc-verificaC19-android
+         cd $(PIPELINE.WORKSPACE)/it-dgc-verificaC19-android
          ls -l
          cd apk
          ls -l
@@ -61,7 +61,7 @@ stages:
         #patterns: '**/*.zip'  # mini match pattern to download specific files, optional; defaults to all files.
       - script: |
          ls -l
-         cd it-dgc-verificaC19-android
+         cd $(PIPELINE.WORKSPACE)/it-dgc-verificaC19-android
          ls -l
          cd bundle
          ls -l
