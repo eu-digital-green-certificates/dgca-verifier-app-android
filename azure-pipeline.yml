@@ -153,6 +153,7 @@ stages:
   jobs:
   - job: AppCenterDistribute   
     steps:
+    - checkout: none
     - task: DownloadPipelineArtifact@2
       inputs:
         buildType: 'current'
@@ -178,6 +179,7 @@ stages:
   jobs:
   - job: GooglePlayTestDistribute 
     steps:
+    - checkout: none
     - task: DownloadPipelineArtifact@2
       inputs:
         buildType: 'current'
