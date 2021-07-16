@@ -78,18 +78,6 @@ stages:
         pollingTimeoutSec: '300'
       continueOnError: true
       condition: succeeded()
-
-    - task: WhiteSource@21
-      inputs:
-        cwd: '$(System.DefaultWorkingDirectory)'
-        projectName: 'ministero-salute.it-dgc-verificaC19-android'
-    
-    - task: dependency-check-build-task@6
-      inputs:
-        projectName: 'ministero-salute.it-dgc-verificaC19-android'
-        scanPath: './'
-        format: 'HTML'
-
     - task: Gradle@2
       inputs:
         gradleWrapperFile: 'it-dgc-verificaC19-android/gradlew'
@@ -156,5 +144,14 @@ stages:
         artifact: 'bundle'
         publishLocation: 'pipeline'
 
-
+    - task: WhiteSource@21
+      inputs:
+        cwd: '$(System.DefaultWorkingDirectory)'
+        projectName: 'ministero-salute.it-dgc-verificaC19-android'
+    
+    - task: dependency-check-build-task@6
+      inputs:
+        projectName: 'ministero-salute.it-dgc-verificaC19-android'
+        scanPath: './'
+        format: 'HTML'
       
