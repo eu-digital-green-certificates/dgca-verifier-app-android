@@ -1,0 +1,58 @@
+name: release-dgca-verifier-app-android
+
+resources:
+  pipelines:
+  - pipeline: build-dgca-verifier-app-android
+    source: dgca-verifier-app-android
+    # branch: string  # branch to pick the artifact, optional; defaults to all branches; Used only for manual or scheduled triggers
+    # tags: [ string ] # list of tags required on the pipeline to pickup default artifacts, optional; Used only for manual or scheduled triggers
+    # trigger:     # triggers are not enabled by default unless you add trigger section to the resource
+    #   branches:  # branch conditions to filter the events, optional; Defaults to all branches.
+    #     include: [ string ]  # branches to consider the trigger events, optional; Defaults to all branches.
+    #     exclude: [ string ]  # branches to discard the trigger events, optional; Defaults to none.
+    #   tags: [ string ]  # list of tags to evaluate for trigger event, optional
+    #   stages: [ string ] # list of stages to evaluate for trigger event, optional
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  publishToAppCenter: $[eq(variables['Build.SourceBranch'], 'refs/heads/develop')]
+  publishToStore: $[contains(variables['Build.SourceBranch'], 'refs/heads/releases')]
+
+stages:
+- stage: AppCenterRelease
+  jobs:
+  - job: AppCenterDistribute   
+    steps:
+    - script: ls -l
+
+#     - task: AppCenterDistribute@3
+#       inputs:
+#           serverEndpoint: 'DGC-App'
+#           appSlug: 'sogei/it-dgc-verificaC19-android'
+#           appFile: '$(Pipeline.Workspace)/app-release-unsigned.apk'
+#           symbolsOption: 'Android'
+#           releaseNotesOption: 'input'
+#           releaseNotesInput: 'Prova'
+#           destinationType: 'groups'
+#           isSilent: true
+#       condition: eq(variables.publishToAppCenter, true)
+
+
+- stage: GooglePlayTestRelease
+  jobs:
+  - job: GooglePlayTestDistribute 
+    steps:
+    - script: ls -l
+
+#     - task: GooglePlayReleaseBundle@3
+#       inputs:
+#         serviceConnection: 'verificac19-google-play'
+#         applicationId: 'it.ministerodellasalute.verificaC19'
+#         bundleFile: '$(Pipeline.Workspace)/app-release.aab'
+#         track: 'internal'
+#         changeLogFile: 'it-dgc-verificaC19-android/metadata/release-notes.xml'
+#         languageCode: 'en-GB'
+      
+
