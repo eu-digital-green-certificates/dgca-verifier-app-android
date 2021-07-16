@@ -171,9 +171,9 @@ stages:
     #   condition: eq(variables.publishToAppCenter, true)
 
 
-- stage: AppCenterRelease
+- stage: GooglePlayTestRelease
   jobs:
-  - job: AppCenterDistribute 
+  - job: GooglePlayTestDistribute 
     #steps:   
     # - task: GooglePlayReleaseBundle@3
     #   inputs:
