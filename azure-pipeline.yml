@@ -116,14 +116,7 @@ stages:
         artifact: 'apk'
         publishLocation: 'pipeline'
 
-  - job: BuildBundle
-    dependsOn: BuildApk
-
-    # verificare eventuali condizioni sui rami per eseguire questo ste (ad esempio non sulla feature, ma solo su develop e release?)
-    steps:
-    - checkout: self
-      clean: true
-    - checkout: dgca-app-core-android
+    # verificare eventuali condizioni sui rami per eseguire questo step (ad esempio non sulla feature, ma solo su develop e release?)
     - task: Gradle@2
       inputs:
         gradleWrapperFile: 'it-dgc-verificaC19-android/gradlew'
@@ -159,8 +152,15 @@ stages:
 - stage: AppCenterRelease
   jobs:
   - job: AppCenterDistribute   
-    #steps: 
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'apk'
+        targetPath: '$(Pipeline.Workspace)'
 
+    - script: ls -l
+    
     # - task: AppCenterDistribute@3
     #   inputs:
     #       serverEndpoint: 'DGC-App'
@@ -177,7 +177,16 @@ stages:
 - stage: GooglePlayTestRelease
   jobs:
   - job: GooglePlayTestDistribute 
-    #steps:   
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'bundle'
+        targetPath: '$(Pipeline.Workspace)'
+    
+    - script: ls -l
+
+
     # - task: GooglePlayReleaseBundle@3
     #   inputs:
     #     serviceConnection: 'verificac19-google-play'
