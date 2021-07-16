@@ -56,7 +56,15 @@ stages:
                   echo 'publishToAppCenter: $(publishToAppCenter)'
                   echo 'publishToStore $(publishToStore)'
                 failOnStderr: true
-            
+                
+          deploy:
+            steps:
+            - script: |
+                ls -l
+                cd $(PIPELINE.WORKSPACE)/it-dgc-verificaC19-android
+                ls -l
+                cd apk
+                ls -l
             - task: AppCenterDistribute@3
               inputs:
                 serverEndpoint: 'DGC-App'
@@ -67,16 +75,7 @@ stages:
                 releaseNotesFile: 'it-dgc-verificaC19-android/metadata/release-notes.xml'
                 destinationType: 'groups'
                 isSilent: true
-              condition: eq(variables.publishToAppCenter, true)
-                
-          deploy:
-            steps:
-            - script: |
-                ls -l
-                cd $(PIPELINE.WORKSPACE)/it-dgc-verificaC19-android
-                ls -l
-                cd apk
-                ls -l
+              #condition: eq(variables.publishToAppCenter, true)
 
 
 
@@ -110,12 +109,12 @@ stages:
                   ls -l
                   cd bundle
                   ls -l
-#     - task: GooglePlayReleaseBundle@3
-#       inputs:
-#         serviceConnection: 'verificac19-google-play'
-#         applicationId: 'it.ministerodellasalute.verificaC19'
-#         bundleFile: '$(Pipeline.Workspace)/app-release.aab'
-#         track: 'internal'
-#         changeLogFile: 'it-dgc-verificaC19-android/metadata/release-notes.xml'
-#         languageCode: 'en-GB'
+        #     - task: GooglePlayReleaseBundle@3
+        #       inputs:
+        #         serviceConnection: 'verificac19-google-play'
+        #         applicationId: 'it.ministerodellasalute.verificaC19'
+        #         bundleFile: '$(Pipeline.Workspace)/app-release.aab'
+        #         track: 'internal'
+        #         changeLogFile: 'it-dgc-verificaC19-android/metadata/release-notes.xml'
+        #         languageCode: 'en-GB'
       
