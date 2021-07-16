@@ -27,17 +27,44 @@ stages:
 
   - stage: AppCenterRelease
     jobs:
-    - job: AppCenterDistribute   
-      steps:
-      - download: it-dgc-verificaC19-android   # pipeline resource identifier.
-        artifact: apk  # artifact to download, optional; defaults to all the artifacts from the resource.
-        #patterns: '**/*.zip'  # mini match pattern to download specific files, optional; defaults to all files.
-      - script: |
-         ls -l
-         cd $(PIPELINE.WORKSPACE)/it-dgc-verificaC19-android
-         ls -l
-         cd apk
-         ls -l
+    # - job: AppCenterDistribute   
+    #   steps:
+    #   - download: it-dgc-verificaC19-android   # pipeline resource identifier.
+    #     artifact: apk  # artifact to download, optional; defaults to all the artifacts from the resource.
+    #     #patterns: '**/*.zip'  # mini match pattern to download specific files, optional; defaults to all files.
+    #   - script: |
+    #      ls -l
+    #      cd $(PIPELINE.WORKSPACE)/it-dgc-verificaC19-android
+    #      ls -l
+    #      cd apk
+    #      ls -l
+    
+    - deployment: AppCenterRelease   # name of the deployment job, A-Z, a-z, 0-9, and underscore. The word "deploy" is a keyword and is unsupported as the deployment name.
+      displayName: Release to AppCenter  # friendly name to display in the UI
+      # pool:                # see pool schema
+      #   name: string       # Use only global level variables for defining a pool name. Stage/job level variables are not supported to define pool name.
+      #   demands: string | [ string ]
+      # workspace:
+      #   clean: outputs | resources | all # what to clean up before the job runs
+      # dependsOn: string
+      # condition: string
+      # continueOnError: boolean                # 'true' if future jobs should run even if this job fails; defaults to 'false'
+      # container: containerReference # container to run this job inside
+      # services: { string: string | container } # container resources to run as a service container
+      # timeoutInMinutes: nonEmptyString        # how long to run the job before automatically cancelling
+      # cancelTimeoutInMinutes: nonEmptyString  # how much time to give 'run always even if cancelled tasks' before killing them
+      # variables: # several syntaxes, see specific section
+      environment: AppCenter  # target environment name and optionally a resource name to record the deployment history; format: <environment-name>.<resource-name>
+      strategy:
+        runOnce:    #rolling, canary are the other strategies that are supported
+          deploy:
+            steps:
+            - script: |
+                ls -l
+                cd $(PIPELINE.WORKSPACE)/it-dgc-verificaC19-android
+                ls -l
+                cd apk
+                ls -l
 
 #     - task: AppCenterDistribute@3
 #       inputs:
@@ -54,17 +81,43 @@ stages:
 
   - stage: GooglePlayTestRelease
     jobs:
-    - job: GooglePlayTestDistribute 
-      steps:
-      - download: it-dgc-verificaC19-android   # pipeline resource identifier.
-        artifact: bundle  # artifact to download, optional; defaults to all the artifacts from the resource.
-        #patterns: '**/*.zip'  # mini match pattern to download specific files, optional; defaults to all files.
-      - script: |
-         ls -l
-         cd $(PIPELINE.WORKSPACE)/it-dgc-verificaC19-android
-         ls -l
-         cd bundle
-         ls -l
+    # - job: GooglePlayTestDistribute 
+    #   steps:
+    #   - download: it-dgc-verificaC19-android   # pipeline resource identifier.
+    #     artifact: bundle  # artifact to download, optional; defaults to all the artifacts from the resource.
+    #     #patterns: '**/*.zip'  # mini match pattern to download specific files, optional; defaults to all files.
+    #   - script: |
+    #      ls -l
+    #      cd $(PIPELINE.WORKSPACE)/it-dgc-verificaC19-android
+    #      ls -l
+    #      cd bundle
+    #      ls -l
+    - deployment: GooglePlayRelease   # name of the deployment job, A-Z, a-z, 0-9, and underscore. The word "deploy" is a keyword and is unsupported as the deployment name.
+      displayName: Release to Google Play  # friendly name to display in the UI
+        # pool:                # see pool schema
+        #   name: string       # Use only global level variables for defining a pool name. Stage/job level variables are not supported to define pool name.
+        #   demands: string | [ string ]
+        # workspace:
+        #   clean: outputs | resources | all # what to clean up before the job runs
+        # dependsOn: string
+        # condition: string
+        # continueOnError: boolean                # 'true' if future jobs should run even if this job fails; defaults to 'false'
+        # container: containerReference # container to run this job inside
+        # services: { string: string | container } # container resources to run as a service container
+        # timeoutInMinutes: nonEmptyString        # how long to run the job before automatically cancelling
+        # cancelTimeoutInMinutes: nonEmptyString  # how much time to give 'run always even if cancelled tasks' before killing them
+        # variables: # several syntaxes, see specific section
+      environment: AndroidStoreTest  # target environment name and optionally a resource name to record the deployment history; format: <environment-name>.<resource-name>
+      strategy:
+          runOnce:    #rolling, canary are the other strategies that are supported
+            deploy:
+              steps:
+              - script: |
+                  ls -l
+                  cd $(PIPELINE.WORKSPACE)/it-dgc-verificaC19-android
+                  ls -l
+                  cd bundle
+                  ls -l
 #     - task: GooglePlayReleaseBundle@3
 #       inputs:
 #         serviceConnection: 'verificac19-google-play'
