@@ -45,7 +45,7 @@ stages:
           echo 'Check pipeline var'
           echo 'publishToAppCenter: $(publishToAppCenter)'
           echo 'publishToStore $(publishToStore)'
-          echo $[counter(variables['Build.SourceBranch'], 100)]
+          echo '$[counter(variables['Build.SourceBranch'], 100)]'
         failOnStderr: true
 
     - task: UpdateAndroidVersionGradle@1
