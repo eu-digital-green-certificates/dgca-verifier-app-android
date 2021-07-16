@@ -52,7 +52,7 @@ stages:
     - task: UpdateAndroidVersionGradle@1
       inputs:
         buildGradlePath: 'it-dgc-verificaC19-android/app/build.gradle'
-        versionCode: '$(Build.BuildId)'
+        versionCode: '$(versionCounter)'
         #versionName: '$(versionName)'
 
     - task: SonarQubePrepare@4
