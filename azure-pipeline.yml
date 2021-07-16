@@ -77,12 +77,11 @@ stages:
         pollingTimeoutSec: '300'
       continueOnError: true
       condition: succeeded()
-     
-    # - task: PublishPipelineArtifact@1
-    #   inputs:
-    #     targetPath: 'it-dgc-verificaC19-android/app/build.gradle'
-    #     artifact: 'build-gradle'
-    #     publishLocation: 'pipeline'
+
+    - task: WhiteSource@21
+      inputs:
+        cwd: '$(System.DefaultWorkingDirectory)'
+        projectName: 'ministero-salute.it-dgc-verificaC19-android'
 
     - task: Gradle@2
       inputs:
