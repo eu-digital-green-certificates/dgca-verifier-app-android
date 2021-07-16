@@ -149,65 +149,56 @@ stages:
         artifact: 'bundle'
         publishLocation: 'pipeline'
 
-- stage: AppCenterRelease
-  jobs:
-  - job: AppCenterDistribute   
-    steps:
-    - checkout: none
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: 'specific'
-        project: 'd8761144-9102-412a-9be9-76b96650fb00'
-        definition: '12'
-        specificBuildWithTriggering: true
-        buildVersionToDownload: 'specific'
-        pipelineId: '448'
-        artifactName: 'apk'
-        targetPath: '$(Pipeline.Workspace)'
-
-    - script: |
-        cd $(Pipeline.Workspace)
-        ls -l
+# - stage: AppCenterRelease
+#   jobs:
+#   - job: AppCenterDistribute   
+#     steps:
+#     - checkout: none
+#     - task: DownloadPipelineArtifact@2
+#       inputs:
+#         buildType: 'specific'
+#         project: 'd8761144-9102-412a-9be9-76b96650fb00'
+#         definition: '12'
+#         specificBuildWithTriggering: true
+#         buildVersionToDownload: 'latest'
+#         artifactName: 'apk'
+#         targetPath: '$(Pipeline.Workspace)'
     
-    # - task: AppCenterDistribute@3
-    #   inputs:
-    #       serverEndpoint: 'DGC-App'
-    #       appSlug: 'sogei/it-dgc-verificaC19-android'
-    #       appFile: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk/release/app-release-unsigned.apk'
-    #       symbolsOption: 'Android'
-    #       releaseNotesOption: 'input'
-    #       releaseNotesInput: 'Prova'
-    #       destinationType: 'groups'
-    #       isSilent: true
-    #   condition: eq(variables.publishToAppCenter, true)
+#     - task: AppCenterDistribute@3
+#       inputs:
+#           serverEndpoint: 'DGC-App'
+#           appSlug: 'sogei/it-dgc-verificaC19-android'
+#           appFile: '$(Pipeline.Workspace)/app-release-unsigned.apk'
+#           symbolsOption: 'Android'
+#           releaseNotesOption: 'input'
+#           releaseNotesInput: 'Prova'
+#           destinationType: 'groups'
+#           isSilent: true
+#       condition: eq(variables.publishToAppCenter, true)
 
 
-- stage: GooglePlayTestRelease
-  jobs:
-  - job: GooglePlayTestDistribute 
-    steps:
-    - checkout: none
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: 'specific'
-        project: 'd8761144-9102-412a-9be9-76b96650fb00'
-        definition: '12'
-        specificBuildWithTriggering: true
-        buildVersionToDownload: 'specific'
-        pipelineId: '448'
-        artifactName: 'bundle'
-        targetPath: '$(Pipeline.Workspace)'
+# - stage: GooglePlayTestRelease
+#   jobs:
+#   - job: GooglePlayTestDistribute 
+#     steps:
+#     - checkout: none
+#     - task: DownloadPipelineArtifact@2
+#       inputs:
+#         buildType: 'specific'
+#         project: 'd8761144-9102-412a-9be9-76b96650fb00'
+#         definition: '12'
+#         specificBuildWithTriggering: true
+#         buildVersionToDownload: 'latest'
+#         artifactName: 'bundle'
+#         targetPath: '$(Pipeline.Workspace)'
     
-    - script: |
-        cd $(Pipeline.Workspace)
-        ls -l
 
-    # - task: GooglePlayReleaseBundle@3
-    #   inputs:
-    #     serviceConnection: 'verificac19-google-play'
-    #     applicationId: 'it.ministerodellasalute.verificaC19'
-    #     bundleFile: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
-    #     track: 'internal'
-    #     changeLogFile: 'it-dgc-verificaC19-android/metadata/release-notes.xml'
-    #     languageCode: 'en-GB'
+#     - task: GooglePlayReleaseBundle@3
+#       inputs:
+#         serviceConnection: 'verificac19-google-play'
+#         applicationId: 'it.ministerodellasalute.verificaC19'
+#         bundleFile: '$(Pipeline.Workspace)/app-release.aab'
+#         track: 'internal'
+#         changeLogFile: 'it-dgc-verificaC19-android/metadata/release-notes.xml'
+#         languageCode: 'en-GB'
       
