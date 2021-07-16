@@ -26,6 +26,7 @@ pool:
 variables:
   publishToAppCenter: $[eq(variables['Build.SourceBranch'], 'refs/heads/develop')]
   publishToStore: $[contains(variables['Build.SourceBranch'], 'refs/heads/releases')]
+  versionCounter: $[counter(variables['Build.SourceBranch'], 100)] 
 
 stages:
 - stage: Build
@@ -45,7 +46,7 @@ stages:
           echo 'Check pipeline var'
           echo 'publishToAppCenter: $(publishToAppCenter)'
           echo 'publishToStore $(publishToStore)'
-          echo '$[counter(variables['Build.SourceBranch'], 100)]'
+          echo $(versionCounter)
         failOnStderr: true
 
     - task: UpdateAndroidVersionGradle@1
@@ -82,6 +83,12 @@ stages:
       inputs:
         cwd: '$(System.DefaultWorkingDirectory)'
         projectName: 'ministero-salute.it-dgc-verificaC19-android'
+    
+    - task: dependency-check-build-task@6
+      inputs:
+        projectName: 'ministero-salute.it-dgc-verificaC19-android'
+        scanPath: './'
+        format: 'HTML'
 
     - task: Gradle@2
       inputs:
