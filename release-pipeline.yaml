@@ -29,7 +29,16 @@ stages:
     jobs:
     - job: AppCenterDistribute   
       steps:
-      - script: ls -l
+      - download: it-dgc-verificaC19-android   # pipeline resource identifier.
+        artifact: apk  # artifact to download, optional; defaults to all the artifacts from the resource.
+        #patterns: '**/*.zip'  # mini match pattern to download specific files, optional; defaults to all files.
+      - script: |
+         ls -l
+         cd it-dgc-verificaC19-android
+         ls -l
+         cd apk
+         ls -l
+
 #     - task: AppCenterDistribute@3
 #       inputs:
 #           serverEndpoint: 'DGC-App'
