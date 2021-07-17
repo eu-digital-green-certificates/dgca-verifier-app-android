@@ -78,8 +78,6 @@ stages:
               #condition: eq(variables.publishToAppCenter, true)
 
 
-
-
   - stage: GooglePlayTestRelease
     condition: eq(variables.publishToStore, true)
     jobs:
