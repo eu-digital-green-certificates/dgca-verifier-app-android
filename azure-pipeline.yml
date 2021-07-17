@@ -143,6 +143,12 @@ stages:
         targetPath: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
         artifact: 'bundle'
         publishLocation: 'pipeline'
+    
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: 'it-dgc-verificaC19-android/metadata/release-notes.xml'
+        artifact: 'release-notes'
+        publishLocation: 'pipeline'
 
     - task: WhiteSource@21
       inputs:
