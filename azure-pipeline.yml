@@ -1,4 +1,4 @@
-name: dgca-verifier-app-android
+name: $(Build.BuildID) - dgca-verifier-app-android
 
 trigger:
   branches:
