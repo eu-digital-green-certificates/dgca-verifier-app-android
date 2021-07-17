@@ -72,7 +72,7 @@ stages:
                 appFile: '$(Pipeline.Workspace)/app-release-unsigned.apk'
                 symbolsOption: 'Android'
                 releaseNotesOption: 'file'
-                releaseNotesFile: 'it-dgc-verificaC19-android/metadata/release-notes.xml'
+                releaseNotesFile: '$(PIPELINE.WORKSPACE)/it-dgc-verificaC19-android/release-notes/release-notes.xml'
                 destinationType: 'groups'
                 isSilent: true
               #condition: eq(variables.publishToAppCenter, true)
