@@ -117,6 +117,10 @@ class VerificationViewModel @Inject constructor(
             var isApplicableCode = false
             withContext(Dispatchers.IO) {
                 val plainInput = prefixValidationService.decode(code, verificationResult)
+                if (verificationResult.contextPrefix.isNullOrBlank()) {
+                    Timber.d("Verification failed: Proper prefix is missing")
+                    return@withContext
+                }
                 val compressedCose = base45Service.decode(plainInput, verificationResult)
                 val cose = compressorService.decode(compressedCose, verificationResult)
 
