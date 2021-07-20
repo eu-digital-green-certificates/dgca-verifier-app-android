@@ -17,7 +17,7 @@ resources:
   - repository: dgca-app-core-android
     type: github
     name: eu-digital-green-certificates/dgca-app-core-android
-    ref: 'refs/tags/1.0.0'
+    ref: 'main'
     endpoint: 'GitHub - it-eucert-team'
 
 pool:

@@ -40,6 +40,7 @@ import dgca.verifier.app.decoder.cose.VerificationCryptoService
 import dgca.verifier.app.decoder.prefixvalidation.DefaultPrefixValidationService
 import dgca.verifier.app.decoder.schema.DefaultSchemaValidator
 import dgca.verifier.app.decoder.schema.SchemaValidator
+import dgca.verifier.app.decoder.services.X509
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -73,5 +74,5 @@ object DecoderModule {
 
     @Singleton
     @Provides
-    fun provideCryptoService(): CryptoService = VerificationCryptoService()
+    fun provideCryptoService(): CryptoService = VerificationCryptoService(X509())
 }
