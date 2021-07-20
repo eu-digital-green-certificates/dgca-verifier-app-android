@@ -322,7 +322,8 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         binding.certificateTypeText.text = when {
             certificate.vaccinations?.isNotEmpty() == true -> getString(
                 R.string.type_vaccination,
-                certificate.vaccinations.first().doseNumber
+                certificate.vaccinations.first().doseNumber,
+                certificate.vaccinations.first().totalSeriesOfDoses
             )
             certificate.recoveryStatements?.isNotEmpty() == true -> getString(R.string.type_recovered)
             certificate.tests?.isNotEmpty() == true -> getString(R.string.type_test)
