@@ -32,7 +32,7 @@ import dgca.verifier.app.android.toFormattedDateTime
 class TestViewHolder(private val binding: ItemTestBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(data: TestModel) {
-        binding.testResultValue.text = data.resultType.value
+//        binding.testResultValue.text = data.resultType.value
         val dateOfCollectionString: String? =
             data.dateTimeOfCollection.toFormattedDateTime()?.apply {
                 binding.dateOfCollectionValue.text = this
@@ -40,17 +40,17 @@ class TestViewHolder(private val binding: ItemTestBinding) : RecyclerView.ViewHo
         binding.dateOfCollectionValue.visibility =
             if (dateOfCollectionString?.isNotEmpty() == true) View.VISIBLE else View.GONE
         val dateOfTestResult = data.dateTimeOfTestResult?.toFormattedDateTime()
-        if (dateOfTestResult?.isNotBlank() == true) {
-            binding.dateOfTestResultValue.text = dateOfTestResult
-            View.VISIBLE
-        } else {
-            View.GONE
-        }.apply {
-            binding.dateOfTestResultTitle.visibility = this
-            binding.dateOfTestResultValue.visibility = this
-        }
+//        if (dateOfTestResult?.isNotBlank() == true) {
+//            binding.dateOfTestResultValue.text = dateOfTestResult
+//            View.VISIBLE
+//        } else {
+//            View.GONE
+//        }.apply {
+//            binding.dateOfTestResultTitle.visibility = this
+//            binding.dateOfTestResultValue.visibility = this
+//        }
         binding.diseaseValue.text = data.disease.value
-        binding.typeOfTestValue.text = data.typeOfTest
+//        binding.typeOfTestValue.text = data.typeOfTest
         binding.countryValue.text = data.countryOfVaccination
     }
 

@@ -40,9 +40,9 @@
 <!--    <string name="dose_number_title">Dose Number</string>-->
     <string name="issuer_country">Issuer Country</string>
     <string name="target_disease">Target Disease</string>
-    <string name="date_of_test_collection_title">Date of Collection</string>
-    <string name="date_of_test_result_title">Date of Test Result</string>
-    <string name="type_of_test_title">Type of Test</string>
+    <string name="date_of_test">Date of Test</string>
+<!--    <string name="date_of_test_result_title">Date of Test Result</string>-->
+<!--    <string name="type_of_test_title">Type of Test</string>-->
     <string name="test_result_title">Test Result</string>
     <string name="date_of_recovery">Date of Recovery</string>
     <string name="certificate_expiration">Certificate Expiration</string>
