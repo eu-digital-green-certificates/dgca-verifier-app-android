@@ -79,7 +79,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/disease_or_agent_targeted_title" />
+        android:text="@string/target_disease" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/disease_value"

@@ -34,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/disease_or_agent_targeted_title" />
+        android:text="@string/target_disease" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/disease_value"
@@ -49,7 +49,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/certificate_valid_from_title" />
+        android:text="@string/date_of_recovery" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/valid_from_value"
@@ -64,7 +64,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/certificate_valid_until_title" />
+        android:text="@string/certificate_expiration" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/valid_until_value"
@@ -73,20 +73,20 @@
         android:layout_height="wrap_content"
         tools:text="Feb 26, 1998" />
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/date_of_positive_title"
-        style="@style/TextAppearance.Dgca.CertificateTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="@string/date_of_positive_title" />
+<!--    <com.google.android.material.textview.MaterialTextView-->
+<!--        android:id="@+id/date_of_positive_title"-->
+<!--        style="@style/TextAppearance.Dgca.CertificateTitle"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="10dp"-->
+<!--        android:text="@string/date_of_positive_title" />-->
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/date_of_positive_value"
-        style="@style/TextAppearance.Dgca.CertificateValue"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="Feb 26, 1998" />
+<!--    <com.google.android.material.textview.MaterialTextView-->
+<!--        android:id="@+id/date_of_positive_value"-->
+<!--        style="@style/TextAppearance.Dgca.CertificateValue"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        tools:text="Feb 26, 1998" />-->
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/country_title"

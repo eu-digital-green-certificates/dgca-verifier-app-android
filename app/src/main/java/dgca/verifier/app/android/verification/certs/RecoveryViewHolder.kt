@@ -39,8 +39,8 @@ class RecoveryViewHolder(private val binding: ItemRecoveryBinding) :
             data.certificateValidFrom.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
         binding.validUntilValue.text =
             data.certificateValidUntil.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
-        binding.dateOfPositiveValue.text =
-            data.dateOfFirstPositiveTest.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
+//        binding.dateOfPositiveValue.text =
+//            data.dateOfFirstPositiveTest.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
         binding.countryValue.text = data.countryOfVaccination
     }
 
