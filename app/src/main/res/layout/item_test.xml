@@ -28,21 +28,6 @@
     android:orientation="vertical"
     tools:background="@color/white">
 
-<!--    <com.google.android.material.textview.MaterialTextView-->
-<!--        android:id="@+id/test_result_title"-->
-<!--        style="@style/TextAppearance.Dgca.CertificateTitle"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="10dp"-->
-<!--        android:text="@string/test_result_title" />-->
-
-<!--    <com.google.android.material.textview.MaterialTextView-->
-<!--        android:id="@+id/test_result_value"-->
-<!--        style="@style/TextAppearance.Dgca.CertificateValue"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        tools:text="Negative" />-->
-
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/disease_title"
         style="@style/TextAppearance.Dgca.CertificateTitle"
@@ -72,36 +57,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:text="Feb 26, 1998" />
-
-<!--    <com.google.android.material.textview.MaterialTextView-->
-<!--        android:id="@+id/date_of_test_result_title"-->
-<!--        style="@style/TextAppearance.Dgca.CertificateTitle"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="10dp"-->
-<!--        android:text="@string/date_of_test_result_title" />-->
-
-<!--    <com.google.android.material.textview.MaterialTextView-->
-<!--        android:id="@+id/date_of_test_result_value"-->
-<!--        style="@style/TextAppearance.Dgca.CertificateValue"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        tools:text="Feb 26, 1998" />-->
-
-<!--    <com.google.android.material.textview.MaterialTextView-->
-<!--        android:id="@+id/type_of_test_title"-->
-<!--        style="@style/TextAppearance.Dgca.CertificateTitle"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="10dp"-->
-<!--        android:text="@string/type_of_test_title" />-->
-
-<!--    <com.google.android.material.textview.MaterialTextView-->
-<!--        android:id="@+id/type_of_test_value"-->
-<!--        style="@style/TextAppearance.Dgca.CertificateValue"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        tools:text="NAA test name" />-->
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/country_title"
