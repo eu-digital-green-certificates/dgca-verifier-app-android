@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v2
       with:
         repository: eu-digital-green-certificates/dgca-app-core-android
-        ref: 0b843142389211104609ef188beeef0f293c5cd0
+        ref: main
         path: dgca-app-core-android
     - uses: actions/checkout@v2
       with:
