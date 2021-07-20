@@ -39,7 +39,7 @@ class TestViewHolder(private val binding: ItemTestBinding) : RecyclerView.ViewHo
             }
         binding.dateOfCollectionValue.visibility =
             if (dateOfCollectionString?.isNotEmpty() == true) View.VISIBLE else View.GONE
-        val dateOfTestResult = data.dateTimeOfTestResult?.toFormattedDateTime()
+//        val dateOfTestResult = data.dateTimeOfTestResult?.toFormattedDateTime()
 //        if (dateOfTestResult?.isNotBlank() == true) {
 //            binding.dateOfTestResultValue.text = dateOfTestResult
 //            View.VISIBLE
