@@ -194,6 +194,7 @@ class VerificationViewModel @Inject constructor(
                         Locale.ROOT
                     )
                 val rules = getRulesUseCase.invoke(
+                    ZonedDateTime.now().withZoneSameInstant(UTC_ZONE_ID),
                     countryIsoCode,
                     issuingCountry,
                     engineCertificateType
