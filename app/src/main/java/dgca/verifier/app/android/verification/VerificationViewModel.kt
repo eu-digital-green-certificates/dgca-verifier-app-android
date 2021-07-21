@@ -52,6 +52,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.security.cert.X509Certificate
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
@@ -110,75 +111,121 @@ class VerificationViewModel @Inject constructor(
     private fun decode(code: String, countryIsoCode: String) {
         viewModelScope.launch {
             _inProgress.value = true
-            var greenCertificateData: GreenCertificateData? = null
+
             val verificationResult = VerificationResult()
-            var noPublicKeysFound = true
+            var innerVerificationResult: InnerVerificationResult
 
-            var isApplicableCode = false
             withContext(Dispatchers.IO) {
-                val plainInput = prefixValidationService.decode(code, verificationResult)
-                val compressedCose = base45Service.decode(plainInput, verificationResult)
-                val cose = compressorService.decode(compressedCose, verificationResult)
 
-                val coseData = coseService.decode(cose, verificationResult)
-                if (coseData == null) {
-                    Timber.d("Verification failed: COSE not decoded")
-                    return@withContext
-                }
+                innerVerificationResult = validateCertificate(code, verificationResult)
 
-                val kid = coseData.kid
-                if (kid == null) {
-                    Timber.d("Verification failed: cannot extract kid from COSE")
-                    return@withContext
-                }
-
-                isApplicableCode = true
-
-                schemaValidator.validate(coseData.cbor, verificationResult)
-                greenCertificateData = cborService.decodeData(coseData.cbor, verificationResult)
-                validateCertData(greenCertificateData?.greenCertificate, verificationResult)
-
-                val base64EncodedKid = kid.toBase64()
-                val certificates = verifierRepository.getCertificatesBy(base64EncodedKid)
-                if (certificates.isEmpty()) {
-                    Timber.d("Verification failed: failed to load certificate")
-                    return@withContext
-                }
-                noPublicKeysFound = false
-                certificates.forEach { innerCertificate ->
-                    cryptoService.validate(
-                        cose,
-                        innerCertificate,
-                        verificationResult,
-                        greenCertificateData?.greenCertificate?.getType()
-                            ?: dgca.verifier.app.decoder.model.CertificateType.UNKNOWN
-                    )
-                    if (verificationResult.coseVerified) {
-                        return@forEach
-                    }
-                }
-
-                if (verificationResult.isValid()) {
-                    greenCertificateData?.validateRules(
+                if (verificationResult.isValid() && innerVerificationResult.base64EncodedKid?.isNotBlank() == true) {
+                    innerVerificationResult.greenCertificateData?.validateRules(
                         verificationResult,
                         countryIsoCode,
-                        base64EncodedKid
+                        innerVerificationResult.base64EncodedKid!!
                     )
                 }
 
             }
 
-            verificationResult.fetchError(noPublicKeysFound)
+            verificationResult.fetchError(innerVerificationResult.noPublicKeysFound)
                 ?.apply { _verificationError.value = this }
 
             _inProgress.value = false
             val certificateModel: CertificateModel? =
-                greenCertificateData?.greenCertificate?.toCertificateModel()
+                innerVerificationResult.greenCertificateData?.greenCertificate?.toCertificateModel()
             _verificationData.value = VerificationData(
-                if (isApplicableCode) verificationResult else null,
+                if (innerVerificationResult.isApplicableCode) verificationResult else null,
                 certificateModel
             )
         }
+    }
+
+    data class InnerVerificationResult(
+        val noPublicKeysFound: Boolean = true,
+        val greenCertificateData: GreenCertificateData? = null,
+        val isApplicableCode: Boolean = false,
+        val base64EncodedKid: String? = null
+    )
+
+    private suspend fun validateCertificate(
+        code: String,
+        verificationResult: VerificationResult
+    ): InnerVerificationResult {
+        var noPublicKeysFound = true
+        var greenCertificateData: GreenCertificateData? = null
+        var isApplicableCode = false
+
+        val plainInput = prefixValidationService.decode(code, verificationResult)
+        val compressedCose = base45Service.decode(plainInput, verificationResult)
+        val cose = compressorService.decode(compressedCose, verificationResult)
+
+        val coseData = coseService.decode(cose, verificationResult)
+        if (coseData == null) {
+            Timber.d("Verification failed: COSE not decoded")
+            return InnerVerificationResult(
+                noPublicKeysFound,
+                greenCertificateData,
+                isApplicableCode
+            )
+        }
+
+        val kid = coseData.kid
+        if (kid == null) {
+            Timber.d("Verification failed: cannot extract kid from COSE")
+            return InnerVerificationResult(
+                noPublicKeysFound,
+                greenCertificateData,
+                isApplicableCode
+            )
+        }
+
+        isApplicableCode = true
+
+        schemaValidator.validate(coseData.cbor, verificationResult)
+        greenCertificateData = cborService.decodeData(coseData.cbor, verificationResult)
+        validateCertData(greenCertificateData?.greenCertificate, verificationResult)
+
+        val base64EncodedKid = kid.toBase64()
+        val certificates = verifierRepository.getCertificatesBy(base64EncodedKid)
+        if (certificates.isEmpty()) {
+            Timber.d("Verification failed: failed to load certificate")
+            return InnerVerificationResult(
+                noPublicKeysFound,
+                greenCertificateData,
+                isApplicableCode,
+                base64EncodedKid
+            )
+        }
+        noPublicKeysFound = false
+        certificates.forEach { innerCertificate ->
+            cryptoService.validate(
+                cose,
+                innerCertificate,
+                verificationResult,
+                greenCertificateData?.greenCertificate?.getType()
+                    ?: dgca.verifier.app.decoder.model.CertificateType.UNKNOWN
+            )
+            if (verificationResult.coseVerified) {
+                val expirationTime: ZonedDateTime? =
+                    if (innerCertificate is X509Certificate) innerCertificate.notAfter.toInstant()
+                        .atZone(UTC_ZONE_ID) else null
+                val currentTime: ZonedDateTime =
+                    ZonedDateTime.now().withZoneSameInstant(UTC_ZONE_ID)
+                if (expirationTime != null && currentTime.isAfter(expirationTime)) {
+                    noPublicKeysFound = true
+                    verificationResult.coseVerified = false
+                }
+                return@forEach
+            }
+        }
+        return InnerVerificationResult(
+            noPublicKeysFound,
+            greenCertificateData,
+            isApplicableCode,
+            base64EncodedKid
+        )
     }
 
     private suspend fun GreenCertificateData.validateRules(
