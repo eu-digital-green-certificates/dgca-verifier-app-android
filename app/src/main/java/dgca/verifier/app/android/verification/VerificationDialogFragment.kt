@@ -94,73 +94,11 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         binding.rulesList.layoutManager = LinearLayoutManager(requireContext())
         binding.actionBtn.setOnClickListener { dismiss() }
 
-        viewModel.verificationData.observe(viewLifecycleOwner, {
-            if (it.verificationResult == null) {
+        viewModel.verificationData.observe(viewLifecycleOwner, { verificationData ->
+            if (verificationData.verificationResult == null) {
                 hideLiveData.value = null
             } else {
-                setCertStatusUI(it.verificationResult.getGeneralResult())
-                setCertDataVisibility(it.verificationResult.getGeneralResult())
-                it.certificateModel?.let { certificateModel ->
-                    binding.personFullName.text = certificateModel.getFullName()
-                    toggleButton(certificateModel)
-
-
-                    // TODO remove before release
-                    if (it.verificationResult.getGeneralResult() == GeneralVerificationResult.SUCCESS) {
-                        val ruleValidationResultCards = mutableListOf<RuleValidationResultCard>()
-                        val context = requireContext()
-                        binding.rulesList.visibility = View.VISIBLE
-                        viewModel.validationResults.value?.forEach {
-                            ruleValidationResultCards.add(
-                                it.toRuleValidationResultCard(context)
-                            )
-                        }
-                        binding.rulesList.adapter =
-                            RuleValidationResultsAdapter(layoutInflater, ruleValidationResultCards)
-                    }
-
-                    if (it.verificationResult.getGeneralResult() != GeneralVerificationResult.FAILED) {
-                        showUserData(certificateModel)
-
-                        if (binding.greenCertificate.parent != null) {
-                            when {
-                                certificateModel.vaccinations?.size == 1 -> {
-                                    binding.greenCertificate.layoutResource =
-                                        R.layout.item_vaccination
-                                    binding.greenCertificate.setOnInflateListener { stub, inflated ->
-                                        VaccinationViewHolder.create(
-                                            inflated as ViewGroup
-                                        ).bind(certificateModel.vaccinations.first())
-                                    }
-                                    binding.greenCertificate.inflate()
-                                }
-                                certificateModel.recoveryStatements?.size == 1 -> {
-                                    binding.greenCertificate.layoutResource = R.layout.item_recovery
-
-                                    binding.greenCertificate.setOnInflateListener { stub, inflated ->
-                                        RecoveryViewHolder.create(
-                                            inflated as ViewGroup
-                                        ).bind(certificateModel.recoveryStatements.first())
-                                    }
-                                    binding.greenCertificate.inflate()
-                                }
-                                certificateModel.tests?.size == 1 -> {
-                                    binding.greenCertificate.layoutResource = R.layout.item_test
-
-                                    binding.greenCertificate.setOnInflateListener { stub, inflated ->
-                                        TestViewHolder.create(
-                                            inflated as ViewGroup
-                                        ).bind(certificateModel.tests.first())
-                                    }
-                                    binding.greenCertificate.inflate()
-                                }
-                            }
-                        }
-
-
-                    }
-                }
-                startTimer()
+                handleVerificationResult(verificationData)
             }
         })
         viewModel.verificationError.observe(viewLifecycleOwner, {
@@ -176,6 +114,72 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun handleVerificationResult(verificationData: VerificationData) {
+        setCertStatusUI(verificationData.getGeneralResult())
+        setCertDataVisibility(verificationData.getGeneralResult())
+        verificationData.certificateModel?.let { certificateModel ->
+            binding.personFullName.text = certificateModel.getFullName()
+            toggleButton(certificateModel)
+
+
+            // TODO remove before release
+            if (verificationData.getGeneralResult() == GeneralVerificationResult.SUCCESS) {
+                val ruleValidationResultCards = mutableListOf<RuleValidationResultCard>()
+                val context = requireContext()
+                binding.rulesList.visibility = View.VISIBLE
+                viewModel.validationResults.value?.forEach { validationResult ->
+                    ruleValidationResultCards.add(
+                        validationResult.toRuleValidationResultCard(context)
+                    )
+                }
+                binding.rulesList.adapter =
+                    RuleValidationResultsAdapter(layoutInflater, ruleValidationResultCards)
+            }
+
+            if (verificationData.getGeneralResult() != GeneralVerificationResult.FAILED) {
+                showUserData(certificateModel)
+
+                if (binding.greenCertificate.parent != null) {
+                    when {
+                        certificateModel.vaccinations?.size == 1 -> {
+                            binding.greenCertificate.layoutResource =
+                                R.layout.item_vaccination
+                            binding.greenCertificate.setOnInflateListener { stub, inflated ->
+                                VaccinationViewHolder.create(
+                                    inflated as ViewGroup
+                                ).bind(certificateModel.vaccinations.first())
+                            }
+                            binding.greenCertificate.inflate()
+                        }
+                        certificateModel.recoveryStatements?.size == 1 -> {
+                            binding.greenCertificate.layoutResource = R.layout.item_recovery
+
+                            binding.greenCertificate.setOnInflateListener { stub, inflated ->
+                                RecoveryViewHolder.create(
+                                    inflated as ViewGroup
+                                ).bind(certificateModel.recoveryStatements.first())
+                            }
+                            binding.greenCertificate.inflate()
+                        }
+                        certificateModel.tests?.size == 1 -> {
+                            binding.greenCertificate.layoutResource = R.layout.item_test
+
+                            binding.greenCertificate.setOnInflateListener { stub, inflated ->
+                                TestViewHolder.create(
+                                    inflated as ViewGroup
+                                ).bind(certificateModel.tests.first())
+                            }
+                            binding.greenCertificate.inflate()
+                        }
+                    }
+                }
+
+
+            }
+        }
+        startTimer()
     }
 
     private fun setCertStatusUI(generalVerificationResult: GeneralVerificationResult) {
@@ -218,9 +222,10 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         binding.reasonForCertificateInvalidityName.visibility = View.VISIBLE
         binding.reasonForCertificateInvalidityName.text = getString(
             when (verificationError) {
-                VerificationError.CERTIFICATE_EXPIRED -> R.string.certificate_is_expired
+                VerificationError.GREEN_CERTIFICATE_EXPIRED -> R.string.certificate_is_expired
                 VerificationError.CERTIFICATE_REVOKED -> R.string.certificate_was_revoked
                 VerificationError.VERIFICATION_FAILED -> R.string.verification_failed
+                VerificationError.CERTIFICATE_EXPIRED -> R.string.signing_certificate_is_expired
                 VerificationError.TEST_DATE_IS_IN_THE_FUTURE -> R.string.the_test_date_is_in_the_future
                 VerificationError.TEST_RESULT_POSITIVE -> R.string.test_result_positive
                 VerificationError.RECOVERY_NOT_VALID_SO_FAR -> R.string.recovery_not_valid_yet
