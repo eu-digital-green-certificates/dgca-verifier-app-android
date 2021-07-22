@@ -65,7 +65,7 @@ enum class GeneralVerificationResult {
 
 fun VerificationData.getGeneralResult(): GeneralVerificationResult {
     return when {
-        verificationResult?.isValid() == true && innerVerificationResult.isValid() && innerVerificationResult.isValid() -> GeneralVerificationResult.SUCCESS
+        verificationResult?.isValid() == true && innerVerificationResult.isValid() -> GeneralVerificationResult.SUCCESS
         verificationResult?.isTestWithPositiveResult() == true -> GeneralVerificationResult.FAILED
         verificationResult?.rulesValidationFailed == true -> GeneralVerificationResult.RULES_VALIDATION_FAILED
         else -> GeneralVerificationResult.FAILED

@@ -22,10 +22,16 @@
 
 package dgca.verifier.app.android.verification
 
+import dgca.verifier.app.android.model.toCertificateModel
+import dgca.verifier.app.decoder.cbor.GreenCertificateData
+import dgca.verifier.app.decoder.model.GreenCertificate
+import dgca.verifier.app.decoder.model.Person
 import dgca.verifier.app.decoder.model.TestVerificationResult
 import dgca.verifier.app.decoder.model.VerificationResult
+import dgca.verifier.app.engine.UTC_ZONE_ID
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.time.ZonedDateTime
 
 /*-
  * ---license-start
@@ -51,66 +57,103 @@ import org.junit.Test
 class VerificationViewModelKtTest {
     @Test
     fun testGetGeneralResultSuccess() {
-        val verificationResult = VerificationResult(
-            base45Decoded = true,
-            zlibDecoded = true,
-            coseVerified = true,
-            cborDecoded = true,
-            isSchemaValid = true,
-            isIssuedTimeCorrect = true,
-            isNotExpired = true,
-            testVerification = TestVerificationResult(true, true)
+        val greenCertificateData = greenCertificateData()
+        val verificationData = VerificationData(
+            VerificationResult(
+                base45Decoded = true,
+                zlibDecoded = true,
+                coseVerified = true,
+                cborDecoded = true,
+                isSchemaValid = true,
+                isIssuedTimeCorrect = true,
+                isNotExpired = true,
+                testVerification = TestVerificationResult(true, true)
+            ),
+            InnerVerificationResult(
+                noPublicKeysFound = false,
+                greenCertificateData = greenCertificateData,
+                isApplicableCode = true,
+                base64EncodedKid = "base64EncodedKid"
+            ),
+            greenCertificateData.greenCertificate.toCertificateModel()
         )
 
-        assertEquals(GeneralVerificationResult.SUCCESS, verificationResult.getGeneralResult())
+        assertEquals(GeneralVerificationResult.SUCCESS, verificationData.getGeneralResult())
+    }
+
+    private fun person(): Person {
+        return Person("", null, null, null)
+    }
+
+    private fun greenCertificate(person: Person = person()): GreenCertificate {
+        return GreenCertificate("", person, "", null, null, null)
+    }
+
+    private fun greenCertificateData(greenCertificate: GreenCertificate = greenCertificate()): GreenCertificateData {
+        return GreenCertificateData(
+            null, "", greenCertificate, ZonedDateTime.now().withZoneSameInstant(
+                UTC_ZONE_ID
+            ), ZonedDateTime.now().withZoneSameInstant(
+                UTC_ZONE_ID
+            )
+        )
     }
 
     @Test
     fun testGetGeneralResultTestResultDetected() {
-        val verificationResult = VerificationResult(
-            base45Decoded = true,
-            zlibDecoded = true,
-            coseVerified = true,
-            cborDecoded = true,
-            isSchemaValid = true,
-            isIssuedTimeCorrect = true,
-            isNotExpired = true,
-            testVerification = TestVerificationResult(false, true),
-            rulesValidationFailed = true
+        val verificationData = VerificationData(
+            VerificationResult(
+                base45Decoded = true,
+                zlibDecoded = true,
+                coseVerified = true,
+                cborDecoded = true,
+                isSchemaValid = true,
+                isIssuedTimeCorrect = true,
+                isNotExpired = true,
+                testVerification = TestVerificationResult(false, true),
+                rulesValidationFailed = true
+            ), InnerVerificationResult(), null
         )
 
-        assertEquals(GeneralVerificationResult.FAILED, verificationResult.getGeneralResult())
+        assertEquals(GeneralVerificationResult.FAILED, verificationData.getGeneralResult())
     }
 
     @Test
     fun testGetGeneralResultRulesValidationFailed() {
-        val verificationResult = VerificationResult(
-            base45Decoded = true,
-            zlibDecoded = true,
-            coseVerified = true,
-            cborDecoded = true,
-            isSchemaValid = true,
-            isIssuedTimeCorrect = true,
-            isNotExpired = true,
-            testVerification = TestVerificationResult(true, true),
-            rulesValidationFailed = true
+        val verificationData = VerificationData(
+            VerificationResult(
+                base45Decoded = true,
+                zlibDecoded = true,
+                coseVerified = true,
+                cborDecoded = true,
+                isSchemaValid = true,
+                isIssuedTimeCorrect = true,
+                isNotExpired = true,
+                testVerification = TestVerificationResult(true, true),
+                rulesValidationFailed = true
+            ), InnerVerificationResult(), null
         )
 
-        assertEquals(GeneralVerificationResult.RULES_VALIDATION_FAILED, verificationResult.getGeneralResult())
+        assertEquals(
+            GeneralVerificationResult.RULES_VALIDATION_FAILED,
+            verificationData.getGeneralResult()
+        )
     }
 
     @Test
     fun testGetGeneralResultValidationFailed() {
-        val verificationResult = VerificationResult(
-            base45Decoded = true,
-            zlibDecoded = true,
-            coseVerified = true,
-            cborDecoded = true,
-            isSchemaValid = false,
-            isIssuedTimeCorrect = true,
-            isNotExpired = true,
-            testVerification = TestVerificationResult(true, true),
-            rulesValidationFailed = false
+        val verificationResult = VerificationData(
+            VerificationResult(
+                base45Decoded = true,
+                zlibDecoded = true,
+                coseVerified = true,
+                cborDecoded = true,
+                isSchemaValid = false,
+                isIssuedTimeCorrect = true,
+                isNotExpired = true,
+                testVerification = TestVerificationResult(true, true),
+                rulesValidationFailed = false
+            ), InnerVerificationResult(), null
         )
 
         assertEquals(GeneralVerificationResult.FAILED, verificationResult.getGeneralResult())
