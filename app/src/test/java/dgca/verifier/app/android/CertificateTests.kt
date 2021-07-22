@@ -87,7 +87,7 @@ class CertificateTests {
         result.coseVerified = true
         result.isNotExpired = false
         val error = result.fetchError(false)
-        Assert.assertTrue(error === VerificationError.CERTIFICATE_EXPIRED)
+        Assert.assertTrue(error === VerificationError.GREEN_CERTIFICATE_EXPIRED)
     }
 
     @Test

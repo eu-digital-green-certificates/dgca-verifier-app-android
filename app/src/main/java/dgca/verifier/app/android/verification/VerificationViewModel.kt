@@ -63,17 +63,18 @@ enum class GeneralVerificationResult {
     SUCCESS, FAILED, RULES_VALIDATION_FAILED
 }
 
-fun VerificationResult.getGeneralResult(): GeneralVerificationResult {
+fun VerificationData.getGeneralResult(): GeneralVerificationResult {
     return when {
-        isValid() -> GeneralVerificationResult.SUCCESS
-        isTestWithPositiveResult() -> GeneralVerificationResult.FAILED
-        rulesValidationFailed -> GeneralVerificationResult.RULES_VALIDATION_FAILED
+        verificationResult?.isValid() == true && innerVerificationResult.isValid() && innerVerificationResult.isValid() -> GeneralVerificationResult.SUCCESS
+        verificationResult?.isTestWithPositiveResult() == true -> GeneralVerificationResult.FAILED
+        verificationResult?.rulesValidationFailed == true -> GeneralVerificationResult.RULES_VALIDATION_FAILED
         else -> GeneralVerificationResult.FAILED
     }
 }
 
 data class VerificationData(
     val verificationResult: VerificationResult?,
+    val innerVerificationResult: InnerVerificationResult,
     val certificateModel: CertificateModel?
 )
 
@@ -129,7 +130,7 @@ class VerificationViewModel @Inject constructor(
 
             }
 
-            verificationResult.fetchError(innerVerificationResult.noPublicKeysFound)
+            verificationResult.fetchError(innerVerificationResult)
                 ?.apply { _verificationError.value = this }
 
             _inProgress.value = false
@@ -137,23 +138,16 @@ class VerificationViewModel @Inject constructor(
                 innerVerificationResult.greenCertificateData?.greenCertificate?.toCertificateModel()
             _verificationData.value = VerificationData(
                 if (innerVerificationResult.isApplicableCode) verificationResult else null,
+                innerVerificationResult,
                 certificateModel
             )
         }
     }
 
-    data class InnerVerificationResult(
-        val noPublicKeysFound: Boolean = true,
-        val greenCertificateData: GreenCertificateData? = null,
-        val isApplicableCode: Boolean = false,
-        val base64EncodedKid: String? = null
-    )
-
     private suspend fun validateCertificate(
         code: String,
         verificationResult: VerificationResult
     ): InnerVerificationResult {
-        var noPublicKeysFound = true
         var greenCertificateData: GreenCertificateData? = null
         var isApplicableCode = false
 
@@ -165,9 +159,8 @@ class VerificationViewModel @Inject constructor(
         if (coseData == null) {
             Timber.d("Verification failed: COSE not decoded")
             return InnerVerificationResult(
-                noPublicKeysFound,
-                greenCertificateData,
-                isApplicableCode
+                greenCertificateData = greenCertificateData,
+                isApplicableCode = isApplicableCode
             )
         }
 
@@ -175,9 +168,8 @@ class VerificationViewModel @Inject constructor(
         if (kid == null) {
             Timber.d("Verification failed: cannot extract kid from COSE")
             return InnerVerificationResult(
-                noPublicKeysFound,
-                greenCertificateData,
-                isApplicableCode
+                greenCertificateData = greenCertificateData,
+                isApplicableCode = isApplicableCode
             )
         }
 
@@ -192,13 +184,13 @@ class VerificationViewModel @Inject constructor(
         if (certificates.isEmpty()) {
             Timber.d("Verification failed: failed to load certificate")
             return InnerVerificationResult(
-                noPublicKeysFound,
-                greenCertificateData,
-                isApplicableCode,
-                base64EncodedKid
+                greenCertificateData = greenCertificateData,
+                isApplicableCode = isApplicableCode,
+                base64EncodedKid = base64EncodedKid
             )
         }
-        noPublicKeysFound = false
+        val noPublicKeysFound = false
+        var certificateExpired = false
         certificates.forEach { innerCertificate ->
             cryptoService.validate(
                 cose,
@@ -214,17 +206,17 @@ class VerificationViewModel @Inject constructor(
                 val currentTime: ZonedDateTime =
                     ZonedDateTime.now().withZoneSameInstant(UTC_ZONE_ID)
                 if (expirationTime != null && currentTime.isAfter(expirationTime)) {
-                    noPublicKeysFound = true
-                    verificationResult.coseVerified = false
+                    certificateExpired = true
                 }
                 return@forEach
             }
         }
         return InnerVerificationResult(
-            noPublicKeysFound,
-            greenCertificateData,
-            isApplicableCode,
-            base64EncodedKid
+            noPublicKeysFound = noPublicKeysFound,
+            certificateExpired = certificateExpired,
+            greenCertificateData = greenCertificateData,
+            isApplicableCode = isApplicableCode,
+            base64EncodedKid = base64EncodedKid
         )
     }
 
