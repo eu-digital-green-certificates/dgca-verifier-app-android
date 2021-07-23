@@ -123,21 +123,6 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
             binding.personFullName.text = certificateModel.getFullName()
             toggleButton(certificateModel)
 
-
-            // TODO remove before release
-            if (verificationData.getGeneralResult() == GeneralVerificationResult.SUCCESS) {
-                val ruleValidationResultCards = mutableListOf<RuleValidationResultCard>()
-                val context = requireContext()
-                binding.rulesList.visibility = View.VISIBLE
-                viewModel.validationResults.value?.forEach { validationResult ->
-                    ruleValidationResultCards.add(
-                        validationResult.toRuleValidationResultCard(context)
-                    )
-                }
-                binding.rulesList.adapter =
-                    RuleValidationResultsAdapter(layoutInflater, ruleValidationResultCards)
-            }
-
             if (verificationData.getGeneralResult() != GeneralVerificationResult.FAILED) {
                 showUserData(certificateModel)
 

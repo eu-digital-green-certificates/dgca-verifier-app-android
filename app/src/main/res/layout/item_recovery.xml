@@ -49,29 +49,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/date_of_recovery" />
+        android:text="@string/certificate_valid_from_to" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/valid_from_value"
         style="@style/TextAppearance.Dgca.CertificateValue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Feb 26, 1998" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/valid_until_title"
-        style="@style/TextAppearance.Dgca.CertificateTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="@string/certificate_expiration" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/valid_until_value"
-        style="@style/TextAppearance.Dgca.CertificateValue"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="Feb 26, 1998" />
+        tools:text="Feb 26, 1998 - Feb 26, 2000" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/country_title"
@@ -79,13 +64,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/issuer_country" />
+        android:text="@string/country_of_test" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/country_value"
         style="@style/TextAppearance.Dgca.CertificateValue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="UA" />
+        tools:text="Germany" />
 
 </LinearLayout>

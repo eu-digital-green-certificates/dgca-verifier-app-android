@@ -77,7 +77,7 @@ data class VaccinationModel(
 
 data class TestModel(
     override val disease: DiseaseType,
-    val typeOfTest: String,
+    val typeOfTest: TypeOfTest,
     val testName: String?,
     val testNameAndManufacturer: String?,
     val dateTimeOfCollection: String,
@@ -98,6 +98,12 @@ enum class TestResult(val value: String) {
 enum class DiseaseType(val value: String) {
     COVID_19("COVID-19"),
     UNDEFINED("UNDEFINED")
+}
+
+enum class TypeOfTest(val value: String) {
+    NUCLEIC_ACID_AMPLIFICATION_WITH_PROBE_DETECTION("Nucleic acid amplification with probe detection"),
+    RAPID_IMMUNOASSAY("Rapid immunoassay"),
+    UNDEFINED("")
 }
 
 data class RecoveryModel(
