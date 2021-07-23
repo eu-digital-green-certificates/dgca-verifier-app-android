@@ -22,9 +22,10 @@
 
 package dgca.verifier.app.android.verification.certs
 
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import dgca.verifier.app.android.bindCountryWith
+import dgca.verifier.app.android.bindText
 import dgca.verifier.app.android.databinding.ItemTestBinding
 import dgca.verifier.app.android.model.TestModel
 import dgca.verifier.app.android.toFormattedDateTime
@@ -32,14 +33,12 @@ import dgca.verifier.app.android.toFormattedDateTime
 class TestViewHolder(private val binding: ItemTestBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(data: TestModel) {
-        val dateOfCollectionString: String? =
-            data.dateTimeOfCollection.toFormattedDateTime()?.apply {
-                binding.dateOfCollectionValue.text = this
-            }
-        binding.dateOfCollectionValue.visibility =
-            if (dateOfCollectionString?.isNotEmpty() == true) View.VISIBLE else View.GONE
-        binding.diseaseValue.text = data.disease.value
-        binding.countryValue.text = data.countryOfVaccination
+        data.disease.value.bindText(binding.diseaseTitle, binding.diseaseValue)
+        data.resultType.value.bindText(binding.testResultTitle, binding.testResultValue)
+        (data.dateTimeOfCollection.toFormattedDateTime()
+            ?: "").bindText(binding.dateOfCollectionTitle, binding.dateOfCollectionValue)
+        data.typeOfTest.value.bindText(binding.typeOfTestTitle, binding.typeOfTestValue)
+        data.countryOfVaccination.bindCountryWith(binding.countryTitle, binding.countryValue)
     }
 
     companion object {

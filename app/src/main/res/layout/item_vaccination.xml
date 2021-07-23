@@ -29,6 +29,21 @@
     tools:background="@color/white">
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/disease_title"
+        style="@style/TextAppearance.Dgca.CertificateTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/target_disease" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/disease_value"
+        style="@style/TextAppearance.Dgca.CertificateValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="COVID-19" />
+
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/date_title"
         style="@style/TextAppearance.Dgca.CertificateTitle"
         android:layout_width="match_parent"
@@ -42,21 +57,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:text="Feb 26, 1998" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/disease_title"
-        style="@style/TextAppearance.Dgca.CertificateTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="@string/target_disease" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/disease_value"
-        style="@style/TextAppearance.Dgca.CertificateValue"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="840539006" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/country_title"

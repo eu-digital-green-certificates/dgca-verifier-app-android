@@ -37,16 +37,11 @@
     <string name="standardised_given_name_title">Standardised Given Name</string>
     <string name="date_of_birth_title">Date of Birth</string>
     <string name="date_of_vaccination_title">Date of Vaccination</string>
-<!--    <string name="dose_number_title">Dose Number</string>-->
     <string name="issuer_country">Issuer Country</string>
     <string name="target_disease">Target Disease</string>
     <string name="date_of_test">Date of Test</string>
-<!--    <string name="date_of_test_result_title">Date of Test Result</string>-->
-<!--    <string name="type_of_test_title">Type of Test</string>-->
     <string name="test_result_title">Test Result</string>
-    <string name="date_of_recovery">Date of Recovery</string>
-    <string name="certificate_expiration">Certificate Expiration</string>
-    <!--    <string name="date_of_positive_title">Date of First Positive Test</string>-->
+    <string name="certificate_valid_from_to">Certificate Valid From - To</string>
 
     <string name="settings">Settings</string>
     <string name="privacy_information">Privacy information</string>
@@ -78,4 +73,7 @@
     <string name="passed_for">Passed for %1$s (see settings)</string>
     <string name="open_for">Open for %1$s (see settings)</string>
     <string name="failed_for">Failed for %1$s (see settings)</string>
+    <string name="type_of_test">Type of Test</string>
+    <string name="country_of_test">Country of Test</string>
+    <string name="test_result">Test Result</string>
 </resources>

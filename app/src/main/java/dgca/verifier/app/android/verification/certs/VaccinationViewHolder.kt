@@ -26,6 +26,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dgca.verifier.app.android.FORMATTED_YEAR_MONTH_DAY
 import dgca.verifier.app.android.YEAR_MONTH_DAY
+import dgca.verifier.app.android.bindCountryWith
 import dgca.verifier.app.android.databinding.ItemVaccinationBinding
 import dgca.verifier.app.android.model.VaccinationModel
 import dgca.verifier.app.android.parseFromTo
@@ -37,7 +38,7 @@ class VaccinationViewHolder(private val binding: ItemVaccinationBinding) :
         binding.dateValue.text =
             data.dateOfVaccination.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
         binding.diseaseValue.text = data.disease.value
-        binding.countryValue.text = data.countryOfVaccination
+        data.countryOfVaccination.bindCountryWith(binding.countryTitle, binding.countryValue)
     }
 
     companion object {
