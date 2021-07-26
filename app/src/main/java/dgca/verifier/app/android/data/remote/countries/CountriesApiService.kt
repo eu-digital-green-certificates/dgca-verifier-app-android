@@ -17,20 +17,17 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:49 AM
+ *  Created by osarapulov on 7/26/21 1:46 PM
  */
 
-import org.gradle.api.JavaVersion
+package dgca.verifier.app.android.data.remote.countries
 
-object Config {
-    const val minSdk = 26
-    const val compileSdk = 29
-    const val targetSdk = 29
-    val javaVersion = JavaVersion.VERSION_1_8
+import retrofit2.Response
+import retrofit2.http.GET
+import retrofit2.http.Url
 
-    const val versionCode = 17
-    const val versionName = "1.1.9"
+interface CountriesApiService {
 
-    const val androidTestInstrumentation = "androidx.test.runner.AndroidJUnitRunner"
-    const val proguardConsumerRules = "consumer-rules.pro"
+    @GET
+    suspend fun getCountries(@Url url: String): Response<List<String>>
 }

@@ -17,20 +17,17 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:49 AM
+ *  Created by osarapulov on 7/26/21 11:56 AM
  */
 
-import org.gradle.api.JavaVersion
+package dgca.verifier.app.android.data.local.countries
 
-object Config {
-    const val minSdk = 26
-    const val compileSdk = 29
-    const val targetSdk = 29
-    val javaVersion = JavaVersion.VERSION_1_8
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-    const val versionCode = 17
-    const val versionName = "1.1.9"
-
-    const val androidTestInstrumentation = "androidx.test.runner.AndroidJUnitRunner"
-    const val proguardConsumerRules = "consumer-rules.pro"
-}
+@Entity(tableName = "countries")
+data class CountryLocal(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val isoCode: String,
+)

@@ -17,20 +17,24 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:49 AM
+ *  Created by osarapulov on 7/26/21 11:53 AM
  */
 
-import org.gradle.api.JavaVersion
+package dgca.verifier.app.android.data.local.countries
 
-object Config {
-    const val minSdk = 26
-    const val compileSdk = 29
-    const val targetSdk = 29
-    val javaVersion = JavaVersion.VERSION_1_8
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
-    const val versionCode = 17
-    const val versionName = "1.1.9"
+@Dao
+interface CountriesDao {
+    @Query("SELECT * from countries")
+    fun getAll(): Flow<List<CountryLocal>>
 
-    const val androidTestInstrumentation = "androidx.test.runner.AndroidJUnitRunner"
-    const val proguardConsumerRules = "consumer-rules.pro"
+    @Insert
+    fun insertAll(vararg countriesLocal: CountryLocal)
+
+    @Query("DELETE FROM countries")
+    fun deleteAll()
 }
