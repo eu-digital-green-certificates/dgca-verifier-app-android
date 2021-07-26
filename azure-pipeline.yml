@@ -51,23 +51,23 @@ stages:
           echo '##vso[task.setvariable variable=message]$(Build.SourceVersionMessage)'
         failOnStderr: true
         
-    - task: ExtractVersionFromTag@1
-      inputs:
-        projectFolderPath: '$(Build.SourcesDirectory)'
+    # - task: ExtractVersionFromTag@1
+    #   inputs:
+    #     projectFolderPath: '$(Build.SourcesDirectory)'
     
     - script: |
         echo 'Message $(message)'
         echo '$(NUMBER_OF_COMMITS)'
         echo '$(MAJOR).$(MINOR).$(PATCH)-dev'
   
-    - task: UpdateAndroidVersionGradle@1
-      inputs:
-        buildGradlePath: 'it-dgc-verificaC19-android/app/build.gradle'
-        versionCode: '$(NUMBER_OF_COMMITS)'
-        versionName: '$(MAJOR).$(MINOR).$(PATCH)-dev' 
-        ${{ if contains(variables['message'],'#build-release') }}: 
-          versionName: '$(MAJOR).$(MINOR).$(PATCH)'
-      condition: and(succeeded(), contains(variables['message'],'#build-debug'))
+    # - task: UpdateAndroidVersionGradle@1
+    #   inputs:
+    #     buildGradlePath: 'it-dgc-verificaC19-android/app/build.gradle'
+    #     versionCode: '$(NUMBER_OF_COMMITS)'
+    #     versionName: '$(MAJOR).$(MINOR).$(PATCH)-dev' 
+    #     ${{ if contains(variables['message'],'#build-release') }}: 
+    #       versionName: '$(MAJOR).$(MINOR).$(PATCH)'
+    #   condition: and(succeeded(), contains(variables['message'],'#build-debug'))
 
     # - task: SonarQubePrepare@4
     #   inputs:
