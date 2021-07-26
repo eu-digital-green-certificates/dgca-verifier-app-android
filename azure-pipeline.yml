@@ -51,7 +51,6 @@ stages:
           echo $(versionCounter)
           echo 'commit message: $(Build.SourceVersionMessage)'
           echo '##vso[task.setvariable variable=message]$(Build.SourceVersionMessage)'
-          ${{ if contains(variables['Build.SourceVersionMessage'],'#build-release') }}:
           if [[ $(Build.SourceVersionMessage) == *"#build-release"* ]]; then
             echo '##vso[task.setvariable variable=build]true'
             echo '##vso[task.setvariable variable=release]true'
