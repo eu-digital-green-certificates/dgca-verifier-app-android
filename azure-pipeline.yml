@@ -48,7 +48,7 @@ stages:
           echo 'Check pipeline var'
           echo 'publishToAppCenter: $(publishToAppCenter)'
           echo 'publishToStore $(publishToStore)'
-          echo $(versionCounter)
+          echo $(versionCounter) 
           echo 'commit message: $(Build.SourceVersionMessage)'
           echo '##vso[task.setvariable variable=message]$(Build.SourceVersionMessage)'
           GIT_MESSAGE=$(Build.SourceVersionMessage)
