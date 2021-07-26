@@ -66,6 +66,7 @@ android {
     compileOptions {
         sourceCompatibility Config.javaVersion
         targetCompatibility Config.javaVersion
+        coreLibraryDesugaringEnabled true
     }
 
     kotlinOptions {
@@ -105,7 +106,8 @@ dependencies {
     implementation Deps.room_runtime
     implementation Deps.androidx_worker_ktx
     implementation Deps.kotlinx_coroutines
-    implementation Deps.zxing
+    implementation(Deps.zxing) { transitive = false }
+    implementation Deps.zxing_core
     implementation Deps.guava_conflict_resolver
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.4.0-alpha02"
 
@@ -127,4 +129,5 @@ dependencies {
     testImplementation Deps.test_junit
 //    testImplementation Deps.mockito_core
 //    testImplementation Deps.mockito_kotlin
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 }

@@ -17,20 +17,13 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:49 AM
+ *  Created by Admin on 7/26/21, 3:18 AM
  */
 
-import org.gradle.api.JavaVersion
+package dgca.verifier.app.android;
 
-object Config {
-    const val minSdk = 23
-    const val compileSdk = 29
-    const val targetSdk = 29
-    val javaVersion = JavaVersion.VERSION_1_8
-
-    const val versionCode = 16
-    const val versionName = "1.1.8"
-
-    const val androidTestInstrumentation = "androidx.test.runner.AndroidJUnitRunner"
-    const val proguardConsumerRules = "consumer-rules.pro"
+public class BackportUtils {
+    public static int byteToUnsignedInt(byte x) {
+        return x & 0xff;
+    }
 }
