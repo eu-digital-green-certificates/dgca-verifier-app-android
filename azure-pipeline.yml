@@ -48,13 +48,18 @@ stages:
           echo 'publishToStore $(publishToStore)'
           echo $(versionCounter)
           echo 'commit message: $(Build.SourceVersionMessage)'
+          echo '##vso[task.setvariable variable=message]$(Build.SourceVersionMessage)'
         failOnStderr: true
-
-    # - task: UpdateAndroidVersionGradle@1
-    #   inputs:
-    #     buildGradlePath: 'it-dgc-verificaC19-android/app/build.gradle'
-    #     versionCode: '$(versionCounter)'
-    #     #versionName: '$(versionName)'
+        
+    - script: |
+          echo 'Message $(message)'
+          
+    - task: UpdateAndroidVersionGradle@1
+      inputs:
+        buildGradlePath: 'it-dgc-verificaC19-android/app/build.gradle'
+        versionCode: '$(versionCounter)'
+        #versionName: '$(versionName)'
+      condition: and(succeded, contains()
 
     # - task: SonarQubePrepare@4
     #   inputs:
