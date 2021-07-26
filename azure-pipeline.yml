@@ -6,11 +6,13 @@ trigger:
     - develop
     - feature/*
     - releases/*
+  batch: true
 pr:
   branches:
     include:
     - develop
     - releases/*
+
 
 resources:
   repositories:
@@ -49,16 +51,32 @@ stages:
           echo $(versionCounter)
           echo 'commit message: $(Build.SourceVersionMessage)'
           echo '##vso[task.setvariable variable=message]$(Build.SourceVersionMessage)'
+          ${{ if contains(variables['Build.SourceVersionMessage'],'#build-release') }}:
+            echo '##vso[task.setvariable variable=build]true'
+            echo '##vso[task.setvariable variable=release]true'
+          ${{ if contains(variables['Build.SourceVersionMessage'],'#build-debug') }}:
+            echo '##vso[task.setvariable variable=build]true'
+            echo '##vso[task.setvariable variable=debug]true'
+          ${{ if contains(variables['Build.SourceVersionMessage'],'#appcenter') }}:
+            echo '##vso[task.setvariable variable=appcenter]true'
+          ${{ if contains(variables['Build.SourceVersionMessage'],'#store') }}:
+            echo '##vso[task.setvariable variable=store]true'
         failOnStderr: true
         
     # - task: ExtractVersionFromTag@1
     #   inputs:
     #     projectFolderPath: '$(Build.SourcesDirectory)'
     
-    - script: |
-        echo 'Message $(message)'
-        echo '$(NUMBER_OF_COMMITS)'
-        echo '$(MAJOR).$(MINOR).$(PATCH)-dev'
+    - bash: |
+         echo 'message $(message)'
+         echo 'build $(build)'
+         echo 'debug $(debug)'
+         echo 'release $(release)'
+         echo 'appcenter $(appcenter)'
+         echo 'store $(store)'
+    #     echo '$(NUMBER_OF_COMMITS)'
+    #     echo '$(MAJOR).$(MINOR).$(PATCH)-dev'
+
   
     # - task: UpdateAndroidVersionGradle@1
     #   inputs:
