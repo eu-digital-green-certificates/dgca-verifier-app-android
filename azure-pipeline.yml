@@ -59,7 +59,7 @@ stages:
         buildGradlePath: 'it-dgc-verificaC19-android/app/build.gradle'
         versionCode: '$(versionCounter)'
         #versionName: '$(versionName)'
-    condition: and(succeded(), contains(variables['message'],'#build-debug'))
+    condition: and(succeeded(), contains(variables['message'],'#build-debug'))
 
     # - task: SonarQubePrepare@4
     #   inputs:
