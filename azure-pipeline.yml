@@ -52,15 +52,20 @@ stages:
           echo 'commit message: $(Build.SourceVersionMessage)'
           echo '##vso[task.setvariable variable=message]$(Build.SourceVersionMessage)'
           ${{ if contains(variables['Build.SourceVersionMessage'],'#build-release') }}:
+          if [[ $(Build.SourceVersionMessage) == *"#build-release"* ]]; then
             echo '##vso[task.setvariable variable=build]true'
             echo '##vso[task.setvariable variable=release]true'
-          ${{ if contains(variables['Build.SourceVersionMessage'],'#build-debug') }}:
+          fi
+          if [[ $(Build.SourceVersionMessage) == *"#build-debug"* ]]; then
             echo '##vso[task.setvariable variable=build]true'
             echo '##vso[task.setvariable variable=debug]true'
-          ${{ if contains(variables['Build.SourceVersionMessage'],'#appcenter') }}:
+          fi
+          if [[ $(Build.SourceVersionMessage) == *"#appcenter"* ]]; then
             echo '##vso[task.setvariable variable=appcenter]true'
-          ${{ if contains(variables['Build.SourceVersionMessage'],'#store') }}:
+          fi
+          if [[ $(Build.SourceVersionMessage) == *"#store"* ]]; then
             echo '##vso[task.setvariable variable=store]true'
+          fi
         failOnStderr: true
         
     # - task: ExtractVersionFromTag@1
