@@ -52,6 +52,9 @@ stages:
           echo 'commit message: $(Build.SourceVersionMessage)'
           echo '##vso[task.setvariable variable=message]$(Build.SourceVersionMessage)'
           GIT_MESSAGE=$(Build.SourceVersionMessage)
+          if [[ ! $GIT_MESSAGE == *"#build"* ]]; then
+              echo "Not a build commit. Stopping the execution of the build job."
+          fi
           if [[ $GIT_MESSAGE == *"#build-release"* ]]; then
             echo '##vso[task.setvariable variable=build]true'
             echo '##vso[task.setvariable variable=release]true'
