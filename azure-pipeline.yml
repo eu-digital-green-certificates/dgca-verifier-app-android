@@ -13,7 +13,7 @@ pr:
     - develop
     - releases/*
 
-
+ 
 resources:
   repositories:
   - repository: dgca-app-core-android
