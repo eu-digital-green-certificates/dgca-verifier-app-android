@@ -150,14 +150,4 @@ stages:
         artifact: 'release-notes'
         publishLocation: 'pipeline'
 
-    - task: WhiteSource@21
-      inputs:
-        cwd: '$(System.DefaultWorkingDirectory)'
-        projectName: 'ministero-salute.it-dgc-verificaC19-android'
-    
-    - task: dependency-check-build-task@6
-      inputs:
-        projectName: 'ministero-salute.it-dgc-verificaC19-android'
-        scanPath: './'
-        format: 'HTML'
       
