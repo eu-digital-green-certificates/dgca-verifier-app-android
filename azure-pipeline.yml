@@ -61,7 +61,7 @@ stages:
             echo '##vso[task.setvariable variable=release;isOutput=true;]true'
           fi
           if [[ $GIT_MESSAGE == *"#build-debug"* ]]; then
-            echo '##vso[task.setvariable variable=buil;isOutput=true;]true'
+            echo '##vso[task.setvariable variable=build;isOutput=true;]true'
             echo '##vso[task.setvariable variable=debug;isOutput=true;]true'
           fi
           if [[ $GIT_MESSAGE == *"#appcenter"* ]]; then
