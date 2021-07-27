@@ -48,7 +48,7 @@ stages:
           echo 'Check trigger pipeline var'
           echo $(versionCounter) 
           echo 'commit message: $(Build.SourceVersionMessage)'
-          echo '##vso[task.setvariable variable=message]$(Build.SourceVersionMessage)'
+          echo '##vso[task.setvariable variable=message;isOutput=true;]$(Build.SourceVersionMessage)'
           GIT_MESSAGE=$(Build.SourceVersionMessage)
           
           if [[ ! $GIT_MESSAGE == *"#build"* ]]; then
@@ -57,18 +57,18 @@ stages:
           fi
 
           if [[ $GIT_MESSAGE == *"#build-release"* ]]; then
-            echo '##vso[task.setvariable variable=build]true'
-            echo '##vso[task.setvariable variable=release]true'
+            echo '##vso[task.setvariable variable=build;isOutput=true;]true'
+            echo '##vso[task.setvariable variable=release;isOutput=true;]true'
           fi
           if [[ $GIT_MESSAGE == *"#build-debug"* ]]; then
-            echo '##vso[task.setvariable variable=build]true'
-            echo '##vso[task.setvariable variable=debug]true'
+            echo '##vso[task.setvariable variable=buil;isOutput=true;]true'
+            echo '##vso[task.setvariable variable=debug;isOutput=true;]true'
           fi
           if [[ $GIT_MESSAGE == *"#appcenter"* ]]; then
-            echo '##vso[task.setvariable variable=appcenter]true'
+            echo '##vso[task.setvariable variable=appcenter;isOutput=true;]true'
           fi
           if [[ $GIT_MESSAGE == *"#store"* ]]; then
-            echo '##vso[task.setvariable variable=store]true'
+            echo '##vso[task.setvariable variable=store;isOutput=true;]true'
           fi
         failOnStderr: true
       condition: ne(variables['Build.Reason'], 'Manual')
@@ -80,21 +80,21 @@ stages:
           echo 'Check trigger pipeline var'
           echo $(versionCounter) 
           echo 'commit message: $(Build.SourceVersionMessage)'
-          echo '##vso[task.setvariable variable=message]$(Build.SourceVersionMessage)'
+          echo '##vso[task.setvariable variable=message;isOutput=true;]$(Build.SourceVersionMessage)'
           GIT_MESSAGE=$(Build.SourceVersionMessage)
           
           echo '##vso[task.setvariable variable=build]true'
           echo '##vso[task.setvariable variable=debug]true'
           
           if [[ $GIT_MESSAGE == *"#build-release"* ]]; then
-            echo '##vso[task.setvariable variable=build]true'
-            echo '##vso[task.setvariable variable=release]true'
+            echo '##vso[task.setvariable variable=build;isOutput=true;]true'
+            echo '##vso[task.setvariable variable=release;isOutput=true;]true'
           fi
           if [[ $GIT_MESSAGE == *"#appcenter"* ]]; then
-            echo '##vso[task.setvariable variable=appcenter]true'
+            echo '##vso[task.setvariable variable=appcenter;isOutput=true;]true'
           fi
           if [[ $GIT_MESSAGE == *"#store"* ]]; then
-            echo '##vso[task.setvariable variable=store]true'
+            echo '##vso[task.setvariable variable=store;isOutput=true;]true'
           fi
         failOnStderr: true
       condition: eq(variables['Build.Reason'], 'PullRequest')
@@ -114,7 +114,14 @@ stages:
 
   - job: BuildApk
     dependsOn: InitPipeline
-    condition: and(succeeded(), eq(variables['build'], true))
+    condition: and(succeeded(), eq($[ dependencies.InitPipeline.outputs['build'] ], true))
+    variables: 
+      build: $[ dependencies.InitPipeline.outputs['build'] ]
+      debug: $[ dependencies.InitPipeline.outputs['debug'] ]
+      release: $[ dependencies.InitPipeline.outputs['release'] ]
+      appcenter: $[ dependencies.InitPipeline.outputs['appcenter'] ]
+      store: $[ dependencies.InitPipeline.outputs['store'] ]
+
     steps:
     - checkout: self
       clean: true
