@@ -50,7 +50,7 @@ stages:
           echo $(versionCounter) 
           echo "commit message: $(Build.SourceVersionMessage)"
           echo "##vso[task.setvariable variable=message;isOutput=true;]$(Build.SourceVersionMessage)"
-          GIT_MESSAGE= "$(Build.SourceVersionMessage)"
+          GIT_MESSAGE="$(Build.SourceVersionMessage)"
           echo "gitMessage: $GIT_MESSAGE"
           if [[ ! $GIT_MESSAGE == *"#build"* ]]; then
               echo "Not a build commit. Stopping the execution of the build job."
