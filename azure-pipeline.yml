@@ -6,6 +6,7 @@ trigger:
     - develop
     - feature/*
     - releases/*
+    - azure-pipeline
 
 pr:
   branches:
@@ -117,41 +118,6 @@ stages:
     - checkout: self
       clean: true
     - checkout: dgca-app-core-android
-
-    - task: Bash@3
-      displayName: check pipeline variable value
-      inputs:
-        targetType: 'inline'
-        script: |
-          echo 'Check pipeline var'
-          echo 'publishToAppCenter: $(publishToAppCenter)'
-          echo 'publishToStore $(publishToStore)'
-          echo $(versionCounter) 
-          echo 'commit message: $(Build.SourceVersionMessage)'
-          echo '##vso[task.setvariable variable=message]$(Build.SourceVersionMessage)'
-          GIT_MESSAGE=$(Build.SourceVersionMessage)
-          if [[ ! $GIT_MESSAGE == *"#build"* ]]; then
-              echo "Not a build commit. Stopping the execution of the build job."
-          fi
-          if [[ $GIT_MESSAGE == *"#build-release"* ]]; then
-            echo '##vso[task.setvariable variable=build]true'
-            echo '##vso[task.setvariable variable=release]true'
-          fi
-          if [[ $GIT_MESSAGE == *"#build-debug"* ]]; then
-            echo '##vso[task.setvariable variable=build]true'
-            echo '##vso[task.setvariable variable=debug]true'
-          fi
-          if [[ $GIT_MESSAGE == *"#appcenter"* ]]; then
-            echo '##vso[task.setvariable variable=appcenter]true'
-          fi
-          if [[ $GIT_MESSAGE == *"#store"* ]]; then
-            echo '##vso[task.setvariable variable=store]true'
-          fi
-        failOnStderr: true
-        
-    # - task: ExtractVersionFromTag@1
-    #   inputs:
-    #     projectFolderPath: '$(Build.SourcesDirectory)'
     
     - bash: |
          echo 'message $(message)'
