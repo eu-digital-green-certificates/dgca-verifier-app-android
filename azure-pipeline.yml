@@ -6,7 +6,7 @@ trigger:
     - develop
     - feature/*
     - releases/*
-    - azure-pipeline
+    - azure-pipelines
 
 
 pr:
