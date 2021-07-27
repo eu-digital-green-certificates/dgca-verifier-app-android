@@ -42,6 +42,7 @@ stages:
 
     - task: Bash@3
       displayName: set init value
+      name: initPipeline
       inputs:
         targetType: 'inline'
         script: |
@@ -106,24 +107,24 @@ stages:
     #     projectFolderPath: '$(Build.SourcesDirectory)'
     
     - bash: |
-         echo 'message $(message)'
-         echo 'build $(build)'
-         echo 'debug $(debug)'
-         echo 'release $(release)'
-         echo 'appcenter $(appcenter)'
-         echo 'store $(store)'
+         echo 'message $(initPipeline.message)'
+         echo 'build $(initPipeline.build)'
+         echo 'debug $(initPipeline.debug)'
+         echo 'release $(initPipeline.release)'
+         echo 'appcenter $(initPipeline.appcenter)'
+         echo 'store $(initPipeline.store)'
     #     echo '$(NUMBER_OF_COMMITS)'
     #     echo '$(MAJOR).$(MINOR).$(PATCH)-dev'
 
   - job: BuildApk
     dependsOn: InitPipeline
-    condition: and(succeeded(), eq(dependencies.InitPipeline.outputs['build'], true))
+    condition: and(succeeded(), eq(dependencies.InitPipeline.outputs['initPipeline.build'], true))
     variables: 
-      build: $[ dependencies.InitPipeline.outputs['build'] ]
-      debug: $[ dependencies.InitPipeline.outputs['debug'] ]
-      release: $[ dependencies.InitPipeline.outputs['release'] ]
-      appcenter: $[ dependencies.InitPipeline.outputs['appcenter'] ]
-      store: $[ dependencies.InitPipeline.outputs['store'] ]
+      build: $[ dependencies.InitPipeline.outputs['initPipeline.build'] ]
+      debug: $[ dependencies.InitPipeline.outputs['initPipeline.debug'] ]
+      release: $[ dependencies.InitPipeline.outputs['initPipeline.release'] ]
+      appcenter: $[ dependencies.InitPipeline.outputs['initPipeline.appcenter'] ]
+      store: $[ dependencies.InitPipeline.outputs['initPipeline.store'] ]
 
     steps:
     - checkout: self
