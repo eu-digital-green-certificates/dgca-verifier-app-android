@@ -114,7 +114,7 @@ stages:
 
   - job: BuildApk
     dependsOn: InitPipeline
-    condition: $[succeeded(), eq(variables['build'], true)]
+    condition: and(succeeded(), $[eq(variables['build'], true)])
     steps:
     - checkout: self
       clean: true
