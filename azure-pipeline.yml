@@ -56,11 +56,11 @@ stages:
           echo "buildReason: $BUILD_REASON"
           echo "gitMessage: $GIT_MESSAGE"
 
-          echo "##vso[task.setvariable variable=build;isOutput=true;]$(build)
-          echo "##vso[task.setvariable variable=debug;isOutput=true;]$(debug)
-          echo "##vso[task.setvariable variable=release;isOutput=true;]$(release)
-          echo "##vso[task.setvariable variable=appcenter;isOutput=true;]$(appcenter)
-          echo "##vso[task.setvariable variable=store;isOutput=true;]$(store)
+          echo "##vso[task.setvariable variable=build;isOutput=true;]$(build)"
+          echo "##vso[task.setvariable variable=debug;isOutput=true;]$(debug)"
+          echo "##vso[task.setvariable variable=release;isOutput=true;]$(release)"
+          echo "##vso[task.setvariable variable=appcenter;isOutput=true;]$(appcenter)"
+          echo "##vso[task.setvariable variable=store;isOutput=true;]$(store)"
           
           if [[ ! BUILD_REASON == 'IndividualCI' ]]; then
             echo "Set variable for Build Reason Individual CI"
@@ -93,8 +93,8 @@ stages:
 
           if [[ BUILD_REASON == 'PullRequest' ]]; then
               echo "Set variable for Build Reason PullRequest "
-              echo "##vso[task.setvariable variable=build;isOutput=true;]true
-              echo "##vso[task.setvariable variable=debug;isOutput=true;]true
+              echo "##vso[task.setvariable variable=build;isOutput=true;]true"
+              echo "##vso[task.setvariable variable=debug;isOutput=true;]true"
           fi
 
     - task: Bash@3
