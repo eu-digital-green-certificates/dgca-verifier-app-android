@@ -11,7 +11,7 @@ pr:
     include:
     - develop
     - releases/*
-
+ 
 resources:
   repositories:
   - repository: dgca-app-core-android
