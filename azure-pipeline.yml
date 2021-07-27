@@ -118,7 +118,7 @@ stages:
 
   - job: BuildApk
     dependsOn: InitPipeline
-    condition: and(succeeded(), dependencies.InitPipeline.outputs['build'], true)
+    condition: and(succeeded(), eq(dependencies.InitPipeline.outputs['build'], true))
     variables: 
       build: $[ dependencies.InitPipeline.outputs['build'] ]
       debug: $[ dependencies.InitPipeline.outputs['debug'] ]
