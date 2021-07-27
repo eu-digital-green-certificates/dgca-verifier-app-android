@@ -53,7 +53,6 @@ stages:
           
           if [[ ! $GIT_MESSAGE == *"#build"* ]]; then
               echo "Not a build commit. Stopping the execution of the build job."
-
           fi
 
           if [[ $GIT_MESSAGE == *"#build-release"* ]]; then
