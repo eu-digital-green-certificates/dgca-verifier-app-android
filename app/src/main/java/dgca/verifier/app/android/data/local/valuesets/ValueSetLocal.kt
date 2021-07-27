@@ -17,20 +17,21 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:49 AM
+ *  Created by osarapulov on 7/26/21 12:08 PM
  */
 
-import org.gradle.api.JavaVersion
+package dgca.verifier.app.android.data.local.valuesets
 
-object Config {
-    const val minSdk = 23
-    const val compileSdk = 29
-    const val targetSdk = 29
-    val javaVersion = JavaVersion.VERSION_1_8
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.fasterxml.jackson.databind.JsonNode
+import java.time.LocalDate
 
-    const val versionCode = 17
-    const val versionName = "1.1.9"
-
-    const val androidTestInstrumentation = "androidx.test.runner.AndroidJUnitRunner"
-    const val proguardConsumerRules = "consumer-rules.pro"
-}
+@Entity(tableName = "valuesets")
+class ValueSetLocal(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val valueSetId: String,
+    val valueSetDate: LocalDate,
+    val valueSetValues: JsonNode
+)

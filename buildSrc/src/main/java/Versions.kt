@@ -32,6 +32,7 @@ object Versions {
     const val androidx_material = "1.3.0"
     const val androidx_constraint = "2.0.4"
     const val kotlinx_coroutines = "1.3.9"
+    const val kotlinx_coroutines_core = "1.5.1"
     private const val work_hilt = "1.0.0-beta01"
     const val androidx_hilt_viewmodel = "1.0.0-alpha02"
     const val androidx_hilt_work = work_hilt

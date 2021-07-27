@@ -17,20 +17,19 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:49 AM
+ *  Created by osarapulov on 7/26/21 1:47 PM
  */
 
-import org.gradle.api.JavaVersion
+package dgca.verifier.app.android.data.remote.countries
 
-object Config {
-    const val minSdk = 23
-    const val compileSdk = 29
-    const val targetSdk = 29
-    val javaVersion = JavaVersion.VERSION_1_8
+import dgca.verifier.app.engine.data.source.remote.countries.CountriesRemoteDataSrouce
+import retrofit2.Response
 
-    const val versionCode = 17
-    const val versionName = "1.1.9"
-
-    const val androidTestInstrumentation = "androidx.test.runner.AndroidJUnitRunner"
-    const val proguardConsumerRules = "consumer-rules.pro"
+class DefaultCountriesRemoteDataSource(private val countriesApiService: CountriesApiService) :
+    CountriesRemoteDataSrouce {
+    override suspend fun getCountries(countriesUrl: String): List<String> {
+        val countriesResponse: Response<List<String>> =
+            countriesApiService.getCountries(countriesUrl)
+        return countriesResponse.body() ?: listOf()
+    }
 }
