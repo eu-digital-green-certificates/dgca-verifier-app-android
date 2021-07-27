@@ -42,7 +42,7 @@ stages:
 
     - task: Bash@3
       displayName: set init value
-      name: initPipeline
+      name: checkBuildCommit
       inputs:
         targetType: 'inline'
         script: |
@@ -80,6 +80,27 @@ stages:
       condition: ne(variables['Build.Reason'], 'Manual')
 
     - task: Bash@3
+      displayName: set init value
+      name: checkReleaseCommit
+      inputs:
+        targetType: 'inline'
+        script: |
+          echo "Check if commit contain release message"
+          echo "commit message: $(Build.SourceVersionMessage)"
+          echo "##vso[task.setvariable variable=message;isOutput=true;]$(Build.SourceVersionMessage)"
+          GIT_MESSAGE=$(Build.SourceVersionMessage)
+
+          if [[ $GIT_MESSAGE == *"#appcenter"* ]]; then
+            echo "set variabili appcenter a true"
+            echo "##vso[task.setvariable variable=appcenter;isOutput=true;]true"
+          fi
+
+          if [[ $GIT_MESSAGE == *"#store"* ]]; then
+            echo "set variabili store a true"
+            echo "##vso[task.setvariable variable=store;isOutput=true;]true"
+          fi
+      condition: ne(variables['Build.Reason'], 'Manual')
+    - task: Bash@3
       displayName: set PR value
       inputs:
         targetType: 'inline'
@@ -104,24 +125,24 @@ stages:
     #     projectFolderPath: '$(Build.SourcesDirectory)'
     
     - bash: |
-         echo 'message $(initPipeline.message)'
-         echo 'build $(initPipeline.build)'
-         echo 'debug $(initPipeline.debug)'
-         echo 'release $(initPipeline.release)'
-         echo 'appcenter $(initPipeline.appcenter)'
-         echo 'store $(initPipeline.store)'
+         echo 'message $(checkBuildCommit.message)'
+         echo 'build $(checkBuildCommit.build)'
+         echo 'debug $(checkBuildCommit.debug)'
+         echo 'release $(checkBuildCommit.release)'
+         echo 'appcenter $(checkReleaseCommit.appcenter)'
+         echo 'store $(checkReleaseCommit.store)'
     #     echo '$(NUMBER_OF_COMMITS)'
     #     echo '$(MAJOR).$(MINOR).$(PATCH)-dev'
 
   - job: BuildApk
     dependsOn: InitPipeline
-    condition: and(succeeded(), eq(dependencies.InitPipeline.outputs['initPipeline.build'], true))
+    condition: and(succeeded(), eq(dependencies.InitPipeline.outputs['checkBuildCommit.build'], true))
     variables: 
-      build: $[ dependencies.InitPipeline.outputs['initPipeline.build'] ]
-      debug: $[ dependencies.InitPipeline.outputs['initPipeline.debug'] ]
-      release: $[ dependencies.InitPipeline.outputs['initPipeline.release'] ]
-      appcenter: $[ dependencies.InitPipeline.outputs['initPipeline.appcenter'] ]
-      store: $[ dependencies.InitPipeline.outputs['initPipeline.store'] ]
+      build: $[ dependencies.InitPipeline.outputs['checkBuildCommit.build'] ]
+      debug: $[ dependencies.InitPipeline.outputs['checkBuildCommit.debug'] ]
+      release: $[ dependencies.InitPipeline.outputs['checkBuildCommit.release'] ]
+      appcenter: $[ dependencies.InitPipeline.outputs['checkReleaseCommit.appcenter'] ]
+      store: $[ dependencies.InitPipeline.outputs['checkReleaseCommit.store'] ]
 
     steps:
     - checkout: self
