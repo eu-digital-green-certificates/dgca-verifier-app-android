@@ -145,7 +145,6 @@ stages:
         versionName: '$(version-name)-dev'
         ${{ if eq(variables['release'],true) }}:
           versionName: '$(version-name)'
-      condition: and(succeeded(), contains(variables['message'],'#build-debug'))
 
     - task: SonarQubePrepare@4
       inputs:
