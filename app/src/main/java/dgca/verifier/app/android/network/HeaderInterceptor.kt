@@ -23,6 +23,7 @@
 package dgca.verifier.app.android.network
 
 import android.os.Build
+import dgca.verifier.app.android.BackportUtils
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
@@ -78,7 +79,7 @@ private fun String.sha256(): String {
         digest.update(this.toByteArray())
         val byteData: ByteArray = digest.digest()
         for (x in byteData) {
-            val str = Integer.toHexString(java.lang.Byte.toUnsignedInt(x))
+            val str = Integer.toHexString(BackportUtils.byteToUnsignedInt(x))
             if (str.length < 2) {
                 sb.append('0')
             }

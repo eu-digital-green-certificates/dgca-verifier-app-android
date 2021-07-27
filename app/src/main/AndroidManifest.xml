@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="dgca.verifier.app.android">
 
+    <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
 
