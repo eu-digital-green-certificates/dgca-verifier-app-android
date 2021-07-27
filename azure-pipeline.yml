@@ -26,15 +26,68 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  publishToAppCenter: $[eq(variables['Build.SourceBranch'], 'refs/heads/develop')]
-  publishToStore: $[contains(variables['Build.SourceBranch'], 'refs/heads/releases')]
   versionCounter: $[counter(variables['Build.SourceBranch'], 100)] 
 
 stages:
 - stage: Build
   jobs:
-  - job: BuildApk
+  - job: InitPipeline
 
+    steps:
+    - checkout: self
+      clean: true
+    - checkout: dgca-app-core-android
+
+    - task: Bash@3
+      displayName: check pipeline value
+      inputs:
+        targetType: 'inline'
+        script: |
+          echo 'Check trigger pipeline var'
+          echo $(versionCounter) 
+          echo 'commit message: $(Build.SourceVersionMessage)'
+          echo '##vso[task.setvariable variable=message]$(Build.SourceVersionMessage)'
+          GIT_MESSAGE=$(Build.SourceVersionMessage)
+          
+          if [[ ! $GIT_MESSAGE == *"#build"* ]]; then
+              echo "Not a build commit. Stopping the execution of the build job."
+              
+          fi
+
+          if [[ $GIT_MESSAGE == *"#build-release"* ]]; then
+            echo '##vso[task.setvariable variable=build]true'
+            echo '##vso[task.setvariable variable=release]true'
+          fi
+          if [[ $GIT_MESSAGE == *"#build-debug"* ]]; then
+            echo '##vso[task.setvariable variable=build]true'
+            echo '##vso[task.setvariable variable=debug]true'
+          fi
+          if [[ $GIT_MESSAGE == *"#appcenter"* ]]; then
+            echo '##vso[task.setvariable variable=appcenter]true'
+          fi
+          if [[ $GIT_MESSAGE == *"#store"* ]]; then
+            echo '##vso[task.setvariable variable=store]true'
+          fi
+        failOnStderr: true
+      condition: $[eq(variables['Build.Reason'], 'IndividualCI')]
+
+    # - task: ExtractVersionFromTag@1
+    #   inputs:
+    #     projectFolderPath: '$(Build.SourcesDirectory)'
+    
+    - bash: |
+         echo 'message $(message)'
+         echo 'build $(build)'
+         echo 'debug $(debug)'
+         echo 'release $(release)'
+         echo 'appcenter $(appcenter)'
+         echo 'store $(store)'
+    #     echo '$(NUMBER_OF_COMMITS)'
+    #     echo '$(MAJOR).$(MINOR).$(PATCH)-dev'
+
+  - job: BuildApk
+    dependsOn: InitPipeline
+    condition: $[eq(variables['build'], true)]
     steps:
     - checkout: self
       clean: true
