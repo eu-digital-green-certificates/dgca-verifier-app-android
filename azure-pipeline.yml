@@ -67,16 +67,6 @@ stages:
             echo "##vso[task.setvariable variable=build;isOutput=true;]true"
             echo "##vso[task.setvariable variable=debug;isOutput=true;]true"
           fi
-
-          if [[ $GIT_MESSAGE == *"#appcenter"* ]]; then
-            echo "set variabili appcenter a true"
-            echo "##vso[task.setvariable variable=appcenter;isOutput=true;]true"
-          fi
-
-          if [[ $GIT_MESSAGE == *"#store"* ]]; then
-            echo "set variabili store a true"
-            echo "##vso[task.setvariable variable=store;isOutput=true;]true"
-          fi
       condition: ne(variables['Build.Reason'], 'Manual')
 
     - task: Bash@3
