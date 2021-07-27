@@ -52,7 +52,7 @@ stages:
           echo "##vso[task.setvariable variable=message;isOutput=true;]$(Build.SourceVersionMessage)"
           GIT_MESSAGE="$(Build.SourceVersionMessage)"
           BUILD_REASON=$(Build.Reason)
-
+ 
           echo "buildReason: $BUILD_REASON"
           echo "gitMessage: $GIT_MESSAGE"
 
