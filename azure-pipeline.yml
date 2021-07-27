@@ -1,4 +1,4 @@
-name: dgca-verifier-app-android
+name: $(Build.BuildID) - dgca-verifier-app-android
 
 trigger:
   branches:
@@ -6,12 +6,16 @@ trigger:
     - develop
     - feature/*
     - releases/*
+    - azure-pipelines
+ 
+
 pr:
   branches:
     include:
     - develop
     - releases/*
 
+ 
 resources:
   repositories:
   - repository: dgca-app-core-android
@@ -24,14 +28,12 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  publishToAppCenter: $[eq(variables['Build.SourceBranch'], 'refs/heads/develop')]
-  publishToStore: $[contains(variables['Build.SourceBranch'], 'refs/heads/releases')]
   versionCounter: $[counter(variables['Build.SourceBranch'], 100)] 
 
 stages:
 - stage: Build
   jobs:
-  - job: BuildApk
+  - job: InitPipeline
 
     steps:
     - checkout: self
@@ -39,125 +41,209 @@ stages:
     - checkout: dgca-app-core-android
 
     - task: Bash@3
-      displayName: check pipeline variable value
+      displayName: set init value
+      name: initPipeline
       inputs:
         targetType: 'inline'
         script: |
-          echo 'Check pipeline var'
-          echo 'publishToAppCenter: $(publishToAppCenter)'
-          echo 'publishToStore $(publishToStore)'
-          echo $(versionCounter)
+          echo "Check trigger pipeline var"
+          echo $(versionCounter) 
+          echo "commit message: $(Build.SourceVersionMessage)"
+          echo "##vso[task.setvariable variable=message;isOutput=true;]$(Build.SourceVersionMessage)"
+          GIT_MESSAGE=$(Build.SourceVersionMessage)
+          
+          if [[ ! $GIT_MESSAGE == *"#build"* ]]; then
+              echo "Not a build commit. Stopping the execution of the build job."
+          fi
+
+          if [[ $GIT_MESSAGE == *"#build-release"* ]]; then
+            echo "set variabili build e release a true"
+            echo "##vso[task.setvariable variable=build;isOutput=true;]true"
+            echo "##vso[task.setvariable variable=release;isOutput=true;]true"
+          fi
+          if [[ $GIT_MESSAGE == *"#build-debug"* ]]; then
+            echo "set variabili build e debug a true"
+            echo "##vso[task.setvariable variable=build;isOutput=true;]true"
+            echo "##vso[task.setvariable variable=debug;isOutput=true;]true"
+          fi
+          if [[ $GIT_MESSAGE == *"#appcenter"* ]]; then
+            echo "set variabili appcenter a true"
+            echo "##vso[task.setvariable variable=appcenter;isOutput=true;]true"
+          fi
+          if [[ $GIT_MESSAGE == *"#store"* ]]; then
+            echo "set variabili store a true"
+            echo "##vso[task.setvariable variable=store;isOutput=true;]true"
+          fi
+      condition: ne(variables['Build.Reason'], 'Manual')
+
+    - task: Bash@3
+      displayName: set PR value
+      inputs:
+        targetType: 'inline'
+        script: |
+          echo 'Check trigger pipeline var'
+          echo $(versionCounter) 
+          echo 'commit message: $(Build.SourceVersionMessage)'
+          echo '##vso[task.setvariable variable=message;isOutput=true;]$(Build.SourceVersionMessage)'
+          GIT_MESSAGE=$(Build.SourceVersionMessage)
+          
+          echo '##vso[task.setvariable variable=build]true'
+          echo '##vso[task.setvariable variable=debug]true'
+          
+          if [[ $GIT_MESSAGE == *"#build-release"* ]]; then
+            echo '##vso[task.setvariable variable=build;isOutput=true;]true'
+            echo '##vso[task.setvariable variable=release;isOutput=true;]true'
+          fi
+          if [[ $GIT_MESSAGE == *"#appcenter"* ]]; then
+            echo '##vso[task.setvariable variable=appcenter;isOutput=true;]true'
+          fi
+          if [[ $GIT_MESSAGE == *"#store"* ]]; then
+            echo '##vso[task.setvariable variable=store;isOutput=true;]true'
+          fi
         failOnStderr: true
-
-    - task: UpdateAndroidVersionGradle@1
-      inputs:
-        buildGradlePath: 'it-dgc-verificaC19-android/app/build.gradle'
-        versionCode: '$(versionCounter)'
-        #versionName: '$(versionName)'
-
-    - task: SonarQubePrepare@4
-      inputs:
-        SonarQube: 'SonarQube Azure 8.9'
-        scannerMode: 'CLI'
-        configMode: 'manual'
-        cliProjectKey: '$(System.TeamProject)_it-dgc-verificaC19-android'
-        cliProjectName: '$(System.TeamProject)_it-dgc-verificaC19-android'
-        cliProjectVersion: '$(Build.SourceBranchName)_$(Build.SourceVersion)'
-        cliSources: '.'
-        extraProperties: |
-          sonar.java.binaries=.
-          sonar.exclusions=**/CCReport*/**
-      continueOnError: true
-
-    - task: SonarQubeAnalyze@4
-      continueOnError: true
-      condition: succeeded()
-
-    - task: SonarQubePublish@4
-      inputs:
-        pollingTimeoutSec: '300'
-      continueOnError: true
-      condition: succeeded()
-    - task: Gradle@2
-      inputs:
-        gradleWrapperFile: 'it-dgc-verificaC19-android/gradlew'
-        workingDirectory: 'it-dgc-verificaC19-android'
-        tasks: 'assembleRelease'
-        publishJUnitResults: true
-        testResultsFiles: '**/TEST-*.xml'
-        javaHomeOption: 'JDKVersion'
-        jdkVersionOption: '1.8'
-        gradleOptions: '-Xmx3072m'
-        sonarQubeRunAnalysis: false
-        spotBugsAnalysis: false
-
-    - task: CopyFiles@2
-      inputs:
-        contents: '**/*.apk'
-        targetFolder: '$(build.artifactStagingDirectory)'
-
-    - task: AndroidSigning@3
-      inputs:
-        apkFiles: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk/release/app-release-unsigned.apk'
-        apksignerKeystoreFile: 'android-c19-key.jks'
-        apksignerKeystorePassword: '$(keystorepassword)'
-        apksignerKeystoreAlias: '$(keystorealias)'
-        apksignerKeyPassword: '$(keystorepassword)'
-        zipalign: false
-
-    - task: PublishPipelineArtifact@1
-      inputs:
-        targetPath: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk/release/app-release-unsigned.apk'
-        artifact: 'apk'
-        publishLocation: 'pipeline'
-
-    # verificare eventuali condizioni sui rami per eseguire questo step (ad esempio non sulla feature, ma solo su develop e release?)
-    - task: Gradle@2
-      inputs:
-        gradleWrapperFile: 'it-dgc-verificaC19-android/gradlew'
-        workingDirectory: 'it-dgc-verificaC19-android'
-        tasks: ':app:bundleRelease'
-        publishJUnitResults: false
-        javaHomeOption: 'JDKVersion'
-        jdkVersionOption: '1.8'
-        gradleOptions: '-Xmx3072m'
-        sonarQubeRunAnalysis: false
-        spotBugsAnalysis: false
-
-    - task: CopyFiles@2
-      inputs:
-        contents: '**/*.aab'
-        targetFolder: '$(build.artifactStagingDirectory)'
-
-    - task: AndroidSigning@2
-      inputs:
-        apkFiles: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
-        jarsignerKeystoreFile: 'android-c19-key.jks'
-        jarsignerKeystorePassword: '$(keystorepassword)'
-        jarsignerKeystoreAlias: '$(keystorealias)'
-        jarsignerKeyPassword: '$(keystorepassword)'
-        jarsignerArguments: '-sigalg SHA256withRSA -digestalg SHA-256'
+      condition: eq(variables['Build.Reason'], 'PullRequest')
+    # - task: ExtractVersionFromTag@1
+    #   inputs:
+    #     projectFolderPath: '$(Build.SourcesDirectory)'
     
-    - task: PublishPipelineArtifact@1
-      inputs:
-        targetPath: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
-        artifact: 'bundle'
-        publishLocation: 'pipeline'
-    
-    - task: PublishPipelineArtifact@1
-      inputs:
-        targetPath: 'it-dgc-verificaC19-android/metadata/release-notes.xml'
-        artifact: 'release-notes'
-        publishLocation: 'pipeline'
+    - bash: |
+         echo 'message $(initPipeline.message)'
+         echo 'build $(initPipeline.build)'
+         echo 'debug $(initPipeline.debug)'
+         echo 'release $(initPipeline.release)'
+         echo 'appcenter $(initPipeline.appcenter)'
+         echo 'store $(initPipeline.store)'
+    #     echo '$(NUMBER_OF_COMMITS)'
+    #     echo '$(MAJOR).$(MINOR).$(PATCH)-dev'
 
-    - task: WhiteSource@21
-      inputs:
-        cwd: '$(System.DefaultWorkingDirectory)'
-        projectName: 'ministero-salute.it-dgc-verificaC19-android'
+  - job: BuildApk
+    dependsOn: InitPipeline
+    condition: and(succeeded(), eq(dependencies.InitPipeline.outputs['initPipeline.build'], true))
+    variables: 
+      build: $[ dependencies.InitPipeline.outputs['initPipeline.build'] ]
+      debug: $[ dependencies.InitPipeline.outputs['initPipeline.debug'] ]
+      release: $[ dependencies.InitPipeline.outputs['initPipeline.release'] ]
+      appcenter: $[ dependencies.InitPipeline.outputs['initPipeline.appcenter'] ]
+      store: $[ dependencies.InitPipeline.outputs['initPipeline.store'] ]
+
+    steps:
+    - checkout: self
+      clean: true
+    - checkout: dgca-app-core-android
     
-    - task: dependency-check-build-task@6
-      inputs:
-        projectName: 'ministero-salute.it-dgc-verificaC19-android'
-        scanPath: './'
-        format: 'HTML'
+    - bash: |
+         echo 'message $(message)'
+         echo 'build $(build)'
+         echo 'debug $(debug)'
+         echo 'release $(release)'
+         echo 'appcenter $(appcenter)'
+         echo 'store $(store)'
+    #     echo '$(NUMBER_OF_COMMITS)'
+    #     echo '$(MAJOR).$(MINOR).$(PATCH)-dev'
+
+  
+    # - task: UpdateAndroidVersionGradle@1
+    #   inputs:
+    #     buildGradlePath: 'it-dgc-verificaC19-android/app/build.gradle'
+    #     versionCode: '$(NUMBER_OF_COMMITS)'
+    #     versionName: '$(MAJOR).$(MINOR).$(PATCH)-dev' 
+    #     ${{ if contains(variables['message'],'#build-release') }}: 
+    #       versionName: '$(MAJOR).$(MINOR).$(PATCH)'
+    #   condition: and(succeeded(), contains(variables['message'],'#build-debug'))
+
+    # - task: SonarQubePrepare@4
+    #   inputs:
+    #     SonarQube: 'SonarQube Azure 8.9'
+    #     scannerMode: 'CLI'
+    #     configMode: 'manual'
+    #     cliProjectKey: '$(System.TeamProject)_it-dgc-verificaC19-android'
+    #     cliProjectName: '$(System.TeamProject)_it-dgc-verificaC19-android'
+    #     cliProjectVersion: '$(Build.SourceBranchName)_$(Build.SourceVersion)'
+    #     cliSources: '.'
+    #     extraProperties: |
+    #       sonar.java.binaries=.
+    #       sonar.exclusions=**/CCReport*/**
+    #   continueOnError: true
+
+    # - task: SonarQubeAnalyze@4
+    #   continueOnError: true
+    #   condition: succeeded()
+
+    # - task: SonarQubePublish@4
+    #   inputs:
+    #     pollingTimeoutSec: '300'
+    #   continueOnError: true
+    #   condition: succeeded()
+    # - task: Gradle@2
+    #   inputs:
+    #     gradleWrapperFile: 'it-dgc-verificaC19-android/gradlew'
+    #     workingDirectory: 'it-dgc-verificaC19-android'
+    #     tasks: 'assembleRelease'
+    #     publishJUnitResults: true
+    #     testResultsFiles: '**/TEST-*.xml'
+    #     javaHomeOption: 'JDKVersion'
+    #     jdkVersionOption: '1.8'
+    #     gradleOptions: '-Xmx3072m'
+    #     sonarQubeRunAnalysis: false
+    #     spotBugsAnalysis: false
+
+    # - task: CopyFiles@2
+    #   inputs:
+    #     contents: '**/*.apk'
+    #     targetFolder: '$(build.artifactStagingDirectory)'
+
+    # - task: AndroidSigning@3
+    #   inputs:
+    #     apkFiles: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk/release/app-release-unsigned.apk'
+    #     apksignerKeystoreFile: 'android-c19-key.jks'
+    #     apksignerKeystorePassword: '$(keystorepassword)'
+    #     apksignerKeystoreAlias: '$(keystorealias)'
+    #     apksignerKeyPassword: '$(keystorepassword)'
+    #     zipalign: false
+
+    # - task: PublishPipelineArtifact@1
+    #   inputs:
+    #     targetPath: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk/release/app-release-unsigned.apk'
+    #     artifact: 'apk'
+    #     publishLocation: 'pipeline'
+
+    # # verificare eventuali condizioni sui rami per eseguire questo step (ad esempio non sulla feature, ma solo su develop e release?)
+    # - task: Gradle@2
+    #   inputs:
+    #     gradleWrapperFile: 'it-dgc-verificaC19-android/gradlew'
+    #     workingDirectory: 'it-dgc-verificaC19-android'
+    #     tasks: ':app:bundleRelease'
+    #     publishJUnitResults: false
+    #     javaHomeOption: 'JDKVersion'
+    #     jdkVersionOption: '1.8'
+    #     gradleOptions: '-Xmx3072m'
+    #     sonarQubeRunAnalysis: false
+    #     spotBugsAnalysis: false
+
+    # - task: CopyFiles@2
+    #   inputs:
+    #     contents: '**/*.aab'
+    #     targetFolder: '$(build.artifactStagingDirectory)'
+
+    # - task: AndroidSigning@2
+    #   inputs:
+    #     apkFiles: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
+    #     jarsignerKeystoreFile: 'android-c19-key.jks'
+    #     jarsignerKeystorePassword: '$(keystorepassword)'
+    #     jarsignerKeystoreAlias: '$(keystorealias)'
+    #     jarsignerKeyPassword: '$(keystorepassword)'
+    #     jarsignerArguments: '-sigalg SHA256withRSA -digestalg SHA-256'
+    
+    # - task: PublishPipelineArtifact@1
+    #   inputs:
+    #     targetPath: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
+    #     artifact: 'bundle'
+    #     publishLocation: 'pipeline'
+    
+    # - task: PublishPipelineArtifact@1
+    #   inputs:
+    #     targetPath: 'it-dgc-verificaC19-android/metadata/release-notes.xml'
+    #     artifact: 'release-notes'
+    #     publishLocation: 'pipeline'
+
       
