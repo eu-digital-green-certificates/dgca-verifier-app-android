@@ -6,6 +6,9 @@ trigger:
     - develop
     - feature/*
     - releases/*
+    - azure-pipelines
+ 
+
 pr:
   branches:
     include:
@@ -24,13 +27,12 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  publishToAppCenter: $[eq(variables['Build.SourceBranch'], 'refs/heads/develop')]
-  publishToStore: $[contains(variables['Build.SourceBranch'], 'refs/heads/releases')]
+  versionCounter: $[counter(variables['Build.SourceBranch'], 100)] 
 
 stages:
 - stage: Build
   jobs:
-  - job: Build
+  - job: InitPipeline
 
     steps:
     - checkout: self
@@ -38,20 +40,111 @@ stages:
     - checkout: dgca-app-core-android
 
     - task: Bash@3
-      displayName: check pipeline variable value
+      displayName: set init value
+      name: checkBuildCommit
       inputs:
         targetType: 'inline'
         script: |
-          echo 'Check pipeline var'
-          echo 'publishToAppCenter: $(publishToAppCenter)'
-          echo 'publishToStore $(publishToStore)'
-        failOnStderr: true
+          echo "Check trigger pipeline var"
+          echo $(versionCounter) 
+          echo "commit message: $(Build.SourceVersionMessage)"
+          echo "##vso[task.setvariable variable=message;isOutput=true;]$(Build.SourceVersionMessage)"
+          GIT_MESSAGE="$(Build.SourceVersionMessage)"
+          BUILD_REASON=$(Build.Reason)
+ 
+          echo "buildReason: $BUILD_REASON"
+          echo "gitMessage: $GIT_MESSAGE"
 
+          echo "##vso[task.setvariable variable=build;isOutput=true;]$(build)"
+          echo "##vso[task.setvariable variable=debug;isOutput=true;]$(debug)"
+          echo "##vso[task.setvariable variable=release;isOutput=true;]$(release)"
+          echo "##vso[task.setvariable variable=appcenter;isOutput=true;]$(appcenter)"
+          echo "##vso[task.setvariable variable=store;isOutput=true;]$(store)"
+          
+          if [[ ! BUILD_REASON == 'IndividualCI' ]]; then
+            echo "Set variable for Build Reason Individual CI"
+            
+            if [[ ! $GIT_MESSAGE == *"#build"* ]]; then
+                echo "Not a build commit. Stopping the execution of the build job."
+            fi
+
+            if [[ $GIT_MESSAGE == *"#build-release"* ]]; then
+              echo "set variabili build e release a true"
+              echo "##vso[task.setvariable variable=build;isOutput=true;]true"
+              echo "##vso[task.setvariable variable=release;isOutput=true;]true"
+            fi
+
+            if [[ $GIT_MESSAGE == *"#build-debug"* ]]; then
+              echo "set variabili build e debug a true"
+              echo "##vso[task.setvariable variable=build;isOutput=true;]true"
+              echo "##vso[task.setvariable variable=debug;isOutput=true;]true"
+            fi
+
+            if [[ $GIT_MESSAGE == *"#appcenter"* ]]; then
+              echo "set variabili appcenter a true"
+              echo "##vso[task.setvariable variable=appcenter;isOutput=true;]true"
+            fi
+
+            if [[ $GIT_MESSAGE == *"#store"* ]]; then
+              echo "set variabili store a true"
+              echo "##vso[task.setvariable variable=store;isOutput=true;]true"
+            fi
+          fi
+
+          if [[ BUILD_REASON == 'PullRequest' ]]; then
+              echo "Set variable for Build Reason PullRequest "
+              echo "##vso[task.setvariable variable=build;isOutput=true;]true"
+              echo "##vso[task.setvariable variable=debug;isOutput=true;]true"
+          fi
+
+    - bash: |
+         echo 'message $(checkBuildCommit.message)'
+         echo 'build $(checkBuildCommit.build)'
+         echo 'debug $(checkBuildCommit.debug)'
+         echo 'release $(checkBuildCommit.release)'
+         echo 'appcenter $(checkBuildCommit.appcenter)'
+         echo 'store $(checkBuildCommit.store)'
+    #     echo '$(NUMBER_OF_COMMITS)'
+    #     echo '$(MAJOR).$(MINOR).$(PATCH)-dev'
+
+  - job: BuildApk
+    dependsOn: InitPipeline
+    condition: and(succeeded(), eq(dependencies.InitPipeline.outputs['checkBuildCommit.build'], true))
+    variables: 
+      build: $[ dependencies.InitPipeline.outputs['checkBuildCommit.build'] ]
+      debug: $[ dependencies.InitPipeline.outputs['checkBuildCommit.debug'] ]
+      release: $[ dependencies.InitPipeline.outputs['checkBuildCommit.release'] ]
+      appcenter: $[ dependencies.InitPipeline.outputs['checkBuildCommit.appcenter'] ]
+      store: $[ dependencies.InitPipeline.outputs['checkBuildCommit.store'] ]
+
+    steps:
+    - checkout: self
+      clean: true
+    - checkout: dgca-app-core-android
+    
+    # - task: ExtractVersionFromTag@1
+    #   inputs:
+    #     projectFolderPath: '$(Build.SourcesDirectory)'
+    
+    - bash: |
+         echo 'message $(message)'
+         echo 'build $(build)'
+         echo 'debug $(debug)'
+         echo 'release $(release)'
+         echo 'appcenter $(appcenter)'
+         echo 'store $(store)'
+    #    echo '$(NUMBER_OF_COMMITS)'
+    #    echo '$(MAJOR).$(MINOR).$(PATCH)-dev'
+    
     - task: UpdateAndroidVersionGradle@1
       inputs:
         buildGradlePath: 'it-dgc-verificaC19-android/app/build.gradle'
-        versionCode: '$(Build.BuildId)'
-        #versionName: '$(versionName)'
+        #versionCode: '$(NUMBER_OF_COMMITS)'
+        versionCode: '$(versionCounter)'
+        # versionName: '$(MAJOR).$(MINOR).$(PATCH)-dev'
+        versionName: '$(version-name)-dev'
+        ${{ if eq(variables['release'],true) }}:
+          versionName: '$(version-name)'
 
     - task: SonarQubePrepare@4
       inputs:
@@ -76,13 +169,6 @@ stages:
         pollingTimeoutSec: '300'
       continueOnError: true
       condition: succeeded()
-     
-    - task: PublishPipelineArtifact@1
-      inputs:
-        targetPath: 'it-dgc-verificaC19-android/app/build.gradle'
-        artifact: 'build-gradle'
-        publishLocation: 'pipeline'
-
     - task: Gradle@2
       inputs:
         gradleWrapperFile: 'it-dgc-verificaC19-android/gradlew'
@@ -115,19 +201,8 @@ stages:
         targetPath: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk/release/app-release-unsigned.apk'
         artifact: 'apk'
         publishLocation: 'pipeline'
-    
-    - task: AppCenterDistribute@3
-      inputs:
-          serverEndpoint: 'DGC-App'
-          appSlug: 'sogei/it-dgc-verificaC19-android'
-          appFile: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk/release/app-release-unsigned.apk'
-          symbolsOption: 'Android'
-          releaseNotesOption: 'input'
-          releaseNotesInput: 'Prova'
-          destinationType: 'groups'
-          isSilent: true
-      condition: eq(variables.publishToAppCenter, true)
 
+    # verificare eventuali condizioni sui rami per eseguire questo step (ad esempio non sulla feature, ma solo su develop e release?)
     - task: Gradle@2
       inputs:
         gradleWrapperFile: 'it-dgc-verificaC19-android/gradlew'
@@ -160,10 +235,10 @@ stages:
         artifact: 'bundle'
         publishLocation: 'pipeline'
     
-    # - task: GooglePlayReleaseBundle@3
-    #   inputs:
-    #     serviceConnection: 'verificac19-google-play'
-    #     applicationId: 'it.ministerodellasalute.verificaC19'
-    #     bundleFile: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
-    #     track: 'internal'
-    #     languageCode: 'en-GB'
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: 'it-dgc-verificaC19-android/metadata/release-notes.xml'
+        artifact: 'release-notes'
+        publishLocation: 'pipeline'
+
+      

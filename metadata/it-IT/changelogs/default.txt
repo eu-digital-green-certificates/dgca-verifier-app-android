@@ -1,0 +1,1 @@
+prova di rilascio su app store tramite pipeline
