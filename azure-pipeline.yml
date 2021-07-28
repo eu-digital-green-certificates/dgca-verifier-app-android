@@ -8,7 +8,7 @@ trigger:
     - releases/*
     - azure-pipelines
  
-
+ 
 pr:
   branches:
     include:
