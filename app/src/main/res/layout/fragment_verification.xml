@@ -46,21 +46,6 @@
             android:layout_height="match_parent"
             android:padding="@dimen/padding_20dp">
 
-            <Button
-                android:id="@+id/next_qr_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_20dp"
-                android:background="@drawable/background_rounded_blue"
-                android:padding="@dimen/padding_16dp"
-                android:text="@string/repeatQR"
-                android:textColor="@color/white"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/container_person_details"
-                app:layout_goneMarginTop="150dp" />
-
             <ImageButton
                 android:id="@+id/checkmark"
                 android:layout_width="@dimen/size_100dp"
@@ -193,6 +178,21 @@
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <Button
+                android:id="@+id/next_qr_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_20dp"
+                android:background="@drawable/background_rounded_blue"
+                android:padding="@dimen/padding_16dp"
+                android:text="@string/repeatQR"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/container_person_details"
+                app:layout_goneMarginTop="150dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
