@@ -91,7 +91,11 @@ class VerificationViewModel @Inject constructor(
             withContext(dispatcherProvider.getIO()) {
                 val plainInput = prefixValidationService.decode(code, verificationResult)
                 val compressedCose = base45Service.decode(plainInput, verificationResult)
-                val cose = compressorService.decode(compressedCose, verificationResult)
+                val cose: ByteArray? = compressorService.decode(compressedCose, verificationResult)
+                if (cose == null) {
+                    Log.d(TAG, "Verification failed: Too many bytes read")
+                    return@withContext
+                }
 
                 val coseData = coseService.decode(cose, verificationResult)
                 if (coseData == null) {
