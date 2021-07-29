@@ -36,6 +36,7 @@ object Deps {
     const val androidx_navigation_ui = "androidx.navigation:navigation-ui-ktx:${Versions.androidx_navigation}"
     const val androidx_navigation = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.androidx_navigation}"
     const val androidx_hilt_compiler = "androidx.hilt:hilt-compiler:${Versions.androidx_hilt_compiler}"
+    const val androidx_lifecycle_livedata_ktx = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.androidx_lifecycle_livedata_ktx}"
     const val room_runtime = "androidx.room:room-runtime:${Versions.androidx_room}"
     const val room_compiler = "androidx.room:room-compiler:${Versions.androidx_room}"
     const val room_ktx = "androidx.room:room-ktx:${Versions.room_ktx}"
@@ -43,7 +44,8 @@ object Deps {
     const val retrofit2 = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
     const val log_interceptor = "com.squareup.okhttp3:logging-interceptor:${Versions.logging_interceptor}"
     const val gson_converter = "com.squareup.retrofit2:converter-jackson:${Versions.gson_converter}"
-    const val lifecycle_livedata_version = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.lifecycle_livedata_version}"
+
+    const val android_tools_desugar_jdk_libs = "com.android.tools:desugar_jdk_libs:${Versions.android_tools_desugar_jdk_libs_version}"
 
     const val hilt_plugin = "com.google.dagger:hilt-android-gradle-plugin:${Versions.hilt_version}"
     const val hilt = "com.google.dagger:hilt-android:${Versions.hilt_version}"
@@ -59,7 +61,6 @@ object Deps {
     const val kotlin_reflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin_reflect}"
     const val java_cose = "com.augustcellars.cose:cose-java:${Versions.java_cose}"
     const val json_validation = "com.github.java-json-tools:json-schema-validator:${Versions.json_validation}"
-    const val json_validation_rhino = "io.apisense:rhino-android:${Versions.json_validation_rhino}"
     const val jackson_cbor = "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${Versions.jackson_cbor}"
     const val bouncy_castle = "org.bouncycastle:bcpkix-jdk15to18:${Versions.bouncy_castle}"
     const val jackson_kotlin = "com.fasterxml.jackson.module:jackson-module-kotlin:${Versions.jackson_kotlin}"
