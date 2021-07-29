@@ -34,8 +34,10 @@
     <string name="expirationText">Data scadenza certificato</string>
     <string name="certificateValid">Certificazione valida</string>
     <string name="certificateNonValid">Certificazione non valida</string>
+    <string name="scanError">Errore di lettura</string>
     <string name="subtitle_text">Per completare la verifica è necessario confrontare i dati anagrafici qui sotto riportati con quelli di un valido documento d\'identità (es. Carta d\'identità).</string>
     <string name="subtitle_text_nonvalid">Il QR Code o la chiave di firma non sono validi.</string>
+    <string name="subtitle_text_notDCC">Il QR Code scansionato non corrisponde a una Certificazione verde COVID-19 o non è stato letto in modo corretto, si prega di riprovare.</string>
     <string name="subtitle_text_expired">La Certificazione è scaduta.</string>
     <string name="subtitle_text_future">La Certificazione non è ancora valida.</string>
     <string name="subtitle_text_technicalError">La Certificazione non è valida o non è stato possibile verificarla.</string>
