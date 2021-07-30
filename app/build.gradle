@@ -93,7 +93,7 @@ android {
         minSdkVersion Config.minSdk
         targetSdkVersion Config.targetSdk
         versionCode 12
-        versionName Config.versionName
+        versionName "0.0.0"
         testInstrumentationRunner Config.androidTestInstrumentation
     }
 
