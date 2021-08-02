@@ -132,4 +132,9 @@ dependencies {
 //    testImplementation Deps.mockito_core
 //    testImplementation Deps.mockito_kotlin
     coreLibraryDesugaring Deps.android_tools_desugar_jdk_libs
+
+    androidTestImplementation Deps.test_runner
+    androidTestImplementation Deps.test_rules
+    androidTestImplementation Deps.test_ext
+    androidTestImplementation Deps.appache_commons
 }
