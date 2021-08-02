@@ -56,7 +56,7 @@ This project uses the Gradle build system. To build this project, use the `gradl
 ## Dependencies
 
 The following libraries are used in the project by the verifier app and the core app and are imported as Gradle dependencies:
-- **[decoder](https://github.com/eu-digital-green-certificates/dgca-app-core-android).** Eurpean core library that contains business logic to decode data from QR code payload and performs technical validations (i.e. correct signature verification, signature expiration verification, correct payload format etc).
+- **[decoder](https://github.com/eu-digital-green-certificates/dgca-app-core-android).** European core library that contains business logic to decode data from QR code payload and performs technical validations (i.e. correct signature verification, signature expiration verification, correct payload format etc).
 - **[zxing](https://github.com/zxing/zxing).** Library used QR code scanning.
 - **[retrofit2](https://github.com/square/retrofit).** Library used for networking.
 - **[gson](https://github.com/google/gson).** Library used by core module for JSON serialization/deserialization.

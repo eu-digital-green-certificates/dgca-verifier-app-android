@@ -6,12 +6,13 @@ trigger:
     - develop
     - feature/*
     - releases/*
+
 pr:
   branches:
     include:
     - develop
     - releases/*
-
+ 
 resources:
   repositories:
   - repository: dgca-app-core-android
@@ -23,14 +24,11 @@ resources:
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:
-  publishToAppCenter: $[eq(variables['Build.SourceBranch'], 'refs/heads/develop')]
-  publishToStore: $[contains(variables['Build.SourceBranch'], 'refs/heads/releases')]
 
 stages:
 - stage: Build
   jobs:
-  - job: Build
+  - job: InitPipeline
 
     steps:
     - checkout: self
@@ -38,21 +36,124 @@ stages:
     - checkout: dgca-app-core-android
 
     - task: Bash@3
-      displayName: check pipeline variable value
+      displayName: set init value
+      name: checkBuildCommit
       inputs:
         targetType: 'inline'
         script: |
-          echo 'Check pipeline var'
-          echo 'publishToAppCenter: $(publishToAppCenter)'
-          echo 'publishToStore $(publishToStore)'
-        failOnStderr: true
+          echo "Check trigger pipeline var"
+          echo "commit message: $(Build.SourceVersionMessage)"
+          echo "##vso[task.setvariable variable=message;isOutput=true;]$(Build.SourceVersionMessage)"
+          GIT_MESSAGE="$(Build.SourceVersionMessage)"
+          BUILD_REASON=$(Build.Reason)
+ 
+          echo "buildReason: $BUILD_REASON"
+          echo "gitMessage: $GIT_MESSAGE"
+
+          echo "##vso[task.setvariable variable=build;isOutput=true;]$(build)"
+          echo "##vso[task.setvariable variable=debug;isOutput=true;]$(debug)"
+          echo "##vso[task.setvariable variable=release;isOutput=true;]$(release)"
+          echo "##vso[task.setvariable variable=appcenter;isOutput=true;]$(appcenter)"
+          echo "##vso[task.setvariable variable=store;isOutput=true;]$(store)"
+          
+          if [[ ! BUILD_REASON == 'IndividualCI' ]]; then
+            echo "Set variable for Build Reason Individual CI"
+            
+            if [[ ! $GIT_MESSAGE == *"#build"* ]]; then
+                echo "Not a build commit. Stopping the execution of the build job."
+            fi
+
+            if [[ $GIT_MESSAGE == *"#build-release"* ]]; then
+              echo "set variabili build e release a true"
+              echo "##vso[task.setvariable variable=build;isOutput=true;]true"
+              echo "##vso[task.setvariable variable=release;isOutput=true;]true"
+            fi
+
+            if [[ $GIT_MESSAGE == *"#build-debug"* ]]; then
+              echo "set variabili build e debug a true"
+              echo "##vso[task.setvariable variable=build;isOutput=true;]true"
+              echo "##vso[task.setvariable variable=debug;isOutput=true;]true"
+            fi
+
+            if [[ $GIT_MESSAGE == *"#appcenter"* ]]; then
+              echo "set variabili appcenter a true"
+              echo "##vso[task.setvariable variable=appcenter;isOutput=true;]true"
+            fi
+
+            if [[ $GIT_MESSAGE == *"#store"* ]]; then
+              echo "set variabili store a true"
+              echo "##vso[task.setvariable variable=store;isOutput=true;]true"
+            fi
+          fi
+
+          if [[ BUILD_REASON == 'PullRequest' ]]; then
+              echo "Set variable for Build Reason PullRequest "
+              echo "##vso[task.setvariable variable=build;isOutput=true;]true"
+              echo "##vso[task.setvariable variable=debug;isOutput=true;]true"
+          fi
+
+    - bash: |
+         echo 'message $(checkBuildCommit.message)'
+         echo 'build $(checkBuildCommit.build)'
+         echo 'debug $(checkBuildCommit.debug)'
+         echo 'release $(checkBuildCommit.release)'
+         echo 'appcenter $(checkBuildCommit.appcenter)'
+         echo 'store $(checkBuildCommit.store)'
+      displayName: check variables
+
+  - job: BuildApk
+    dependsOn: InitPipeline
+    condition: and(succeeded(), eq(dependencies.InitPipeline.outputs['checkBuildCommit.build'], 'true'))
+    variables: 
+      build: $[ dependencies.InitPipeline.outputs['checkBuildCommit.build'] ]
+      debug: $[ dependencies.InitPipeline.outputs['checkBuildCommit.debug'] ]
+      release: $[ dependencies.InitPipeline.outputs['checkBuildCommit.release'] ]
+      appcenter: $[ dependencies.InitPipeline.outputs['checkBuildCommit.appcenter'] ]
+      store: $[ dependencies.InitPipeline.outputs['checkBuildCommit.store'] ]
+
+    steps:
+    - checkout: self
+      clean: true
+    - checkout: dgca-app-core-android
+    
+    - task: ExtractVersionFromTag@1
+      inputs:
+        projectFolderPath: '$(Build.SourcesDirectory)/it-dgc-verificaC19-android'
+
+    # creo le variabili dal file appConfig.json tra cui il versionName
+    - task: oneLuckiDevJson2Variable@1
+      inputs:
+        jsonFile: '$(Build.SourcesDirectory)/it-dgc-verificaC19-android/appConfig.json'
+        shouldPrefixVariables: false
+      displayName: set variable name from appConfig.json
+
+    - bash: |
+         echo 'message $(message)'
+         echo 'build $(build)'
+         echo 'debug $(debug)'
+         echo 'release $(release)'
+         echo 'appcenter $(appcenter)'
+         echo 'store $(store)'
+         echo '$(NUMBER_OF_COMMITS)'
+         echo '$(versionName)-dev'
+      displayName: check variables
 
     - task: UpdateAndroidVersionGradle@1
+      displayName: UpdateVersion -dev
+      condition: and(succeeded(), eq(variables.release, 'false'))
       inputs:
         buildGradlePath: 'it-dgc-verificaC19-android/app/build.gradle'
-        versionCode: '$(Build.BuildId)'
-        #versionName: '$(versionName)'
-
+        versionCode: '$(NUMBER_OF_COMMITS)'
+        versionName: '$(versionName)-dev'
+    
+    - task: UpdateAndroidVersionGradle@1
+      displayName: UpdateVersion Release
+      condition: and(succeeded(), eq(variables.release, 'true'))
+      inputs:
+        buildGradlePath: 'it-dgc-verificaC19-android/app/build.gradle'
+        versionCode: '$(NUMBER_OF_COMMITS)'
+        versionName: '$(versionName)'
+      
     - task: SonarQubePrepare@4
       inputs:
         SonarQube: 'SonarQube Azure 8.9'
@@ -76,14 +177,24 @@ stages:
         pollingTimeoutSec: '300'
       continueOnError: true
       condition: succeeded()
-     
-    - task: PublishPipelineArtifact@1
+    - task: Gradle@2
+      displayName: Build Debug
+      condition: and(succeeded(), eq(variables.release, 'false')) 
       inputs:
-        targetPath: 'it-dgc-verificaC19-android/app/build.gradle'
-        artifact: 'build-gradle'
-        publishLocation: 'pipeline'
+        gradleWrapperFile: 'it-dgc-verificaC19-android/gradlew'
+        workingDirectory: 'it-dgc-verificaC19-android'
+        tasks: 'assembleDebug'
+        publishJUnitResults: true
+        testResultsFiles: '**/TEST-*.xml'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.8'
+        gradleOptions: '-Xmx3072m'
+        sonarQubeRunAnalysis: false
+        spotBugsAnalysis: false
 
     - task: Gradle@2
+      displayName: Build Release
+      condition: and(succeeded(), eq(variables.release, 'true')) 
       inputs:
         gradleWrapperFile: 'it-dgc-verificaC19-android/gradlew'
         workingDirectory: 'it-dgc-verificaC19-android'
@@ -95,40 +206,58 @@ stages:
         gradleOptions: '-Xmx3072m'
         sonarQubeRunAnalysis: false
         spotBugsAnalysis: false
-
+    
     - task: CopyFiles@2
       inputs:
         contents: '**/*.apk'
         targetFolder: '$(build.artifactStagingDirectory)'
 
     - task: AndroidSigning@3
+      displayName: Sign apk debug 
+      condition: and(succeeded(), eq(variables.release, 'false')) 
       inputs:
-        apkFiles: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk/release/app-release-unsigned.apk'
+        apkFiles: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk/debug/app-debug.apk'
+        apksignerArguments: '--verbose --out $(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk/app-debug.apk'
+        zipalign: false
         apksignerKeystoreFile: 'android-c19-key.jks'
         apksignerKeystorePassword: '$(keystorepassword)'
         apksignerKeystoreAlias: '$(keystorealias)'
         apksignerKeyPassword: '$(keystorepassword)'
+    
+    - task: AndroidSigning@3
+      displayName: Sign apk Release 
+      condition: and(succeeded(), eq(variables.release, 'true')) 
+      inputs:
+        apkFiles: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk/release/app-release-unsigned.apk'
+        apksignerArguments: '--verbose --out $(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk/app-release.apk'
         zipalign: false
+        apksignerKeystoreFile: 'android-c19-key.jks'
+        apksignerKeystorePassword: '$(keystorepassword)'
+        apksignerKeystoreAlias: '$(keystorealias)'
+        apksignerKeyPassword: '$(keystorepassword)'
 
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk/release/app-release-unsigned.apk'
+        targetPath: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk'
         artifact: 'apk'
         publishLocation: 'pipeline'
-    
-    - task: AppCenterDistribute@3
-      inputs:
-          serverEndpoint: 'DGC-App'
-          appSlug: 'sogei/it-dgc-verificaC19-android'
-          appFile: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/apk/release/app-release-unsigned.apk'
-          symbolsOption: 'Android'
-          releaseNotesOption: 'input'
-          releaseNotesInput: 'Prova'
-          destinationType: 'groups'
-          isSilent: true
-      condition: eq(variables.publishToAppCenter, true)
 
     - task: Gradle@2
+      displayName: build aab debug 
+      inputs:
+        gradleWrapperFile: 'it-dgc-verificaC19-android/gradlew'
+        workingDirectory: 'it-dgc-verificaC19-android'
+        tasks: ':app:bundleDebug'
+        publishJUnitResults: false
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.8'
+        gradleOptions: '-Xmx3072m'
+        sonarQubeRunAnalysis: false
+        spotBugsAnalysis: false
+      condition: and(succeeded(), eq(variables.store, 'true'), eq(variables.debug, 'true'))
+
+    - task: Gradle@2
+      displayName: build aab release 
       inputs:
         gradleWrapperFile: 'it-dgc-verificaC19-android/gradlew'
         workingDirectory: 'it-dgc-verificaC19-android'
@@ -139,13 +268,28 @@ stages:
         gradleOptions: '-Xmx3072m'
         sonarQubeRunAnalysis: false
         spotBugsAnalysis: false
+      condition: and(succeeded(), eq(variables.store, 'true'), eq(variables.release, 'true'))
+
 
     - task: CopyFiles@2
       inputs:
         contents: '**/*.aab'
         targetFolder: '$(build.artifactStagingDirectory)'
-
+      condition: and(succeeded(), eq(variables.store, 'true'))
+  
     - task: AndroidSigning@2
+      displayName: sign aab debug 
+      inputs:
+        apkFiles: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/debug/app-debug.aab'
+        jarsignerKeystoreFile: 'android-c19-key.jks'
+        jarsignerKeystorePassword: '$(keystorepassword)'
+        jarsignerKeystoreAlias: '$(keystorealias)'
+        jarsignerKeyPassword: '$(keystorepassword)'
+        jarsignerArguments: '-sigalg SHA256withRSA -digestalg SHA-256'
+      condition: and(succeeded(), eq(variables.store, 'true'), eq(variables.debug, 'true'))
+    
+    - task: AndroidSigning@2
+      displayName: sign aab release 
       inputs:
         apkFiles: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
         jarsignerKeystoreFile: 'android-c19-key.jks'
@@ -153,17 +297,137 @@ stages:
         jarsignerKeystoreAlias: '$(keystorealias)'
         jarsignerKeyPassword: '$(keystorepassword)'
         jarsignerArguments: '-sigalg SHA256withRSA -digestalg SHA-256'
+      condition: and(succeeded(), eq(variables.store, 'true'), eq(variables.release, 'true'))
     
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
+        targetPath: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle'
         artifact: 'bundle'
         publishLocation: 'pipeline'
+      condition: and(succeeded(), eq(variables.store, 'true'))
+
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: 'it-dgc-verificaC19-android/metadata/release-notes.xml'
+        artifact: 'release-notes'
+        publishLocation: 'pipeline'
+  
+- stage: AppCenterRelease
+  dependsOn: Build
+  condition: eq(dependencies.Build.outputs['InitPipeline.checkBuildCommit.appcenter'], 'true')
+  variables: 
+    build: $[ stageDependencies.Build.InitPipeline.outputs['checkBuildCommit.build'] ]
+    debug: $[ stageDependencies.Build.InitPipeline.outputs['checkBuildCommit.debug'] ]
+    release: $[ stageDependencies.Build.InitPipeline.outputs['checkBuildCommit.release'] ]
+    appcenter: $[ stageDependencies.Build.InitPipeline.outputs['checkBuildCommit.appcenter'] ]
+    store: $[ stageDependencies.Build.InitPipeline.outputs['checkBuildCommit.store'] ]
+  jobs:
+    - deployment: AppCenterRelease   # name of the deployment job, A-Z, a-z, 0-9, and underscore. The word "deploy" is a keyword and is unsupported as the deployment name.
+      displayName: Release to AppCenter  # friendly name to display in the UI
+      workspace:
+        clean: all # what to clean up before the job runs
+      environment: AppCenter  # target environment name and optionally a resource name to record the deployment history; format: <environment-name>.<resource-name>
+      strategy:
+        runOnce:    #rolling, canary are the other strategies that are supported
+          preDeploy: 
+           steps:
+            - script: |
+                echo "pre deploy to appcenter - var appcenter $(appcenter)"
+                echo 'build $(build)'
+                echo 'debug $(debug)'
+                echo 'release $(release)'
+                echo 'appcenter $(appcenter)'
+                echo 'store $(store)'
+                
+          deploy:
+            steps:
+              - script: |
+                  echo "deploy deploy to appcenter - var appcenter $(appcenter)"
+              - task: AppCenterDistribute@3
+                displayName: AppCenter debug Distribute
+                condition: and(succeeded(), eq(variables.debug, 'true')) 
+                inputs:
+                  serverEndpoint: 'DGC-App'
+                  appSlug: 'sogei/it-dgc-verificaC19-android'
+                  appFile: '$(Pipeline.Workspace)/apk/app-debug.apk'
+                  symbolsOption: 'Android'
+                  releaseNotesOption: 'file'
+                  releaseNotesFile: '$(PIPELINE.WORKSPACE)/release-notes/release-notes.xml'
+                  destinationType: 'groups'
+                  isSilent: true
+              
+              - task: AppCenterDistribute@3
+                displayName: AppCenter debug Distribute
+                condition: and(succeeded(), eq(variables.release, 'true')) 
+                inputs:
+                  serverEndpoint: 'DGC-App'
+                  appSlug: 'sogei/it-dgc-verificaC19-android'
+                  appFile: '$(Pipeline.Workspace)/apk/app-release.apk'
+                  symbolsOption: 'Android'
+                  releaseNotesOption: 'file'
+                  releaseNotesFile: '$(PIPELINE.WORKSPACE)/release-notes/release-notes.xml'
+                  destinationType: 'groups'
+                  isSilent: true  
+
+
+- stage: GooglePlayTestRelease
+  dependsOn: Build
+  condition: eq(dependencies.Build.outputs['InitPipeline.checkBuildCommit.store'], 'true')
+  variables: 
+    build: $[ stageDependencies.Build.InitPipeline.outputs['checkBuildCommit.build'] ]
+    debug: $[ stageDependencies.Build.InitPipeline.outputs['checkBuildCommit.debug'] ]
+    release: $[ stageDependencies.Build.InitPipeline.outputs['checkBuildCommit.release'] ]
+    appcenter: $[ stageDependencies.Build.InitPipeline.outputs['checkBuildCommit.appcenter'] ]
+    store: $[ stageDependencies.Build.InitPipeline.outputs['checkBuildCommit.store'] ]
+  jobs:
+    - deployment: GooglePlayRelease   # name of the deployment job, A-Z, a-z, 0-9, and underscore. The word "deploy" is a keyword and is unsupported as the deployment name.
+      displayName: Release to Google Play  # friendly name to display in the UI
+      workspace:
+           clean: all # what to clean up before the job runs
+      environment: AndroidStoreTest  # target environment name and optionally a resource name to record the deployment history; format: <environment-name>.<resource-name>
+      strategy:
+        runOnce:    #rolling, canary are the other strategies that are supported
+          preDeploy: 
+           steps:
+            - script: |
+                echo "pre deploy to store - var store $(store)"
+                echo 'build $(build)'
+                echo 'debug $(debug)'
+                echo 'release $(release)'
+                echo 'appcenter $(appcenter)'
+                echo 'store $(store)'
+              displayName: check variables
+
+          deploy:
+            steps:
+             - script: |
+                echo "deploy to store - var store $(store)"
+                cd $(Pipeline.Workspace)/bundle/debug
+                ls -l
+                cd $(Pipeline.Workspace)/bundle/release
+                ls -l
+               displayName: check download artifact
+               
+             - task: GooglePlayReleaseBundle@3
+               condition: and(succeeded(), eq(variables.store, 'true'), eq(variables.debug, 'true'))
+               displayName: Publish Debug version to store
+               inputs:
+                  serviceConnection: 'verificac19-google-play'
+                  applicationId: 'it.ministerodellasalute.verificaC19'
+                  bundleFile: '$(Pipeline.Workspace)/bundle/debug/app-debug.aab'
+                  track: 'internal'
+                  changeLogFile: '$(Pipeline.Workspace)/release-notes/release-notes.xml'
+                  languageCode: 'en-GB'
+  
+             - task: GooglePlayReleaseBundle@3
+               condition: and(succeeded(), eq(variables.store, 'true'), eq(variables.release, 'true'))
+               displayName: Publish Release version to store
+               inputs:
+                    serviceConnection: 'verificac19-google-play'
+                    applicationId: 'it.ministerodellasalute.verificaC19'
+                    bundleFile: '$(Pipeline.Workspace)/bundle/release/app-release.aab'
+                    track: 'internal'
+                    changeLogFile: '$(Pipeline.Workspace)/release-notes/release-notes.xml'
+                    languageCode: 'en-GB'   
+
     
-    # - task: GooglePlayReleaseBundle@3
-    #   inputs:
-    #     serviceConnection: 'verificac19-google-play'
-    #     applicationId: 'it.ministerodellasalute.verificaC19'
-    #     bundleFile: '$(build.artifactStagingDirectory)/it-dgc-verificaC19-android/app/build/outputs/bundle/release/app-release.aab'
-    #     track: 'internal'
-    #     languageCode: 'en-GB'

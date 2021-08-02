@@ -207,6 +207,7 @@ class VerificationFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setCertStatusUI(verificationResult: VerificationResult) {
+        binding.validationDatetimeText.text = getString(R.string.validation_datetime_text, LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm, dd/MM/yyyy")))
         if (verificationResult.isValid()) {
             val certificateValidityResult = isAnyTestExpired(certificateModel)
             if (certificateValidityResult == TestExpiryValues.VALID) {
@@ -222,9 +223,9 @@ class VerificationFragment : Fragment(), View.OnClickListener {
         } else {
             binding.containerPersonDetails.visibility = View.GONE
             binding.checkmark.background =
-                ContextCompat.getDrawable(requireContext(), R.drawable.ic_misuse)
-            binding.certificateValid.text = getString(R.string.certificateNonValid)
-            binding.subtitleText.text = getString(R.string.subtitle_text_nonvalid)
+                ContextCompat.getDrawable(requireContext(), if (verificationResult.cborDecoded) R.drawable.ic_misuse else R.drawable.ic_warning)
+            binding.certificateValid.text = if (verificationResult.cborDecoded) getString(R.string.certificateNonValid) else getString(R.string.scanError)
+            binding.subtitleText.text = if (verificationResult.cborDecoded) getString(R.string.subtitle_text_nonvalid) else getString(R.string.subtitle_text_notDCC)
         }
     }
 
