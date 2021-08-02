@@ -19,3 +19,5 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-keep public class dgca.verifier.app.decoder.model.*
+-keep public class com.github.fge.jsonschema.** { *; }
