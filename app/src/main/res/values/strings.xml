@@ -41,6 +41,7 @@
     <string name="subtitle_text_expired">La Certificazione è scaduta.</string>
     <string name="subtitle_text_future">La Certificazione non è ancora valida.</string>
     <string name="subtitle_text_technicalError">La Certificazione non è valida o non è stato possibile verificarla.</string>
+    <string name="validation_datetime_text">Ora e data di validazione: %1$s</string>
     <string name="scanQrCertificate">Scansiona il QR Code. </string>
     <string name="scanQr">Avvia scansione </string>
     <string name="nextQR">Prossima scansione</string>
