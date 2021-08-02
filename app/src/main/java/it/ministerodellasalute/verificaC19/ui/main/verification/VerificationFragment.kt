@@ -207,7 +207,7 @@ class VerificationFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setCertStatusUI(verificationResult: VerificationResult) {
-        binding.validationDatetimeText.text = getString(R.string.validation_datetime_text) + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm, dd/MM/yyyy"))
+        binding.validationDatetimeText.text = getString(R.string.validation_datetime_text, LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm, dd/MM/yyyy")))
         if (verificationResult.isValid()) {
             val certificateValidityResult = isAnyTestExpired(certificateModel)
             if (certificateValidityResult == TestExpiryValues.VALID) {
