@@ -19,27 +19,12 @@
  *
  */
 
-package it.ministerodellasalute.verificaC19.ui.main
+package it.ministerodellasalute.verificaC19.model
 
-import android.os.Bundle
-import android.view.WindowManager
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import dagger.hilt.android.AndroidEntryPoint
-import it.ministerodellasalute.verificaC19.BuildConfig
-import it.ministerodellasalute.verificaC19.R
-
-@AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (!BuildConfig.DEBUG) {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
-        }
-        setContentView(R.layout.activity_main)
-    }
+enum class CertificateStatus {
+    NOT_VALID,
+    NOT_VALID_YET,
+    VALID,
+    PARTIALLY_VALID,
+    NOT_GREEN_PASS;
 }

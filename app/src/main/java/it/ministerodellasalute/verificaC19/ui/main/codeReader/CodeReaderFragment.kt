@@ -40,7 +40,8 @@ import it.ministerodellasalute.verificaC19.R
 import it.ministerodellasalute.verificaC19.databinding.FragmentCodeReaderBinding
 import java.lang.Exception
 
-class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListener, View.OnClickListener {
+class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListener,
+    View.OnClickListener {
 
     private var _binding: FragmentCodeReaderBinding? = null
     private val binding get() = _binding!!
@@ -50,6 +51,10 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
 
     private val callback: BarcodeCallback = object : BarcodeCallback {
         override fun barcodeResult(result: BarcodeResult) {
+            // Prevent errors from finding patterns of other QR code types inside DCCs
+            if (result.barcodeFormat != BarcodeFormat.QR_CODE && result.barcodeFormat != BarcodeFormat.AZTEC) {
+                return
+            }
             if (result.text == null || result.text == lastText) {
                 // Prevent duplicate scans
                 return
@@ -58,9 +63,10 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
 
             lastText = result.text
 
-            try{
+            try {
                 beepManager.playBeepSoundAndVibrate()
-            }catch (e: Exception){}
+            } catch (e: Exception) {
+            }
 
             navigateToVerificationPage(result.text)
         }
@@ -91,7 +97,8 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
         binding.barcodeScanner.statusView.text = ""
         beepManager = BeepManager(requireActivity())
 
-        binding.stopButton.setOnClickListener(this)
+        binding.backImage.setOnClickListener(this)
+        binding.backText.setOnClickListener(this)
     }
 
     override fun onDestroyView() {
@@ -115,12 +122,16 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
         findNavController().currentDestination
 
         val action = CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationFragment(
-                text
-            )
+            text
+        )
         findNavController().navigate(action)
     }
 
-    override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
+    override fun onDestinationChanged(
+        controller: NavController,
+        destination: NavDestination,
+        arguments: Bundle?
+    ) {
         if (destination.id == R.id.codeReaderFragment) {
             binding.barcodeScanner.resume()
             lastText = ""
@@ -128,8 +139,9 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
     }
 
     override fun onClick(v: View?) {
-        when(v?.id){
-            R.id.stop_button -> requireActivity().finish()
+        when (v?.id) {
+            R.id.back_image -> requireActivity().finish()
+            R.id.back_text -> requireActivity().finish()
         }
     }
 }
