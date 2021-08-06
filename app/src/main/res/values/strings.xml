@@ -29,13 +29,16 @@
     <string name="controlCertificate">Verifica una certificazione</string>
     <string name="welcome">Benvenuto</string>
     <string name="systemDescription">Con la scansione dei QR Code è possibile verificare la validità e l\'autenticità della Certificazione verde COVID-19. VerificaC19 permette anche il controllo dell\'EU Digital Covid Certificate emesso da altri paesi europei.</string>
-    <string name="privacyPolicy"><u>Privacy policy</u></string>
+    <string name="privacyPolicy"><u>Leggi la Privacy policy</u></string>
     <string name="codiceFiscale">Codice fiscale</string>
     <string name="expirationText">Data scadenza certificato</string>
-    <string name="certificateValid">Certificazione valida</string>
+    <string name="certificateValid">Certificazione valida in Italia e in Europa</string>
     <string name="certificateNonValid">Certificazione non valida</string>
-    <string name="scanError">Errore di lettura</string>
-    <string name="subtitle_text">Per completare la verifica è necessario confrontare i dati anagrafici qui sotto riportati con quelli di un valido documento d\'identità (es. Carta d\'identità).</string>
+    <string name="certificateNonValidYet">Certificazione non ancora valida</string>
+    <string name="certificateNotDCC">Errore di lettura del QR Code, oppure non è il Certificato verde COVID-19</string>
+    <string name="certificateTechnicalError">Errore tecnico, non è stato possibile effettuare la verifica</string>
+    <string name="subtitle_text">Per completare la verifica è necessario confrontare i seguenti dati anagrafici con quelli di un documento d\'identità valido:</string>
+    <string name="subtitle_text_notvalid">La certificazione presenta i seguenti dati anagrafici:</string>
     <string name="subtitle_text_nonvalid">Il QR Code o la chiave di firma non sono validi.</string>
     <string name="subtitle_text_notDCC">Il QR Code scansionato non corrisponde a una Certificazione verde COVID-19 o non è stato letto in modo corretto, si prega di riprovare.</string>
     <string name="subtitle_text_expired">La Certificazione è scaduta.</string>
@@ -46,9 +49,9 @@
     <string name="scanQr">Avvia scansione </string>
     <string name="nextQR">Prossima scansione</string>
     <string name="repeatQR">Ripeti scansione</string>
-    <string name="dateOfBirth">Data di nascita</string>
-    <string name="lastSyncDate">Ultimo aggiornamento: %1$s</string>
-    <string name="loading">Caricamento certificati in corso</string>
+    <string name="dateOfBirth">Data di nascita/Birth date</string>
+    <string name="lastSyncDate">Ultimo aggiornamento dati e regole:\n%1$s</string>
+    <string name="loading">Ultimo aggiornamento dati e regole:\nAggiornamento in corso...</string>
     <string name="notAvailable">N/A</string>
     <string name="updateTitle">Aggiornamento richiesto</string>
     <string name="updateMessage">Per continuare ad utilizzare l\'applicazione, scarica la nuova versione dallo store</string>
@@ -58,8 +61,23 @@
     <string name="ok">OK</string>
     <string name="next">Avanti</string>
     <string name="back">Indietro</string>
-    <string name="version">v. %1$s</string>
+    <string name="version"><u><b>versione %1$s</b></u></string>
     <string name="privacyTitle"></string>
     <string name="privacy">VerificaC19 è l\'app ufficiale del Ministero della Salute per la verifica di validità e autenticità delle Certificazioni Verdi Covid19. La verifica avviene scansionando il QRcode presente sulla certificazione tramite la fotocamera del dispositivo. Nessun dato letto dalla Certificazione viene memorizzato sul dispositivo con cui si effettua la verifica.
-\n\nPer utilizzare l\'App è necessario fornire il consenso all\'uso della fotocamera.</string>
+\n\nPer utilizzare l\'app è necessario fornire il consenso all\'uso della fotocamera.</string>
+    <string name="label_verify_green_pass">Verifica una\n<b>Certificazione\nverde Covid-19</b></string>
+    <string name="label_scan_qr_code">Scansiona il QR CODE</string>
+    <string name="label_read_faq"><u><b>Leggi le domande frequenti</b></u></string>
+    <string name="label_verification_location"><b><u>Quali sono i luoghi e gli eventi che la prevedono?</u></b></string>
+    <string name="label_name">Nome/Name</string>
+    <string name="label_close">Chiudi</string>
+    <string name="label_return_home">Torna all\'inizio</string>
+    <string name="certificatePartiallyValid">Certificazione valida solo in Italia</string>
+    <string name="label_what_can_be_done">Cosa si può fare con la certificazione verde COVID-19</string>
+    <string name="label_why_qr_not_valid">Quali sono i motivi di non validità?</string>
+    <string name="label_when_qr_valid">Quali sono i tempi di inizio validità?</string>
+    <string name="label_which_qr_scan">Quale QR Code scansionare?</string>
+    <string name="label_scan_error_meaning">Cosa significa errore di lettura?</string>
+    <string name="label_scan_times_needed">Quante volte devo riprovare a scansionare</string>
+    <string name="label_validation_timestamp">Ora e data di validazione: %1$s</string>
 </resources>

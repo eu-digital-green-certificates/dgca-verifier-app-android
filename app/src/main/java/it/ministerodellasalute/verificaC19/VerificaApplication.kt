@@ -56,6 +56,10 @@ class VerificaApplication : Application(), Configuration.Provider {
                 .build()
         WorkManager
             .getInstance(this)
-            .enqueue(uploadWorkRequest)
+            .enqueueUniquePeriodicWork(
+                "LoadKeysWorker",
+                ExistingPeriodicWorkPolicy.REPLACE,
+                uploadWorkRequest as PeriodicWorkRequest
+            )
     }
 }

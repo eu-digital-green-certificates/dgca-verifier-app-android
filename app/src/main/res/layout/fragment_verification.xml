@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
    ~ license-start
    ~
    ~ Copyright (C) 2021 Ministero della Salute and all other contributors
@@ -20,195 +19,248 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/verification_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue_dark">
+    android:background="@color/green">
 
-    <ScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:fillViewport="true"
-        android:paddingTop="@dimen/padding_20dp"
-        android:paddingBottom="@dimen/padding_20dp">
+        android:layout_height="match_parent">
+        <TextView
+                    android:id="@+id/validation_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/titiliumfont"
+                    android:paddingTop="@dimen/padding_16dp"
+                    android:paddingBottom="@dimen/padding_16dp"
+                    android:text="@string/label_validation_timestamp"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_14sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/margin_10dp"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="20dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="@dimen/padding_20dp">
-
-            <ImageButton
-                android:id="@+id/checkmark"
-                android:layout_width="@dimen/size_100dp"
-                android:layout_height="@dimen/size_100dp"
-                android:layout_marginTop="@dimen/margin_20dp"
-                android:background="@android:color/transparent"
-                android:padding="@dimen/padding_10dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/close_button"
-                tools:background="@drawable/ic_checkmark_filled" />
-
-            <ImageButton
-                android:id="@+id/close_button"
-                android:layout_width="@dimen/size_35dp"
-                android:layout_height="@dimen/size_35dp"
-                android:background="@drawable/circular"
-                android:padding="@dimen/padding_10dp"
-                android:src="@drawable/ic_close"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/subtitle_text"
-                style="@style/H3.Black"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_20dp"
-                android:textSize="15sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/certificate_valid"
-                tools:text="@string/subtitle_text" />
-
-            <TextView
-                android:id="@+id/validation_datetime_text"
-                style="@style/H3.Black"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:textSize="15sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/subtitle_text"
-                tools:text="@string/validation_datetime_text" />
-
-            <TextView
-                android:id="@+id/certificate_valid"
-                style="@style/H1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_20dp"
-                android:fontFamily="@font/titiliumfont"
-                android:textSize="32sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/checkmark"
-                tools:text="@string/certificateValid" />
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/size_45dp"
+            android:paddingBottom="@dimen/size_15dp"
+            android:fillViewport="true"
+            >
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/container_person_details"
+                android:id="@+id/topCon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@+id/validation_datetime_text"
-                tools:layout_editor_absoluteX="21dp"
-                tools:visibility="visible">
 
-                <ImageView
-                    android:id="@+id/user_image"
-                    android:layout_width="@dimen/size_35dp"
-                    android:layout_height="@dimen/size_35dp"
-                    android:src="@drawable/ic_user"
-                    app:layout_constraintBottom_toBottomOf="@+id/name_standardised_text"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/name_text" />
+                android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/birthday_image"
-                    android:layout_width="@dimen/size_35dp"
-                    android:layout_height="@dimen/size_35dp"
-                    android:src="@drawable/ic_calendar"
-                    app:layout_constraintBottom_toBottomOf="@+id/birthdate_text"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/birthdate_label" />
 
-                <TextView
-                    android:id="@+id/name_standardised_text"
-                    style="@style/H3.Black"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_16dp"
-                    android:textSize="15sp"
-                    app:layout_constraintStart_toEndOf="@+id/user_image"
-                    app:layout_constraintTop_toBottomOf="@+id/name_text"
-                    tools:text="MARIO ROSSI" />
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/maincard"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="@dimen/margin_16dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="4dp"
+                    app:layout_constraintStart_toStartOf="parent">
 
-                <TextView
-                    android:id="@+id/name_text"
-                    style="@style/H3.Black.Bold"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_16dp"
-                    android:textSize="15sp"
-                    app:layout_constraintEnd_toEndOf="@id/container_person_details"
-                    app:layout_constraintStart_toEndOf="@+id/user_image"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Mario Rossi" />
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingTop="@dimen/padding_16dp">
 
-                <TextView
-                    android:id="@+id/birthdate_label"
-                    style="@style/H3.Black.Bold"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_16dp"
-                    android:layout_marginTop="@dimen/margin_20dp"
-                    android:text="@string/dateOfBirth"
-                    android:textSize="15sp"
-                    app:layout_constraintStart_toEndOf="@+id/birthday_image"
-                    app:layout_constraintTop_toBottomOf="@+id/name_standardised_text" />
+                        <ImageButton
+                            android:id="@+id/checkmark"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="28dp"
+                            android:background="@android:color/transparent"
+                            android:padding="@dimen/padding_10dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:background="@drawable/ic_valid_cert" />
 
-                <TextView
-                    android:id="@+id/birthdate_text"
-                    style="@style/H3.Black"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_16dp"
-                    android:textSize="15sp"
-                    app:layout_constraintStart_toEndOf="@+id/birthday_image"
-                    app:layout_constraintTop_toBottomOf="@+id/birthdate_label"
-                    tools:text="10/05/1993" />
+                        <TextView
+                            android:id="@+id/certificate_valid"
+                            style="@style/H1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/margin_24dp"
+                            android:layout_marginTop="@dimen/margin_28dp"
+                            android:fontFamily="@font/titiliumfont"
+                            android:textColor="@color/blue_dark"
+                            android:textSize="32sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/checkmark"
+                            tools:text="Certificazione valida per l'Italia" />
+
+                        <TextView
+                            android:id="@+id/subtitle_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/margin_24dp"
+                            android:layout_marginStart="24dp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginEnd="24dp"
+                            android:fontFamily="@font/titiliumfont"
+                            android:textColor="@color/blue_dark"
+                            android:textSize="@dimen/text_size_12sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/question_container"
+                            tools:text="@string/subtitle_text" />
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/question_container"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:orientation="vertical"
+                            app:dividerPadding="@dimen/padding_16dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/certificate_valid"
+                            app:showDividers="middle" />
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/container_person_details"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/margin_24dp"
+                            android:layout_marginStart="24dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginEnd="24dp"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toTopOf="@+id/close_button"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/subtitle_text"
+                            tools:visibility="visible">
+
+                            <TextView
+                                android:id="@+id/name_text"
+                                style="@style/H3.Black.Bold"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/titiliumfont"
+                                android:text="@string/label_name"
+                                android:textAllCaps="true"
+                                android:textColor="@color/blue_dark"
+                                android:textSize="@dimen/text_size_12sp"
+                                app:layout_constraintEnd_toEndOf="@id/container_person_details"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/name_standardised_text"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:fontFamily="@font/titiliumfont"
+                                android:textAllCaps="true"
+                                android:textColor="@color/blue_dark"
+                                android:textSize="@dimen/text_size_24sp"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toStartOf="@id/name_text"
+                                app:layout_constraintTop_toBottomOf="@+id/name_text"
+                                tools:text="MARIO ROSSI" />
+
+
+                            <TextView
+                                android:id="@+id/birthdate_label"
+                                style="@style/H3.Black.Bold"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/margin_20dp"
+                                android:fontFamily="@font/titiliumfont"
+                                android:text="@string/dateOfBirth"
+                                android:textAllCaps="true"
+                                android:textColor="@color/blue_dark"
+                                android:textSize="@dimen/text_size_12sp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/name_standardised_text" />
+
+                            <TextView
+                                android:id="@+id/birthdate_text"
+                                style="@style/H3.Black"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:fontFamily="@font/titiliumfont"
+                                android:textColor="@color/blue_dark"
+                                android:textSize="@dimen/text_size_24sp"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toStartOf="@id/birthdate_label"
+                                app:layout_constraintTop_toBottomOf="@+id/birthdate_label"
+                                tools:text="10/05/1993" />
+
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/close_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="bottom|center"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/checkmark"
+                            app:layout_constraintVertical_bias="1.0">
+
+                            <TextView
+                                android:id="@+id/close_text"
+                                style="@style/H3.Black.Bold"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/titiliumfont"
+                                android:text="@string/label_close"
+                                android:textAllCaps="true"
+                                android:textColor="@color/blue_dark"
+                                android:textSize="@dimen/text_size_12sp"
+                                app:layout_constraintBottom_toTopOf="@id/arrow"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="parent"/>
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/arrow"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="@id/close_button"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/close_text"
+                                app:srcCompat="@drawable/ic_arrow_up"
+                                app:tint="@color/blue_dark" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.cardview.widget.CardView>
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <Button
-                android:id="@+id/next_qr_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_20dp"
-                android:background="@drawable/background_rounded_blue"
-                android:padding="@dimen/padding_16dp"
-                android:text="@string/repeatQR"
-                android:textColor="@color/white"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/container_person_details"
-                app:layout_goneMarginTop="150dp" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.cardview.widget.CardView>
-
-    </ScrollView>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="@dimen/size_50dp"
         android:layout_height="@dimen/size_50dp"
         android:indeterminateTint="@color/blue_dark"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -25,8 +25,12 @@ import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.style.StyleSpan
+import android.text.style.UnderlineSpan
 import android.view.View
 import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
@@ -34,6 +38,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.text.set
 import androidx.lifecycle.observe
 import dagger.hilt.android.AndroidEntryPoint
 import it.ministerodellasalute.verificaC19.BuildConfig
@@ -43,7 +48,6 @@ import it.ministerodellasalute.verificaC19.databinding.ActivityFirstBinding
 import it.ministerodellasalute.verificaC19.parseTo
 import it.ministerodellasalute.verificaC19.ui.main.MainActivity
 import it.ministerodellasalute.verificaC19.util.Utility
-import java.lang.Exception
 
 @AndroidEntryPoint
 class FirstActivity : AppCompatActivity(), View.OnClickListener {
@@ -61,46 +65,73 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE
+        )
 
         binding = ActivityFirstBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.qrButton.setOnClickListener(this)
 
-        binding.versionText.text = getString(R.string.version, BuildConfig.VERSION_NAME)
+        val string = getString(R.string.version, BuildConfig.VERSION_NAME)
+        val spannableString = SpannableString(string).also {
+            it.setSpan(UnderlineSpan(), 0, it.length, 0)
+            it.setSpan(StyleSpan(Typeface.BOLD), 0, it.length, 0)
+        }
+        binding.versionText.text = spannableString
 
-        viewModel.getDateLastSync().let{
-            binding.dateLastSyncText.text = getString(R.string.lastSyncDate, if (it == -1L) getString(R.string.notAvailable) else it.parseTo(FORMATTED_DATE_LAST_SYNC))
+        viewModel.getDateLastSync().let {
+            binding.dateLastSyncText.text = getString(
+                R.string.lastSyncDate,
+                if (it == -1L) getString(R.string.notAvailable) else it.parseTo(
+                    FORMATTED_DATE_LAST_SYNC
+                )
+            )
         }
 
-        viewModel.fetchStatus.observe(this){
-            if(it){
+        viewModel.fetchStatus.observe(this) {
+            if (it) {
                 binding.qrButton.isEnabled = false
                 binding.dateLastSyncText.text = getString(R.string.loading)
-            } else{
+            } else {
                 binding.qrButton.isEnabled = true
-                viewModel.getDateLastSync().let{ date ->
-                    binding.dateLastSyncText.text = getString(R.string.lastSyncDate, if (date == -1L) getString(R.string.notAvailable) else date.parseTo(FORMATTED_DATE_LAST_SYNC))
+                viewModel.getDateLastSync().let { date ->
+                    binding.dateLastSyncText.text = getString(
+                        R.string.lastSyncDate,
+                        if (date == -1L) getString(R.string.notAvailable) else date.parseTo(
+                            FORMATTED_DATE_LAST_SYNC
+                        )
+                    )
                 }
             }
         }
-
-        binding.privacyPolicy.setOnClickListener {
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dgc.gov.it/web/pn.html"))
+        binding.privacyPolicyCard.setOnClickListener {
+            val browserIntent =
+                Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dgc.gov.it/web/pn.html"))
+            startActivity(browserIntent)
+        }
+        binding.faqCard.setOnClickListener {
+            val browserIntent =
+                Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dgc.gov.it/web/faq.html"))
             startActivity(browserIntent)
         }
     }
 
     private fun checkCameraPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_DENIED
+        ) {
             createPermissionAlert()
-        } else{
+        } else {
             openQrCodeReader()
         }
     }
 
-    fun createPermissionAlert() {
+    private fun createPermissionAlert() {
         try {
             val builder = AlertDialog.Builder(this)
             builder.setTitle(getString(R.string.privacyTitle))
@@ -112,9 +143,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
             }
             val dialog = builder.create()
             dialog.show()
-        }
-        catch (e: Exception)
-        {
+        } catch (e: Exception) {
             requestPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
@@ -122,31 +151,31 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-        viewModel.getAppMinVersion().let{
-            if (Utility.versionCompare(it, BuildConfig.VERSION_NAME) > 0){
+        viewModel.getAppMinVersion().let {
+            if (Utility.versionCompare(it, BuildConfig.VERSION_NAME) > 0) {
                 createForceUpdateDialog()
             }
         }
     }
 
-    private fun openQrCodeReader(){
+    private fun openQrCodeReader() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
 
     override fun onClick(v: View?) {
-        viewModel.getDateLastSync().let{
+        viewModel.getDateLastSync().let {
             if (it == -1L) {
                 createNoKeyAlert()
                 return
             }
         }
-        when(v?.id){
+        when (v?.id) {
             R.id.qrButton -> checkCameraPermission()
         }
     }
 
-    fun createNoKeyAlert(){
+    private fun createNoKeyAlert() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.noKeyAlertTitle))
         builder.setMessage(getString(R.string.noKeyAlertMessage))
@@ -156,7 +185,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
         dialog.show()
     }
 
-    fun createForceUpdateDialog(){
+    private fun createForceUpdateDialog() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.updateTitle))
         builder.setMessage(getString(R.string.updateMessage))
@@ -169,11 +198,16 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
         dialog.show()
     }
 
-    fun openGooglePlay(){
+    private fun openGooglePlay() {
         try {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")))
         } catch (e: ActivityNotFoundException) {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+                )
+            )
         }
     }
 }

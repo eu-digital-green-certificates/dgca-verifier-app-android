@@ -21,11 +21,9 @@
 package it.ministerodellasalute.verificaC19.ui.main.verification
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -34,24 +32,13 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
-import dgca.verifier.app.decoder.model.VerificationResult
-import it.ministerodellasalute.verificaC19.FORMATTED_BIRTHDAY_DATE
-import it.ministerodellasalute.verificaC19.R
-import it.ministerodellasalute.verificaC19.YEAR_MONTH_DAY
+import it.ministerodellasalute.verificaC19.*
 import it.ministerodellasalute.verificaC19.databinding.FragmentVerificationBinding
 import it.ministerodellasalute.verificaC19.model.CertificateModel
+import it.ministerodellasalute.verificaC19.model.CertificateStatus
 import it.ministerodellasalute.verificaC19.model.PersonModel
-import it.ministerodellasalute.verificaC19.model.TestResult
-import it.ministerodellasalute.verificaC19.parseFromTo
-import java.lang.Exception
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeFormatter.ofPattern
+import it.ministerodellasalute.verificaC19.ui.compounds.QuestionCompound
 import java.util.*
-import kotlin.properties.Delegates
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
@@ -74,186 +61,119 @@ class VerificationFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.closeButton.setOnClickListener(this)
-        binding.nextQrButton.setOnClickListener(this)
-
-        viewModel.verificationResult.observe(viewLifecycleOwner) {
-            setCertStatusUI(it)
-        }
-
+        binding.validationDate.text = getString(
+            R.string.label_validation_timestamp, Date().time.parseTo(
+                FORMATTED_VALIDATION_DATE
+            )
+        )
         viewModel.certificate.observe(viewLifecycleOwner) { certificate ->
             certificate?.let {
                 certificateModel = it
                 setPersonData(it.person, it.dateOfBirth)
+                setupCertStatusView(it)
             }
         }
-
         viewModel.inProgress.observe(viewLifecycleOwner) {
             binding.progressBar.isVisible = it
         }
-
         viewModel.init(args.qrCodeText)
     }
 
-    private fun clearExtraTime(strDateTime: String): String {
-        try {
+    private fun setupCertStatusView(cert: CertificateModel) {
+        val certStatus = viewModel.getCertificateStatus(cert)
+        setBackgroundColor(certStatus)
+        setPersonDetailsVisibility(certStatus)
+        setValidationIcon(certStatus)
+        setValidationMainText(certStatus)
+        setValidationSubTextVisibility(certStatus)
+        setValidationSubText(certStatus)
+        setLinkViews(certStatus)
+    }
 
-            if (strDateTime.contains("T")) {
-                return strDateTime.substring(0, strDateTime.indexOf("T"))
-            }
-            return strDateTime
+    private fun setLinkViews(certStatus: CertificateStatus) {
+        val questionMap: Map<String, String> = when (certStatus) {
+            CertificateStatus.VALID, CertificateStatus.PARTIALLY_VALID -> mapOf(getString(R.string.label_what_can_be_done) to "https://www.dgc.gov.it/web/faq.html#verifica19")
+            CertificateStatus.NOT_VALID_YET -> mapOf(getString(R.string.label_when_qr_valid) to "https://www.dgc.gov.it/web/faq.html#verifica19")
+            CertificateStatus.NOT_VALID -> mapOf(getString(R.string.label_why_qr_not_valid) to "https://www.dgc.gov.it/web/faq.html#verifica19")
+            CertificateStatus.NOT_GREEN_PASS -> mapOf(getString(R.string.label_which_qr_scan) to "https://www.dgc.gov.it/web/faq.html#verifica19")
         }
-        catch (e : Exception)
-        {
-            return strDateTime
+        questionMap.map {
+            val compound = QuestionCompound(context)
+            compound.setupWithLabels(it.key, it.value)
+            binding.questionContainer.addView(compound)
+        }
+        binding.questionContainer.clipChildren = false
+    }
+
+    private fun setValidationSubTextVisibility(certStatus: CertificateStatus) {
+        binding.subtitleText.visibility = when (certStatus) {
+            CertificateStatus.NOT_GREEN_PASS -> View.GONE
+            else -> View.VISIBLE
         }
     }
 
-    private fun isAnyTestExpired(it: CertificateModel): TestExpiryValues {
-        it.recoveryStatements?.let {
-
-            try {
-
-                val startDate: LocalDate = LocalDate.parse(clearExtraTime(it.last().certificateValidFrom))
-
-                val endDate: LocalDate = LocalDate.parse(clearExtraTime(it.last().certificateValidUntil))
-
-                Log.d("dates", "start:" + startDate.toString() +" end: " +endDate.toString())
-                return when {
-                    startDate.isAfter(LocalDate.now()) -> TestExpiryValues.FUTURE
-                    LocalDate.now().isAfter(endDate) -> TestExpiryValues.EXPIRED
-                    else -> TestExpiryValues.VALID
-                }
-            } catch (e: Exception) {
-                return TestExpiryValues.TECHNICAL_ERROR
-            }
-
-            return TestExpiryValues.EXPIRED
-        }
-        it.tests?.let {
-
-            if (it.last().resultType == TestResult.DETECTED) {
-                return TestExpiryValues.TECHNICAL_ERROR
-            }
-            try {
-
-                val odtDateTimeOfCollection = OffsetDateTime.parse(it.last().dateTimeOfCollection)
-                val ldtDateTimeOfCollection = odtDateTimeOfCollection.toLocalDateTime()
-
-                val startDate: LocalDateTime =
-                    ldtDateTimeOfCollection
-                        .plusHours(Integer.parseInt(viewModel.getRapidTestStartHour()).toLong())
-
-                val endDate: LocalDateTime =
-                    ldtDateTimeOfCollection
-                        .plusHours(Integer.parseInt(viewModel.getRapidTestEndHour()).toLong())
-                Log.d("dates", "start:" + startDate.toString() +" end: " +endDate.toString())
-                return when {
-                    startDate.isAfter(LocalDateTime.now()) -> TestExpiryValues.FUTURE
-                    LocalDateTime.now().isAfter(endDate) -> TestExpiryValues.EXPIRED
-                    else -> TestExpiryValues.VALID
-                }
-            } catch (e: Exception) {
-                return TestExpiryValues.TECHNICAL_ERROR
-            }
-
-            return TestExpiryValues.EXPIRED
-        }
-
-        it.vaccinations?.let {
-            try {
-                if (it.last().doseNumber < it.last().totalSeriesOfDoses) {
-                    val startDate: LocalDate = LocalDate.parse(clearExtraTime(it.last().dateOfVaccination))
-                        .plusDays(Integer.parseInt(viewModel.getVaccineStartDayNotComplete(it.last().medicinalProduct)).toLong())
-
-                    val endDate: LocalDate = LocalDate.parse(clearExtraTime(it.last().dateOfVaccination))
-                        .plusDays(Integer.parseInt(viewModel.getVaccineEndDayNotComplete(it.last().medicinalProduct)).toLong())
-                    Log.d("dates", "start:" + startDate.toString() +" end: " +endDate.toString())
-                    return when {
-                        startDate.isAfter(LocalDate.now()) -> TestExpiryValues.FUTURE
-                        LocalDate.now().isAfter(endDate) -> TestExpiryValues.EXPIRED
-                        else -> TestExpiryValues.VALID
-                    }
-                } else if (it.last().doseNumber == it.last().totalSeriesOfDoses) {
-                    val startDate: LocalDate = LocalDate.parse(clearExtraTime(it.last().dateOfVaccination))
-                        .plusDays(Integer.parseInt(viewModel.getVaccineStartDayComplete(it.last().medicinalProduct)).toLong())
-
-                    val endDate: LocalDate = LocalDate.parse(clearExtraTime(it.last().dateOfVaccination))
-                        .plusDays(Integer.parseInt(viewModel.getVaccineEndDayComplete(it.last().medicinalProduct)).toLong())
-                    Log.d("dates", "start:" + startDate.toString() +" end: " +endDate.toString())
-                    return when {
-                        startDate.isAfter(LocalDate.now()) -> TestExpiryValues.FUTURE
-                        LocalDate.now().isAfter(endDate) -> TestExpiryValues.EXPIRED
-                        else -> TestExpiryValues.VALID
-                    }
-                }
-                else if (it.last().doseNumber > it.last().totalSeriesOfDoses)
-                {
-                    return TestExpiryValues.TECHNICAL_ERROR
-                }
-            } catch (e: Exception) {
-                return TestExpiryValues.TECHNICAL_ERROR
-            }
-        }
-        return TestExpiryValues.EXPIRED
-    }
-
-    private enum class TestExpiryValues {
-        TECHNICAL_ERROR,
-        EXPIRED,
-        FUTURE,
-        VALID
-    }
-
-    private fun setCertStatusUI(verificationResult: VerificationResult) {
-        binding.validationDatetimeText.text = getString(R.string.validation_datetime_text, LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm, dd/MM/yyyy")))
-        if (verificationResult.isValid()) {
-            val certificateValidityResult = isAnyTestExpired(certificateModel)
-            if (certificateValidityResult == TestExpiryValues.VALID) {
-                binding.containerPersonDetails.visibility = View.VISIBLE
-                binding.checkmark.background =
-                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_checkmark_filled)
-                binding.certificateValid.text = getString(R.string.certificateValid)
-                binding.subtitleText.text = getString(R.string.subtitle_text)
-                binding.nextQrButton.text = getString(R.string.nextQR)
-            } else {
-                setTestErrorMessage(certificateValidityResult)
-            }
-        } else {
-            binding.containerPersonDetails.visibility = View.GONE
-            binding.checkmark.background =
-                ContextCompat.getDrawable(requireContext(), if (verificationResult.cborDecoded) R.drawable.ic_misuse else R.drawable.ic_warning)
-            binding.certificateValid.text = if (verificationResult.cborDecoded) getString(R.string.certificateNonValid) else getString(R.string.scanError)
-            binding.subtitleText.text = if (verificationResult.cborDecoded) getString(R.string.subtitle_text_nonvalid) else getString(R.string.subtitle_text_notDCC)
-        }
-    }
-
-    private fun setTestErrorMessage(certificateValidityResult: TestExpiryValues) {
-        binding.containerPersonDetails.visibility = View.VISIBLE
-        binding.checkmark.background =
-            ContextCompat.getDrawable(requireContext(), R.drawable.ic_misuse)
-        binding.certificateValid.text = getString(R.string.certificateNonValid)
+    private fun setValidationSubText(certStatus: CertificateStatus) {
         binding.subtitleText.text =
-            when (certificateValidityResult) {
-                TestExpiryValues.TECHNICAL_ERROR -> getString(R.string.subtitle_text_technicalError)
-                TestExpiryValues.EXPIRED -> getString(R.string.subtitle_text_expired)
-                TestExpiryValues.FUTURE -> getString(R.string.subtitle_text_future)
+            when (certStatus) {
+                CertificateStatus.VALID, CertificateStatus.PARTIALLY_VALID -> getString(R.string.subtitle_text)
+                CertificateStatus.NOT_VALID, CertificateStatus.NOT_VALID_YET -> getString(R.string.subtitle_text_notvalid)
                 else -> getString(R.string.subtitle_text_technicalError)
             }
     }
 
-    private fun setPersonData(person: PersonModel, dateOfBirth: String) {
-        binding.nameText.text = person.familyName.plus(" ").plus(person.givenName)
-        binding.nameStandardisedText.text = ""
+    private fun setValidationMainText(certStatus: CertificateStatus) {
+        binding.certificateValid.text = when (certStatus) {
+            CertificateStatus.VALID -> getString(R.string.certificateValid)
+            CertificateStatus.PARTIALLY_VALID -> getString(R.string.certificatePartiallyValid)
+            CertificateStatus.NOT_GREEN_PASS -> getString(R.string.certificateNotDCC)
+            CertificateStatus.NOT_VALID -> getString(R.string.certificateNonValid)
+            CertificateStatus.NOT_VALID_YET -> getString(R.string.certificateNonValidYet)
+        }
+    }
+
+    private fun setValidationIcon(certStatus: CertificateStatus) {
+        binding.checkmark.background =
+            ContextCompat.getDrawable(
+                requireContext(), when (certStatus) {
+                    CertificateStatus.VALID -> R.drawable.ic_valid_cert
+                    CertificateStatus.NOT_VALID_YET -> R.drawable.ic_not_valid_yet
+                    CertificateStatus.PARTIALLY_VALID -> R.drawable.ic_locally_valid
+                    CertificateStatus.NOT_GREEN_PASS -> R.drawable.ic_technical_error
+                    else -> R.drawable.ic_invalid
+                }
+            )
+    }
+
+    private fun setPersonDetailsVisibility(certStatus: CertificateStatus) {
+        binding.containerPersonDetails.visibility = when (certStatus) {
+            CertificateStatus.VALID, CertificateStatus.NOT_VALID, CertificateStatus.NOT_VALID_YET, CertificateStatus.PARTIALLY_VALID -> View.VISIBLE
+            else -> View.GONE
+        }
+    }
+
+    private fun setBackgroundColor(certStatus: CertificateStatus) {
+        binding.verificationBackground.setBackgroundColor(
+            ContextCompat.getColor(
+                requireContext(),
+                when (certStatus) {
+                    CertificateStatus.VALID -> R.color.green
+                    CertificateStatus.PARTIALLY_VALID -> R.color.blue_bg
+                    else -> R.color.red_bg
+                }
+            )
+        )
+    }
+
+    private fun setPersonData(person: PersonModel?, dateOfBirth: String?) {
+        binding.nameStandardisedText.text = person?.familyName.plus(" ").plus(person?.givenName)
         binding.birthdateText.text =
-            dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_BIRTHDAY_DATE)
+            dateOfBirth?.parseFromTo(YEAR_MONTH_DAY, FORMATTED_BIRTHDAY_DATE) ?: ""
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.close_button -> requireActivity().finish()
-            R.id.next_qr_button -> findNavController().popBackStack()
+            R.id.close_button -> findNavController().popBackStack()
         }
     }
 

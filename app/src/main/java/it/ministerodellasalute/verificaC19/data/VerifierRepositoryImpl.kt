@@ -40,23 +40,23 @@ import javax.inject.Inject
 
 
 class VerifierRepositoryImpl @Inject constructor(
-        private val apiService: ApiService,
-        private val preferences: Preferences,
-        private val db: AppDatabase,
-        private val keyStoreCryptor: KeyStoreCryptor,
-        private val dispatcherProvider: DispatcherProvider
+    private val apiService: ApiService,
+    private val preferences: Preferences,
+    private val db: AppDatabase,
+    private val keyStoreCryptor: KeyStoreCryptor,
+    private val dispatcherProvider: DispatcherProvider
 ) : BaseRepository(dispatcherProvider), VerifierRepository {
 
     private val validCertList = mutableListOf<String>()
     private val fetchStatus: MutableLiveData<Boolean> = MutableLiveData()
 
-    override suspend fun syncData(): Boolean?{
+    override suspend fun syncData(): Boolean? {
         return execute {
             fetchStatus.postValue(true)
 
             fetchValidationRules()
 
-            if(fetchCertificates() == false) {
+            if (fetchCertificates() == false) {
                 fetchStatus.postValue(false)
                 return@execute false
             }
@@ -81,26 +81,27 @@ class VerifierRepositoryImpl @Inject constructor(
             val body = response.body() ?: run {
                 return@execute false
             }
-                validCertList.clear()
-                validCertList.addAll(body)
+            validCertList.clear()
+            validCertList.addAll(body)
 
-                if (body.isEmpty()) {
-                    preferences.resumeToken = -1L
-                }
+            if (body.isEmpty()) {
+                preferences.resumeToken = -1L
+            }
 
-                val resumeToken = preferences.resumeToken
-                fetchCertificate(resumeToken)
-                db.keyDao().deleteAllExcept(validCertList.toTypedArray())
+            val resumeToken = preferences.resumeToken
+            fetchCertificate(resumeToken)
+            db.keyDao().deleteAllExcept(validCertList.toTypedArray())
 
-                preferences.dateLastFetch = System.currentTimeMillis()
+            preferences.dateLastFetch = System.currentTimeMillis()
 
-                return@execute true
+            return@execute true
         }
     }
 
     override suspend fun getCertificate(kid: String): Certificate? {
         val key = db.keyDao().getById(kid)
-        return if (key != null) keyStoreCryptor.decrypt(key.key)!!.base64ToX509Certificate() else null
+        return if (key != null) keyStoreCryptor.decrypt(key.key)!!
+            .base64ToX509Certificate() else null
     }
 
     override fun getCertificateFetchStatus(): LiveData<Boolean> {
@@ -111,26 +112,24 @@ class VerifierRepositoryImpl @Inject constructor(
         val tokenFormatted = if (resumeToken == -1L) "" else resumeToken.toString()
         val response = apiService.getCertUpdate(tokenFormatted)
 
-        if (!response.isSuccessful || response.code() == HttpURLConnection.HTTP_NO_CONTENT) {
-            Log.i("VerifierRepository", "No content")
-            return
-        }
+        if (response.isSuccessful && response.code() == HttpURLConnection.HTTP_OK) {
+            val headers = response.headers()
+            val responseKid = headers[HEADER_KID]
+            val newResumeToken = headers[HEADER_RESUME_TOKEN]
+            val responseStr = response.body()?.stringSuspending(dispatcherProvider) ?: return
 
-        val headers = response.headers()
-        val responseKid = headers[HEADER_KID]
-        val newResumeToken = headers[HEADER_RESUME_TOKEN]
-        val responseStr = response.body()?.stringSuspending(dispatcherProvider) ?: return
+            if (validCertList.contains(responseKid) && isKidValid(responseKid, responseStr)) {
+                Log.i(VerifierRepositoryImpl::class.java.simpleName, "Cert KID verified")
+                val key = Key(kid = responseKid!!, key = keyStoreCryptor.encrypt(responseStr)!!)
+                db.keyDao().insert(key)
 
-        if (validCertList.contains(responseKid) && isKidValid(responseKid, responseStr)) {
-            Log.i(VerifierRepositoryImpl::class.java.simpleName, "Cert KID verified")
-            val key = Key(responseKid!!, keyStoreCryptor.encrypt(responseStr)!!)
-            db.keyDao().insert(key)
-        }
+                preferences.resumeToken = resumeToken
 
-        newResumeToken?.let {
-            val newToken = it.toLong()
-            preferences.resumeToken = newToken
-            fetchCertificate(newToken)
+                newResumeToken?.let {
+                    val newToken = it.toLong()
+                    fetchCertificate(newToken)
+                }
+            }
         }
     }
 
