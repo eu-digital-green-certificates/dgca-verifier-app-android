@@ -49,7 +49,7 @@ class FirstViewModel @Inject constructor(
 
     private fun getValidationRules():Array<Rule>{
         val jsonString = preferences.validationRulesJson
-        return Gson().fromJson(jsonString, Array<Rule>::class.java)?: kotlin.run { emptyArray<Rule>() }
+        return Gson().fromJson(jsonString, Array<Rule>::class.java)?: kotlin.run { emptyArray() }
     }
 
     fun getAppMinVersion(): String{

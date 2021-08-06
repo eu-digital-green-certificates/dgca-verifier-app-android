@@ -22,7 +22,6 @@
 
 package it.ministerodellasalute.verificaC19.data.remote
 
-import it.ministerodellasalute.verificaC19.data.remote.model.Rule
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET

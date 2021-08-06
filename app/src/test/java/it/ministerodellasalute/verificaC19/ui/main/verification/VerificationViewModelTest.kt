@@ -164,7 +164,6 @@ class VerificationViewModelTest {
         viewModel.decode(qrCode)
 
         assertNotEquals(viewModel.certificate.value, null)
-        assertNotEquals(viewModel.verificationResult.value, null)
         assertEquals(true, listOfResponse[0])
         assertEquals(false, listOfResponse[1])
     }

@@ -31,6 +31,7 @@ const val FORMATTED_YEAR_MONTH_DAY = "MMM d, yyyy"
 const val FORMATTED_DATE_TIME = "MMM d, yyyy, HH:mm"
 const val FORMATTED_BIRTHDAY_DATE = "dd/MM/yyyy"
 const val FORMATTED_DATE_LAST_SYNC = "dd/MM/yyyy, HH:mm"
+const val FORMATTED_VALIDATION_DATE = "HH:mm, dd/MM/yyyy"
 
 fun String.parseFromTo(from: String, to: String): String {
     return try {
@@ -43,5 +44,5 @@ fun String.parseFromTo(from: String, to: String): String {
 }
 
 fun Long.parseTo(to: String): String {
-   return SimpleDateFormat(to, Locale.getDefault()).format(Date(this))
+    return SimpleDateFormat(to, Locale.getDefault()).format(Date(this))
 }

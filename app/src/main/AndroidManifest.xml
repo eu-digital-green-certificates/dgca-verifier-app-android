@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
    ~ license-start
    ~
    ~ Copyright (C) 2021 Ministero della Salute and all other contributors
@@ -33,9 +32,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".ui.SplashScreenActivity"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden">
+        <activity
+            android:name=".ui.SplashScreenActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,14 +43,14 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.main.MainActivity"
-            android:screenOrientation="portrait"
+        <activity
+            android:name=".ui.main.MainActivity"
             android:configChanges="orientation|keyboardHidden"
-        />
-        <activity android:name=".ui.FirstActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.FirstActivity"
             android:configChanges="orientation|keyboardHidden"
-        />
+            android:screenOrientation="portrait" />
 
         <provider
             android:name="androidx.work.impl.WorkManagerInitializer"
