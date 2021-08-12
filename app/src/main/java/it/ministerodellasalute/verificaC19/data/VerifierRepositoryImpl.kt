@@ -118,7 +118,7 @@ class VerifierRepositoryImpl @Inject constructor(
             val newResumeToken = headers[HEADER_RESUME_TOKEN]
             val responseStr = response.body()?.stringSuspending(dispatcherProvider) ?: return
 
-            if (validCertList.contains(responseKid) && isKidValid(responseKid, responseStr)) {
+            if (validCertList.contains(responseKid)) {
                 Log.i(VerifierRepositoryImpl::class.java.simpleName, "Cert KID verified")
                 val key = Key(kid = responseKid!!, key = keyStoreCryptor.encrypt(responseStr)!!)
                 db.keyDao().insert(key)
@@ -131,18 +131,6 @@ class VerifierRepositoryImpl @Inject constructor(
                 }
             }
         }
-    }
-
-    private fun isKidValid(responseKid: String?, responseStr: String): Boolean {
-        if (responseKid == null) return false
-
-        val cert = responseStr.base64ToX509Certificate() ?: return false
-        val certKid = MessageDigest.getInstance("SHA-256")
-            .digest(cert.encoded)
-            .copyOf(8)
-            .toBase64()
-
-        return responseKid == certKid
     }
 
     companion object {
