@@ -33,7 +33,6 @@ import android.widget.AdapterView.OnItemSelectedListener
 import androidx.activity.addCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -45,22 +44,22 @@ import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import dagger.hilt.android.AndroidEntryPoint
+import dgca.verifier.app.android.base.BindingFragment
 import dgca.verifier.app.android.databinding.FragmentCodeReaderBinding
 import dgca.verifier.app.engine.data.source.countries.COUNTRIES_MAP
+import timber.log.Timber
 import java.util.Locale
 
 private const val CAMERA_REQUEST_CODE = 1003
 
 @AndroidEntryPoint
-class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListener {
-
-    private var _binding: FragmentCodeReaderBinding? = null
-    private val binding get() = _binding!!
+class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(), NavController.OnDestinationChangedListener {
 
     private val viewModel by viewModels<CodeReaderViewModel>()
 
     private lateinit var beepManager: BeepManager
     private var lastText: String? = null
+    private var refinedCountries: List<String> = emptyList()
 
     private val callback: BarcodeCallback = object : BarcodeCallback {
         override fun barcodeResult(result: BarcodeResult) {
@@ -85,14 +84,8 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
         (activity as MainActivity).clearBackground()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentCodeReaderBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentCodeReaderBinding =
+        FragmentCodeReaderBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -109,11 +102,6 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
         }
 
         setUpCountriesProcessing()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     override fun onResume() {
@@ -134,7 +122,7 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
                 View.GONE
             } else {
                 val countries = pair.first
-                val refinedCountries =
+                refinedCountries =
                     countries.sortedBy { Locale("", COUNTRIES_MAP[it] ?: it).displayCountry }
                 binding.countrySelector.adapter = CountriesAdapter(refinedCountries, layoutInflater)
                 if (pair.second!!.isNotBlank()) {
@@ -194,6 +182,21 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
         if (destination.id == R.id.codeReaderFragment) {
             binding.barcodeScanner.resume()
             lastText = ""
+        }
+    }
+
+    fun onNdefMessageReceived(qrCodeText: String) {
+        val position = binding.countrySelector.selectedItemPosition
+        if (position == -1 || refinedCountries.isEmpty()) {
+            return
+        }
+
+        try {
+            val countryCode = refinedCountries[position].toLowerCase(Locale.ROOT)
+            val action = CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationFragment(qrCodeText, countryCode)
+            findNavController().navigate(action)
+        } catch (ex: Exception) {
+            Timber.d("Cannot get iso country code for position.")
         }
     }
 }

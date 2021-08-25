@@ -38,6 +38,7 @@ import timber.log.Timber
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var navHostFragment: NavHostFragment
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         setContentView(R.layout.activity_main)
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -57,7 +58,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-
         checkNdefMessage(intent)
     }
 
@@ -92,9 +92,11 @@ class MainActivity : AppCompatActivity() {
 
         val qrCodeText = builder.toString()
         if (qrCodeText.isNotEmpty()) {
-//            TODO: update logic for isoCode
-            val action = CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationFragment(qrCodeText, "uk")
-            navController.navigate(action)
+            navHostFragment.childFragmentManager.primaryNavigationFragment?.let { fragment ->
+                if (fragment is CodeReaderFragment && fragment.isVisible) {
+                    fragment.onNdefMessageReceived(qrCodeText)
+                }
+            }
         } else {
             Timber.d("Received empty NDEFMessage")
         }
