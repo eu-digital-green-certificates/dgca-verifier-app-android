@@ -47,8 +47,7 @@ import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.databinding.FragmentCodeReaderBinding
 import dgca.verifier.app.engine.data.source.countries.COUNTRIES_MAP
-import java.util.*
-
+import java.util.Locale
 
 private const val CAMERA_REQUEST_CODE = 1003
 
