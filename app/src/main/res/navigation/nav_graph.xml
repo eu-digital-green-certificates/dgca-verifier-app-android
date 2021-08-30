@@ -39,6 +39,12 @@
             app:exitAnim="@anim/slide_out_left" />
 
         <action
+            android:id="@+id/action_codeReaderFragment_to_detailedVerificationFragment"
+            app:destination="@id/detailedVerificationDialogFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+
+        <action
             android:id="@+id/action_codeReaderFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
 
@@ -58,6 +64,22 @@
             android:name="countryIsoCode"
             app:argType="string" />
     </dialog>
+
+    <dialog
+        android:id="@+id/detailedVerificationDialogFragment"
+        android:name="dgca.verifier.app.android.verification.DetailedVerificationDialogFragment"
+        android:label="Detailed Verification"
+        tools:layout="@layout/dialog_fragment_detailed_verification">
+
+        <argument
+            android:name="qrCodeText"
+            app:argType="string" />
+
+        <argument
+            android:name="countryIsoCode"
+            app:argType="string" />
+    </dialog>
+
     <fragment
         android:id="@+id/settingsFragment"
         android:name="dgca.verifier.app.android.settings.SettingsFragment"

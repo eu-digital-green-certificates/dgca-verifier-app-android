@@ -17,35 +17,36 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 4/24/21 2:10 PM
+ *  Created by osarapulov on 8/30/21 10:02 AM
  */
 
 package dgca.verifier.app.android.verification
-
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewStub
-import android.widget.*
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
-import dgca.verifier.app.android.databinding.DialogFragmentVerificationBinding
+import dgca.verifier.app.android.databinding.DialogFragmentDetailedVerificationBinding
 
-
-@ExperimentalUnsignedTypes
 @AndroidEntryPoint
-class VerificationDialogFragment : BaseVerificationDialogFragment<DialogFragmentVerificationBinding>() {
+class DetailedVerificationDialogFragment :
+    BaseVerificationDialogFragment<DialogFragmentDetailedVerificationBinding>() {
 
-    private val args by navArgs<VerificationDialogFragmentArgs>()
+    private val args by navArgs<DetailedVerificationDialogFragmentArgs>()
 
     override fun onCreateBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
-    ): DialogFragmentVerificationBinding =
-        DialogFragmentVerificationBinding.inflate(inflater, container, false)
+    ): DialogFragmentDetailedVerificationBinding =
+        DialogFragmentDetailedVerificationBinding.inflate(inflater, container, false)
 
     override fun contentLayout(): ViewGroup.LayoutParams =
         binding.content.layoutParams
