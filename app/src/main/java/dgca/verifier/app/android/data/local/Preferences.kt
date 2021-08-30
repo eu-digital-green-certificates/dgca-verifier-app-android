@@ -37,6 +37,8 @@ interface Preferences {
 
     var selectedCountryIsoCode: String?
 
+    var isDebugModeEnabled: Boolean?
+
     fun clear()
 }
 
@@ -59,6 +61,10 @@ class PreferencesImpl(context: Context) : Preferences {
         preferences,
         KEY_SELECTED_COUNTRY_ISO_CODE
     )
+    override var isDebugModeEnabled: Boolean? by BooleanPreference(
+        preferences,
+        KEY_IS_DEBUG_MODE_ENABLED
+    )
 
     override fun clear() {
         preferences.value.edit().clear().apply()
@@ -69,6 +75,7 @@ class PreferencesImpl(context: Context) : Preferences {
         private const val KEY_RESUME_TOKEN = "resume_token"
         private const val KEY_LAST_KEYS_SYNC_TIME_MILLIS = "last_keys_sync_time_millis"
         private const val KEY_SELECTED_COUNTRY_ISO_CODE = "selected_country_iso_code"
+        private const val KEY_IS_DEBUG_MODE_ENABLED = "is_debug_mode_enabled"
     }
 }
 
@@ -101,5 +108,28 @@ class StringPreference(
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: String?) {
         preferences.value.edit { putString(name, value) }
+    }
+}
+
+class BooleanPreference(
+    private val preferences: Lazy<SharedPreferences>,
+    private val name: String,
+    private val defaultValue: Boolean = false
+) : ReadWriteProperty<Any, Boolean?> {
+
+    @WorkerThread
+    override fun getValue(thisRef: Any, property: KProperty<*>): Boolean? {
+        return if (preferences.value.contains(name)) preferences.value.getBoolean(
+            name,
+            defaultValue
+        ) else null
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: Boolean?) {
+        preferences.value.edit {
+            value?.let {
+                putBoolean(name, value)
+            } ?: remove(name)
+        }
     }
 }

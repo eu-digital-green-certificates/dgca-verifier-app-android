@@ -53,4 +53,5 @@
     <string name="type_of_test">Type test</string>
     <string name="country_of_test">Land van test</string>
     <string name="test_result">Test Result</string>
+    <string name="debug_mode">Debug Mode</string>
 </resources>

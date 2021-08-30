@@ -76,4 +76,5 @@
     <string name="type_of_test">Type of Test</string>
     <string name="country_of_test">Country of Test</string>
     <string name="test_result">Test Result</string>
+    <string name="debug_mode">Debug Mode</string>
 </resources>

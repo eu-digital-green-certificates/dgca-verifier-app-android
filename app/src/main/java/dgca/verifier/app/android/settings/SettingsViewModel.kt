@@ -45,6 +45,7 @@ class SettingsViewModel @Inject constructor(
     private val _inProgress = MutableLiveData<Boolean>()
     val inProgress: LiveData<Boolean> = _inProgress
     val lastSyncLiveData: LiveData<Long> = verifierRepository.getLastSyncTimeMillis()
+    val isDebugModeEnabled: LiveData<Boolean?> = verifierRepository.isDebugModeEnabled()
 
     fun syncPublicKeys() {
         viewModelScope.launch {
@@ -64,4 +65,6 @@ class SettingsViewModel @Inject constructor(
             _inProgress.value = false
         }
     }
+
+    fun setDebugModeEnabled(enabled: Boolean?) = verifierRepository.setDebugModeEnabled(enabled)
 }

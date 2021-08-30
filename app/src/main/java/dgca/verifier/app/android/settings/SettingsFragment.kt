@@ -44,7 +44,11 @@ class SettingsFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel by viewModels<SettingsViewModel>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -75,6 +79,14 @@ class SettingsFragment : Fragment() {
                 )
             }
         })
+        viewModel.isDebugModeEnabled.observe(viewLifecycleOwner) {
+            binding.debugModeSwitch.isChecked = it == true
+        }
+        binding.debugModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setDebugModeEnabled(
+                isChecked
+            )
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -105,7 +117,8 @@ class SettingsFragment : Fragment() {
     }
 
     companion object {
-        const val PRIVACY_POLICY = "https://op.europa.eu/en/web/about-us/legal-notices/eu-mobile-apps"
+        const val PRIVACY_POLICY =
+            "https://op.europa.eu/en/web/about-us/legal-notices/eu-mobile-apps"
         private const val LAST_UPDATE_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm"
     }
 }
