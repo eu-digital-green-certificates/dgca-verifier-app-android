@@ -27,7 +27,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewStub
-import android.widget.*
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
@@ -37,7 +40,8 @@ import dgca.verifier.app.android.databinding.DialogFragmentVerificationBinding
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
-class VerificationDialogFragment : BaseVerificationDialogFragment<DialogFragmentVerificationBinding>() {
+class VerificationDialogFragment :
+    BaseVerificationDialogFragment<DialogFragmentVerificationBinding>() {
 
     private val args by navArgs<VerificationDialogFragmentArgs>()
 

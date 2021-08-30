@@ -62,42 +62,46 @@ abstract class BaseVerificationDialogFragment<T : ViewBinding> : BottomSheetDial
     private val hideLiveData: MutableLiveData<Void?> = MutableLiveData()
 
     abstract fun contentLayout(): ViewGroup.LayoutParams
-    abstract fun timerView(): View
-    abstract fun rulesList(): RecyclerView
-    abstract fun actionButton(): Button
-    abstract fun progressBar(): ProgressBar
+    open fun timerView(): View? = null
+    open fun rulesList(): RecyclerView? = null
+    open fun actionButton(): Button? = null
+    open fun progressBar(): ProgressBar? = null
     abstract fun qrCodeText(): String
     abstract fun countryIsoCode(): String
-    abstract fun status(): TextView
-    abstract fun certStatusIcon(): ImageView
-    abstract fun verificationStatusBg(): View
+    open fun status(): TextView? = null
+    open fun certStatusIcon(): ImageView? = null
+    open fun verificationStatusBg(): View? = null
 
-    abstract fun reasonForCertificateInvalidityTitle(): TextView
-    abstract fun reasonForCertificateInvalidityName(): TextView
+    open fun reasonForCertificateInvalidityTitle(): TextView? = null
+    open fun reasonForCertificateInvalidityName(): TextView? = null
 
-    abstract fun greenCertificate(): ViewStub
-    abstract fun reasonTestResultValue(): TextView
-    abstract fun certificateTypeText(): TextView
+    open fun greenCertificate(): ViewStub? = null
+    open fun reasonTestResultValue(): TextView? = null
+    open fun certificateTypeText(): TextView? = null
 
-    abstract fun personFullName(): TextView
-    abstract fun personStandardisedGivenNameTitle(): TextView
-    abstract fun personStandardisedFamilyName(): TextView
-    abstract fun personStandardisedGivenName(): TextView
-    abstract fun dateOfBirthTitle(): TextView
-    abstract fun dateOfBirth(): TextView
+    open fun personFullName(): TextView? = null
+    open fun personStandardisedGivenNameTitle(): TextView? = null
+    open fun personStandardisedFamilyName(): TextView? = null
+    open fun personStandardisedGivenName(): TextView? = null
+    open fun dateOfBirthTitle(): TextView? = null
+    open fun dateOfBirth(): TextView? = null
 
-    abstract fun generalInfo(): Group
-    abstract fun errorDetails(): Group
-    abstract fun successDetails(): Group
-    abstract fun errorTestResult(): Group
+    open fun generalInfo(): Group? = null
+    open fun errorDetails(): Group? = null
+    open fun successDetails(): Group? = null
+    open fun errorTestResult(): Group? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val displayMetrics = DisplayMetrics()
         requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
-        val height = displayMetrics.heightPixels
-        contentLayout().height = height - TOP_MARGIN.dpToPx()
+        contentLayout().apply {
+            height = displayMetrics.heightPixels - TOP_MARGIN.dpToPx()
+        }
 
-        timerView().translationX = -displayMetrics.widthPixels.toFloat()
+        timerView()?.apply {
+            translationX = -displayMetrics.widthPixels.toFloat()
+        }
+
 
         dialog.expand()
 
@@ -105,8 +109,10 @@ abstract class BaseVerificationDialogFragment<T : ViewBinding> : BottomSheetDial
             dismiss()
         })
 
-        rulesList().layoutManager = LinearLayoutManager(requireContext())
-        actionButton().setOnClickListener { dismiss() }
+        rulesList()?.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+        }
+        actionButton()?.setOnClickListener { dismiss() }
 
         viewModel.verificationData.observe(viewLifecycleOwner, { verificationData ->
             if (verificationData.verificationResult == null) {
@@ -116,7 +122,7 @@ abstract class BaseVerificationDialogFragment<T : ViewBinding> : BottomSheetDial
             }
         })
         viewModel.verificationError.observe(viewLifecycleOwner, { setCertStatusError(it) })
-        viewModel.inProgress.observe(viewLifecycleOwner, { progressBar().isVisible = it })
+        viewModel.inProgress.observe(viewLifecycleOwner, { progressBar()?.isVisible = it })
 
         viewModel.init(qrCodeText(), countryIsoCode())
     }
@@ -125,43 +131,43 @@ abstract class BaseVerificationDialogFragment<T : ViewBinding> : BottomSheetDial
         setCertStatusUI(verificationData.getGeneralResult())
         setCertDataVisibility(verificationData.getGeneralResult())
         verificationData.certificateModel?.let { certificateModel ->
-            personFullName().text = certificateModel.getFullName()
+            personFullName()?.text = certificateModel.getFullName()
             toggleButton(certificateModel)
 
             if (verificationData.getGeneralResult() != GeneralVerificationResult.FAILED) {
                 showUserData(certificateModel)
 
-                if (greenCertificate().parent != null) {
+                if (greenCertificate()?.parent != null) {
                     when {
                         certificateModel.vaccinations?.size == 1 -> {
-                            greenCertificate().layoutResource =
+                            greenCertificate()?.layoutResource =
                                 R.layout.item_vaccination
-                            greenCertificate().setOnInflateListener { stub, inflated ->
+                            greenCertificate()?.setOnInflateListener { stub, inflated ->
                                 VaccinationViewHolder.create(
                                     inflated as ViewGroup
                                 ).bind(certificateModel.vaccinations.first())
                             }
-                            greenCertificate().inflate()
+                            greenCertificate()?.inflate()
                         }
                         certificateModel.recoveryStatements?.size == 1 -> {
-                            greenCertificate().layoutResource = R.layout.item_recovery
+                            greenCertificate()?.layoutResource = R.layout.item_recovery
 
-                            greenCertificate().setOnInflateListener { stub, inflated ->
+                            greenCertificate()?.setOnInflateListener { stub, inflated ->
                                 RecoveryViewHolder.create(
                                     inflated as ViewGroup
                                 ).bind(certificateModel.recoveryStatements.first())
                             }
-                            greenCertificate().inflate()
+                            greenCertificate()?.inflate()
                         }
                         certificateModel.tests?.size == 1 -> {
-                            greenCertificate().layoutResource = R.layout.item_test
+                            greenCertificate()?.layoutResource = R.layout.item_test
 
-                            greenCertificate().setOnInflateListener { stub, inflated ->
+                            greenCertificate()?.setOnInflateListener { stub, inflated ->
                                 TestViewHolder.create(
                                     inflated as ViewGroup
                                 ).bind(certificateModel.tests.first())
                             }
-                            greenCertificate().inflate()
+                            greenCertificate()?.inflate()
                         }
                     }
                 }
@@ -196,19 +202,19 @@ abstract class BaseVerificationDialogFragment<T : ViewBinding> : BottomSheetDial
             actionBtnText = getString(R.string.retry)
         }
 
-        status().text = text
-        certStatusIcon().setImageResource(imageId)
-        verificationStatusBg().backgroundTintList = statusColor
-        actionButton().isVisible = true
-        actionButton().backgroundTintList = statusColor
-        actionButton().text = actionBtnText
-        actionButton().isVisible = true
+        status()?.text = text
+        certStatusIcon()?.setImageResource(imageId)
+        verificationStatusBg()?.backgroundTintList = statusColor
+        actionButton()?.isVisible = true
+        actionButton()?.backgroundTintList = statusColor
+        actionButton()?.text = actionBtnText
+        actionButton()?.isVisible = true
     }
 
     private fun setCertStatusError(verificationError: VerificationError) {
-        reasonForCertificateInvalidityTitle().visibility = View.VISIBLE
-        reasonForCertificateInvalidityName().visibility = View.VISIBLE
-        reasonForCertificateInvalidityName().text = getString(
+        reasonForCertificateInvalidityTitle()?.visibility = View.VISIBLE
+        reasonForCertificateInvalidityName()?.visibility = View.VISIBLE
+        reasonForCertificateInvalidityName()?.text = getString(
             when (verificationError) {
                 VerificationError.GREEN_CERTIFICATE_EXPIRED -> R.string.certificate_is_expired
                 VerificationError.CERTIFICATE_REVOKED -> R.string.certificate_was_revoked
@@ -223,10 +229,10 @@ abstract class BaseVerificationDialogFragment<T : ViewBinding> : BottomSheetDial
             }
         )
         if (verificationError == VerificationError.TEST_RESULT_POSITIVE) {
-            errorTestResult().visibility = View.VISIBLE
-            reasonTestResultValue().text = TestResult.DETECTED.value
+            errorTestResult()?.visibility = View.VISIBLE
+            reasonTestResultValue()?.text = TestResult.DETECTED.value
         } else {
-            errorTestResult().visibility = View.GONE
+            errorTestResult()?.visibility = View.GONE
         }
 
         if (verificationError == VerificationError.RULES_VALIDATION_FAILED) {
@@ -238,23 +244,23 @@ abstract class BaseVerificationDialogFragment<T : ViewBinding> : BottomSheetDial
                 )
 
             }
-            rulesList().adapter =
+            rulesList()?.adapter =
                 RuleValidationResultsAdapter(layoutInflater, ruleValidationResultCards)
-            reasonForCertificateInvalidityName().setOnClickListener {
-                rulesList().visibility =
-                    if (rulesList().visibility == View.VISIBLE) View.GONE else View.VISIBLE
-                reasonForCertificateInvalidityName().setCompoundDrawablesRelativeWithIntrinsicBounds(
+            reasonForCertificateInvalidityName()?.setOnClickListener {
+                rulesList()?.visibility =
+                    if (rulesList()?.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                reasonForCertificateInvalidityName()?.setCompoundDrawablesRelativeWithIntrinsicBounds(
                     null,
                     null,
                     ResourcesCompat.getDrawable(
                         resources,
-                        if (rulesList().visibility == View.VISIBLE) R.drawable.icon_collapsed else R.drawable.icon_expanded,
+                        if (rulesList()?.visibility == View.VISIBLE) R.drawable.icon_collapsed else R.drawable.icon_expanded,
                         null
                     ),
                     null
                 )
             }
-            reasonForCertificateInvalidityTitle().text =
+            reasonForCertificateInvalidityTitle()?.text =
                 getString(R.string.possible_limitation)
             val outValue = TypedValue()
             requireContext().theme.resolveAttribute(
@@ -262,8 +268,8 @@ abstract class BaseVerificationDialogFragment<T : ViewBinding> : BottomSheetDial
                 outValue,
                 true
             )
-            reasonForCertificateInvalidityName().setBackgroundResource(outValue.resourceId)
-            reasonForCertificateInvalidityName().setCompoundDrawablesRelativeWithIntrinsicBounds(
+            reasonForCertificateInvalidityName()?.setBackgroundResource(outValue.resourceId)
+            reasonForCertificateInvalidityName()?.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 null,
                 null,
                 ResourcesCompat.getDrawable(resources, R.drawable.icon_expanded, null),
@@ -273,29 +279,29 @@ abstract class BaseVerificationDialogFragment<T : ViewBinding> : BottomSheetDial
     }
 
     private fun setCertDataVisibility(generalVerificationResult: GeneralVerificationResult) {
-        errorDetails().visibility =
+        errorDetails()?.visibility =
             if (generalVerificationResult == GeneralVerificationResult.SUCCESS) View.GONE else View.VISIBLE
         if (generalVerificationResult == GeneralVerificationResult.SUCCESS) {
-            errorTestResult().visibility = View.GONE
+            errorTestResult()?.visibility = View.GONE
         }
-        successDetails().visibility =
+        successDetails()?.visibility =
             if (generalVerificationResult != GeneralVerificationResult.FAILED) View.VISIBLE else View.GONE
     }
 
 
     private fun showUserData(certificate: CertificateModel) {
-        personStandardisedFamilyName().text = certificate.person.standardisedFamilyName
-        personStandardisedGivenName().text = certificate.person.standardisedGivenName
+        personStandardisedFamilyName()?.text = certificate.person.standardisedFamilyName
+        personStandardisedGivenName()?.text = certificate.person.standardisedGivenName
         if (certificate.person.standardisedGivenName?.isNotBlank() == true) {
             View.VISIBLE
         } else {
             View.GONE
         }.apply {
-            personStandardisedGivenNameTitle().visibility = this
-            personStandardisedGivenName().visibility = this
+            personStandardisedGivenNameTitle()?.visibility = this
+            personStandardisedGivenName()?.visibility = this
         }
 
-        dateOfBirth().text =
+        dateOfBirth()?.text =
             certificate.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
 
         val dateOfBirth =
@@ -303,16 +309,16 @@ abstract class BaseVerificationDialogFragment<T : ViewBinding> : BottomSheetDial
         if (dateOfBirth.isBlank()) {
             View.GONE
         } else {
-            dateOfBirth().text = dateOfBirth
+            dateOfBirth()?.text = dateOfBirth
             View.VISIBLE
         }.apply {
-            dateOfBirthTitle().visibility = this
-            dateOfBirth().visibility = this
+            dateOfBirthTitle()?.visibility = this
+            dateOfBirth()?.visibility = this
         }
     }
 
     private fun toggleButton(certificate: CertificateModel) {
-        certificateTypeText().text = when {
+        certificateTypeText()?.text = when {
             certificate.vaccinations?.isNotEmpty() == true -> getString(
                 R.string.type_vaccination,
                 certificate.vaccinations.first().doseNumber,
@@ -322,17 +328,17 @@ abstract class BaseVerificationDialogFragment<T : ViewBinding> : BottomSheetDial
             certificate.tests?.isNotEmpty() == true -> getString(R.string.type_test)
             else -> getString(R.string.type_test)
         }
-        generalInfo().visibility = View.VISIBLE
+        generalInfo()?.visibility = View.VISIBLE
     }
 
     private fun startTimer() {
-        timerView().animate()
-            .setDuration(COLLAPSE_TIME)
-            .translationX(0F)
-            .withEndAction {
+        timerView()?.animate()
+            ?.setDuration(COLLAPSE_TIME)
+            ?.translationX(0F)
+            ?.withEndAction {
                 hideLiveData.value = null
             }
-            .start()
+            ?.start()
     }
 
     private var _binding: T? = null

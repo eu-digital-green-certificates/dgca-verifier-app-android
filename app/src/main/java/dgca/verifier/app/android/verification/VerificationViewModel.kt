@@ -79,7 +79,7 @@ data class VerificationData(
 )
 
 @HiltViewModel
-class VerificationViewModel @Inject constructor(
+open class VerificationViewModel @Inject constructor(
     private val prefixValidationService: PrefixValidationService,
     private val base45Service: Base45Service,
     private val compressorService: CompressorService,

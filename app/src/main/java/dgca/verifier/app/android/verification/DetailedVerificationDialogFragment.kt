@@ -22,17 +22,12 @@
 
 package dgca.verifier.app.android.verification
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewStub
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.constraintlayout.widget.Group
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.databinding.DialogFragmentDetailedVerificationBinding
 
@@ -41,6 +36,7 @@ class DetailedVerificationDialogFragment :
     BaseVerificationDialogFragment<DialogFragmentDetailedVerificationBinding>() {
 
     private val args by navArgs<DetailedVerificationDialogFragmentArgs>()
+    val viewModel by viewModels<DetailedVerificationViewModel>()
 
     override fun onCreateBinding(
         inflater: LayoutInflater,
@@ -48,51 +44,16 @@ class DetailedVerificationDialogFragment :
     ): DialogFragmentDetailedVerificationBinding =
         DialogFragmentDetailedVerificationBinding.inflate(inflater, container, false)
 
-    override fun contentLayout(): ViewGroup.LayoutParams =
-        binding.content.layoutParams
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        viewModel.verificationComponent.observe(viewLifecycleOwner) {
 
-    override fun timerView(): View = binding.timerView
-    override fun rulesList(): RecyclerView = binding.rulesList
-    override fun actionButton(): Button = binding.actionBtn
-    override fun progressBar(): ProgressBar = binding.progressBar
+        }
+    }
+
+    override fun contentLayout(): ViewGroup.LayoutParams = binding.content.layoutParams
 
     override fun qrCodeText(): String = args.qrCodeText
 
     override fun countryIsoCode(): String = args.countryIsoCode
-    override fun status(): TextView = binding.status
-    override fun certStatusIcon(): ImageView = binding.certStatusIcon
-    override fun verificationStatusBg(): View = binding.verificationStatusBg
 
-    override fun reasonForCertificateInvalidityTitle(): TextView =
-        binding.reasonForCertificateInvalidityTitle
-
-    override fun reasonForCertificateInvalidityName(): TextView =
-        binding.reasonForCertificateInvalidityName
-
-    override fun greenCertificate(): ViewStub = binding.greenCertificate
-
-    override fun reasonTestResultValue(): TextView = binding.reasonTestResultValue
-
-    override fun certificateTypeText(): TextView = binding.certificateTypeText
-
-    override fun personFullName(): TextView = binding.personFullName
-
-    override fun personStandardisedGivenNameTitle(): TextView =
-        binding.personStandardisedGivenNameTitle
-
-    override fun personStandardisedFamilyName(): TextView = binding.personStandardisedFamilyName
-
-    override fun personStandardisedGivenName(): TextView = binding.personStandardisedGivenName
-
-    override fun dateOfBirthTitle(): TextView = binding.dateOfBirthTitle
-
-    override fun dateOfBirth(): TextView = binding.dateOfBirth
-
-    override fun generalInfo(): Group = binding.generalInfo
-
-    override fun errorDetails(): Group = binding.errorDetails
-
-    override fun successDetails(): Group = binding.successDetails
-
-    override fun errorTestResult(): Group = binding.errorTestResult
 }
