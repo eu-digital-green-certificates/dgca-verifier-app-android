@@ -54,17 +54,17 @@ fun Map<VerificationComponent, VerificationComponentState>.toVerificationResult(
 
 @HiltViewModel
 class DetailedVerificationViewModel @Inject constructor(
-    private val prefixValidationService: PrefixValidationService,
-    private val base45Service: Base45Service,
-    private val compressorService: CompressorService,
-    private val cryptoService: CryptoService,
-    private val coseService: CoseService,
-    private val schemaValidator: SchemaValidator,
-    private val cborService: CborService,
-    private val verifierRepository: VerifierRepository,
-    private val engine: CertLogicEngine,
-    private val getRulesUseCase: GetRulesUseCase,
-    private val valueSetsRepository: ValueSetsRepository
+    prefixValidationService: PrefixValidationService,
+    base45Service: Base45Service,
+    compressorService: CompressorService,
+    cryptoService: CryptoService,
+    coseService: CoseService,
+    schemaValidator: SchemaValidator,
+    cborService: CborService,
+    verifierRepository: VerifierRepository,
+    engine: CertLogicEngine,
+    getRulesUseCase: GetRulesUseCase,
+    valueSetsRepository: ValueSetsRepository
 ) : VerificationViewModel(
     prefixValidationService,
     base45Service,
@@ -83,9 +83,9 @@ class DetailedVerificationViewModel @Inject constructor(
             DetailedVerificationResult(
                 "Alex Sarapulov",
                 mapOf(
-                    VerificationComponent.TECHNICAL_VERIFICATION to VerificationComponentState.PASSED,
-                    VerificationComponent.ISSUER_INVALIDATION to VerificationComponentState.OPEN,
-                    VerificationComponent.DESTINATION_INVALIDATION to VerificationComponentState.FAILED,
+                    VerificationComponent.TECHNICAL_VERIFICATION to VerificationComponentState.FAILED,
+                    VerificationComponent.ISSUER_INVALIDATION to VerificationComponentState.PASSED,
+                    VerificationComponent.DESTINATION_INVALIDATION to VerificationComponentState.PASSED,
                     VerificationComponent.TRAVELLER_ACCEPTANCE to VerificationComponentState.PASSED
                 )
             )

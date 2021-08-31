@@ -56,7 +56,7 @@ class VerificationDialogFragment :
 
     override fun timerView(): View = binding.timerView
     override fun rulesList(): RecyclerView = binding.rulesList
-    override fun actionButton(): Button = binding.actionBtn
+    override fun actionButton(): Button = binding.actionButton
     override fun progressBar(): ProgressBar = binding.progressBar
 
     override fun qrCodeText(): String = args.qrCodeText
