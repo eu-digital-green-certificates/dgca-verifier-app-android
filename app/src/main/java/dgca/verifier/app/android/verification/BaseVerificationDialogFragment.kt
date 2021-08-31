@@ -71,7 +71,13 @@ abstract class BaseVerificationDialogFragment<T : ViewBinding> : BottomSheetDial
 
         viewModel().init(qrCodeText(), countryIsoCode())
 
-        viewModel().isApplicable.observe(viewLifecycleOwner, { hideLiveData.value = null })
+        viewModel().isApplicable.observe(viewLifecycleOwner, {
+            if (it) {
+                startTimer()
+            } else {
+                hideLiveData.value = null
+            }
+        })
         viewModel().inProgress.observe(viewLifecycleOwner, { progressBar()?.isVisible = it })
     }
 
