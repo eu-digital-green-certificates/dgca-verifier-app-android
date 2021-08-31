@@ -36,15 +36,12 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/techVerificationTitle"
+            style="@style/TextAppearance.Dgca.DetailedVerificationResultBannerTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/default_margin"
             android:layout_marginTop="@dimen/default_half_margin"
-            android:gravity="center"
-            android:lines="2"
             android:text="@string/technical_verification"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_small"
             app:layout_constraintEnd_toStartOf="@id/issuerInvalidationTitle"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
@@ -52,43 +49,34 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/issuerInvalidationTitle"
+            style="@style/TextAppearance.Dgca.DetailedVerificationResultBannerTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/default_half_margin"
-            android:gravity="center"
-            android:lines="2"
             android:text="@string/issuer_invalidation"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_small"
             app:layout_constraintEnd_toStartOf="@id/destinationAcceptanceTitle"
             app:layout_constraintStart_toEndOf="@id/techVerificationTitle"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/destinationAcceptanceTitle"
+            style="@style/TextAppearance.Dgca.DetailedVerificationResultBannerTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/default_half_margin"
-            android:gravity="center"
-            android:lines="2"
             android:text="@string/destination_acceptance"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_small"
             app:layout_constraintEnd_toStartOf="@id/travellerAcceptanceTitle"
             app:layout_constraintStart_toEndOf="@id/issuerInvalidationTitle"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/travellerAcceptanceTitle"
+            style="@style/TextAppearance.Dgca.DetailedVerificationResultBannerTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/default_half_margin"
             android:layout_marginEnd="@dimen/default_margin"
-            android:gravity="center"
-            android:lines="2"
             android:text="@string/traveller_acceptance"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_small"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/destinationAcceptanceTitle"
             app:layout_constraintTop_toTopOf="parent" />

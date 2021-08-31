@@ -37,4 +37,23 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingHorizontal="@dimen/default_padding"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/detailedVerificationResultHeaderView">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/person_info_container"
+            android:layout_width="match_parent"
+            android:layout_height="5000dp"
+            android:paddingVertical="@dimen/default_margin_top">
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

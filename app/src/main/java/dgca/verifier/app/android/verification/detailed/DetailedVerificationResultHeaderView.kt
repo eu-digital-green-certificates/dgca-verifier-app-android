@@ -45,6 +45,10 @@ class DetailedVerificationResultHeaderView(context: Context, attrs: AttributeSet
     private val binding: ViewDetailedVerificationResultHeaderBinding =
         ViewDetailedVerificationResultHeaderBinding.inflate(LayoutInflater.from(context), this)
 
+    fun setInfoClickListener(infoClickListener: OnClickListener?) {
+        binding.information.setOnClickListener { infoClickListener?.onClick(it) }
+    }
+
     fun setUp(detailedVerificationResult: DetailedVerificationResult) {
         binding.personFullName.text = detailedVerificationResult.personFullName
 

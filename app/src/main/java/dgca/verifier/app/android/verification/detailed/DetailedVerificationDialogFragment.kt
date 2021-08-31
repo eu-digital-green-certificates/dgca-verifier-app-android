@@ -26,6 +26,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,10 +48,15 @@ class DetailedVerificationDialogFragment :
         DialogFragmentDetailedVerificationBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         viewModel.detailedVerificationResult.observe(viewLifecycleOwner) { detailedVerificationResult ->
             binding.detailedVerificationResultHeaderView.setUp(
                 detailedVerificationResult
             )
+        }
+        binding.detailedVerificationResultHeaderView.setInfoClickListener {
+            Toast.makeText(requireContext(), "TODO implement info click handler", Toast.LENGTH_SHORT).show()
+            // TODO implement handler
         }
     }
 
