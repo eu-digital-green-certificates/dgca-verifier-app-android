@@ -24,6 +24,7 @@ package dgca.verifier.app.android.verification
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.decoder.base45.Base45Service
 import dgca.verifier.app.decoder.cbor.CborService
@@ -50,6 +51,7 @@ fun Map<VerificationComponent, VerificationComponentState>.toVerificationResult(
         else -> VerificationResult.LIMITED_VALIDITY
     }
 
+@HiltViewModel
 class DetailedVerificationViewModel @Inject constructor(
     private val prefixValidationService: PrefixValidationService,
     private val base45Service: Base45Service,
@@ -80,7 +82,7 @@ class DetailedVerificationViewModel @Inject constructor(
             mapOf(
                 VerificationComponent.TECHNICAL_VERIFICATION to VerificationComponentState.PASSED,
                 VerificationComponent.ISSUER_INVALIDATION to VerificationComponentState.PASSED,
-                VerificationComponent.DESTINATION_INVALIDATION to VerificationComponentState.PASSED,
+                VerificationComponent.DESTINATION_INVALIDATION to VerificationComponentState.FAILED,
                 VerificationComponent.TRAVELLER_ACCEPTANCE to VerificationComponentState.PASSED
             )
         )
