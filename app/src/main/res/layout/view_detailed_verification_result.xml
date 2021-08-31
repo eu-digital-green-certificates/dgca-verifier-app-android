@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~  license-start
+  ~  eu-digital-green-certificates / dgca-verifier-app-android
+  ~
+  ~  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  ~  license-end
+  ~
+  ~  Created by osarapulov on 8/31/21 9:08 AM
+  -->
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/green"
+    tools:parentTag="dgca.verifier.app.android.verification.detailed.DetailedVerificationResultView">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/detailed_verification_result_background"
+        android:padding="@dimen/default_half_margin">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/techVerificationTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginTop="@dimen/default_half_margin"
+            android:gravity="center"
+            android:lines="2"
+            android:text="@string/technical_verification"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_small"
+            app:layout_constraintEnd_toStartOf="@id/issuerInvalidationTitle"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/issuerInvalidationTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_half_margin"
+            android:gravity="center"
+            android:lines="2"
+            android:text="@string/issuer_invalidation"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_small"
+            app:layout_constraintEnd_toStartOf="@id/destinationAcceptanceTitle"
+            app:layout_constraintStart_toEndOf="@id/techVerificationTitle"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/destinationAcceptanceTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_half_margin"
+            android:gravity="center"
+            android:lines="2"
+            android:text="@string/destination_acceptance"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_small"
+            app:layout_constraintEnd_toStartOf="@id/travellerAcceptanceTitle"
+            app:layout_constraintStart_toEndOf="@id/issuerInvalidationTitle"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/travellerAcceptanceTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_half_margin"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:gravity="center"
+            android:lines="2"
+            android:text="@string/traveller_acceptance"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_small"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/destinationAcceptanceTitle"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/blackLine"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/black"
+            app:layout_constraintBottom_toBottomOf="@id/techVerificationImage"
+            app:layout_constraintEnd_toStartOf="@id/travellerAcceptanceImage"
+            app:layout_constraintStart_toEndOf="@id/techVerificationImage"
+            app:layout_constraintTop_toTopOf="@id/techVerificationImage" />
+
+        <ImageView
+            android:id="@+id/techVerificationImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/default_double_margin"
+            android:src="@drawable/ic_traffic_success"
+            app:layout_constraintEnd_toStartOf="@id/issuerInvalidationImage"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/techVerificationTitle" />
+
+        <ImageView
+            android:id="@+id/issuerInvalidationImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_traffic_uncertain"
+            app:layout_constraintEnd_toStartOf="@id/destinationAcceptanceImage"
+            app:layout_constraintStart_toEndOf="@id/techVerificationImage"
+            app:layout_constraintTop_toBottomOf="@id/issuerInvalidationTitle" />
+
+        <ImageView
+            android:id="@+id/destinationAcceptanceImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_traffic_fail"
+            app:layout_constraintEnd_toStartOf="@id/travellerAcceptanceImage"
+            app:layout_constraintStart_toEndOf="@id/issuerInvalidationImage"
+            app:layout_constraintTop_toBottomOf="@id/destinationAcceptanceTitle" />
+
+        <ImageView
+            android:id="@+id/travellerAcceptanceImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/default_double_margin"
+            android:src="@drawable/ic_traffic_success"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/destinationAcceptanceImage"
+            app:layout_constraintTop_toBottomOf="@id/travellerAcceptanceTitle" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</merge>

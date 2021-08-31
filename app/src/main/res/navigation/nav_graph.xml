@@ -67,7 +67,7 @@
 
     <dialog
         android:id="@+id/detailedVerificationDialogFragment"
-        android:name="dgca.verifier.app.android.verification.DetailedVerificationDialogFragment"
+        android:name="dgca.verifier.app.android.verification.detailed.DetailedVerificationDialogFragment"
         android:label="Detailed Verification"
         tools:layout="@layout/dialog_fragment_detailed_verification">
 

@@ -17,22 +17,21 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 8/30/21 10:02 AM
+ *  Created by osarapulov on 8/31/21 9:27 AM
  */
 
-package dgca.verifier.app.android.verification
+package dgca.verifier.app.android.verification.detailed
 
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
-import dgca.verifier.app.android.R
 import dgca.verifier.app.android.databinding.DialogFragmentDetailedVerificationBinding
+import dgca.verifier.app.android.verification.BaseVerificationDialogFragment
+import dgca.verifier.app.android.verification.DetailedVerificationViewModel
 
 @AndroidEntryPoint
 class DetailedVerificationDialogFragment :
@@ -48,18 +47,10 @@ class DetailedVerificationDialogFragment :
         DialogFragmentDetailedVerificationBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.verificationComponent.observe(viewLifecycleOwner) { res ->
-            val (colorRes, textRes) = when (res.toVerificationResult()) {
-                VerificationResult.VALID -> Pair(R.color.green, R.string.cert_valid)
-                VerificationResult.INVALID -> Pair(R.color.red, R.string.cert_invalid)
-                VerificationResult.LIMITED_VALIDITY -> Pair(
-                    R.color.yellow,
-                    R.string.cert_limited_validity
-                )
-            }
-            binding.status.text = getString(textRes)
-            binding.verificationStatusBg.backgroundTintList =
-                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), colorRes))
+        viewModel.detailedVerificationResult.observe(viewLifecycleOwner) { detailedVerificationResult ->
+            binding.detailedVerificationResultHeaderView.setUp(
+                detailedVerificationResult
+            )
         }
     }
 

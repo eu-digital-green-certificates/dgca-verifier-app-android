@@ -54,4 +54,8 @@
     <string name="country_of_test">Land van test</string>
     <string name="test_result">Test Result</string>
     <string name="debug_mode">Debug Mode</string>
+    <string name="technical_verification">Technical Verification</string>
+    <string name="issuer_invalidation">Issuer Invalidation</string>
+    <string name="destination_acceptance">Destination Acceptance</string>
+    <string name="traveller_acceptance">Traveller Acceptance</string>
 </resources>
