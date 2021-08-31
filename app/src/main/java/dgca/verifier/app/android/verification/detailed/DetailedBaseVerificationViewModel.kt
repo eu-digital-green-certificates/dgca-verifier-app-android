@@ -109,11 +109,17 @@ class DetailedBaseVerificationViewModel @Inject constructor(
                 VerificationComponent.DESTINATION_INVALIDATION to VerificationComponentState.FAILED,
                 VerificationComponent.TRAVELLER_ACCEPTANCE to VerificationComponentState.PASSED
             )
-            else -> mapOf(
+            VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID -> mapOf(
                 VerificationComponent.TECHNICAL_VERIFICATION to VerificationComponentState.FAILED,
                 VerificationComponent.ISSUER_INVALIDATION to VerificationComponentState.OPEN,
                 VerificationComponent.DESTINATION_INVALIDATION to VerificationComponentState.OPEN,
                 VerificationComponent.TRAVELLER_ACCEPTANCE to VerificationComponentState.OPEN
+            )
+            else -> mapOf(
+                VerificationComponent.TECHNICAL_VERIFICATION to VerificationComponentState.PASSED,
+                VerificationComponent.ISSUER_INVALIDATION to VerificationComponentState.PASSED,
+                VerificationComponent.DESTINATION_INVALIDATION to VerificationComponentState.PASSED,
+                VerificationComponent.TRAVELLER_ACCEPTANCE to VerificationComponentState.PASSED
             )
         }
 }
