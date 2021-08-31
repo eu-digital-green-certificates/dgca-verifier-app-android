@@ -27,6 +27,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -35,16 +36,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.R
 import dgca.verifier.app.android.databinding.DialogFragmentDetailedVerificationBinding
 import dgca.verifier.app.android.verification.BaseVerificationDialogFragment
-import dgca.verifier.app.android.verification.DetailedVerificationViewModel
-import dgca.verifier.app.android.verification.VerificationResult
-import dgca.verifier.app.android.verification.toVerificationResult
+import dgca.verifier.app.android.verification.BaseVerificationViewModel
 
 @AndroidEntryPoint
 class DetailedVerificationDialogFragment :
     BaseVerificationDialogFragment<DialogFragmentDetailedVerificationBinding>() {
 
     private val args by navArgs<DetailedVerificationDialogFragmentArgs>()
-    val viewModel by viewModels<DetailedVerificationViewModel>()
+    private val viewModel by viewModels<DetailedBaseVerificationViewModel>()
 
     override fun onCreateBinding(
         inflater: LayoutInflater,
@@ -54,11 +53,7 @@ class DetailedVerificationDialogFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.detailedVerificationResult.observe(viewLifecycleOwner) { detailedVerificationResult ->
-            handleDetailedVerificationResult(
-                detailedVerificationResult
-            )
-        }
+
         binding.detailedVerificationResultHeaderView.setInfoClickListener {
             Toast.makeText(
                 requireContext(),
@@ -67,7 +62,9 @@ class DetailedVerificationDialogFragment :
             ).show()
             // TODO implement handler
         }
-        binding.dataLoadedViews.visibility = View.VISIBLE
+        viewModel.detailedVerificationResult.observe(viewLifecycleOwner) {
+            handleDetailedVerificationResult(it)
+        }
     }
 
     private fun handleDetailedVerificationResult(detailedVerificationResult: DetailedVerificationResult) {
@@ -83,9 +80,15 @@ class DetailedVerificationDialogFragment :
         binding.actionButton.backgroundTintList =
             ColorStateList.valueOf(ContextCompat.getColor(context, colorRes))
         binding.actionButton.setOnClickListener { dismiss() }
+        binding.dataLoadedViews.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.GONE
     }
 
     override fun contentLayout(): ViewGroup.LayoutParams = binding.content.layoutParams
+
+    override fun timerView(): View = binding.timberView
+
+    override fun progressBar(): ProgressBar = binding.progressBar
 
     override fun qrCodeText(): String = args.qrCodeText
 
@@ -99,4 +102,6 @@ class DetailedVerificationDialogFragment :
             R.string.retry
         )
     }
+
+    override fun viewModel(): BaseVerificationViewModel = viewModel
 }

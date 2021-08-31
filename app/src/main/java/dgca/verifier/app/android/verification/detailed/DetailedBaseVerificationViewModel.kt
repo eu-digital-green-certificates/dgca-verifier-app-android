@@ -20,13 +20,14 @@
  *  Created by osarapulov on 8/31/21 10:49 AM
  */
 
-package dgca.verifier.app.android.verification
+package dgca.verifier.app.android.verification.detailed
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.VerifierRepository
-import dgca.verifier.app.android.verification.detailed.DetailedVerificationResult
+import dgca.verifier.app.android.verification.BaseVerificationViewModel
+import dgca.verifier.app.android.verification.DecodeResult
 import dgca.verifier.app.decoder.base45.Base45Service
 import dgca.verifier.app.decoder.cbor.CborService
 import dgca.verifier.app.decoder.compression.CompressorService
@@ -53,7 +54,7 @@ fun Map<VerificationComponent, VerificationComponentState>.toVerificationResult(
     }
 
 @HiltViewModel
-class DetailedVerificationViewModel @Inject constructor(
+class DetailedBaseVerificationViewModel @Inject constructor(
     prefixValidationService: PrefixValidationService,
     base45Service: Base45Service,
     compressorService: CompressorService,
@@ -65,7 +66,7 @@ class DetailedVerificationViewModel @Inject constructor(
     engine: CertLogicEngine,
     getRulesUseCase: GetRulesUseCase,
     valueSetsRepository: ValueSetsRepository
-) : VerificationViewModel(
+) : BaseVerificationViewModel(
     prefixValidationService,
     base45Service,
     compressorService,
@@ -78,16 +79,19 @@ class DetailedVerificationViewModel @Inject constructor(
     getRulesUseCase,
     valueSetsRepository
 ) {
+    private val _detailedVerificationResult = MutableLiveData<DetailedVerificationResult>()
     val detailedVerificationResult: LiveData<DetailedVerificationResult> =
-        MutableLiveData(
-            DetailedVerificationResult(
-                "Alex Sarapulov",
-                mapOf(
-                    VerificationComponent.TECHNICAL_VERIFICATION to VerificationComponentState.FAILED,
-                    VerificationComponent.ISSUER_INVALIDATION to VerificationComponentState.PASSED,
-                    VerificationComponent.DESTINATION_INVALIDATION to VerificationComponentState.PASSED,
-                    VerificationComponent.TRAVELLER_ACCEPTANCE to VerificationComponentState.PASSED
-                )
+        _detailedVerificationResult
+
+    override fun handleDecodeResult(decodeResult: DecodeResult) {
+        _detailedVerificationResult.value = DetailedVerificationResult(
+            "Alex Sarapulov",
+            mapOf(
+                VerificationComponent.TECHNICAL_VERIFICATION to VerificationComponentState.FAILED,
+                VerificationComponent.ISSUER_INVALIDATION to VerificationComponentState.PASSED,
+                VerificationComponent.DESTINATION_INVALIDATION to VerificationComponentState.PASSED,
+                VerificationComponent.TRAVELLER_ACCEPTANCE to VerificationComponentState.PASSED
             )
         )
+    }
 }

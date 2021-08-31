@@ -54,7 +54,7 @@ import java.time.ZonedDateTime
  *
  * Created by osarapulov on 09.07.21 9:57
  */
-class VerificationViewModelKtTest {
+class BaseVerificationViewModelKtTest {
     @Test
     fun testGetGeneralResultSuccess() {
         val greenCertificateData = greenCertificateData()

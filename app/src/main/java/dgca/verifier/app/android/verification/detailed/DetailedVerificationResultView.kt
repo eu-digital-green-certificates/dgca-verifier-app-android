@@ -30,8 +30,6 @@ import androidx.annotation.DrawableRes
 import androidx.cardview.widget.CardView
 import dgca.verifier.app.android.R
 import dgca.verifier.app.android.databinding.ViewDetailedVerificationResultBinding
-import dgca.verifier.app.android.verification.VerificationComponent
-import dgca.verifier.app.android.verification.VerificationComponentState
 
 
 class DetailedVerificationResultView(context: Context, attrs: AttributeSet?) :

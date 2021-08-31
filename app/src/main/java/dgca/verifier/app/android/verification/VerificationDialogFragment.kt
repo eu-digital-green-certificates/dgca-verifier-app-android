@@ -23,19 +23,34 @@
 package dgca.verifier.app.android.verification
 
 
+import android.content.res.ColorStateList
+import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewStub
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.constraintlayout.widget.Group
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
+import dgca.verifier.app.android.FORMATTED_YEAR_MONTH_DAY
+import dgca.verifier.app.android.R
+import dgca.verifier.app.android.YEAR_MONTH_DAY
 import dgca.verifier.app.android.databinding.DialogFragmentVerificationBinding
+import dgca.verifier.app.android.model.CertificateModel
+import dgca.verifier.app.android.model.TestResult
+import dgca.verifier.app.android.parseFromTo
+import dgca.verifier.app.android.verification.certs.RecoveryViewHolder
+import dgca.verifier.app.android.verification.certs.TestViewHolder
+import dgca.verifier.app.android.verification.certs.VaccinationViewHolder
+import dgca.verifier.app.android.verification.rules.RuleValidationResultCard
+import dgca.verifier.app.android.verification.rules.RuleValidationResultsAdapter
+import dgca.verifier.app.android.verification.rules.toRuleValidationResultCard
 
 
 @ExperimentalUnsignedTypes
@@ -43,6 +58,7 @@ import dgca.verifier.app.android.databinding.DialogFragmentVerificationBinding
 class VerificationDialogFragment :
     BaseVerificationDialogFragment<DialogFragmentVerificationBinding>() {
 
+    private val viewModel by viewModels<VerificationViewModel>()
     private val args by navArgs<VerificationDialogFragmentArgs>()
 
     override fun onCreateBinding(
@@ -51,51 +67,230 @@ class VerificationDialogFragment :
     ): DialogFragmentVerificationBinding =
         DialogFragmentVerificationBinding.inflate(inflater, container, false)
 
-    override fun contentLayout(): ViewGroup.LayoutParams =
-        binding.content.layoutParams
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.rulesList.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+        }
+        viewModel.decodeResult.observe(viewLifecycleOwner) { handleDecodeResult(it) }
+    }
 
+    override fun viewModel(): BaseVerificationViewModel = viewModel
+
+    override fun contentLayout(): ViewGroup.LayoutParams = binding.content.layoutParams
     override fun timerView(): View = binding.timerView
-    override fun rulesList(): RecyclerView = binding.rulesList
     override fun actionButton(): Button = binding.actionButton
     override fun progressBar(): ProgressBar = binding.progressBar
 
     override fun qrCodeText(): String = args.qrCodeText
-
     override fun countryIsoCode(): String = args.countryIsoCode
-    override fun status(): TextView = binding.status
-    override fun certStatusIcon(): ImageView = binding.certStatusIcon
-    override fun verificationStatusBg(): View = binding.verificationStatusBg
 
-    override fun reasonForCertificateInvalidityTitle(): TextView =
-        binding.reasonForCertificateInvalidityTitle
+    private fun handleDecodeResult(decodeResult: DecodeResult) {
+        handleVerificationResult(decodeResult.verificationData)
+        decodeResult.verificationError?.apply {
+            setCertStatusError(this)
+        }
+    }
 
-    override fun reasonForCertificateInvalidityName(): TextView =
-        binding.reasonForCertificateInvalidityName
+    private fun handleVerificationResult(verificationData: VerificationData) {
+        setCertStatusUI(verificationData.getGeneralResult())
+        setCertDataVisibility(verificationData.getGeneralResult())
+        verificationData.certificateModel?.let { certificateModel ->
+            binding.personFullName.text = certificateModel.getFullName()
+            toggleButton(certificateModel)
 
-    override fun greenCertificate(): ViewStub = binding.greenCertificate
+            if (verificationData.getGeneralResult() != GeneralVerificationResult.FAILED) {
+                showUserData(certificateModel)
 
-    override fun reasonTestResultValue(): TextView = binding.reasonTestResultValue
+                if (binding.greenCertificate.parent != null) {
+                    when {
+                        certificateModel.vaccinations?.size == 1 -> {
+                            binding.greenCertificate.layoutResource =
+                                R.layout.item_vaccination
+                            binding.greenCertificate.setOnInflateListener { stub, inflated ->
+                                VaccinationViewHolder.create(
+                                    inflated as ViewGroup
+                                ).bind(certificateModel.vaccinations.first())
+                            }
+                            binding.greenCertificate.inflate()
+                        }
+                        certificateModel.recoveryStatements?.size == 1 -> {
+                            binding.greenCertificate.layoutResource = R.layout.item_recovery
 
-    override fun certificateTypeText(): TextView = binding.certificateTypeText
+                            binding.greenCertificate.setOnInflateListener { stub, inflated ->
+                                RecoveryViewHolder.create(
+                                    inflated as ViewGroup
+                                ).bind(certificateModel.recoveryStatements.first())
+                            }
+                            binding.greenCertificate.inflate()
+                        }
+                        certificateModel.tests?.size == 1 -> {
+                            binding.greenCertificate.layoutResource = R.layout.item_test
 
-    override fun personFullName(): TextView = binding.personFullName
+                            binding.greenCertificate.setOnInflateListener { stub, inflated ->
+                                TestViewHolder.create(
+                                    inflated as ViewGroup
+                                ).bind(certificateModel.tests.first())
+                            }
+                            binding.greenCertificate.inflate()
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-    override fun personStandardisedGivenNameTitle(): TextView =
-        binding.personStandardisedGivenNameTitle
+    private fun setCertStatusUI(generalVerificationResult: GeneralVerificationResult) {
+        val text: String
+        val imageId: Int
+        val statusColor: ColorStateList
+        val actionBtnText: String
 
-    override fun personStandardisedFamilyName(): TextView = binding.personStandardisedFamilyName
+        if (generalVerificationResult == GeneralVerificationResult.SUCCESS) {
+            text = getString(R.string.cert_valid)
+            imageId = R.drawable.check
+            statusColor =
+                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
+            actionBtnText = getString(R.string.done)
+        } else if (generalVerificationResult == GeneralVerificationResult.RULES_VALIDATION_FAILED) {
+            text = getString(R.string.cert_limited_validity)
+            imageId = R.drawable.check
+            statusColor =
+                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.yellow))
+            actionBtnText = getString(R.string.retry)
+        } else {
+            text = getString(R.string.cert_invalid)
+            imageId = R.drawable.error
+            statusColor =
+                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.red))
+            actionBtnText = getString(R.string.retry)
+        }
 
-    override fun personStandardisedGivenName(): TextView = binding.personStandardisedGivenName
+        binding.status.text = text
+        binding.certStatusIcon.setImageResource(imageId)
+        binding.verificationStatusBg.backgroundTintList = statusColor
+        actionButton().isVisible = true
+        actionButton().backgroundTintList = statusColor
+        actionButton().text = actionBtnText
+        actionButton().isVisible = true
+    }
 
-    override fun dateOfBirthTitle(): TextView = binding.dateOfBirthTitle
+    private fun setCertStatusError(verificationError: VerificationError) {
+        binding.reasonForCertificateInvalidityTitle.visibility = View.VISIBLE
+        binding.reasonForCertificateInvalidityName.visibility = View.VISIBLE
+        binding.reasonForCertificateInvalidityName.text = getString(
+            when (verificationError) {
+                VerificationError.GREEN_CERTIFICATE_EXPIRED -> R.string.certificate_is_expired
+                VerificationError.CERTIFICATE_REVOKED -> R.string.certificate_was_revoked
+                VerificationError.VERIFICATION_FAILED -> R.string.verification_failed
+                VerificationError.CERTIFICATE_EXPIRED -> R.string.signing_certificate_is_expired
+                VerificationError.TEST_DATE_IS_IN_THE_FUTURE -> R.string.the_test_date_is_in_the_future
+                VerificationError.TEST_RESULT_POSITIVE -> R.string.test_result_positive
+                VerificationError.RECOVERY_NOT_VALID_SO_FAR -> R.string.recovery_not_valid_yet
+                VerificationError.RECOVERY_NOT_VALID_ANYMORE -> R.string.recover_not_valid_anymore
+                VerificationError.RULES_VALIDATION_FAILED -> R.string.rules_validation_failed
+                VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID -> R.string.cryptographic_signature_invalid
+            }
+        )
+        if (verificationError == VerificationError.TEST_RESULT_POSITIVE) {
+            binding.errorTestResult.visibility = View.VISIBLE
+            binding.reasonTestResultValue.text = TestResult.DETECTED.value
+        } else {
+            binding.errorTestResult.visibility = View.GONE
+        }
 
-    override fun dateOfBirth(): TextView = binding.dateOfBirth
+        if (verificationError == VerificationError.RULES_VALIDATION_FAILED) {
+            val ruleValidationResultCards = mutableListOf<RuleValidationResultCard>()
+            val context = requireContext()
+            viewModel().validationResults.value?.forEach {
+                ruleValidationResultCards.add(
+                    it.toRuleValidationResultCard(context)
+                )
 
-    override fun generalInfo(): Group = binding.generalInfo
+            }
+            binding.rulesList.adapter =
+                RuleValidationResultsAdapter(layoutInflater, ruleValidationResultCards)
+            binding.reasonForCertificateInvalidityName.setOnClickListener {
+                binding.rulesList.visibility =
+                    if (binding.rulesList.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                binding.reasonForCertificateInvalidityName.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    null,
+                    null,
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        if (binding.rulesList.visibility == View.VISIBLE) R.drawable.icon_collapsed else R.drawable.icon_expanded,
+                        null
+                    ),
+                    null
+                )
+            }
+            binding.reasonForCertificateInvalidityTitle.text =
+                getString(R.string.possible_limitation)
+            val outValue = TypedValue()
+            requireContext().theme.resolveAttribute(
+                android.R.attr.selectableItemBackground,
+                outValue,
+                true
+            )
+            binding.reasonForCertificateInvalidityName.setBackgroundResource(outValue.resourceId)
+            binding.reasonForCertificateInvalidityName.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                null,
+                null,
+                ResourcesCompat.getDrawable(resources, R.drawable.icon_expanded, null),
+                null
+            )
+        }
+    }
 
-    override fun errorDetails(): Group = binding.errorDetails
+    private fun setCertDataVisibility(generalVerificationResult: GeneralVerificationResult) {
+        binding.errorDetails.visibility =
+            if (generalVerificationResult == GeneralVerificationResult.SUCCESS) View.GONE else View.VISIBLE
+        if (generalVerificationResult == GeneralVerificationResult.SUCCESS) {
+            binding.errorTestResult.visibility = View.GONE
+        }
+        binding.successDetails.visibility =
+            if (generalVerificationResult != GeneralVerificationResult.FAILED) View.VISIBLE else View.GONE
+    }
 
-    override fun successDetails(): Group = binding.successDetails
+    private fun showUserData(certificate: CertificateModel) {
+        binding.personStandardisedFamilyName.text = certificate.person.standardisedFamilyName
+        binding.personStandardisedGivenName.text = certificate.person.standardisedGivenName
+        if (certificate.person.standardisedGivenName?.isNotBlank() == true) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }.apply {
+            binding.personStandardisedGivenNameTitle.visibility = this
+            binding.personStandardisedGivenName.visibility = this
+        }
 
-    override fun errorTestResult(): Group = binding.errorTestResult
+        binding.dateOfBirth.text =
+            certificate.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
+
+        val dateOfBirth =
+            certificate.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
+        if (dateOfBirth.isBlank()) {
+            View.GONE
+        } else {
+            binding.dateOfBirth.text = dateOfBirth
+            View.VISIBLE
+        }.apply {
+            binding.dateOfBirthTitle.visibility = this
+            binding.dateOfBirth.visibility = this
+        }
+    }
+
+    private fun toggleButton(certificate: CertificateModel) {
+        binding.certificateTypeText.text = when {
+            certificate.vaccinations?.isNotEmpty() == true -> getString(
+                R.string.type_vaccination,
+                certificate.vaccinations.first().doseNumber,
+                certificate.vaccinations.first().totalSeriesOfDoses
+            )
+            certificate.recoveryStatements?.isNotEmpty() == true -> getString(R.string.type_recovered)
+            certificate.tests?.isNotEmpty() == true -> getString(R.string.type_test)
+            else -> getString(R.string.type_test)
+        }
+        binding.generalInfo.visibility = View.VISIBLE
+    }
 }

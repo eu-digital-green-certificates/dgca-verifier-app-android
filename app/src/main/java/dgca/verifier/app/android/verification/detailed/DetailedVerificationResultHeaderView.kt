@@ -30,10 +30,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import dgca.verifier.app.android.R
 import dgca.verifier.app.android.databinding.ViewDetailedVerificationResultHeaderBinding
-import dgca.verifier.app.android.verification.VerificationComponent
-import dgca.verifier.app.android.verification.VerificationComponentState
-import dgca.verifier.app.android.verification.VerificationResult
-import dgca.verifier.app.android.verification.toVerificationResult
 
 data class DetailedVerificationResult(
     val personFullName: String,
