@@ -23,30 +23,28 @@
 package dgca.verifier.app.android.verification
 
 
-import android.app.Dialog
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
+import android.widget.Button
+import android.widget.ProgressBar
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import dgca.verifier.app.android.*
+import dgca.verifier.app.android.FORMATTED_YEAR_MONTH_DAY
+import dgca.verifier.app.android.R
+import dgca.verifier.app.android.YEAR_MONTH_DAY
 import dgca.verifier.app.android.databinding.DialogFragmentVerificationBinding
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.model.TestResult
+import dgca.verifier.app.android.parseFromTo
 import dgca.verifier.app.android.verification.certs.RecoveryViewHolder
 import dgca.verifier.app.android.verification.certs.TestViewHolder
 import dgca.verifier.app.android.verification.certs.VaccinationViewHolder
@@ -57,63 +55,41 @@ import dgca.verifier.app.android.verification.rules.toRuleValidationResultCard
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
-class VerificationDialogFragment : BottomSheetDialogFragment() {
+class VerificationDialogFragment :
+    BaseVerificationDialogFragment<DialogFragmentVerificationBinding>() {
 
-    private val args by navArgs<VerificationDialogFragmentArgs>()
     private val viewModel by viewModels<VerificationViewModel>()
+    private val args by navArgs<VerificationDialogFragmentArgs>()
 
-    private var _binding: DialogFragmentVerificationBinding? = null
-    private val binding get() = _binding!!
-    private val hideLiveData: MutableLiveData<Void?> = MutableLiveData()
-
-    override fun onCreateView(
+    override fun onCreateBinding(
         inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = DialogFragmentVerificationBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+        container: ViewGroup?
+    ): DialogFragmentVerificationBinding =
+        DialogFragmentVerificationBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val displayMetrics = DisplayMetrics()
-        requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
-        val height = displayMetrics.heightPixels
-        val params = binding.content.layoutParams as FrameLayout.LayoutParams
-        params.height = height - TOP_MARGIN.dpToPx()
-
-        binding.timerView.translationX = -displayMetrics.widthPixels.toFloat()
-
-        dialog.expand()
-
-        hideLiveData.observe(viewLifecycleOwner, {
-            dismiss()
-        })
-
-        binding.rulesList.layoutManager = LinearLayoutManager(requireContext())
-        binding.actionBtn.setOnClickListener { dismiss() }
-
-        viewModel.verificationData.observe(viewLifecycleOwner, { verificationData ->
-            if (verificationData.verificationResult == null) {
-                hideLiveData.value = null
-            } else {
-                handleVerificationResult(verificationData)
-            }
-        })
-        viewModel.verificationError.observe(viewLifecycleOwner, {
-            setCertStatusError(it)
-        })
-        viewModel.inProgress.observe(viewLifecycleOwner, {
-            binding.progressBar.isVisible = it
-        })
-
-        viewModel.init(args.qrCodeText, args.countryIsoCode)
+        binding.rulesList.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+        }
+        viewModel.decodeResult.observe(viewLifecycleOwner) { handleDecodeResult(it) }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    override fun viewModel(): BaseVerificationViewModel = viewModel
+
+    override fun contentLayout(): ViewGroup.LayoutParams = binding.content.layoutParams
+    override fun timerView(): View = binding.timerView
+    override fun actionButton(): Button = binding.actionButton
+    override fun progressBar(): ProgressBar = binding.progressBar
+
+    override fun qrCodeText(): String = args.qrCodeText
+    override fun countryIsoCode(): String = args.countryIsoCode
+
+    private fun handleDecodeResult(decodeResult: DecodeResult) {
+        handleVerificationResult(decodeResult.verificationData)
+        decodeResult.verificationError?.apply {
+            setCertStatusError(this)
+        }
     }
 
     private fun handleVerificationResult(verificationData: VerificationData) {
@@ -164,8 +140,6 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
                         }
                     }
                 }
-
-
             }
         }
 //        TODO: uncomment
@@ -201,10 +175,10 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         binding.status.text = text
         binding.certStatusIcon.setImageResource(imageId)
         binding.verificationStatusBg.backgroundTintList = statusColor
-        binding.actionBtn.isVisible = true
-        binding.actionBtn.backgroundTintList = statusColor
-        binding.actionBtn.text = actionBtnText
-        binding.actionBtn.isVisible = true
+        actionButton().isVisible = true
+        actionButton().backgroundTintList = statusColor
+        actionButton().text = actionBtnText
+        actionButton().isVisible = true
     }
 
     private fun setCertStatusError(verificationError: VerificationError) {
@@ -234,7 +208,7 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         if (verificationError == VerificationError.RULES_VALIDATION_FAILED) {
             val ruleValidationResultCards = mutableListOf<RuleValidationResultCard>()
             val context = requireContext()
-            viewModel.validationResults.value?.forEach {
+            viewModel().validationResults.value?.forEach {
                 ruleValidationResultCards.add(
                     it.toRuleValidationResultCard(context)
                 )
@@ -280,10 +254,9 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
         if (generalVerificationResult == GeneralVerificationResult.SUCCESS) {
             binding.errorTestResult.visibility = View.GONE
         }
-        binding.sucessDetails.visibility =
+        binding.successDetails.visibility =
             if (generalVerificationResult != GeneralVerificationResult.FAILED) View.VISIBLE else View.GONE
     }
-
 
     private fun showUserData(certificate: CertificateModel) {
         binding.personStandardisedFamilyName.text = certificate.person.standardisedFamilyName
@@ -325,36 +298,5 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
             else -> getString(R.string.type_test)
         }
         binding.generalInfo.visibility = View.VISIBLE
-    }
-
-    private fun startTimer() {
-        binding.timerView.animate()
-            .setDuration(COLLAPSE_TIME)
-            .translationX(0F)
-            .withEndAction {
-                hideLiveData.value = null
-            }
-            .start()
-    }
-
-    companion object {
-        private const val TOP_MARGIN = 50
-        private const val COLLAPSE_TIME = 15000L // 15 sec
-    }
-}
-
-fun Dialog?.expand() {
-    this?.let { dialog ->
-        dialog.setOnShowListener { dialogInterface ->
-            val bottomSheetDialog = dialogInterface as BottomSheetDialog
-            val bottomSheetInternal =
-                bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheetInternal?.let {
-                val bottomSheetBehavior = BottomSheetBehavior.from(it)
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                bottomSheetBehavior.peekHeight = it.height
-                it.setBackgroundResource(android.R.color.transparent)
-            }
-        }
     }
 }

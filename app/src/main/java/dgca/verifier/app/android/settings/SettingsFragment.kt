@@ -29,25 +29,21 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.*
+import dgca.verifier.app.android.base.BindingFragment
 import dgca.verifier.app.android.databinding.FragmentSettingsBinding
 
 @AndroidEntryPoint
-class SettingsFragment : Fragment() {
+class SettingsFragment : BindingFragment<FragmentSettingsBinding>() {
 
-    private var _binding: FragmentSettingsBinding? = null
-    private val binding get() = _binding!!
     private val viewModel by viewModels<SettingsViewModel>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsBinding =
+        FragmentSettingsBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -75,6 +71,14 @@ class SettingsFragment : Fragment() {
                 )
             }
         })
+        viewModel.isDebugModeEnabled.observe(viewLifecycleOwner) {
+            binding.debugModeSwitch.isChecked = it == true
+        }
+        binding.debugModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setDebugModeEnabled(
+                isChecked
+            )
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -105,7 +109,8 @@ class SettingsFragment : Fragment() {
     }
 
     companion object {
-        const val PRIVACY_POLICY = "https://op.europa.eu/en/web/about-us/legal-notices/eu-mobile-apps"
+        const val PRIVACY_POLICY =
+            "https://op.europa.eu/en/web/about-us/legal-notices/eu-mobile-apps"
         private const val LAST_UPDATE_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm"
     }
 }

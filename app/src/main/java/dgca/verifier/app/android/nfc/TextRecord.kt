@@ -17,23 +17,14 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 4/24/21 2:20 PM
+ *  Created by mykhailo.nester on 17/08/2021, 18:54
  */
 
-package dgca.verifier.app.android.data
+package dgca.verifier.app.android.nfc
 
-import androidx.lifecycle.LiveData
-import java.security.cert.Certificate
+class TextRecord(
+    val text: String
+) : ParsedNdefRecord {
 
-interface VerifierRepository {
-
-    suspend fun fetchCertificates(statusUrl: String, updateUrl: String): Boolean?
-
-    suspend fun getCertificatesBy(kid: String): List<Certificate>
-
-    fun getLastSyncTimeMillis(): LiveData<Long>
-
-    fun isDebugModeEnabled(): LiveData<Boolean?>
-
-    fun setDebugModeEnabled(enabled: Boolean?)
+    override fun str(): String = text
 }

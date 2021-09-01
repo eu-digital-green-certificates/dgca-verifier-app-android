@@ -17,25 +17,25 @@
   ~  limitations under the License.
   ~  license-end
   ~
-  ~  Created by Mykhailo Nester on 4/23/21 9:53 AM
+  ~  Created by osarapulov on 8/31/21 10:55 AM
   -->
 
-<resources>
-    <color name="blue">#004494</color>
-    <color name="blue_dark">#003D84</color>
-    <color name="blue_light">#4073AF</color>
-    <color name="white">#FFFFFF</color>
-    <color name="black">#404040</color>
-    <color name="green">#467A39</color>
-    <color name="yellow">#FF9F00</color>
-    <color name="red">#DA2131</color>
-
-    <color name="grey_100">#404040</color>
-    <color name="grey_75">#707070</color>
-    <color name="grey_50">#9F9F9F</color>
-    <color name="grey_transparent">#3CD1D0D0</color>
-
-    <color name="rule_card_background_color">#F2F2F2</color>
-    <color name="detailed_verification_result_background">#fff8e8</color>
-
-</resources>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="33dp"
+    android:viewportWidth="32"
+    android:viewportHeight="33">
+  <path
+      android:pathData="M0,16.5a16,16.5 0,1 0,32 0a16,16.5 0,1 0,-32 0z"
+      android:strokeWidth="1"
+      android:fillColor="#bfcb44"
+      android:strokeColor="#00000000"/>
+  <path
+      android:pathData="M0.5,16.5a15.5,16 0,1 0,31 0a15.5,16 0,1 0,-31 0z"
+      android:strokeWidth="1"
+      android:fillColor="#00000000"
+      android:strokeColor="#262626"/>
+  <path
+      android:pathData="M22.084,9.843 L13.735,18.31 9.958,14.48 7.175,17.302l6.56,6.854L25.066,12.665Z"
+      android:fillColor="#fff"/>
+</vector>
