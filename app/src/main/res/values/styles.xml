@@ -45,6 +45,7 @@
 
     <style name="TextAppearance.Dgca.DetailedVerificationResultBannerTitle" parent="">
         <item name="android:textColor">@color/black</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:textSize">@dimen/text_size_small</item>
         <item name="android:gravity">center</item>
         <item name="android:lines">2</item>
