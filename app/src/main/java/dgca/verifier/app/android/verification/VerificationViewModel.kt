@@ -26,7 +26,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dgca.verifier.app.android.anonymization.AnonymizationManager
+import dgca.verifier.app.android.anonymization.PolicyLevel
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.model.toCertificateModel
@@ -90,7 +93,8 @@ class VerificationViewModel @Inject constructor(
     private val verifierRepository: VerifierRepository,
     private val engine: CertLogicEngine,
     private val getRulesUseCase: GetRulesUseCase,
-    private val valueSetsRepository: ValueSetsRepository
+    private val valueSetsRepository: ValueSetsRepository,
+    private val anonymizationManager: AnonymizationManager
 ) : ViewModel() {
 
     private val _verificationData = MutableLiveData<VerificationData>()
@@ -107,6 +111,22 @@ class VerificationViewModel @Inject constructor(
 
     fun init(qrCodeText: String, countryIsoCode: String) {
         decode(qrCodeText, countryIsoCode)
+    }
+
+    private val policyLevel = PolicyLevel.L1
+
+
+    fun onShareClick(certificateModel: CertificateModel?) {
+        if (certificateModel == null) {
+            return
+        }
+
+        val result = anonymizationManager.anonymizeDcc(certificateModel, policyLevel)
+
+        val json = Gson().toJson(result)
+
+        Timber.d("Result: $json")
+//        TODO: update
     }
 
     private fun decode(code: String, countryIsoCode: String) {

@@ -295,10 +295,10 @@
 
             <ViewStub
                 android:id="@+id/greenCertificate"
-                android:inflatedId="@+id/inflatedGreenCertificate"
                 android:layout_width="0dp"
-                android:layout="@layout/item_recovery"
                 android:layout_height="wrap_content"
+                android:inflatedId="@+id/inflatedGreenCertificate"
+                android:layout="@layout/item_recovery"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -350,6 +350,18 @@
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/share_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/default_margin_top"
+            android:backgroundTint="@color/green"
+            android:letterSpacing="-0.02"
+            android:minWidth="176dp"
+            android:text="Share"
+            android:textAllCaps="false"
+            android:textColor="@color/white" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/logo"

@@ -117,6 +117,10 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun handleVerificationResult(verificationData: VerificationData) {
+        binding.shareBtn.setOnClickListener {
+            viewModel.onShareClick(verificationData.certificateModel)
+        }
+
         setCertStatusUI(verificationData.getGeneralResult())
         setCertDataVisibility(verificationData.getGeneralResult())
         verificationData.certificateModel?.let { certificateModel ->
@@ -164,7 +168,8 @@ class VerificationDialogFragment : BottomSheetDialogFragment() {
 
             }
         }
-        startTimer()
+//        TODO: uncomment
+//        startTimer()
     }
 
     private fun setCertStatusUI(generalVerificationResult: GeneralVerificationResult) {
