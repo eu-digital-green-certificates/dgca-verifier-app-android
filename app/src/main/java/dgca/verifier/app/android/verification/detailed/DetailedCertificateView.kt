@@ -43,6 +43,7 @@ class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
     private val binding: ViewDetailedCertificateViewBinding =
         ViewDetailedCertificateViewBinding.inflate(LayoutInflater.from(context), this)
     private var isExpanded = true
+    private lateinit var certificateModelAndVerificationError: Pair<CertificateModel, VerificationError?>
 
     init {
         radius = TypedValue.applyDimension(
@@ -56,6 +57,7 @@ class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
         binding.expandButton.setOnClickListener {
             isExpanded = !isExpanded
             setExpanded(isExpanded)
+            setUp(certificateModelAndVerificationError)
         }
     }
 
@@ -68,9 +70,14 @@ class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
         certificateModel: CertificateModel,
         verificationError: VerificationError?
     ) {
-        setUpCertificateType(certificateModel)
-        setUpPossibleLimitation(verificationError)
-        setUpDateOfBirth(certificateModel)
+        certificateModelAndVerificationError = Pair(certificateModel, verificationError)
+        setUp(certificateModelAndVerificationError)
+    }
+
+    private fun setUp(certificateModelAndVerificationError: Pair<CertificateModel?, VerificationError?>) {
+        setUpCertificateType(certificateModelAndVerificationError.first!!)
+        setUpPossibleLimitation(certificateModelAndVerificationError.second)
+        setUpDateOfBirth(certificateModelAndVerificationError.first!!)
     }
 
     private fun setUpCertificateType(certificateModel: CertificateModel) {
