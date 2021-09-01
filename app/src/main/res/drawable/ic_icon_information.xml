@@ -17,25 +17,15 @@
   ~  limitations under the License.
   ~  license-end
   ~
-  ~  Created by Mykhailo Nester on 4/23/21 9:53 AM
+  ~  Created by osarapulov on 8/31/21 2:17 PM
   -->
 
-<resources>
-    <color name="blue">#004494</color>
-    <color name="blue_dark">#003D84</color>
-    <color name="blue_light">#4073AF</color>
-    <color name="white">#FFFFFF</color>
-    <color name="black">#404040</color>
-    <color name="green">#467A39</color>
-    <color name="yellow">#FF9F00</color>
-    <color name="red">#DA2131</color>
-
-    <color name="grey_100">#404040</color>
-    <color name="grey_75">#707070</color>
-    <color name="grey_50">#9F9F9F</color>
-    <color name="grey_transparent">#3CD1D0D0</color>
-
-    <color name="rule_card_background_color">#F2F2F2</color>
-    <color name="detailed_verification_result_background">#fff8e8</color>
-
-</resources>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:pathData="M4.212,19.788A11.013,11.013 0,0 1,19.788 4.212,11.013 11.013,0 0,1 4.212,19.788ZM2.5,12A9.5,9.5 0,1 0,12 2.5,9.511 9.511,0 0,0 2.5,12ZM11,17L11,10.5h2L13,17ZM10.75,7.75A1.25,1.25 0,1 1,12 9,1.25 1.25,0 0,1 10.75,7.75Z"
+      android:fillColor="#fff"/>
+</vector>

@@ -154,11 +154,17 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(), NavCont
     }
 
     private fun navigateToVerificationPage(text: String) {
-        val action =
+        val action = if (viewModel.isDebugModeEnabled() == true) {
+            CodeReaderFragmentDirections.actionCodeReaderFragmentToDetailedVerificationFragment(
+                text,
+                binding.countrySelector.selectedItem?.toString() ?: ""
+            )
+        } else {
             CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationFragment(
                 text,
                 binding.countrySelector.selectedItem?.toString() ?: ""
             )
+        }
         findNavController().navigate(action)
     }
 
