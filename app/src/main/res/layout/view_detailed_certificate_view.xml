@@ -52,18 +52,19 @@
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
-            android:src="@drawable/ic_icon_minus"
+            android:src="@drawable/ic_icon_plus"
             app:layout_constraintBottom_toBottomOf="@id/title"
             app:layout_constraintDimensionRatio="1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/title" />
+            app:layout_constraintTop_toTopOf="@id/title"
+            tools:src="@drawable/ic_icon_minus" />
 
         <TextView
-            android:layout_marginTop="@dimen/default_margin"
             android:id="@+id/certificateTypeTitle"
             style="@style/TextAppearance.Dgca.DetailedCertificateTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_margin"
             android:text="@string/certificate_type_title"
             app:layout_constraintBottom_toTopOf="@id/certificateTypeName"
             app:layout_constraintEnd_toEndOf="parent"
@@ -72,6 +73,7 @@
 
         <TextView
             android:id="@+id/certificateTypeName"
+            style="@style/TextAppearance.Dgca.DetailedCertificateName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@id/possibleLimitationsTitle"
@@ -93,6 +95,7 @@
 
         <TextView
             android:id="@+id/possibleLimitationsName"
+            style="@style/TextAppearance.Dgca.DetailedCertificateName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@id/dateOfBirthTitle"
@@ -106,7 +109,7 @@
             style="@style/TextAppearance.Dgca.DetailedCertificateTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/certificate_type_title"
+            android:text="@string/date_of_birth_title"
             app:layout_constraintBottom_toTopOf="@id/dateOfBirthName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -114,20 +117,22 @@
 
         <TextView
             android:id="@+id/dateOfBirthName"
+            style="@style/TextAppearance.Dgca.DetailedCertificateName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/dateOfBirthTitle"
-            tools:text="Vaccination Shot #1" />
+            tools:text="Feb 26, 1998" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/expandableContent"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:visibility="visible"
-            app:constraint_referenced_ids="certificateTypeTitle, certificateTypeName, possibleLimitationsTitle, possibleLimitationsName, dateOfBirthTitle, dateOfBirthName" />
+            android:visibility="gone"
+            app:constraint_referenced_ids="certificateTypeTitle, certificateTypeName, possibleLimitationsTitle, possibleLimitationsName, dateOfBirthTitle, dateOfBirthName"
+            tools:visibility="visible" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </merge>

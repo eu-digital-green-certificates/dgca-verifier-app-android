@@ -42,7 +42,7 @@ class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
     MaterialCardView(context, attrs) {
     private val binding: ViewDetailedCertificateViewBinding =
         ViewDetailedCertificateViewBinding.inflate(LayoutInflater.from(context), this)
-    private var isExpanded = true
+    private var isExpanded = false
     private lateinit var certificateModelAndVerificationError: Pair<CertificateModel, VerificationError?>
 
     init {
