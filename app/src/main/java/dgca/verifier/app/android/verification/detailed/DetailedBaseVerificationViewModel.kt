@@ -22,10 +22,16 @@
 
 package dgca.verifier.app.android.verification.detailed
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dgca.verifier.app.android.anonymization.AnonymizationManager
+import dgca.verifier.app.android.anonymization.PolicyLevel
 import dgca.verifier.app.android.data.VerifierRepository
+import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.verification.BaseVerificationViewModel
 import dgca.verifier.app.android.verification.DecodeResult
 import dgca.verifier.app.decoder.base45.Base45Service
@@ -38,6 +44,13 @@ import dgca.verifier.app.decoder.schema.SchemaValidator
 import dgca.verifier.app.engine.CertLogicEngine
 import dgca.verifier.app.engine.data.source.valuesets.ValueSetsRepository
 import dgca.verifier.app.engine.domain.rules.GetRulesUseCase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
+import java.io.*
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 import javax.inject.Inject
 
 enum class VerificationComponent { TECHNICAL_VERIFICATION, ISSUER_INVALIDATION, DESTINATION_INVALIDATION, TRAVELLER_ACCEPTANCE }
@@ -53,6 +66,9 @@ fun Map<VerificationComponent, VerificationComponentState>.toVerificationResult(
         else -> VerificationResult.LIMITED_VALIDITY
     }
 
+
+private const val BUFFER = 1024
+
 @HiltViewModel
 class DetailedBaseVerificationViewModel @Inject constructor(
     prefixValidationService: PrefixValidationService,
@@ -65,7 +81,8 @@ class DetailedBaseVerificationViewModel @Inject constructor(
     verifierRepository: VerifierRepository,
     engine: CertLogicEngine,
     getRulesUseCase: GetRulesUseCase,
-    valueSetsRepository: ValueSetsRepository
+    valueSetsRepository: ValueSetsRepository,
+    private val anonymizationManager: AnonymizationManager
 ) : BaseVerificationViewModel(
     prefixValidationService,
     base45Service,
@@ -83,6 +100,8 @@ class DetailedBaseVerificationViewModel @Inject constructor(
     val detailedVerificationResult: LiveData<DetailedVerificationResult> =
         _detailedVerificationResult
 
+    private val policyLevel = PolicyLevel.L1
+
     override fun handleDecodeResult(decodeResult: DecodeResult) {
         _detailedVerificationResult.value = decodeResult.toDetailedVerificationResult()
     }
@@ -92,5 +111,61 @@ class DetailedBaseVerificationViewModel @Inject constructor(
             this.verificationData.certificateModel,
             this.verificationError
         )
+    }
+
+    fun onShareClick(context: Context, certificateModel: CertificateModel?) {
+        if (certificateModel == null) {
+            return
+        }
+
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val result = anonymizationManager.anonymizeDcc(certificateModel, policyLevel)
+
+                val json = Gson().toJson(result)
+                Timber.d("Result: $json")
+
+                val version = File("${context.cacheDir.path}/VERSION.txt")
+                version.createNewFile()
+                version.bufferedWriter().use { out ->
+                    out.write("1.0.0")
+                }
+
+                val file = File("${context.cacheDir.path}/dcc.txt")
+                file.createNewFile()
+                file.bufferedWriter().use { out ->
+                    out.write(json)
+                }
+
+                val list = listOf(version, file)
+                zip(context, list, "")
+            }
+
+         // TODO: return path to zip file. Share via email
+        }
+    }
+
+    private fun zip(context: Context, files: List<File>, zipFileName: String?) {
+        try {
+            var origin: BufferedInputStream?
+            val dest = FileOutputStream(File(context.cacheDir, "verifierDebug.zip"))
+            val out = ZipOutputStream(BufferedOutputStream(dest))
+            val data = ByteArray(BUFFER)
+            for (i in files.indices) {
+                Timber.v("Compress: Adding: ${files[i]}")
+                val fi = FileInputStream(files[i])
+                origin = BufferedInputStream(fi, BUFFER)
+                val entry = ZipEntry(files[i].name)
+                out.putNextEntry(entry)
+                var count: Int
+                while (origin.read(data, 0, BUFFER).also { count = it } != -1) {
+                    out.write(data, 0, count)
+                }
+                origin.close()
+            }
+            out.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

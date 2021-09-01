@@ -82,4 +82,6 @@
     <string name="destination_acceptance">Destination\nAcceptance</string>
     <string name="traveller_acceptance">Traveller\nAcceptance</string>
     <string name="certificate_information">Certificate\ninformation</string>
+
+    <string name="share" translatable="false">Share</string>
 </resources>

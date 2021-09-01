@@ -8,6 +8,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/layout/dialog_fragment_detailed_verification.xml" value="0.44907407407407407" />
         <entry key="app/src/main/res/layout/dialog_fragment_verification.xml" value="0.4527777777777778" />
       </map>
     </option>

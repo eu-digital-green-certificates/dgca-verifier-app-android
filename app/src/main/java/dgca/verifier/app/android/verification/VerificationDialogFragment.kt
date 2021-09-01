@@ -22,7 +22,6 @@
 
 package dgca.verifier.app.android.verification
 
-
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.TypedValue
@@ -51,7 +50,6 @@ import dgca.verifier.app.android.verification.certs.VaccinationViewHolder
 import dgca.verifier.app.android.verification.rules.RuleValidationResultCard
 import dgca.verifier.app.android.verification.rules.RuleValidationResultsAdapter
 import dgca.verifier.app.android.verification.rules.toRuleValidationResultCard
-
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
@@ -93,10 +91,6 @@ class VerificationDialogFragment :
     }
 
     private fun handleVerificationResult(verificationData: VerificationData) {
-        binding.shareBtn.setOnClickListener {
-            viewModel.onShareClick(verificationData.certificateModel)
-        }
-
         setCertStatusUI(verificationData.getGeneralResult())
         setCertDataVisibility(verificationData.getGeneralResult())
         verificationData.certificateModel?.let { certificateModel ->
@@ -142,8 +136,6 @@ class VerificationDialogFragment :
                 }
             }
         }
-//        TODO: uncomment
-//        startTimer()
     }
 
     private fun setCertStatusUI(generalVerificationResult: GeneralVerificationResult) {

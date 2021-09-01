@@ -351,18 +351,6 @@
             android:textColor="@color/white"
             android:visibility="gone" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/share_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/default_margin_top"
-            android:backgroundTint="@color/green"
-            android:letterSpacing="-0.02"
-            android:minWidth="176dp"
-            android:text="Share"
-            android:textAllCaps="false"
-            android:textColor="@color/white" />
-
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/logo"
             android:layout_width="match_parent"

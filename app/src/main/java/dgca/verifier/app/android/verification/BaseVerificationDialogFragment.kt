@@ -73,7 +73,7 @@ abstract class BaseVerificationDialogFragment<T : ViewBinding> : BottomSheetDial
 
         viewModel().isApplicable.observe(viewLifecycleOwner, {
             if (it) {
-                startTimer()
+//                startTimer()
             } else {
                 hideLiveData.value = null
             }

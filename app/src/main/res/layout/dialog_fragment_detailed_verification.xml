@@ -64,8 +64,8 @@
             android:paddingVertical="@dimen/default_margin_top">
 
             <dgca.verifier.app.android.verification.detailed.DetailedCertificateView
-                android:layout_width="0dp"
                 android:id="@+id/certificateInfo"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -110,8 +110,23 @@
         android:textColor="@color/white"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/share_btn"
         app:layout_constraintStart_toEndOf="@id/logo" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/share_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/default_margin"
+        android:backgroundTint="@color/green"
+        android:letterSpacing="-0.02"
+        android:text="@string/share"
+        android:textColor="@color/white"
+        app:icon="@android:drawable/ic_menu_share"
+        app:layout_constraintBottom_toBottomOf="@+id/actionButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/actionButton"
+        app:layout_constraintTop_toTopOf="@+id/actionButton" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/bottomBarrier"

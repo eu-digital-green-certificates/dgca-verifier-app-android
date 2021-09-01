@@ -24,12 +24,7 @@ package dgca.verifier.app.android.verification
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dgca.verifier.app.android.anonymization.AnonymizationManager
-import dgca.verifier.app.android.anonymization.PolicyLevel
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.decoder.base45.Base45Service
 import dgca.verifier.app.decoder.cbor.CborService

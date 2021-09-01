@@ -70,11 +70,16 @@ class DetailedVerificationDialogFragment :
     }
 
     private fun handleDetailedVerificationResult(detailedVerificationResult: DetailedVerificationResult) {
+        binding.shareBtn.setOnClickListener {
+            viewModel.onShareClick(requireContext(), detailedVerificationResult.certificateModel)
+        }
+
         binding.detailedVerificationResultHeaderView.setUp(
             detailedVerificationResult
         )
 
-        val (colorRes, textRes) = detailedVerificationResult.verificationError.toVerificationComponentStates().toVerificationResult()
+        val (colorRes, textRes) = detailedVerificationResult.verificationError.toVerificationComponentStates()
+            .toVerificationResult()
             .getActionButtonData()
 
         val context = requireContext()
