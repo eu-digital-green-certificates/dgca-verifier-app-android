@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~  -license-start
+  ~  license-start
   ~  eu-digital-green-certificates / dgca-verifier-app-android
-  ~  -
+  ~
   ~  Copyright (C) 2021 T-Systems International GmbH and all other contributors
-  ~  -
+  ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
   ~  You may obtain a copy of the License at
@@ -16,23 +15,17 @@
   ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
-  ~  -license-end
+  ~  license-end
   ~
-  ~  Created by mykhailo.nester on 27/05/2021, 23:13
+  ~  Created by osarapulov on 9/1/21 8:20 AM
   -->
 
-<resources>
-
-    <dimen name="default_margin_top">10dp</dimen>
-    <dimen name="default_quarter_margin">4dp</dimen>
-    <dimen name="default_half_margin">8dp</dimen>
-    <dimen name="default_margin">16dp</dimen>
-    <dimen name="default_double_margin">32dp</dimen>
-    <dimen name="default_padding">16dp</dimen>
-    <dimen name="text_size_small">8sp</dimen>
-    <dimen name="text_size_medium">16sp</dimen>
-    <dimen name="text_size_big">26sp</dimen>
-
-    <dimen name="detailed_verification_result_banner_radius">2dp</dimen>
-    <dimen name="default_stroke_width">1dp</dimen>
-</resources>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:pathData="M19.5,11.25L12.75,11.25L12.75,4.5a0.75,0.75 0,0 0,-1.5 0L11.25,11.25L4.5,11.25A0.75,0.75 0,0 0,4.5 12.75L11.25,12.75v6.75a0.75,0.75 0,0 0,1.5 0L12.75,12.75h6.75a0.75,0.75 0,0 0,0 -1.5Z"
+      android:fillColor="#262626"/>
+</vector>

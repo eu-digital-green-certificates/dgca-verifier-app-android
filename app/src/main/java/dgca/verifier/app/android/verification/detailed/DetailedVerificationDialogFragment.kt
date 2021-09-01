@@ -35,8 +35,10 @@ import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.R
 import dgca.verifier.app.android.databinding.DialogFragmentDetailedVerificationBinding
+import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.verification.BaseVerificationDialogFragment
 import dgca.verifier.app.android.verification.BaseVerificationViewModel
+import dgca.verifier.app.android.verification.VerificationError
 
 @AndroidEntryPoint
 class DetailedVerificationDialogFragment :
@@ -72,7 +74,7 @@ class DetailedVerificationDialogFragment :
             detailedVerificationResult
         )
 
-        val (colorRes, textRes) = detailedVerificationResult.verificationComponentStates.toVerificationResult()
+        val (colorRes, textRes) = detailedVerificationResult.verificationError.toVerificationComponentStates().toVerificationResult()
             .getActionButtonData()
 
         val context = requireContext()
@@ -82,6 +84,17 @@ class DetailedVerificationDialogFragment :
         binding.actionButton.setOnClickListener { dismiss() }
         binding.dataLoadedViews.visibility = View.VISIBLE
         binding.progressBar.visibility = View.GONE
+
+        handleCertificateModel(detailedVerificationResult.certificateModel, detailedVerificationResult.verificationError)
+    }
+
+    private fun handleCertificateModel(certificateModel: CertificateModel?, verificationError: VerificationError?) {
+        if (certificateModel == null) {
+            binding.certificateInfo.visibility = View.GONE
+        } else {
+            binding.certificateInfo.setCertificateModel(certificateModel, verificationError)
+            binding.certificateInfo.visibility = View.VISIBLE
+        }
     }
 
     override fun contentLayout(): ViewGroup.LayoutParams = binding.content.layoutParams

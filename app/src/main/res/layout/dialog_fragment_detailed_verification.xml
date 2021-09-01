@@ -49,19 +49,28 @@
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:paddingHorizontal="@dimen/default_padding"
         app:layout_constraintBottom_toBottomOf="@id/bottomBarrier"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/detailedVerificationResultHeaderView">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/person_info_container"
+            android:id="@+id/infoContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="@dimen/default_half_margin"
             android:paddingVertical="@dimen/default_margin_top">
+
+            <dgca.verifier.app.android.verification.detailed.DetailedCertificateView
+                android:layout_width="0dp"
+                android:id="@+id/certificateInfo"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
@@ -117,7 +126,7 @@
         android:layout_height="0dp"
         android:visibility="gone"
         app:constraint_referenced_ids="gradient, bottomBarrier, whiteBackground, actionButton, logo, nestedScrollView, detailedVerificationResultHeaderView"
-        tools:visibility="gone" />
+        tools:visibility="visible" />
 
     <View
         android:id="@+id/timberView"
@@ -139,5 +148,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
+        tools:visibility="gone" />
 </androidx.constraintlayout.widget.ConstraintLayout>

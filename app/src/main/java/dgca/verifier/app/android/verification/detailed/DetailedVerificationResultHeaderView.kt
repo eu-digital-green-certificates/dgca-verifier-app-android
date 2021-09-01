@@ -31,11 +31,6 @@ import androidx.core.content.ContextCompat
 import dgca.verifier.app.android.R
 import dgca.verifier.app.android.databinding.ViewDetailedVerificationResultHeaderBinding
 
-data class DetailedVerificationResult(
-    val personFullName: String,
-    val verificationComponentStates: Map<VerificationComponent, VerificationComponentState>
-)
-
 class DetailedVerificationResultHeaderView(context: Context, attrs: AttributeSet?) :
     ConstraintLayout(context, attrs) {
     private val binding: ViewDetailedVerificationResultHeaderBinding =
@@ -46,9 +41,10 @@ class DetailedVerificationResultHeaderView(context: Context, attrs: AttributeSet
     }
 
     fun setUp(detailedVerificationResult: DetailedVerificationResult) {
-        binding.personFullName.text = detailedVerificationResult.personFullName
+        binding.personFullName.text =
+            detailedVerificationResult.certificateModel?.getFullName() ?: ""
 
-        val (colorRes, textRes) = when (detailedVerificationResult.verificationComponentStates.toVerificationResult()) {
+        val (colorRes, textRes) = when (detailedVerificationResult.verificationError.toVerificationComponentStates().toVerificationResult()) {
             VerificationResult.VALID -> Pair(R.color.green, R.string.cert_valid)
             VerificationResult.INVALID -> Pair(R.color.red, R.string.cert_invalid)
             VerificationResult.LIMITED_VALIDITY -> Pair(
@@ -60,6 +56,6 @@ class DetailedVerificationResultHeaderView(context: Context, attrs: AttributeSet
         binding.verificationStatusBackground.backgroundTintList =
             ColorStateList.valueOf(ContextCompat.getColor(context, colorRes))
 
-        binding.detailedVerificationResultView.setUp(detailedVerificationResult.verificationComponentStates)
+        binding.detailedVerificationResultView.setUp(detailedVerificationResult.verificationError.toVerificationComponentStates())
     }
 }

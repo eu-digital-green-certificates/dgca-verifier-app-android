@@ -52,4 +52,10 @@
         <item name="android:singleLine">false</item>
     </style>
 
+    <style name="TextAppearance.Dgca.DetailedCertificateTitle" parent="">
+        <item name="android:textColor">@color/blue</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
 </resources>

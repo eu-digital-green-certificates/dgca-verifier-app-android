@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~  license-start
+  ~  eu-digital-green-certificates / dgca-verifier-app-android
+  ~
+  ~  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  ~ license-end
+  ~
+  ~  Created by osarapulov on 9/1/21 7:18 AM
+  -->
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="@dimen/detailed_verification_result_banner_radius"
+    app:strokeColor="@color/red"
+    app:strokeWidth="1dp"
+    tools:parentTag="com.google.android.material.card.MaterialCardView">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/default_half_margin"
+        tools:background="@color/white">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/certificate_information"
+            app:layout_constraintEnd_toStartOf="@id/expandButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/expandButton"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_icon_minus"
+            app:layout_constraintBottom_toBottomOf="@id/title"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/title" />
+
+        <TextView
+            android:layout_marginTop="@dimen/default_margin"
+            android:id="@+id/certificateTypeTitle"
+            style="@style/TextAppearance.Dgca.DetailedCertificateTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/certificate_type_title"
+            app:layout_constraintBottom_toTopOf="@id/certificateTypeName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title" />
+
+        <TextView
+            android:id="@+id/certificateTypeName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/possibleLimitationsTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/certificateTypeTitle"
+            tools:text="Vaccination Shot #1" />
+
+        <TextView
+            android:id="@+id/possibleLimitationsTitle"
+            style="@style/TextAppearance.Dgca.DetailedCertificateTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/possible_limitation"
+            app:layout_constraintBottom_toTopOf="@id/possibleLimitationsName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/certificateTypeName" />
+
+        <TextView
+            android:id="@+id/possibleLimitationsName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/dateOfBirthTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/possibleLimitationsTitle"
+            tools:text="Country rules validation failed" />
+
+        <TextView
+            android:id="@+id/dateOfBirthTitle"
+            style="@style/TextAppearance.Dgca.DetailedCertificateTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/certificate_type_title"
+            app:layout_constraintBottom_toTopOf="@id/dateOfBirthName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/possibleLimitationsName" />
+
+        <TextView
+            android:id="@+id/dateOfBirthName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dateOfBirthTitle"
+            tools:text="Vaccination Shot #1" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/expandableContent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="visible"
+            app:constraint_referenced_ids="certificateTypeTitle, certificateTypeName, possibleLimitationsTitle, possibleLimitationsName, dateOfBirthTitle, dateOfBirthName" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</merge>

@@ -58,4 +58,5 @@
     <string name="issuer_invalidation">Issuer Invalidation</string>
     <string name="destination_acceptance">Destination Acceptance</string>
     <string name="traveller_acceptance">Traveller Acceptance</string>
+    <string name="certificate_information">Certificate information</string>
 </resources>
