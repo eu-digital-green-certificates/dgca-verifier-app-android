@@ -81,7 +81,7 @@ class DecodeResult(
     val verificationError: VerificationError?
 )
 
-abstract class BaseVerificationViewModel(
+abstract class BaseVerificationResultViewModel(
     private val prefixValidationService: PrefixValidationService,
     private val base45Service: Base45Service,
     private val compressorService: CompressorService,

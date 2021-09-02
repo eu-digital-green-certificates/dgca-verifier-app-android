@@ -34,24 +34,24 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.R
-import dgca.verifier.app.android.databinding.DialogFragmentDetailedVerificationBinding
+import dgca.verifier.app.android.databinding.DialogFragmentDetailedVerificationResultBinding
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.verification.BaseVerificationDialogFragment
-import dgca.verifier.app.android.verification.BaseVerificationViewModel
+import dgca.verifier.app.android.verification.BaseVerificationResultViewModel
 import dgca.verifier.app.android.verification.VerificationError
 
 @AndroidEntryPoint
-class DetailedVerificationDialogFragment :
-    BaseVerificationDialogFragment<DialogFragmentDetailedVerificationBinding>() {
+class DetailedVerificationResultDialogFragment :
+    BaseVerificationDialogFragment<DialogFragmentDetailedVerificationResultBinding>() {
 
-    private val args by navArgs<DetailedVerificationDialogFragmentArgs>()
-    private val viewModel by viewModels<DetailedBaseVerificationViewModel>()
+    private val args by navArgs<DetailedVerificationResultDialogFragmentArgs>()
+    private val viewModel by viewModels<DetailedBaseVerificationResultViewModel>()
 
     override fun onCreateBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
-    ): DialogFragmentDetailedVerificationBinding =
-        DialogFragmentDetailedVerificationBinding.inflate(inflater, container, false)
+    ): DialogFragmentDetailedVerificationResultBinding =
+        DialogFragmentDetailedVerificationResultBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -74,7 +74,8 @@ class DetailedVerificationDialogFragment :
             detailedVerificationResult
         )
 
-        val (colorRes, textRes) = detailedVerificationResult.verificationError.toVerificationComponentStates().toVerificationResult()
+        val (colorRes, textRes) = detailedVerificationResult.verificationError.toVerificationComponentStates()
+            .toVerificationResult()
             .getActionButtonData()
 
         val context = requireContext()
@@ -85,10 +86,16 @@ class DetailedVerificationDialogFragment :
         binding.dataLoadedViews.visibility = View.VISIBLE
         binding.progressBar.visibility = View.GONE
 
-        handleCertificateModel(detailedVerificationResult.certificateModel, detailedVerificationResult.verificationError)
+        handleCertificateModel(
+            detailedVerificationResult.certificateModel,
+            detailedVerificationResult.verificationError
+        )
     }
 
-    private fun handleCertificateModel(certificateModel: CertificateModel?, verificationError: VerificationError?) {
+    private fun handleCertificateModel(
+        certificateModel: CertificateModel?,
+        verificationError: VerificationError?
+    ) {
         if (certificateModel == null) {
             binding.certificateInfo.visibility = View.GONE
         } else {
@@ -116,5 +123,5 @@ class DetailedVerificationDialogFragment :
         )
     }
 
-    override fun viewModel(): BaseVerificationViewModel = viewModel
+    override fun viewModel(): BaseVerificationResultViewModel = viewModel
 }

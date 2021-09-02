@@ -23,7 +23,7 @@ package dgca.verifier.app.android
 
 import dgca.verifier.app.android.verification.InnerVerificationResult
 import dgca.verifier.app.android.verification.VerificationError
-import dgca.verifier.app.android.verification.BaseVerificationViewModel.Companion.validateCertData
+import dgca.verifier.app.android.verification.BaseVerificationResultViewModel.Companion.validateCertData
 import dgca.verifier.app.android.verification.fetchError
 import dgca.verifier.app.decoder.model.*
 import org.junit.Assert

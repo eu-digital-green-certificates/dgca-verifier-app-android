@@ -58,7 +58,7 @@ import dgca.verifier.app.android.verification.rules.toRuleValidationResultCard
 class VerificationResultDialogFragment :
     BaseVerificationDialogFragment<DialogFragmentVerificationResultBinding>() {
 
-    private val viewModel by viewModels<VerificationResultViewModel>()
+    private val viewModel by viewModels<VerificationResultResultViewModel>()
     private val args by navArgs<VerificationResultDialogFragmentArgs>()
 
     override fun onCreateBinding(
@@ -75,7 +75,7 @@ class VerificationResultDialogFragment :
         viewModel.decodeResult.observe(viewLifecycleOwner) { handleDecodeResult(it) }
     }
 
-    override fun viewModel(): BaseVerificationViewModel = viewModel
+    override fun viewModel(): BaseVerificationResultViewModel = viewModel
 
     override fun contentLayout(): ViewGroup.LayoutParams = binding.content.layoutParams
     override fun timerView(): View = binding.timerView

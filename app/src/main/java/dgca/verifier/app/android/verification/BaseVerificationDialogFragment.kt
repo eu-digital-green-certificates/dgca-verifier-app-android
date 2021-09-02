@@ -41,7 +41,7 @@ import dgca.verifier.app.android.dpToPx
 abstract class BaseVerificationDialogFragment<T : ViewBinding> : BottomSheetDialogFragment() {
     private val hideLiveData: MutableLiveData<Void?> = MutableLiveData()
 
-    abstract fun viewModel(): BaseVerificationViewModel
+    abstract fun viewModel(): BaseVerificationResultViewModel
 
     abstract fun contentLayout(): ViewGroup.LayoutParams
     open fun timerView(): View? = null

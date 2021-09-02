@@ -17,17 +17,15 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 8/31/21 10:49 AM
+ *  Created by osarapulov on 8/31/21 5:45 PM
  */
 
-package dgca.verifier.app.android.verification.detailed
+package dgca.verifier.app.android.verification
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.VerifierRepository
-import dgca.verifier.app.android.verification.BaseVerificationViewModel
-import dgca.verifier.app.android.verification.DecodeResult
 import dgca.verifier.app.decoder.base45.Base45Service
 import dgca.verifier.app.decoder.cbor.CborService
 import dgca.verifier.app.decoder.compression.CompressorService
@@ -40,21 +38,8 @@ import dgca.verifier.app.engine.data.source.valuesets.ValueSetsRepository
 import dgca.verifier.app.engine.domain.rules.GetRulesUseCase
 import javax.inject.Inject
 
-enum class VerificationComponent { TECHNICAL_VERIFICATION, ISSUER_INVALIDATION, DESTINATION_INVALIDATION, TRAVELLER_ACCEPTANCE }
-
-enum class VerificationComponentState { PASSED, FAILED, OPEN }
-
-enum class VerificationResult { VALID, INVALID, LIMITED_VALIDITY }
-
-fun Map<VerificationComponent, VerificationComponentState>.toVerificationResult(): VerificationResult =
-    when {
-        this[VerificationComponent.TECHNICAL_VERIFICATION] != VerificationComponentState.PASSED || this[VerificationComponent.TRAVELLER_ACCEPTANCE] != VerificationComponentState.PASSED -> VerificationResult.INVALID
-        this[VerificationComponent.ISSUER_INVALIDATION] == VerificationComponentState.PASSED && this[VerificationComponent.DESTINATION_INVALIDATION] == VerificationComponentState.PASSED -> VerificationResult.VALID
-        else -> VerificationResult.LIMITED_VALIDITY
-    }
-
 @HiltViewModel
-class DetailedBaseVerificationViewModel @Inject constructor(
+class VerificationResultResultViewModel @Inject constructor(
     prefixValidationService: PrefixValidationService,
     base45Service: Base45Service,
     compressorService: CompressorService,
@@ -66,7 +51,7 @@ class DetailedBaseVerificationViewModel @Inject constructor(
     engine: CertLogicEngine,
     getRulesUseCase: GetRulesUseCase,
     valueSetsRepository: ValueSetsRepository
-) : BaseVerificationViewModel(
+) : BaseVerificationResultViewModel(
     prefixValidationService,
     base45Service,
     compressorService,
@@ -79,18 +64,10 @@ class DetailedBaseVerificationViewModel @Inject constructor(
     getRulesUseCase,
     valueSetsRepository
 ) {
-    private val _detailedVerificationResult = MutableLiveData<DetailedVerificationResult>()
-    val detailedVerificationResult: LiveData<DetailedVerificationResult> =
-        _detailedVerificationResult
+    private val _decodeResult = MutableLiveData<DecodeResult>()
+    val decodeResult: LiveData<DecodeResult> = _decodeResult
 
     override fun handleDecodeResult(decodeResult: DecodeResult) {
-        _detailedVerificationResult.value = decodeResult.toDetailedVerificationResult()
-    }
-
-    private fun DecodeResult.toDetailedVerificationResult(): DetailedVerificationResult {
-        return DetailedVerificationResult(
-            this.verificationData.certificateModel,
-            this.verificationError
-        )
+        _decodeResult.value = decodeResult
     }
 }
