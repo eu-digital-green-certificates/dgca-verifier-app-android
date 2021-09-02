@@ -30,11 +30,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ProgressBar
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -56,6 +56,7 @@ import dgca.verifier.app.android.verification.rules.RuleValidationResultsAdapter
 @AndroidEntryPoint
 class VerificationResultDialogFragment :
     BaseVerificationDialogFragment<DialogFragmentVerificationResultBinding>() {
+    private val hideLiveData: MutableLiveData<Void?> = MutableLiveData()
 
     private val viewModel by viewModels<VerificationResultResultViewModel>()
     private val args by navArgs<VerificationResultDialogFragmentArgs>()
@@ -72,6 +73,12 @@ class VerificationResultDialogFragment :
             layoutManager = LinearLayoutManager(requireContext())
         }
         handleDecodeResult()
+
+        hideLiveData.observe(viewLifecycleOwner, {
+            dismiss()
+        })
+
+        startTimer()
     }
 
     override fun contentLayout(): ViewGroup.LayoutParams = binding.content.layoutParams
@@ -94,42 +101,42 @@ class VerificationResultDialogFragment :
     ) {
         setCertStatusUI(standardizedVerificationResultCategory)
         setCertDataVisibility(standardizedVerificationResultCategory)
-        certificateModel?.let { certificateModel ->
-            binding.personFullName.text = certificateModel.getFullName()
-            toggleButton(certificateModel)
+        certificateModel?.let { it ->
+            binding.personFullName.text = it.getFullName()
+            toggleButton(it)
 
             if (standardizedVerificationResultCategory != StandardizedVerificationResultCategory.INVALID) {
-                showUserData(certificateModel)
+                showUserData(it)
 
                 if (binding.greenCertificate.parent != null) {
                     when {
-                        certificateModel.vaccinations?.size == 1 -> {
+                        it.vaccinations?.size == 1 -> {
                             binding.greenCertificate.layoutResource =
                                 R.layout.item_vaccination
                             binding.greenCertificate.setOnInflateListener { stub, inflated ->
                                 VaccinationViewHolder.create(
                                     inflated as ViewGroup
-                                ).bind(certificateModel.vaccinations.first())
+                                ).bind(it.vaccinations.first())
                             }
                             binding.greenCertificate.inflate()
                         }
-                        certificateModel.recoveryStatements?.size == 1 -> {
+                        it.recoveryStatements?.size == 1 -> {
                             binding.greenCertificate.layoutResource = R.layout.item_recovery
 
                             binding.greenCertificate.setOnInflateListener { stub, inflated ->
                                 RecoveryViewHolder.create(
                                     inflated as ViewGroup
-                                ).bind(certificateModel.recoveryStatements.first())
+                                ).bind(it.recoveryStatements.first())
                             }
                             binding.greenCertificate.inflate()
                         }
-                        certificateModel.tests?.size == 1 -> {
+                        it.tests?.size == 1 -> {
                             binding.greenCertificate.layoutResource = R.layout.item_test
 
                             binding.greenCertificate.setOnInflateListener { stub, inflated ->
                                 TestViewHolder.create(
                                     inflated as ViewGroup
-                                ).bind(certificateModel.tests.first())
+                                ).bind(it.tests.first())
                             }
                             binding.greenCertificate.inflate()
                         }
@@ -252,8 +259,6 @@ class VerificationResultDialogFragment :
         if (standardizedVerificationResultCategory == StandardizedVerificationResultCategory.VALID) {
             binding.errorTestResult.visibility = View.GONE
         }
-        binding.successDetails.visibility =
-            if (standardizedVerificationResultCategory != StandardizedVerificationResultCategory.INVALID) View.VISIBLE else View.GONE
     }
 
     private fun showUserData(certificate: CertificateModel) {
@@ -296,5 +301,19 @@ class VerificationResultDialogFragment :
             else -> getString(R.string.type_test)
         }
         binding.generalInfo.visibility = View.VISIBLE
+    }
+
+    private fun startTimer() {
+        binding.timerView.animate()
+            .setDuration(COLLAPSE_TIME)
+            .translationX(0F)
+            .withEndAction {
+                hideLiveData.value = null
+            }
+            .start()
+    }
+
+    companion object {
+        private const val COLLAPSE_TIME = 15000L // 15 sec
     }
 }

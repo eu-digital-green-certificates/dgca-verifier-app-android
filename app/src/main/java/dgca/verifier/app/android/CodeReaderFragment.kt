@@ -131,11 +131,17 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
     ) {
         findNavController().navigateUp()
         binding.barcodeScanner.pause()
-        val action =
+        val action = if (viewModel.isDebugModeEnabled() == true) {
+            CodeReaderFragmentDirections.actionCodeReaderFragmentToDetailedVerificationResultFragment(
+                standardizedVerificationResult,
+                certificateModel
+            )
+        } else {
             CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationResultFragment(
                 standardizedVerificationResult,
                 certificateModel
             )
+        }
         findNavController().navigate(action)
     }
 

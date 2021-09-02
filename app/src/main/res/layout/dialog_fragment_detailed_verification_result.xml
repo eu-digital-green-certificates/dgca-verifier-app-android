@@ -64,8 +64,8 @@
             android:paddingVertical="@dimen/default_margin_top">
 
             <dgca.verifier.app.android.verification.detailed.DetailedCertificateView
-                android:layout_width="0dp"
                 android:id="@+id/certificateInfo"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -120,33 +120,4 @@
         app:barrierDirection="top"
         app:constraint_referenced_ids="logo, actionButton" />
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/dataLoadedViews"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:constraint_referenced_ids="gradient, bottomBarrier, whiteBackground, actionButton, logo, nestedScrollView, detailedVerificationResultHeaderView"
-        tools:visibility="visible" />
-
-    <View
-        android:id="@+id/timberView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/grey_transparent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:indeterminateTint="@color/blue"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone" />
 </androidx.constraintlayout.widget.ConstraintLayout>

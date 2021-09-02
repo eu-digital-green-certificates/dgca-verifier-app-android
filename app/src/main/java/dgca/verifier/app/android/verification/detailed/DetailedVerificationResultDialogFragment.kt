@@ -63,17 +63,19 @@ class DetailedVerificationResultDialogFragment :
             ).show()
             // TODO implement handler
         }
-        viewModel.detailedVerificationResult.observe(viewLifecycleOwner) {
-            handleDetailedVerificationResult(it)
-        }
+        handleDetailedVerificationResult(args.standardizedVerificationResult, args.certificateModel)
     }
 
-    private fun handleDetailedVerificationResult(detailedVerificationResult: DetailedVerificationResult) {
+    private fun handleDetailedVerificationResult(
+        detailedVerificationResult: StandardizedVerificationResult,
+        certificateModel: CertificateModel?
+    ) {
         binding.detailedVerificationResultHeaderView.setUp(
-            detailedVerificationResult
+            detailedVerificationResult,
+            certificateModel
         )
 
-        val (colorRes, textRes) = detailedVerificationResult.standardizedVerificationResult.toVerificationComponentStates()
+        val (colorRes, textRes) = detailedVerificationResult.toVerificationComponentStates()
             .toVerificationResult()
             .getActionButtonData()
 
@@ -82,37 +84,37 @@ class DetailedVerificationResultDialogFragment :
         binding.actionButton.backgroundTintList =
             ColorStateList.valueOf(ContextCompat.getColor(context, colorRes))
         binding.actionButton.setOnClickListener { dismiss() }
-        binding.dataLoadedViews.visibility = View.VISIBLE
-        binding.progressBar.visibility = View.GONE
 
         handleCertificateModel(
-            detailedVerificationResult.certificateModel,
-            detailedVerificationResult.standardizedVerificationResult
+            detailedVerificationResult,
+            certificateModel
         )
     }
 
     private fun handleCertificateModel(
-        certificateModel: CertificateModel?,
-        standardizedVerificationResult: StandardizedVerificationResult
+        standardizedVerificationResult: StandardizedVerificationResult,
+        certificateModel: CertificateModel?
     ) {
         if (certificateModel == null) {
             binding.certificateInfo.visibility = View.GONE
         } else {
-            binding.certificateInfo.setCertificateModel(certificateModel, standardizedVerificationResult)
+            binding.certificateInfo.setCertificateModel(
+                certificateModel,
+                standardizedVerificationResult
+            )
             binding.certificateInfo.visibility = View.VISIBLE
         }
     }
 
     override fun contentLayout(): ViewGroup.LayoutParams = binding.content.layoutParams
 
-    override fun timerView(): View = binding.timberView
-
-    private fun StandardizedVerificationResultCategory.getActionButtonData(): Pair<Int, Int> = when (this) {
-        StandardizedVerificationResultCategory.VALID -> Pair(R.color.green, R.string.done)
-        StandardizedVerificationResultCategory.INVALID -> Pair(R.color.red, R.string.retry)
-        StandardizedVerificationResultCategory.LIMITED_VALIDITY -> Pair(
-            R.color.yellow,
-            R.string.retry
-        )
-    }
+    private fun StandardizedVerificationResultCategory.getActionButtonData(): Pair<Int, Int> =
+        when (this) {
+            StandardizedVerificationResultCategory.VALID -> Pair(R.color.green, R.string.done)
+            StandardizedVerificationResultCategory.INVALID -> Pair(R.color.red, R.string.retry)
+            StandardizedVerificationResultCategory.LIMITED_VALIDITY -> Pair(
+                R.color.yellow,
+                R.string.retry
+            )
+        }
 }

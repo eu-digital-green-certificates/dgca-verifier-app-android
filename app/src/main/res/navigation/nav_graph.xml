@@ -38,11 +38,11 @@
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left" />
 
-        <!--        <action-->
-        <!--            android:id="@+id/action_codeReaderFragment_to_detailedVerificationResultFragment"-->
-        <!--            app:destination="@id/detailedVerificationResultDialogFragment"-->
-        <!--            app:enterAnim="@anim/slide_in_right"-->
-        <!--            app:exitAnim="@anim/slide_out_left" />-->
+        <action
+            android:id="@+id/action_codeReaderFragment_to_detailedVerificationResultFragment"
+            app:destination="@id/detailedVerificationResultDialogFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
 
         <action
             android:id="@+id/action_codeReaderFragment_to_verificationDialogFragment"
@@ -95,12 +95,14 @@
         tools:layout="@layout/dialog_fragment_detailed_verification_result">
 
         <argument
-            android:name="qrCodeText"
-            app:argType="string" />
+            android:name="standardizedVerificationResult"
+            app:argType="dgca.verifier.app.android.verification.StandardizedVerificationResult" />
 
         <argument
-            android:name="countryIsoCode"
-            app:argType="string" />
+            android:name="certificateModel"
+            android:defaultValue="@null"
+            app:argType="dgca.verifier.app.android.model.CertificateModel"
+            app:nullable="true" />
     </dialog>
 
     <fragment

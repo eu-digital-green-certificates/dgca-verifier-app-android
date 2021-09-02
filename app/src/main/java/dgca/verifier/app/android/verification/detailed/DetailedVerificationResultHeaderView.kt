@@ -30,6 +30,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import dgca.verifier.app.android.R
 import dgca.verifier.app.android.databinding.ViewDetailedVerificationResultHeaderBinding
+import dgca.verifier.app.android.model.CertificateModel
+import dgca.verifier.app.android.verification.StandardizedVerificationResult
 import dgca.verifier.app.android.verification.StandardizedVerificationResultCategory
 
 class DetailedVerificationResultHeaderView(context: Context, attrs: AttributeSet?) :
@@ -41,11 +43,13 @@ class DetailedVerificationResultHeaderView(context: Context, attrs: AttributeSet
         binding.information.setOnClickListener { infoClickListener?.onClick(it) }
     }
 
-    fun setUp(detailedVerificationResult: DetailedVerificationResult) {
-        binding.personFullName.text =
-            detailedVerificationResult.certificateModel?.getFullName() ?: ""
+    fun setUp(
+        standardizedVerificationResult: StandardizedVerificationResult,
+        certificateModel: CertificateModel?
+    ) {
+        binding.personFullName.text = certificateModel?.getFullName() ?: ""
 
-        val (colorRes, textRes) = when (detailedVerificationResult.standardizedVerificationResult.category) {
+        val (colorRes, textRes) = when (standardizedVerificationResult.category) {
             StandardizedVerificationResultCategory.VALID -> Pair(R.color.green, R.string.cert_valid)
             StandardizedVerificationResultCategory.INVALID -> Pair(
                 R.color.red,
@@ -60,6 +64,6 @@ class DetailedVerificationResultHeaderView(context: Context, attrs: AttributeSet
         binding.verificationStatusBackground.backgroundTintList =
             ColorStateList.valueOf(ContextCompat.getColor(context, colorRes))
 
-        binding.detailedVerificationResultView.setUp(detailedVerificationResult.standardizedVerificationResult.toVerificationComponentStates())
+        binding.detailedVerificationResultView.setUp(standardizedVerificationResult.toVerificationComponentStates())
     }
 }
