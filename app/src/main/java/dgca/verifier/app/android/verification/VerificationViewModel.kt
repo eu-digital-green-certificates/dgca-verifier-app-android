@@ -17,7 +17,7 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 4/24/21 2:54 PM
+ *  Created by osarapulov on 9/2/21 9:36 AM
  */
 
 package dgca.verifier.app.android.verification
@@ -26,9 +26,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.model.toCertificateModel
+import dgca.verifier.app.android.verification.*
 import dgca.verifier.app.decoder.base45.Base45Service
 import dgca.verifier.app.decoder.cbor.CborService
 import dgca.verifier.app.decoder.cbor.GreenCertificateData
@@ -42,7 +44,10 @@ import dgca.verifier.app.decoder.model.VerificationResult
 import dgca.verifier.app.decoder.prefixvalidation.PrefixValidationService
 import dgca.verifier.app.decoder.schema.SchemaValidator
 import dgca.verifier.app.decoder.toBase64
-import dgca.verifier.app.engine.*
+import dgca.verifier.app.engine.CertLogicEngine
+import dgca.verifier.app.engine.Result
+import dgca.verifier.app.engine.UTC_ZONE_ID
+import dgca.verifier.app.engine.ValidationResult
 import dgca.verifier.app.engine.data.CertificateType
 import dgca.verifier.app.engine.data.ExternalParameter
 import dgca.verifier.app.engine.data.source.valuesets.ValueSetsRepository
@@ -56,13 +61,39 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.*
+import javax.inject.Inject
 
-class DecodeResult(
-    val verificationData: VerificationData,
-    val verificationError: VerificationError?
+enum class GeneralVerificationResult {
+    SUCCESS, FAILED, RULES_VALIDATION_FAILED
+}
+
+fun VerificationData.getGeneralResult(): GeneralVerificationResult {
+    return when {
+        verificationResult.isValid() && innerVerificationResult.isValid() -> GeneralVerificationResult.SUCCESS
+        verificationResult.isTestWithPositiveResult() -> GeneralVerificationResult.FAILED
+        verificationResult.rulesValidationFailed -> GeneralVerificationResult.RULES_VALIDATION_FAILED
+        else -> GeneralVerificationResult.FAILED
+    }
+}
+
+data class VerificationData(
+    val verificationResult: VerificationResult,
+    val innerVerificationResult: InnerVerificationResult,
+    val certificateModel: CertificateModel?
 )
 
-abstract class BaseVerificationResultViewModel(
+sealed class QrCodeVerificationResult {
+    class Applicable(
+        val verificationData: VerificationData,
+        val verificationError: VerificationError?,
+        val validationResults: List<ValidationResult>?
+    ) : QrCodeVerificationResult()
+
+    object NotApplicable : QrCodeVerificationResult()
+}
+
+@HiltViewModel
+class VerificationViewModel @Inject constructor(
     private val prefixValidationService: PrefixValidationService,
     private val base45Service: Base45Service,
     private val compressorService: CompressorService,
@@ -76,14 +107,8 @@ abstract class BaseVerificationResultViewModel(
     private val valueSetsRepository: ValueSetsRepository
 ) : ViewModel() {
 
-    private val _isApplicable = MutableLiveData<Boolean>()
-    val isApplicable: LiveData<Boolean> = _isApplicable
-
-    private val _validationResults = MutableLiveData<List<ValidationResult>>()
-    val validationResults: LiveData<List<ValidationResult>> = _validationResults
-
-    private val _inProgress = MutableLiveData<Boolean>()
-    val inProgress: LiveData<Boolean> = _inProgress
+    private val _qrCodeVerificationResult = MutableLiveData<QrCodeVerificationResult>()
+    val qrCodeVerificationResult: LiveData<QrCodeVerificationResult> = _qrCodeVerificationResult
 
     fun init(qrCodeText: String, countryIsoCode: String) {
         decode(qrCodeText, countryIsoCode)
@@ -91,17 +116,17 @@ abstract class BaseVerificationResultViewModel(
 
     private fun decode(code: String, countryIsoCode: String) {
         viewModelScope.launch {
-            _inProgress.value = true
 
             val verificationResult = VerificationResult()
             var innerVerificationResult: InnerVerificationResult
+            var validationResults: List<ValidationResult>? = null
 
             withContext(Dispatchers.IO) {
 
                 innerVerificationResult = validateCertificate(code, verificationResult)
 
                 if (verificationResult.isValid() && innerVerificationResult.base64EncodedKid?.isNotBlank() == true) {
-                    innerVerificationResult.greenCertificateData?.validateRules(
+                    validationResults = innerVerificationResult.greenCertificateData?.validateRules(
                         verificationResult,
                         countryIsoCode,
                         innerVerificationResult.base64EncodedKid!!
@@ -110,10 +135,7 @@ abstract class BaseVerificationResultViewModel(
 
             }
 
-            _inProgress.value = false
-            _isApplicable.value = innerVerificationResult.isApplicableCode
-
-            if (innerVerificationResult.isApplicableCode) {
+            _qrCodeVerificationResult.value = if (innerVerificationResult.isApplicableCode) {
                 val certificateModel: CertificateModel? =
                     innerVerificationResult.greenCertificateData?.greenCertificate?.toCertificateModel()
                 val verificationError: VerificationError? =
@@ -125,13 +147,16 @@ abstract class BaseVerificationResultViewModel(
                     certificateModel
                 )
 
-                val decodeResult = DecodeResult(verificationData, verificationError)
-                handleDecodeResult(decodeResult)
+                QrCodeVerificationResult.Applicable(
+                    verificationData,
+                    verificationError,
+                    validationResults
+                )
+            } else {
+                QrCodeVerificationResult.NotApplicable
             }
         }
     }
-
-    abstract fun handleDecodeResult(decodeResult: DecodeResult)
 
     private suspend fun validateCertificate(
         code: String,
@@ -221,10 +246,10 @@ abstract class BaseVerificationResultViewModel(
         verificationResult: VerificationResult,
         countryIsoCode: String,
         base64EncodedKid: String
-    ) {
+    ): List<ValidationResult>? {
         this.apply {
             val engineCertificateType = this.greenCertificate.getEngineCertificateType()
-            if (countryIsoCode.isNotBlank()) {
+            return if (countryIsoCode.isNotBlank()) {
                 val issuingCountry: String =
                     (if (this.issuingCountry?.isNotBlank() == true && this.issuingCountry != null) this.issuingCountry!! else this.greenCertificate.getIssuingCountry()).toLowerCase(
                         Locale.ROOT
@@ -262,14 +287,16 @@ abstract class BaseVerificationResultViewModel(
                     this.hcertJson
                 )
 
-                _validationResults.postValue(validationResults)
-
                 validationResults.forEach {
                     if (it.result != Result.PASSED) {
                         verificationResult.rulesValidationFailed = true
                         return@forEach
                     }
                 }
+
+                validationResults
+            } else {
+                null
             }
         }
     }
@@ -284,7 +311,6 @@ abstract class BaseVerificationResultViewModel(
     }
 
     companion object {
-        private const val ENGINE_VERSION = "1.0.0"
 
         fun validateCertData(
             certificate: GreenCertificate?,
