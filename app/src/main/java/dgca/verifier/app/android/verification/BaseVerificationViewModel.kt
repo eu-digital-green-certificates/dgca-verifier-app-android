@@ -35,10 +35,7 @@ import dgca.verifier.app.decoder.cbor.GreenCertificateData
 import dgca.verifier.app.decoder.compression.CompressorService
 import dgca.verifier.app.decoder.cose.CoseService
 import dgca.verifier.app.decoder.cose.CryptoService
-import dgca.verifier.app.decoder.model.GreenCertificate
-import dgca.verifier.app.decoder.model.RecoveryVerificationResult
-import dgca.verifier.app.decoder.model.TestVerificationResult
-import dgca.verifier.app.decoder.model.VerificationResult
+import dgca.verifier.app.decoder.model.*
 import dgca.verifier.app.decoder.prefixvalidation.PrefixValidationService
 import dgca.verifier.app.decoder.schema.SchemaValidator
 import dgca.verifier.app.decoder.toBase64
@@ -105,6 +102,11 @@ abstract class BaseVerificationViewModel(
     private val _inProgress = MutableLiveData<Boolean>()
     val inProgress: LiveData<Boolean> = _inProgress
 
+    protected var certificateModel: CertificateModel? = null
+    protected var coseData: CoseData? = null
+    protected var cose: ByteArray? = null
+    protected var anonymizeCose: ByteArray? = null
+
     fun init(qrCodeText: String, countryIsoCode: String) {
         decode(qrCodeText, countryIsoCode)
     }
@@ -134,8 +136,7 @@ abstract class BaseVerificationViewModel(
             _isApplicable.value = innerVerificationResult.isApplicableCode
 
             if (innerVerificationResult.isApplicableCode) {
-                val certificateModel: CertificateModel? =
-                    innerVerificationResult.greenCertificateData?.greenCertificate?.toCertificateModel()
+                certificateModel = innerVerificationResult.greenCertificateData?.greenCertificate?.toCertificateModel()
                 val verificationError: VerificationError? =
                     verificationResult.fetchError(innerVerificationResult)
 
@@ -148,6 +149,10 @@ abstract class BaseVerificationViewModel(
                 val decodeResult = DecodeResult(verificationData, verificationError)
                 handleDecodeResult(decodeResult)
             }
+
+//            TODO: update: move anonymization Part to this method
+//            if debug on
+//            anonymizeData(policyLevel, cose, certificateModel, ) etc.
         }
     }
 
@@ -162,7 +167,7 @@ abstract class BaseVerificationViewModel(
 
         val plainInput = prefixValidationService.decode(code, verificationResult)
         val compressedCose = base45Service.decode(plainInput, verificationResult)
-        val cose: ByteArray? = compressorService.decode(compressedCose, verificationResult)
+        cose = compressorService.decode(compressedCose, verificationResult)
 
         if (cose == null) {
             Timber.d("Verification failed: Too many bytes read")
@@ -172,7 +177,8 @@ abstract class BaseVerificationViewModel(
             )
         }
 
-        val coseData = coseService.decode(cose, verificationResult)
+        coseData = coseService.decode(cose!!, verificationResult)
+        anonymizeCose = coseService.anonymizeCose(cose!!)
         if (coseData == null) {
             Timber.d("Verification failed: COSE not decoded")
             return InnerVerificationResult(
@@ -181,7 +187,7 @@ abstract class BaseVerificationViewModel(
             )
         }
 
-        val kid = coseData.kid
+        val kid = coseData!!.kid
         if (kid == null) {
             Timber.d("Verification failed: cannot extract kid from COSE")
             return InnerVerificationResult(
@@ -192,8 +198,8 @@ abstract class BaseVerificationViewModel(
 
         isApplicableCode = true
 
-        schemaValidator.validate(coseData.cbor, verificationResult)
-        greenCertificateData = cborService.decodeData(coseData.cbor, verificationResult)
+        schemaValidator.validate(coseData!!.cbor, verificationResult)
+        greenCertificateData = cborService.decodeData(coseData!!.cbor, verificationResult)
         validateCertData(greenCertificateData?.greenCertificate, verificationResult)
 
         val base64EncodedKid = kid.toBase64()
@@ -210,7 +216,7 @@ abstract class BaseVerificationViewModel(
         var certificateExpired = false
         certificates.forEach { innerCertificate ->
             cryptoService.validate(
-                cose,
+                cose!!,
                 innerCertificate,
                 verificationResult,
                 greenCertificateData?.greenCertificate?.getType()

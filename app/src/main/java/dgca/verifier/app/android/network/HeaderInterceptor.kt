@@ -23,7 +23,7 @@
 package dgca.verifier.app.android.network
 
 import android.os.Build
-import dgca.verifier.app.android.BackportUtils
+import dgca.verifier.app.android.utils.sha256
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
@@ -31,7 +31,6 @@ import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import java.io.IOException
 import java.net.HttpURLConnection.HTTP_BAD_REQUEST
-import java.security.MessageDigest
 
 class HeaderInterceptor : Interceptor {
 
@@ -70,23 +69,4 @@ private fun Response.toRuleResponse(expectedSha256: String): Response = if (this
     newResponse.build()
 } else {
     this
-}
-
-private fun String.sha256(): String {
-    val sb = StringBuilder()
-    try {
-        val digest: MessageDigest = MessageDigest.getInstance("SHA-256")
-        digest.update(this.toByteArray())
-        val byteData: ByteArray = digest.digest()
-        for (x in byteData) {
-            val str = Integer.toHexString(BackportUtils.byteToUnsignedInt(x))
-            if (str.length < 2) {
-                sb.append('0')
-            }
-            sb.append(str)
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
-    return sb.toString()
 }

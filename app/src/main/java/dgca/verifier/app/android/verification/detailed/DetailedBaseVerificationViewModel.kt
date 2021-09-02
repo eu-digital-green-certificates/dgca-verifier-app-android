@@ -28,10 +28,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dgca.verifier.app.android.BuildConfig
 import dgca.verifier.app.android.anonymization.AnonymizationManager
 import dgca.verifier.app.android.anonymization.PolicyLevel
 import dgca.verifier.app.android.data.VerifierRepository
-import dgca.verifier.app.android.model.CertificateModel
+import dgca.verifier.app.android.utils.sha256
 import dgca.verifier.app.android.verification.BaseVerificationViewModel
 import dgca.verifier.app.android.verification.DecodeResult
 import dgca.verifier.app.decoder.base45.Base45Service
@@ -41,6 +42,8 @@ import dgca.verifier.app.decoder.cose.CoseService
 import dgca.verifier.app.decoder.cose.CryptoService
 import dgca.verifier.app.decoder.prefixvalidation.PrefixValidationService
 import dgca.verifier.app.decoder.schema.SchemaValidator
+import dgca.verifier.app.decoder.toBase64
+import dgca.verifier.app.decoder.toHexString
 import dgca.verifier.app.engine.CertLogicEngine
 import dgca.verifier.app.engine.data.source.valuesets.ValueSetsRepository
 import dgca.verifier.app.engine.domain.rules.GetRulesUseCase
@@ -49,6 +52,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.*
+import java.time.Instant
+import java.time.format.DateTimeFormatter
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import javax.inject.Inject
@@ -113,42 +118,79 @@ class DetailedBaseVerificationViewModel @Inject constructor(
         )
     }
 
-    fun onShareClick(context: Context, certificateModel: CertificateModel?) {
-        if (certificateModel == null) {
-            return
-        }
-
+    @Suppress("BlockingMethodInNonBlockingContext")
+    fun onShareClick(context: Context, qrCodeText: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val result = anonymizationManager.anonymizeDcc(certificateModel, policyLevel)
+                if (certificateModel == null) {
+                    return@withContext
+                }
+
+                val result = anonymizationManager.anonymizeDcc(certificateModel!!, policyLevel)
 
                 val json = Gson().toJson(result)
                 Timber.d("Result: $json")
 
-                val version = File("${context.cacheDir.path}/VERSION.txt")
-                version.createNewFile()
-                version.bufferedWriter().use { out ->
-                    out.write("1.0.0")
+                val version = createAndWriteToFile("${context.cacheDir.path}/VERSION.txt", "1.00\n")
+                val readme = createAndWriteToFile(
+                    "${context.cacheDir.path}/README.txt",
+                    "Timestamp: ${DateTimeFormatter.ISO_INSTANT.format(Instant.now())}\n" +
+                            "App Version name: ${BuildConfig.VERSION_NAME}\n" +
+                            "App Version code: ${BuildConfig.VERSION_CODE}\n"
+                )
+
+                val payload = createAndWriteToFile("${context.cacheDir.path}/payload.json", json)
+
+                val payloadShaBin = File("${context.cacheDir.path}/payload-sha.bin")
+                if (payloadShaBin.exists()) {
+                    payloadShaBin.delete()
+                }
+                payloadShaBin.createNewFile()
+                coseData?.cbor?.sha256()?.let { payloadShaBin.writeBytes(it) }
+
+                val payloadShaTxt = createAndWriteToFile(
+                    "${context.cacheDir.path}/payload-sha.txt",
+                    coseData?.cbor?.toHexString()?.sha256() + "\n"
+                )
+
+
+                val coseByteArray = if (policyLevel == PolicyLevel.L3) {
+                    cose
+                } else {
+                    anonymizeCose
                 }
 
-                val file = File("${context.cacheDir.path}/dcc.txt")
-                file.createNewFile()
-                file.bufferedWriter().use { out ->
-                    out.write(json)
-                }
+                val qrBase64 = createAndWriteToFile("${context.cacheDir.path}/QR.base64", coseByteArray?.toBase64() ?: "")
 
-                val list = listOf(version, file)
-                zip(context, list, "")
+                //  L2/L3 Section
+                qrCodeText
+
+                val list = listOf(version, readme, payload, payloadShaBin, payloadShaTxt, qrBase64)
+                zip(context, list, "verifierDebug.zip")
             }
 
-         // TODO: return path to zip file. Share via email
+            // TODO: return path to zip file. Share via email
         }
     }
 
-    private fun zip(context: Context, files: List<File>, zipFileName: String?) {
+    private fun createAndWriteToFile(path: String, content: String): File {
+        val file = File(path)
+        if (file.exists()) {
+            file.delete()
+        }
+
+        file.createNewFile()
+        file.bufferedWriter().use { out ->
+            out.write(content)
+        }
+
+        return file
+    }
+
+    private fun zip(context: Context, files: List<File>, zipFileName: String) {
         try {
             var origin: BufferedInputStream?
-            val dest = FileOutputStream(File(context.cacheDir, "verifierDebug.zip"))
+            val dest = FileOutputStream(File(context.cacheDir, zipFileName))
             val out = ZipOutputStream(BufferedOutputStream(dest))
             val data = ByteArray(BUFFER)
             for (i in files.indices) {

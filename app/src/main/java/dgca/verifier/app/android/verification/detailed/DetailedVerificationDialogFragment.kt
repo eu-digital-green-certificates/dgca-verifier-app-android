@@ -30,6 +30,7 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
@@ -67,12 +68,14 @@ class DetailedVerificationDialogFragment :
         viewModel.detailedVerificationResult.observe(viewLifecycleOwner) {
             handleDetailedVerificationResult(it)
         }
+
+        binding.shareBtn.setOnClickListener {
+            viewModel.onShareClick(requireContext(), args.qrCodeText)
+        }
     }
 
     private fun handleDetailedVerificationResult(detailedVerificationResult: DetailedVerificationResult) {
-        binding.shareBtn.setOnClickListener {
-            viewModel.onShareClick(requireContext(), detailedVerificationResult.certificateModel)
-        }
+        binding.shareBtn.isVisible = true
 
         binding.detailedVerificationResultHeaderView.setUp(
             detailedVerificationResult
