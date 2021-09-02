@@ -50,7 +50,6 @@ import dgca.verifier.app.android.verification.certs.TestViewHolder
 import dgca.verifier.app.android.verification.certs.VaccinationViewHolder
 import dgca.verifier.app.android.verification.rules.RuleValidationResultCard
 import dgca.verifier.app.android.verification.rules.RuleValidationResultsAdapter
-import dgca.verifier.app.android.verification.rules.toRuleValidationResultCard
 
 
 @ExperimentalUnsignedTypes
@@ -72,34 +71,34 @@ class VerificationResultDialogFragment :
         binding.rulesList.apply {
             layoutManager = LinearLayoutManager(requireContext())
         }
-        viewModel.decodeResult.observe(viewLifecycleOwner) { handleDecodeResult(it) }
+        handleDecodeResult()
     }
-
-    override fun viewModel(): BaseVerificationResultViewModel = viewModel
 
     override fun contentLayout(): ViewGroup.LayoutParams = binding.content.layoutParams
     override fun timerView(): View = binding.timerView
     override fun actionButton(): Button = binding.actionButton
-    override fun progressBar(): ProgressBar = binding.progressBar
 
-    override fun qrCodeText(): String = args.qrCodeText
-    override fun countryIsoCode(): String = args.countryIsoCode
-
-    private fun handleDecodeResult(decodeResult: DecodeResult) {
-        handleVerificationResult(decodeResult.verificationData)
-        decodeResult.verificationError?.apply {
-            setCertStatusError(this)
+    private fun handleDecodeResult() {
+        handleVerificationResult(
+            args.certificateModel,
+            args.standardizedVerificationResult.category
+        )
+        if (args.standardizedVerificationResult.category != StandardizedVerificationResultCategory.VALID) {
+            setCertStatusError(args.standardizedVerificationResult)
         }
     }
 
-    private fun handleVerificationResult(verificationData: VerificationData) {
-        setCertStatusUI(verificationData.getGeneralResult())
-        setCertDataVisibility(verificationData.getGeneralResult())
-        verificationData.certificateModel?.let { certificateModel ->
+    private fun handleVerificationResult(
+        certificateModel: CertificateModel?,
+        standardizedVerificationResultCategory: StandardizedVerificationResultCategory
+    ) {
+        setCertStatusUI(standardizedVerificationResultCategory)
+        setCertDataVisibility(standardizedVerificationResultCategory)
+        certificateModel?.let { certificateModel ->
             binding.personFullName.text = certificateModel.getFullName()
             toggleButton(certificateModel)
 
-            if (verificationData.getGeneralResult() != GeneralVerificationResult.FAILED) {
+            if (standardizedVerificationResultCategory != StandardizedVerificationResultCategory.INVALID) {
                 showUserData(certificateModel)
 
                 if (binding.greenCertificate.parent != null) {
@@ -140,30 +139,34 @@ class VerificationResultDialogFragment :
         }
     }
 
-    private fun setCertStatusUI(generalVerificationResult: GeneralVerificationResult) {
+    private fun setCertStatusUI(standardizedVerificationResultCategory: StandardizedVerificationResultCategory) {
         val text: String
         val imageId: Int
         val statusColor: ColorStateList
         val actionBtnText: String
 
-        if (generalVerificationResult == GeneralVerificationResult.SUCCESS) {
-            text = getString(R.string.cert_valid)
-            imageId = R.drawable.check
-            statusColor =
-                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
-            actionBtnText = getString(R.string.done)
-        } else if (generalVerificationResult == GeneralVerificationResult.RULES_VALIDATION_FAILED) {
-            text = getString(R.string.cert_limited_validity)
-            imageId = R.drawable.check
-            statusColor =
-                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.yellow))
-            actionBtnText = getString(R.string.retry)
-        } else {
-            text = getString(R.string.cert_invalid)
-            imageId = R.drawable.error
-            statusColor =
-                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.red))
-            actionBtnText = getString(R.string.retry)
+        when (standardizedVerificationResultCategory) {
+            StandardizedVerificationResultCategory.VALID -> {
+                text = getString(R.string.cert_valid)
+                imageId = R.drawable.check
+                statusColor =
+                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
+                actionBtnText = getString(R.string.done)
+            }
+            StandardizedVerificationResultCategory.LIMITED_VALIDITY -> {
+                text = getString(R.string.cert_limited_validity)
+                imageId = R.drawable.check
+                statusColor =
+                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.yellow))
+                actionBtnText = getString(R.string.retry)
+            }
+            StandardizedVerificationResultCategory.INVALID -> {
+                text = getString(R.string.cert_invalid)
+                imageId = R.drawable.error
+                statusColor =
+                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.red))
+                actionBtnText = getString(R.string.retry)
+            }
         }
 
         binding.status.text = text
@@ -175,39 +178,40 @@ class VerificationResultDialogFragment :
         actionButton().isVisible = true
     }
 
-    private fun setCertStatusError(verificationError: VerificationError) {
+    private fun setCertStatusError(standardizedVerificationResult: StandardizedVerificationResult) {
         binding.reasonForCertificateInvalidityTitle.visibility = View.VISIBLE
         binding.reasonForCertificateInvalidityName.visibility = View.VISIBLE
         binding.reasonForCertificateInvalidityName.text = getString(
-            when (verificationError) {
-                VerificationError.GREEN_CERTIFICATE_EXPIRED -> R.string.certificate_is_expired
-                VerificationError.CERTIFICATE_REVOKED -> R.string.certificate_was_revoked
-                VerificationError.VERIFICATION_FAILED -> R.string.verification_failed
-                VerificationError.CERTIFICATE_EXPIRED -> R.string.signing_certificate_is_expired
-                VerificationError.TEST_DATE_IS_IN_THE_FUTURE -> R.string.the_test_date_is_in_the_future
-                VerificationError.TEST_RESULT_POSITIVE -> R.string.test_result_positive
-                VerificationError.RECOVERY_NOT_VALID_SO_FAR -> R.string.recovery_not_valid_yet
-                VerificationError.RECOVERY_NOT_VALID_ANYMORE -> R.string.recover_not_valid_anymore
-                VerificationError.RULES_VALIDATION_FAILED -> R.string.rules_validation_failed
-                VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID -> R.string.cryptographic_signature_invalid
+            when (standardizedVerificationResult) {
+                StandardizedVerificationResult.GREEN_CERTIFICATE_EXPIRED -> R.string.certificate_is_expired
+                StandardizedVerificationResult.CERTIFICATE_REVOKED -> R.string.certificate_was_revoked
+                StandardizedVerificationResult.VERIFICATION_FAILED -> R.string.verification_failed
+                StandardizedVerificationResult.CERTIFICATE_EXPIRED -> R.string.signing_certificate_is_expired
+                StandardizedVerificationResult.TEST_DATE_IS_IN_THE_FUTURE -> R.string.the_test_date_is_in_the_future
+                StandardizedVerificationResult.TEST_RESULT_POSITIVE -> R.string.test_result_positive
+                StandardizedVerificationResult.RECOVERY_NOT_VALID_SO_FAR -> R.string.recovery_not_valid_yet
+                StandardizedVerificationResult.RECOVERY_NOT_VALID_ANYMORE -> R.string.recover_not_valid_anymore
+                StandardizedVerificationResult.RULES_VALIDATION_FAILED -> R.string.rules_validation_failed
+                StandardizedVerificationResult.CRYPTOGRAPHIC_SIGNATURE_INVALID -> R.string.cryptographic_signature_invalid
+                else -> throw IllegalArgumentException()
             }
         )
-        if (verificationError == VerificationError.TEST_RESULT_POSITIVE) {
+        if (standardizedVerificationResult == StandardizedVerificationResult.TEST_RESULT_POSITIVE) {
             binding.errorTestResult.visibility = View.VISIBLE
             binding.reasonTestResultValue.text = TestResult.DETECTED.value
         } else {
             binding.errorTestResult.visibility = View.GONE
         }
 
-        if (verificationError == VerificationError.RULES_VALIDATION_FAILED) {
+        if (standardizedVerificationResult == StandardizedVerificationResult.RULES_VALIDATION_FAILED) {
             val ruleValidationResultCards = mutableListOf<RuleValidationResultCard>()
             val context = requireContext()
-            viewModel().validationResults.value?.forEach {
-                ruleValidationResultCards.add(
-                    it.toRuleValidationResultCard(context)
-                )
-
-            }
+//            viewModel().validationResults.value.forEach {
+//                ruleValidationResultCards.add(
+//                    it.toRuleValidationResultCard(context)
+//                )
+//
+//            }
             binding.rulesList.adapter =
                 RuleValidationResultsAdapter(layoutInflater, ruleValidationResultCards)
             binding.reasonForCertificateInvalidityName.setOnClickListener {
@@ -242,14 +246,14 @@ class VerificationResultDialogFragment :
         }
     }
 
-    private fun setCertDataVisibility(generalVerificationResult: GeneralVerificationResult) {
+    private fun setCertDataVisibility(standardizedVerificationResultCategory: StandardizedVerificationResultCategory) {
         binding.errorDetails.visibility =
-            if (generalVerificationResult == GeneralVerificationResult.SUCCESS) View.GONE else View.VISIBLE
-        if (generalVerificationResult == GeneralVerificationResult.SUCCESS) {
+            if (standardizedVerificationResultCategory == StandardizedVerificationResultCategory.VALID) View.GONE else View.VISIBLE
+        if (standardizedVerificationResultCategory == StandardizedVerificationResultCategory.VALID) {
             binding.errorTestResult.visibility = View.GONE
         }
         binding.successDetails.visibility =
-            if (generalVerificationResult != GeneralVerificationResult.FAILED) View.VISIBLE else View.GONE
+            if (standardizedVerificationResultCategory != StandardizedVerificationResultCategory.INVALID) View.VISIBLE else View.GONE
     }
 
     private fun showUserData(certificate: CertificateModel) {

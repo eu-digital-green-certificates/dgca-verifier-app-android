@@ -33,6 +33,7 @@ import android.widget.AdapterView.OnItemSelectedListener
 import androidx.activity.addCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -46,6 +47,11 @@ import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.base.BindingFragment
 import dgca.verifier.app.android.databinding.FragmentCodeReaderBinding
+import dgca.verifier.app.android.model.CertificateModel
+import dgca.verifier.app.android.verification.CERTIFICATE_MODEL_KEY
+import dgca.verifier.app.android.verification.STANDARDISED_VERIFICATION_RESULT_KEY
+import dgca.verifier.app.android.verification.StandardizedVerificationResult
+import dgca.verifier.app.android.verification.VERIFY_REQUEST_KEY
 import dgca.verifier.app.engine.data.source.countries.COUNTRIES_MAP
 import timber.log.Timber
 import java.util.*
@@ -106,6 +112,31 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
         }
 
         setUpCountriesProcessing()
+
+        setFragmentResultListener(VERIFY_REQUEST_KEY) { _, bundle ->
+            val standardizedVerificationResult: StandardizedVerificationResult? =
+                bundle.getSerializable(
+                    STANDARDISED_VERIFICATION_RESULT_KEY
+                ) as StandardizedVerificationResult?
+            val certificateModel: CertificateModel? = bundle.getParcelable(CERTIFICATE_MODEL_KEY)
+            if (standardizedVerificationResult != null) {
+                showVerificationResult(standardizedVerificationResult, certificateModel)
+            }
+        }
+    }
+
+    private fun showVerificationResult(
+        standardizedVerificationResult: StandardizedVerificationResult,
+        certificateModel: CertificateModel?
+    ) {
+        findNavController().navigateUp()
+        binding.barcodeScanner.pause()
+        val action =
+            CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationResultFragment(
+                standardizedVerificationResult,
+                certificateModel
+            )
+        findNavController().navigate(action)
     }
 
     override fun onResume() {

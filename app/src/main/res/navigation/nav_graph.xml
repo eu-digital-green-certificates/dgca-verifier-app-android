@@ -32,17 +32,17 @@
         android:label="CodeReader"
         tools:layout="@layout/fragment_code_reader">
 
-<!--        <action-->
-<!--            android:id="@+id/action_codeReaderFragment_to_verificationResultFragment"-->
-<!--            app:destination="@id/verificationResultDialogFragment"-->
-<!--            app:enterAnim="@anim/slide_in_right"-->
-<!--            app:exitAnim="@anim/slide_out_left" />-->
+        <action
+            android:id="@+id/action_codeReaderFragment_to_verificationResultFragment"
+            app:destination="@id/verificationResultDialogFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
 
-<!--        <action-->
-<!--            android:id="@+id/action_codeReaderFragment_to_detailedVerificationResultFragment"-->
-<!--            app:destination="@id/detailedVerificationResultDialogFragment"-->
-<!--            app:enterAnim="@anim/slide_in_right"-->
-<!--            app:exitAnim="@anim/slide_out_left" />-->
+        <!--        <action-->
+        <!--            android:id="@+id/action_codeReaderFragment_to_detailedVerificationResultFragment"-->
+        <!--            app:destination="@id/detailedVerificationResultDialogFragment"-->
+        <!--            app:enterAnim="@anim/slide_in_right"-->
+        <!--            app:exitAnim="@anim/slide_out_left" />-->
 
         <action
             android:id="@+id/action_codeReaderFragment_to_verificationDialogFragment"
@@ -74,16 +74,18 @@
     <dialog
         android:id="@+id/verificationResultDialogFragment"
         android:name="dgca.verifier.app.android.verification.VerificationResultDialogFragment"
-        android:label="Verification"
+        android:label="Verification Result"
         tools:layout="@layout/dialog_fragment_verification_result">
 
         <argument
-            android:name="qrCodeText"
-            app:argType="string" />
+            android:name="standardizedVerificationResult"
+            app:argType="dgca.verifier.app.android.verification.StandardizedVerificationResult" />
 
         <argument
-            android:name="countryIsoCode"
-            app:argType="string" />
+            android:name="certificateModel"
+            android:defaultValue="@null"
+            app:argType="dgca.verifier.app.android.model.CertificateModel"
+            app:nullable="true" />
     </dialog>
 
     <dialog

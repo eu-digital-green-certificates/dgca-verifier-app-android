@@ -36,14 +36,14 @@ import dgca.verifier.app.android.YEAR_MONTH_DAY
 import dgca.verifier.app.android.databinding.ViewDetailedCertificateViewBinding
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.parseFromTo
-import dgca.verifier.app.android.verification.VerificationError
+import dgca.verifier.app.android.verification.StandardizedVerificationResult
 
 class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
     MaterialCardView(context, attrs) {
     private val binding: ViewDetailedCertificateViewBinding =
         ViewDetailedCertificateViewBinding.inflate(LayoutInflater.from(context), this)
     private var isExpanded = false
-    private lateinit var certificateModelAndVerificationError: Pair<CertificateModel, VerificationError?>
+    private lateinit var certificateModelAndStandardizedVerificationResult: Pair<CertificateModel, StandardizedVerificationResult>
 
     init {
         radius = TypedValue.applyDimension(
@@ -57,7 +57,7 @@ class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
         binding.expandButton.setOnClickListener {
             isExpanded = !isExpanded
             setExpanded(isExpanded)
-            setUp(certificateModelAndVerificationError)
+            setUp(certificateModelAndStandardizedVerificationResult)
         }
     }
 
@@ -68,16 +68,17 @@ class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
 
     fun setCertificateModel(
         certificateModel: CertificateModel,
-        verificationError: VerificationError?
+        standardizedVerificationResult: StandardizedVerificationResult
     ) {
-        certificateModelAndVerificationError = Pair(certificateModel, verificationError)
-        setUp(certificateModelAndVerificationError)
+        certificateModelAndStandardizedVerificationResult =
+            Pair(certificateModel, standardizedVerificationResult)
+        setUp(certificateModelAndStandardizedVerificationResult)
     }
 
-    private fun setUp(certificateModelAndVerificationError: Pair<CertificateModel?, VerificationError?>) {
-        setUpCertificateType(certificateModelAndVerificationError.first!!)
-        setUpPossibleLimitation(certificateModelAndVerificationError.second)
-        setUpDateOfBirth(certificateModelAndVerificationError.first!!)
+    private fun setUp(certificateModelAndStandardizedVerificationResult: Pair<CertificateModel?, StandardizedVerificationResult>) {
+        setUpCertificateType(this.certificateModelAndStandardizedVerificationResult.first!!)
+        setUpPossibleLimitation(this.certificateModelAndStandardizedVerificationResult.second)
+        setUpDateOfBirth(this.certificateModelAndStandardizedVerificationResult.first!!)
     }
 
     private fun setUpCertificateType(certificateModel: CertificateModel) {
@@ -93,22 +94,23 @@ class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
         }
     }
 
-    private fun setUpPossibleLimitation(verificationError: VerificationError?) {
-        if (verificationError == null) {
+    private fun setUpPossibleLimitation(standardizedVerificationResult: StandardizedVerificationResult) {
+        if (standardizedVerificationResult == StandardizedVerificationResult.SUCCESS) {
             View.GONE
         } else {
             binding.possibleLimitationsName.text = context.getString(
-                when (verificationError) {
-                    VerificationError.GREEN_CERTIFICATE_EXPIRED -> R.string.certificate_is_expired
-                    VerificationError.CERTIFICATE_REVOKED -> R.string.certificate_was_revoked
-                    VerificationError.VERIFICATION_FAILED -> R.string.verification_failed
-                    VerificationError.CERTIFICATE_EXPIRED -> R.string.signing_certificate_is_expired
-                    VerificationError.TEST_DATE_IS_IN_THE_FUTURE -> R.string.the_test_date_is_in_the_future
-                    VerificationError.TEST_RESULT_POSITIVE -> R.string.test_result_positive
-                    VerificationError.RECOVERY_NOT_VALID_SO_FAR -> R.string.recovery_not_valid_yet
-                    VerificationError.RECOVERY_NOT_VALID_ANYMORE -> R.string.recover_not_valid_anymore
-                    VerificationError.RULES_VALIDATION_FAILED -> R.string.rules_validation_failed
-                    VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID -> R.string.cryptographic_signature_invalid
+                when (standardizedVerificationResult) {
+                    StandardizedVerificationResult.GREEN_CERTIFICATE_EXPIRED -> R.string.certificate_is_expired
+                    StandardizedVerificationResult.CERTIFICATE_REVOKED -> R.string.certificate_was_revoked
+                    StandardizedVerificationResult.VERIFICATION_FAILED -> R.string.verification_failed
+                    StandardizedVerificationResult.CERTIFICATE_EXPIRED -> R.string.signing_certificate_is_expired
+                    StandardizedVerificationResult.TEST_DATE_IS_IN_THE_FUTURE -> R.string.the_test_date_is_in_the_future
+                    StandardizedVerificationResult.TEST_RESULT_POSITIVE -> R.string.test_result_positive
+                    StandardizedVerificationResult.RECOVERY_NOT_VALID_SO_FAR -> R.string.recovery_not_valid_yet
+                    StandardizedVerificationResult.RECOVERY_NOT_VALID_ANYMORE -> R.string.recover_not_valid_anymore
+                    StandardizedVerificationResult.RULES_VALIDATION_FAILED -> R.string.rules_validation_failed
+                    StandardizedVerificationResult.CRYPTOGRAPHIC_SIGNATURE_INVALID -> R.string.cryptographic_signature_invalid
+                    else -> throw IllegalArgumentException()
                 }
             )
             View.VISIBLE

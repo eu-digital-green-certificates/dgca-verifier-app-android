@@ -27,7 +27,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -37,8 +36,8 @@ import dgca.verifier.app.android.R
 import dgca.verifier.app.android.databinding.DialogFragmentDetailedVerificationResultBinding
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.verification.BaseVerificationDialogFragment
-import dgca.verifier.app.android.verification.BaseVerificationResultViewModel
-import dgca.verifier.app.android.verification.VerificationError
+import dgca.verifier.app.android.verification.StandardizedVerificationResult
+import dgca.verifier.app.android.verification.StandardizedVerificationResultCategory
 
 @AndroidEntryPoint
 class DetailedVerificationResultDialogFragment :
@@ -74,7 +73,7 @@ class DetailedVerificationResultDialogFragment :
             detailedVerificationResult
         )
 
-        val (colorRes, textRes) = detailedVerificationResult.verificationError.toVerificationComponentStates()
+        val (colorRes, textRes) = detailedVerificationResult.standardizedVerificationResult.toVerificationComponentStates()
             .toVerificationResult()
             .getActionButtonData()
 
@@ -88,18 +87,18 @@ class DetailedVerificationResultDialogFragment :
 
         handleCertificateModel(
             detailedVerificationResult.certificateModel,
-            detailedVerificationResult.verificationError
+            detailedVerificationResult.standardizedVerificationResult
         )
     }
 
     private fun handleCertificateModel(
         certificateModel: CertificateModel?,
-        verificationError: VerificationError?
+        standardizedVerificationResult: StandardizedVerificationResult
     ) {
         if (certificateModel == null) {
             binding.certificateInfo.visibility = View.GONE
         } else {
-            binding.certificateInfo.setCertificateModel(certificateModel, verificationError)
+            binding.certificateInfo.setCertificateModel(certificateModel, standardizedVerificationResult)
             binding.certificateInfo.visibility = View.VISIBLE
         }
     }
@@ -108,20 +107,12 @@ class DetailedVerificationResultDialogFragment :
 
     override fun timerView(): View = binding.timberView
 
-    override fun progressBar(): ProgressBar = binding.progressBar
-
-    override fun qrCodeText(): String = args.qrCodeText
-
-    override fun countryIsoCode(): String = args.countryIsoCode
-
-    private fun VerificationResult.getActionButtonData(): Pair<Int, Int> = when (this) {
-        VerificationResult.VALID -> Pair(R.color.green, R.string.done)
-        VerificationResult.INVALID -> Pair(R.color.red, R.string.retry)
-        VerificationResult.LIMITED_VALIDITY -> Pair(
+    private fun StandardizedVerificationResultCategory.getActionButtonData(): Pair<Int, Int> = when (this) {
+        StandardizedVerificationResultCategory.VALID -> Pair(R.color.green, R.string.done)
+        StandardizedVerificationResultCategory.INVALID -> Pair(R.color.red, R.string.retry)
+        StandardizedVerificationResultCategory.LIMITED_VALIDITY -> Pair(
             R.color.yellow,
             R.string.retry
         )
     }
-
-    override fun viewModel(): BaseVerificationResultViewModel = viewModel
 }

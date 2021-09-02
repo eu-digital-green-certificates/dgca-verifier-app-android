@@ -63,30 +63,11 @@ import java.time.ZonedDateTime
 import java.util.*
 import javax.inject.Inject
 
-enum class GeneralVerificationResult {
-    SUCCESS, FAILED, RULES_VALIDATION_FAILED
-}
-
-fun VerificationData.getGeneralResult(): GeneralVerificationResult {
-    return when {
-        verificationResult.isValid() && innerVerificationResult.isValid() -> GeneralVerificationResult.SUCCESS
-        verificationResult.isTestWithPositiveResult() -> GeneralVerificationResult.FAILED
-        verificationResult.rulesValidationFailed -> GeneralVerificationResult.RULES_VALIDATION_FAILED
-        else -> GeneralVerificationResult.FAILED
-    }
-}
-
-data class VerificationData(
-    val verificationResult: VerificationResult,
-    val innerVerificationResult: InnerVerificationResult,
-    val certificateModel: CertificateModel?
-)
-
 sealed class QrCodeVerificationResult {
     class Applicable(
-        val verificationData: VerificationData,
-        val verificationError: VerificationError?,
-        val validationResults: List<ValidationResult>?
+        val standardizedVerificationResult: StandardizedVerificationResult,
+        val certificateModel: CertificateModel?,
+        val rulesValidationResults: List<ValidationResult>?
     ) : QrCodeVerificationResult()
 
     object NotApplicable : QrCodeVerificationResult()
@@ -138,18 +119,15 @@ class VerificationViewModel @Inject constructor(
             _qrCodeVerificationResult.value = if (innerVerificationResult.isApplicableCode) {
                 val certificateModel: CertificateModel? =
                     innerVerificationResult.greenCertificateData?.greenCertificate?.toCertificateModel()
-                val verificationError: VerificationError? =
-                    verificationResult.fetchError(innerVerificationResult)
-
-                val verificationData = VerificationData(
-                    verificationResult,
-                    innerVerificationResult,
-                    certificateModel
-                )
+                val standardizedVerificationResult: StandardizedVerificationResult =
+                    extractStandardizedVerificationResultFrom(
+                        verificationResult,
+                        innerVerificationResult
+                    )
 
                 QrCodeVerificationResult.Applicable(
-                    verificationData,
-                    verificationError,
+                    standardizedVerificationResult,
+                    certificateModel,
                     validationResults
                 )
             } else {

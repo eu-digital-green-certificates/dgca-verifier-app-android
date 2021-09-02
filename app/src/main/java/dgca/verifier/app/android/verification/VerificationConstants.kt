@@ -17,14 +17,11 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 8/31/21 5:45 PM
+ *  Created by osarapulov on 9/2/21 7:45 PM
  */
 
 package dgca.verifier.app.android.verification
 
-import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-
-@HiltViewModel
-class VerificationResultResultViewModel @Inject constructor() : ViewModel()
+const val VERIFY_REQUEST_KEY = "VERIFY_REQUEST"
+const val STANDARDISED_VERIFICATION_RESULT_KEY = "STANDARDISED_VERIFICATION_RESULT"
+const val CERTIFICATE_MODEL_KEY = "CERTIFICATE_MODEL"

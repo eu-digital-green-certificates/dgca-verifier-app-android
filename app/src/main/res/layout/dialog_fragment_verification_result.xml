@@ -359,15 +359,4 @@
             android:src="@drawable/eu_logo_big" />
     </LinearLayout>
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:indeterminateTint="@color/blue"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_container"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

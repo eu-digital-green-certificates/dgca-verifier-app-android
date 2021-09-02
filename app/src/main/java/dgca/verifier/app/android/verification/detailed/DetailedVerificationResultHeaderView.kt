@@ -30,6 +30,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import dgca.verifier.app.android.R
 import dgca.verifier.app.android.databinding.ViewDetailedVerificationResultHeaderBinding
+import dgca.verifier.app.android.verification.StandardizedVerificationResultCategory
 
 class DetailedVerificationResultHeaderView(context: Context, attrs: AttributeSet?) :
     ConstraintLayout(context, attrs) {
@@ -44,10 +45,13 @@ class DetailedVerificationResultHeaderView(context: Context, attrs: AttributeSet
         binding.personFullName.text =
             detailedVerificationResult.certificateModel?.getFullName() ?: ""
 
-        val (colorRes, textRes) = when (detailedVerificationResult.verificationError.toVerificationComponentStates().toVerificationResult()) {
-            VerificationResult.VALID -> Pair(R.color.green, R.string.cert_valid)
-            VerificationResult.INVALID -> Pair(R.color.red, R.string.cert_invalid)
-            VerificationResult.LIMITED_VALIDITY -> Pair(
+        val (colorRes, textRes) = when (detailedVerificationResult.standardizedVerificationResult.category) {
+            StandardizedVerificationResultCategory.VALID -> Pair(R.color.green, R.string.cert_valid)
+            StandardizedVerificationResultCategory.INVALID -> Pair(
+                R.color.red,
+                R.string.cert_invalid
+            )
+            StandardizedVerificationResultCategory.LIMITED_VALIDITY -> Pair(
                 R.color.yellow,
                 R.string.cert_limited_validity
             )
@@ -56,6 +60,6 @@ class DetailedVerificationResultHeaderView(context: Context, attrs: AttributeSet
         binding.verificationStatusBackground.backgroundTintList =
             ColorStateList.valueOf(ContextCompat.getColor(context, colorRes))
 
-        binding.detailedVerificationResultView.setUp(detailedVerificationResult.verificationError.toVerificationComponentStates())
+        binding.detailedVerificationResultView.setUp(detailedVerificationResult.standardizedVerificationResult.toVerificationComponentStates())
     }
 }

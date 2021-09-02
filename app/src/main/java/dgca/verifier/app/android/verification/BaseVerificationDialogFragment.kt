@@ -29,8 +29,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ProgressBar
-import androidx.core.view.isVisible
 import androidx.lifecycle.MutableLiveData
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -41,15 +39,9 @@ import dgca.verifier.app.android.dpToPx
 abstract class BaseVerificationDialogFragment<T : ViewBinding> : BottomSheetDialogFragment() {
     private val hideLiveData: MutableLiveData<Void?> = MutableLiveData()
 
-    abstract fun viewModel(): BaseVerificationResultViewModel
-
     abstract fun contentLayout(): ViewGroup.LayoutParams
     open fun timerView(): View? = null
     open fun actionButton(): Button? = null
-    open fun progressBar(): ProgressBar? = null
-
-    abstract fun qrCodeText(): String
-    abstract fun countryIsoCode(): String
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val displayMetrics = DisplayMetrics()
@@ -69,16 +61,7 @@ abstract class BaseVerificationDialogFragment<T : ViewBinding> : BottomSheetDial
 
         actionButton()?.setOnClickListener { dismiss() }
 
-        viewModel().init(qrCodeText(), countryIsoCode())
-
-        viewModel().isApplicable.observe(viewLifecycleOwner, {
-            if (it) {
-                startTimer()
-            } else {
-                hideLiveData.value = null
-            }
-        })
-        viewModel().inProgress.observe(viewLifecycleOwner, { progressBar()?.isVisible = it })
+        startTimer()
     }
 
     private fun startTimer() {
