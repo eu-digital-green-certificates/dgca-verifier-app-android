@@ -39,7 +39,7 @@ import dgca.verifier.app.engine.domain.rules.GetRulesUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class VerificationViewModel @Inject constructor(
+class VerificationResultViewModel @Inject constructor(
     prefixValidationService: PrefixValidationService,
     base45Service: Base45Service,
     compressorService: CompressorService,

@@ -160,7 +160,7 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(), NavCont
                 binding.countrySelector.selectedItem?.toString() ?: ""
             )
         } else {
-            CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationFragment(
+            CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationResultFragment(
                 text,
                 binding.countrySelector.selectedItem?.toString() ?: ""
             )
@@ -199,7 +199,7 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(), NavCont
 
         try {
             val countryCode = refinedCountries[position].toLowerCase(Locale.ROOT)
-            val action = CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationFragment(qrCodeText, countryCode)
+            val action = CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationResultFragment(qrCodeText, countryCode)
             findNavController().navigate(action)
         } catch (ex: Exception) {
             Timber.d("Cannot get iso country code for position.")

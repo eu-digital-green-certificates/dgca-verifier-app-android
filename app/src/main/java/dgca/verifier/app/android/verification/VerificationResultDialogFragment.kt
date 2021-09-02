@@ -41,7 +41,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.FORMATTED_YEAR_MONTH_DAY
 import dgca.verifier.app.android.R
 import dgca.verifier.app.android.YEAR_MONTH_DAY
-import dgca.verifier.app.android.databinding.DialogFragmentVerificationBinding
+import dgca.verifier.app.android.databinding.DialogFragmentVerificationResultBinding
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.model.TestResult
 import dgca.verifier.app.android.parseFromTo
@@ -55,17 +55,17 @@ import dgca.verifier.app.android.verification.rules.toRuleValidationResultCard
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
-class VerificationDialogFragment :
-    BaseVerificationDialogFragment<DialogFragmentVerificationBinding>() {
+class VerificationResultDialogFragment :
+    BaseVerificationDialogFragment<DialogFragmentVerificationResultBinding>() {
 
-    private val viewModel by viewModels<VerificationViewModel>()
-    private val args by navArgs<VerificationDialogFragmentArgs>()
+    private val viewModel by viewModels<VerificationResultViewModel>()
+    private val args by navArgs<VerificationResultDialogFragmentArgs>()
 
     override fun onCreateBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
-    ): DialogFragmentVerificationBinding =
-        DialogFragmentVerificationBinding.inflate(inflater, container, false)
+    ): DialogFragmentVerificationResultBinding =
+        DialogFragmentVerificationResultBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
