@@ -31,29 +31,39 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.databinding.FragmentVerificationBinding
 
 @AndroidEntryPoint
 class VerificationFragment : DialogFragment() {
+    private val viewModel by viewModels<VerificationViewModel>()
+    private val args by navArgs<VerificationFragmentArgs>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.init(args.qrCodeText, args.countryIsoCode)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View = FragmentVerificationBinding.inflate(inflater, container, false).root
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return super.onCreateDialog(savedInstanceState).apply {
-            this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            this.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
-            setStyle(STYLE_NO_FRAME, android.R.style.Theme);
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        viewModel.qrCodeVerificationResult.observe(viewLifecycleOwner) {
+            findNavController().navigateUp()
         }
     }
 
-    //    override fun onCreateBinding(
-//        inflater: LayoutInflater,
-//        container: ViewGroup?
-//    ): FragmentVerificationBinding =
-//        FragmentVerificationBinding.inflate(inflater, container, false)
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return super.onCreateDialog(savedInstanceState).apply {
+            this.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            this.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setStyle(STYLE_NO_FRAME, android.R.style.Theme)
+        }
+    }
 }
