@@ -39,8 +39,6 @@ class CodeReaderViewModel @Inject constructor(
         emit(preferences.selectedCountryIsoCode)
     }
 
-    fun isDebugModeEnabled(): Boolean? = preferences.isDebugModeEnabled
-
     fun selectCountry(countryIsoCode: String) {
         preferences.selectedCountryIsoCode = countryIsoCode
     }

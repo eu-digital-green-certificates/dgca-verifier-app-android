@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~  license-start
   ~  eu-digital-green-certificates / dgca-verifier-app-android
   ~
@@ -17,26 +17,20 @@
   ~  limitations under the License.
   ~  license-end
   ~
-  ~  Created by Mykhailo Nester on 4/23/21 9:53 AM
+  ~  Created by osarapulov on 9/2/21 11:07 AM
   -->
 
-<resources>
-    <color name="blue">#004494</color>
-    <color name="blue_dark">#003D84</color>
-    <color name="blue_light">#4073AF</color>
-    <color name="white">#FFFFFF</color>
-    <color name="black">#404040</color>
-    <color name="green">#467A39</color>
-    <color name="yellow">#FF9F00</color>
-    <color name="red">#DA2131</color>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <color name="grey_100">#404040</color>
-    <color name="grey_75">#707070</color>
-    <color name="grey_50">#9F9F9F</color>
-    <color name="grey_transparent">#3CD1D0D0</color>
-    <color name="transparent">#00000000</color>
-
-    <color name="rule_card_background_color">#F2F2F2</color>
-    <color name="detailed_verification_result_background">#fff8e8</color>
-
-</resources>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

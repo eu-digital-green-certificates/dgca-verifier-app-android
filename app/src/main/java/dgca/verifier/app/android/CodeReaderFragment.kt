@@ -48,12 +48,13 @@ import dgca.verifier.app.android.base.BindingFragment
 import dgca.verifier.app.android.databinding.FragmentCodeReaderBinding
 import dgca.verifier.app.engine.data.source.countries.COUNTRIES_MAP
 import timber.log.Timber
-import java.util.Locale
+import java.util.*
 
 private const val CAMERA_REQUEST_CODE = 1003
 
 @AndroidEntryPoint
-class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(), NavController.OnDestinationChangedListener {
+class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
+    NavController.OnDestinationChangedListener {
 
     private val viewModel by viewModels<CodeReaderViewModel>()
 
@@ -84,7 +85,10 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(), NavCont
         (activity as MainActivity).clearBackground()
     }
 
-    override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentCodeReaderBinding =
+    override fun onCreateBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentCodeReaderBinding =
         FragmentCodeReaderBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -154,17 +158,11 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(), NavCont
     }
 
     private fun navigateToVerificationPage(text: String) {
-        val action = if (viewModel.isDebugModeEnabled() == true) {
-            CodeReaderFragmentDirections.actionCodeReaderFragmentToDetailedVerificationResultFragment(
+        val action =
+            CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationDialogFragment(
                 text,
                 binding.countrySelector.selectedItem?.toString() ?: ""
             )
-        } else {
-            CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationResultFragment(
-                text,
-                binding.countrySelector.selectedItem?.toString() ?: ""
-            )
-        }
         findNavController().navigate(action)
     }
 
@@ -199,7 +197,11 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(), NavCont
 
         try {
             val countryCode = refinedCountries[position].toLowerCase(Locale.ROOT)
-            val action = CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationResultFragment(qrCodeText, countryCode)
+            val action =
+                CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationDialogFragment(
+                    qrCodeText,
+                    countryCode
+                )
             findNavController().navigate(action)
         } catch (ex: Exception) {
             Timber.d("Cannot get iso country code for position.")

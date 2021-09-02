@@ -32,15 +32,21 @@
         android:label="CodeReader"
         tools:layout="@layout/fragment_code_reader">
 
-        <action
-            android:id="@+id/action_codeReaderFragment_to_verificationResultFragment"
-            app:destination="@id/verificationResultDialogFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left" />
+<!--        <action-->
+<!--            android:id="@+id/action_codeReaderFragment_to_verificationResultFragment"-->
+<!--            app:destination="@id/verificationResultDialogFragment"-->
+<!--            app:enterAnim="@anim/slide_in_right"-->
+<!--            app:exitAnim="@anim/slide_out_left" />-->
+
+<!--        <action-->
+<!--            android:id="@+id/action_codeReaderFragment_to_detailedVerificationResultFragment"-->
+<!--            app:destination="@id/detailedVerificationResultDialogFragment"-->
+<!--            app:enterAnim="@anim/slide_in_right"-->
+<!--            app:exitAnim="@anim/slide_out_left" />-->
 
         <action
-            android:id="@+id/action_codeReaderFragment_to_detailedVerificationResultFragment"
-            app:destination="@id/detailedVerificationResultDialogFragment"
+            android:id="@+id/action_codeReaderFragment_to_verificationDialogFragment"
+            app:destination="@id/verificationDialogFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left" />
 
@@ -49,6 +55,21 @@
             app:destination="@id/settingsFragment" />
 
     </fragment>
+
+    <dialog
+        android:id="@+id/verificationDialogFragment"
+        android:name="dgca.verifier.app.android.verification.VerificationFragment"
+        android:label="Verification"
+        tools:layout="@layout/fragment_verification">
+
+        <argument
+            android:name="qrCodeText"
+            app:argType="string" />
+
+        <argument
+            android:name="countryIsoCode"
+            app:argType="string" />
+    </dialog>
 
     <dialog
         android:id="@+id/verificationResultDialogFragment"
