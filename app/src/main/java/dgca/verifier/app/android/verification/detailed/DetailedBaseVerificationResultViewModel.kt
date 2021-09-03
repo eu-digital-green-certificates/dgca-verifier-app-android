@@ -168,10 +168,7 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
 
     @Throws(IOException::class)
     private fun generatePayloadShaTxt(cachePath: String, cbor: ByteArray?): File =
-        createAndWriteToFile(
-            cachePath.plusFile(Files.PAYLOAD_SHA_TXT),
-            cbor?.toHexString()?.sha256() + "\n"
-        )
+        createAndWriteToFile(cachePath.plusFile(Files.PAYLOAD_SHA_TXT), "${cbor?.toHexString()?.sha256()}\n")
 
     @Throws(IOException::class)
     private fun generateQrBase64(cachePath: String, cose: ByteArray?, policyLevel: PolicyLevel): File {
@@ -181,7 +178,7 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
             cose?.let { coseService.anonymizeCose(it) }
         }
 
-        return createAndWriteToFile(cachePath.plusFile(Files.QR_BASE_64), coseByteArray?.toBase64() ?: "")
+        return createAndWriteToFile(cachePath.plusFile(Files.QR_BASE_64), "${coseByteArray?.toBase64()}")
     }
 
     @Throws(IOException::class)
