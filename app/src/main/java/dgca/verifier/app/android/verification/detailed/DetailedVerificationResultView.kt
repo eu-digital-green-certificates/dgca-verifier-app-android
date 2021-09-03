@@ -26,10 +26,15 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.LayoutInflater
-import androidx.annotation.DrawableRes
 import androidx.cardview.widget.CardView
 import dgca.verifier.app.android.R
 import dgca.verifier.app.android.databinding.ViewDetailedVerificationResultBinding
+import dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer
+import dgca.verifier.app.android.verification.StandardizedVerificationResult
+import dgca.verifier.app.android.verification.StandardizedVerificationResultCategory
+import dgca.verifier.app.engine.Result
+import dgca.verifier.app.engine.data.RuleCertificateType
+import dgca.verifier.app.engine.data.Type
 
 
 class DetailedVerificationResultView(context: Context, attrs: AttributeSet?) :
@@ -45,17 +50,70 @@ class DetailedVerificationResultView(context: Context, attrs: AttributeSet?) :
         )
     }
 
-    fun setUp(verificationComponentStates: Map<VerificationComponent, VerificationComponentState>) {
-        binding.techVerificationImage.setImageResource(verificationComponentStates[VerificationComponent.TECHNICAL_VERIFICATION]!!.getAsset())
-        binding.issuerInvalidationImage.setImageResource(verificationComponentStates[VerificationComponent.ISSUER_INVALIDATION]!!.getAsset())
-        binding.destinationAcceptanceImage.setImageResource(verificationComponentStates[VerificationComponent.DESTINATION_INVALIDATION]!!.getAsset())
-        binding.travellerAcceptanceImage.setImageResource(verificationComponentStates[VerificationComponent.TRAVELLER_ACCEPTANCE]!!.getAsset())
+    fun setUp(
+        standardizedVerificationResult: StandardizedVerificationResult,
+        ruleValidationResultModelsContainer: RuleValidationResultModelsContainer?
+    ) {
+        val techVerificationAsset =
+            if (standardizedVerificationResult.category == StandardizedVerificationResultCategory.VALID
+                || standardizedVerificationResult.category == StandardizedVerificationResultCategory.LIMITED_VALIDITY
+            ) {
+                R.drawable.ic_traffic_success
+            } else {
+                R.drawable.ic_traffic_fail
+            }
+        binding.techVerificationImage.setImageResource(techVerificationAsset)
+        val (invalidationAsset, nonGeneralAcceptanceAsset, generalAcceptanceAsset) = ruleValidationResultModelsContainer?.getAssets()
+            ?: Triple(
+                R.drawable.ic_traffic_uncertain,
+                R.drawable.ic_traffic_uncertain,
+                R.drawable.ic_traffic_uncertain
+            )
+
+        binding.issuerInvalidationImage.setImageResource(invalidationAsset)
+        binding.destinationAcceptanceImage.setImageResource(nonGeneralAcceptanceAsset)
+        binding.travellerAcceptanceImage.setImageResource(generalAcceptanceAsset)
     }
 
-    @DrawableRes
-    fun VerificationComponentState.getAsset(): Int = when (this) {
-        VerificationComponentState.FAILED -> R.drawable.ic_traffic_fail
-        VerificationComponentState.OPEN -> R.drawable.ic_traffic_uncertain
-        VerificationComponentState.PASSED -> R.drawable.ic_traffic_success
+    private fun RuleValidationResultModelsContainer.getAssets(): Triple<Int, Int, Int> {
+        var invalidationAsset = R.drawable.ic_traffic_success
+        var nonGeneralAcceptanceAsset = R.drawable.ic_traffic_success
+        var generalAcceptanceAsset = R.drawable.ic_traffic_success
+        this.ruleValidationResultModels.forEach { ruleValidationResultModel ->
+            when {
+                ruleValidationResultModel.result == Result.PASSED -> {
+                }
+                ruleValidationResultModel.rule.type == Type.INVALIDATION -> {
+                    invalidationAsset =
+                        if (invalidationAsset == R.drawable.ic_traffic_fail || ruleValidationResultModel.result == Result.FAIL) {
+                            R.drawable.ic_traffic_fail
+                        } else {
+                            R.drawable.ic_traffic_uncertain
+                        }
+                }
+                ruleValidationResultModel.rule.ruleCertificateType == RuleCertificateType.GENERAL -> {
+                    generalAcceptanceAsset =
+                        if (generalAcceptanceAsset == R.drawable.ic_traffic_fail || ruleValidationResultModel.result == Result.FAIL) {
+                            R.drawable.ic_traffic_fail
+                        } else {
+                            R.drawable.ic_traffic_uncertain
+                        }
+                }
+                else -> {
+                    nonGeneralAcceptanceAsset =
+                        if (nonGeneralAcceptanceAsset == R.drawable.ic_traffic_fail || ruleValidationResultModel.result == Result.FAIL) {
+                            R.drawable.ic_traffic_fail
+                        } else {
+                            R.drawable.ic_traffic_uncertain
+                        }
+                }
+            }
+
+        }
+        return Triple(
+            invalidationAsset,
+            nonGeneralAcceptanceAsset,
+            generalAcceptanceAsset
+        )
     }
 }

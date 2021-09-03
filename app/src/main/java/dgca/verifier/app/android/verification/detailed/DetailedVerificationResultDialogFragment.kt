@@ -36,6 +36,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.R
 import dgca.verifier.app.android.databinding.DialogFragmentDetailedVerificationResultBinding
 import dgca.verifier.app.android.model.CertificateModel
+import dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer
 import dgca.verifier.app.android.verification.BaseVerificationDialogFragment
 import dgca.verifier.app.android.verification.StandardizedVerificationResult
 import dgca.verifier.app.android.verification.StandardizedVerificationResultCategory
@@ -67,7 +68,8 @@ class DetailedVerificationResultDialogFragment :
         handleDetailedVerificationResult(
             args.standardizedVerificationResult,
             args.certificateModel,
-            args.hcert
+            args.hcert,
+            args.ruleValidationResultModelsContainer
         )
         binding.shareBtn.setOnClickListener {
             viewModel.onShareClick(requireContext(), args.qrCodeText)
@@ -75,19 +77,19 @@ class DetailedVerificationResultDialogFragment :
     }
 
     private fun handleDetailedVerificationResult(
-        detailedVerificationResult: StandardizedVerificationResult,
+        standardizedVerificationResult: StandardizedVerificationResult,
         certificateModel: CertificateModel?,
-        hcert: String?
+        hcert: String?,
+        ruleValidationResultModelsContainer: RuleValidationResultModelsContainer?
     ) {
         binding.shareBtn.isVisible = true
         binding.detailedVerificationResultHeaderView.setUp(
-            detailedVerificationResult,
-            certificateModel
+            standardizedVerificationResult,
+            certificateModel,
+            ruleValidationResultModelsContainer
         )
 
-        val (colorRes, textRes) = detailedVerificationResult.toVerificationComponentStates()
-            .toVerificationResult()
-            .getActionButtonData()
+        val (colorRes, textRes) = standardizedVerificationResult.category.getActionButtonData()
 
         val context = requireContext()
         binding.actionButton.text = context.getString(textRes)
@@ -96,7 +98,7 @@ class DetailedVerificationResultDialogFragment :
         binding.actionButton.setOnClickListener { dismiss() }
 
         handleCertificateModel(
-            detailedVerificationResult,
+            standardizedVerificationResult,
             certificateModel,
             hcert
         )
