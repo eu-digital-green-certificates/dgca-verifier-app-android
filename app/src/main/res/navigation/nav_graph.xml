@@ -86,6 +86,11 @@
             android:defaultValue="@null"
             app:argType="dgca.verifier.app.android.model.CertificateModel"
             app:nullable="true" />
+
+        <argument
+            android:name="ruleValidationResultModelsContainer"
+            app:argType="dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer"
+            app:nullable="true" />
     </dialog>
 
     <dialog
@@ -107,6 +112,11 @@
         <argument
             android:name="hcert"
             app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="ruleValidationResultModelsContainer"
+            app:argType="dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer"
             app:nullable="true" />
     </dialog>
 

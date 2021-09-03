@@ -37,6 +37,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.databinding.FragmentVerificationBinding
+import dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer
 
 @AndroidEntryPoint
 class VerificationFragment : DialogFragment() {
@@ -55,14 +56,19 @@ class VerificationFragment : DialogFragment() {
     ): View = FragmentVerificationBinding.inflate(inflater, container, false).root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.qrCodeVerificationResult.observe(viewLifecycleOwner) {
-            if (it is QrCodeVerificationResult.Applicable) {
+        viewModel.qrCodeVerificationResult.observe(viewLifecycleOwner) { qrCodeVerificationResult ->
+            if (qrCodeVerificationResult is QrCodeVerificationResult.Applicable) {
                 setFragmentResult(
                     VERIFY_REQUEST_KEY,
                     bundleOf(
-                        STANDARDISED_VERIFICATION_RESULT_KEY to it.standardizedVerificationResult,
-                        CERTIFICATE_MODEL_KEY to it.certificateModel,
-                        HCERT_KEY to it.hcert
+                        STANDARDISED_VERIFICATION_RESULT_KEY to qrCodeVerificationResult.standardizedVerificationResult,
+                        CERTIFICATE_MODEL_KEY to qrCodeVerificationResult.certificateModel,
+                        HCERT_KEY to qrCodeVerificationResult.hcert,
+                        RULE_VALIDATION_RESULT_MODELS_CONTAINER_KEY to qrCodeVerificationResult.rulesValidationResults?.let {
+                            RuleValidationResultModelsContainer(
+                                it
+                            )
+                        }
                     )
                 )
             }

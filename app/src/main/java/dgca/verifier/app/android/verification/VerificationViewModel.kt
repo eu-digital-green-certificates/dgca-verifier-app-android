@@ -29,6 +29,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.android.model.CertificateModel
+import dgca.verifier.app.android.model.rules.RuleValidationResultModel
+import dgca.verifier.app.android.model.rules.toRuleValidationResultModels
 import dgca.verifier.app.android.model.toCertificateModel
 import dgca.verifier.app.android.verification.*
 import dgca.verifier.app.decoder.base45.Base45Service
@@ -68,7 +70,7 @@ sealed class QrCodeVerificationResult {
         val standardizedVerificationResult: StandardizedVerificationResult,
         val certificateModel: CertificateModel?,
         val hcert: String?,
-        val rulesValidationResults: List<ValidationResult>?
+        val rulesValidationResults: List<RuleValidationResultModel>?
     ) : QrCodeVerificationResult()
 
     object NotApplicable : QrCodeVerificationResult()
@@ -131,7 +133,7 @@ class VerificationViewModel @Inject constructor(
                     standardizedVerificationResult,
                     certificateModel,
                     hcert,
-                    validationResults
+                    validationResults?.toRuleValidationResultModels()
                 )
             } else {
                 QrCodeVerificationResult.NotApplicable

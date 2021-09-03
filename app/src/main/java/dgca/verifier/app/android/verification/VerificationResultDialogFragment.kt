@@ -50,6 +50,7 @@ import dgca.verifier.app.android.verification.certs.TestViewHolder
 import dgca.verifier.app.android.verification.certs.VaccinationViewHolder
 import dgca.verifier.app.android.verification.rules.RuleValidationResultCard
 import dgca.verifier.app.android.verification.rules.RuleValidationResultsAdapter
+import dgca.verifier.app.android.verification.rules.toRuleValidationResultCard
 
 
 @ExperimentalUnsignedTypes
@@ -212,13 +213,11 @@ class VerificationResultDialogFragment :
 
         if (standardizedVerificationResult == StandardizedVerificationResult.RULES_VALIDATION_FAILED) {
             val ruleValidationResultCards = mutableListOf<RuleValidationResultCard>()
-            val context = requireContext()
-//            viewModel().validationResults.value.forEach {
-//                ruleValidationResultCards.add(
-//                    it.toRuleValidationResultCard(context)
-//                )
-//
-//            }
+            args.ruleValidationResultModelsContainer?.ruleValidationResultModels?.forEach {
+                ruleValidationResultCards.add(
+                    it.toRuleValidationResultCard()
+                )
+            }
             binding.rulesList.adapter =
                 RuleValidationResultsAdapter(layoutInflater, ruleValidationResultCards)
             binding.reasonForCertificateInvalidityName.setOnClickListener {

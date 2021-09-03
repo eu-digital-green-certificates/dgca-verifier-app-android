@@ -17,13 +17,19 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 9/2/21 7:45 PM
+ *  Created by osarapulov on 9/3/21 7:55 AM
  */
 
-package dgca.verifier.app.android.verification
+package dgca.verifier.app.android.model.rules
 
-const val VERIFY_REQUEST_KEY = "VERIFY_REQUEST"
-const val STANDARDISED_VERIFICATION_RESULT_KEY = "STANDARDISED_VERIFICATION_RESULT"
-const val CERTIFICATE_MODEL_KEY = "CERTIFICATE_MODEL"
-const val HCERT_KEY = "HCERT"
-const val RULE_VALIDATION_RESULT_MODELS_CONTAINER_KEY = "RULE_VALIDATION_RESULT_MODELS_CONTAINER"
+import android.os.Parcelable
+import dgca.verifier.app.engine.Result
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+class RuleValidationResultModel(
+    val rule: RuleModel,
+    val result: Result,
+    val current: String,
+    val validationErrors: List<Exception>?,
+) : Parcelable

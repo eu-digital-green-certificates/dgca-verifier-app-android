@@ -48,6 +48,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.base.BindingFragment
 import dgca.verifier.app.android.databinding.FragmentCodeReaderBinding
 import dgca.verifier.app.android.model.CertificateModel
+import dgca.verifier.app.android.model.rules.RuleValidationResultModel
+import dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer
 import dgca.verifier.app.android.verification.*
 import dgca.verifier.app.engine.data.source.countries.COUNTRIES_MAP
 import timber.log.Timber
@@ -117,8 +119,10 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
                 ) as StandardizedVerificationResult?
             val certificateModel: CertificateModel? = bundle.getParcelable(CERTIFICATE_MODEL_KEY)
             val hcert: String? = bundle.getString(HCERT_KEY)
+            val ruleValidationResultModelsContainer: RuleValidationResultModelsContainer? = bundle.getParcelable(
+                RULE_VALIDATION_RESULT_MODELS_CONTAINER_KEY)
             if (standardizedVerificationResult != null) {
-                showVerificationResult(standardizedVerificationResult, certificateModel, hcert)
+                showVerificationResult(standardizedVerificationResult, certificateModel, hcert, ruleValidationResultModelsContainer)
             }
         }
     }
@@ -126,7 +130,8 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
     private fun showVerificationResult(
         standardizedVerificationResult: StandardizedVerificationResult,
         certificateModel: CertificateModel?,
-        hcert: String?
+        hcert: String?,
+        ruleValidationResultModelsContainer: RuleValidationResultModelsContainer?
     ) {
         findNavController().navigateUp()
         binding.barcodeScanner.pause()
@@ -134,12 +139,14 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
             CodeReaderFragmentDirections.actionCodeReaderFragmentToDetailedVerificationResultFragment(
                 standardizedVerificationResult,
                 certificateModel,
-                hcert
+                hcert,
+                ruleValidationResultModelsContainer
             )
         } else {
             CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationResultFragment(
                 standardizedVerificationResult,
-                certificateModel
+                certificateModel,
+                ruleValidationResultModelsContainer
             )
         }
         findNavController().navigate(action)
