@@ -23,6 +23,7 @@
 package dgca.verifier.app.android.utils
 
 import dgca.verifier.app.android.BackportUtils
+import timber.log.Timber
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -52,7 +53,7 @@ fun String.sha256(): String {
             sb.append(str)
         }
     } catch (e: Exception) {
-        e.printStackTrace()
+        Timber.w("sha256 exception")
     }
     return sb.toString()
 }

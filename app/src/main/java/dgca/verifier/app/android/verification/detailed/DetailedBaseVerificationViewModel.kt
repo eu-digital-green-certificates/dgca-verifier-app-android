@@ -162,11 +162,29 @@ class DetailedBaseVerificationViewModel @Inject constructor(
 
                 val qrBase64 = createAndWriteToFile("${context.cacheDir.path}/QR.base64", coseByteArray?.toBase64() ?: "")
 
-                //  L2/L3 Section
-                qrCodeText
+                // Base list of files
+                val list = mutableListOf(version, readme, payload, payloadShaBin, payloadShaTxt, qrBase64)
 
-                val list = listOf(version, readme, payload, payloadShaBin, payloadShaTxt, qrBase64)
-                zip(context, list, "verifierDebug.zip")
+                //  L2/L3 Section
+                if (policyLevel == PolicyLevel.L2 || policyLevel == PolicyLevel.L3) {
+                    val qrShaBin = File("${context.cacheDir.path}/QR-sha.bin")
+                    if (qrShaBin.exists()) {
+                        qrShaBin.delete()
+                    }
+                    qrShaBin.createNewFile()
+                    qrCodeText.toByteArray().sha256()?.let { qrShaBin.writeBytes(it) }
+                    list.add(qrShaBin)
+
+                    val qrShaTxt = createAndWriteToFile("${context.cacheDir.path}/QR-sha.txt", "${qrCodeText.sha256()}\n")
+                    list.add(qrShaTxt)
+                }
+
+                if (policyLevel == PolicyLevel.L3) {
+
+                }
+
+
+                zip(context, list, "EmergencyModeZip.zip")
             }
 
             // TODO: return path to zip file. Share via email
