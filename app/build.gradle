@@ -115,6 +115,7 @@ android {
     }
 
     compileOptions {
+        coreLibraryDesugaringEnabled = true
         sourceCompatibility Config.javaVersion
         targetCompatibility Config.javaVersion
     }
@@ -145,6 +146,7 @@ android {
 
 dependencies {
     implementation project(':decoder')
+    coreLibraryDesugaring Deps.desugar_jdk_libs
 
     implementation Deps.kotlin_stdlib
     implementation Deps.androidx_core
