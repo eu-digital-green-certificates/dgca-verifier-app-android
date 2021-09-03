@@ -129,8 +129,22 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
             val bitmap = qrCodeConverter.convertStringIntoQrCode(qrCode, QR_CODE_SIZE)
             val qrImageFile = bitmapToFile(cachePath, bitmap)
             list.add(qrImageFile)
-        }
 
+            val qrTxt = generateQrTxt(cachePath, qrCode)
+            list.add(qrTxt)
+
+            val coseShaBin = generateCoseShaBin(cachePath, cose)
+            list.add(coseShaBin)
+
+            val coseShaTxt = generateCoseShaTxt(cachePath, cose)
+            list.add(coseShaTxt)
+
+            val coseBase64 = generateCoseBase64(cachePath, cose)
+            list.add(coseBase64)
+
+            val payloadBase64 = generatePayloadBase64(cachePath, cbor)
+            list.add(payloadBase64)
+        }
 
         zip(cachePath, list)
     }
@@ -149,16 +163,8 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
         )
 
     @Throws(IOException::class)
-    private fun generatePayloadShaBin(cachePath: String, cbor: ByteArray?): File {
-        val payloadShaBin = File(cachePath.plusFile(Files.PAYLOAD_SHA_BIN))
-        if (payloadShaBin.exists()) {
-            payloadShaBin.delete()
-        }
-        payloadShaBin.createNewFile()
-        cbor?.sha256()?.let { payloadShaBin.writeBytes(it) }
-
-        return payloadShaBin
-    }
+    private fun generatePayloadShaBin(cachePath: String, cbor: ByteArray?): File =
+        createAndWriteToFile(cachePath.plusFile(Files.PAYLOAD_SHA_BIN), cbor?.sha256())
 
     @Throws(IOException::class)
     private fun generatePayloadShaTxt(cachePath: String, cbor: ByteArray?): File =
@@ -186,54 +192,41 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
     }
 
     @Throws(IOException::class)
-    private fun generateQrShaBin(cachePath: String, qrCode: String): File {
-        val qrShaBin = File(cachePath.plusFile(Files.QR_SHA_BIN))
-        if (qrShaBin.exists()) {
-            qrShaBin.delete()
-        }
-        qrShaBin.createNewFile()
-        qrCode.toByteArray().sha256()?.let { qrShaBin.writeBytes(it) }
-
-        return qrShaBin
-    }
+    private fun generateQrShaBin(cachePath: String, qrCode: String): File =
+        createAndWriteToFile(cachePath.plusFile(Files.QR_SHA_BIN), qrCode.toByteArray().sha256())
 
     @Throws(IOException::class)
     private fun generateQrShaTxt(cachePath: String, qrCode: String): File =
         createAndWriteToFile(cachePath.plusFile(Files.QR_SHA_TXT), "${qrCode.sha256()}\n")
 
     @Throws(IOException::class)
-    private fun createAndWriteToFile(path: String, content: String): File {
-        val file = File(path)
-        if (file.exists()) {
-            file.delete()
-        }
-
-        file.createNewFile()
-        file.bufferedWriter().use { out ->
-            out.write(content)
-        }
-
-        return file
-    }
-
-    @Throws(IOException::class)
     fun bitmapToFile(cachePath: String, bitmap: Bitmap): File {
-        var file: File?
-        file = File(cachePath.plusFile(Files.QR_PNG))
-        if (file.exists()) {
-            file.delete()
-        }
-
-        file.createNewFile()
-
         val bos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos)
         val bitmapData = bos.toByteArray()
 
-        file.writeBytes(bitmapData)
-
-        return file
+        return createAndWriteToFile(cachePath.plusFile(Files.QR_PNG), bitmapData)
     }
+
+    @Throws(IOException::class)
+    private fun generateQrTxt(cachePath: String, qrCode: String): File =
+        createAndWriteToFile(cachePath.plusFile(Files.QR_TXT), qrCode)
+
+    @Throws(IOException::class)
+    private fun generateCoseShaBin(cachePath: String, cose: ByteArray?): File =
+        createAndWriteToFile(cachePath.plusFile(Files.COSE_SHA_BIN), cose?.sha256())
+
+    @Throws(IOException::class)
+    private fun generateCoseShaTxt(cachePath: String, cose: ByteArray?): File =
+        createAndWriteToFile(cachePath.plusFile(Files.COSE_SHA_TXT), "${cose?.toHexString()?.sha256()}\n")
+
+    @Throws(IOException::class)
+    private fun generateCoseBase64(cachePath: String, cose: ByteArray?): File =
+        createAndWriteToFile(cachePath.plusFile(Files.COSE_BASE64), "${cose?.toBase64()}")
+
+    @Throws(IOException::class)
+    private fun generatePayloadBase64(cachePath: String, cbor: ByteArray?): File =
+        createAndWriteToFile(cachePath.plusFile(Files.PAYLOAD_BASE64), "${cbor?.toBase64()}")
 
     @Throws(IOException::class)
     private fun zip(cachePath: String, files: List<File>) {
@@ -255,6 +248,35 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
         }
         out.close()
     }
+
+    @Throws(IOException::class)
+    private fun createAndWriteToFile(path: String, content: String): File {
+        val file = createNewFile(path)
+        file.bufferedWriter().use { out ->
+            out.write(content)
+        }
+
+        return file
+    }
+
+    @Throws(IOException::class)
+    private fun createAndWriteToFile(path: String, content: ByteArray?): File {
+        val file = createNewFile(path)
+        content?.let { file.writeBytes(it) }
+
+        return file
+    }
+
+    @Throws(IOException::class)
+    private fun createNewFile(path: String): File {
+        val file = File(path)
+        if (file.exists()) {
+            file.delete()
+        }
+        file.createNewFile()
+
+        return file
+    }
 }
 
 enum class Files(val fileName: String) {
@@ -267,6 +289,11 @@ enum class Files(val fileName: String) {
     QR_SHA_BIN("QR-sha.bin"),
     QR_SHA_TXT("QR-sha.txt"),
     QR_PNG("QR.png"),
+    QR_TXT("QR.txt"),
+    COSE_SHA_BIN("cose-sha.bin"),
+    COSE_SHA_TXT("cose-sha.txt"),
+    COSE_BASE64("cose.base64"),
+    PAYLOAD_BASE64("payload.base64"),
     ZIP("EmergencyMode.zip")
 }
 
