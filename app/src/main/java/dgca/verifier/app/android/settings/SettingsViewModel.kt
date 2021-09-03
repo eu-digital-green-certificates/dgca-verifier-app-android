@@ -30,6 +30,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.BuildConfig
 import dgca.verifier.app.android.data.ConfigRepository
 import dgca.verifier.app.android.data.VerifierRepository
+import dgca.verifier.app.android.settings.debug.mode.DebugModeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -45,7 +46,8 @@ class SettingsViewModel @Inject constructor(
     private val _inProgress = MutableLiveData<Boolean>()
     val inProgress: LiveData<Boolean> = _inProgress
     val lastSyncLiveData: LiveData<Long> = verifierRepository.getLastSyncTimeMillis()
-    val isDebugModeEnabled: LiveData<Boolean?> = verifierRepository.isDebugModeEnabled()
+    val debugModeState: LiveData<DebugModeState> =
+        MutableLiveData(DebugModeState.OFF)//verifierRepository.isDebugModeEnabled()
 
     fun syncPublicKeys() {
         viewModelScope.launch {

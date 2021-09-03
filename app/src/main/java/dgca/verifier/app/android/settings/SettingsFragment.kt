@@ -25,6 +25,10 @@ package dgca.verifier.app.android.settings
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.style.TextAppearanceSpan
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -36,13 +40,17 @@ import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.*
 import dgca.verifier.app.android.base.BindingFragment
 import dgca.verifier.app.android.databinding.FragmentSettingsBinding
+import dgca.verifier.app.android.settings.debug.mode.DebugModeState
 
 @AndroidEntryPoint
 class SettingsFragment : BindingFragment<FragmentSettingsBinding>() {
 
     private val viewModel by viewModels<SettingsViewModel>()
 
-    override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsBinding =
+    override fun onCreateBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentSettingsBinding =
         FragmentSettingsBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -71,14 +79,19 @@ class SettingsFragment : BindingFragment<FragmentSettingsBinding>() {
                 )
             }
         })
-        viewModel.isDebugModeEnabled.observe(viewLifecycleOwner) {
-            binding.debugModeSwitch.isChecked = it == true
+        viewModel.debugModeState.observe(viewLifecycleOwner) {
+            setUpDebugModeButton(it)
         }
-        binding.debugModeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.setDebugModeEnabled(
-                isChecked
-            )
+        binding.debugMode.setOnClickListener {
+            val action =
+                SettingsFragmentDirections.actionSettingsFragmentToVerificationResultFragment()
+            findNavController().navigate(action)
         }
+//        binding.debugModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+//            viewModel.setDebugModeEnabled(
+//                isChecked
+//            )
+//        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -106,6 +119,35 @@ class SettingsFragment : BindingFragment<FragmentSettingsBinding>() {
         requireContext().apply {
             startActivity(Intent(this, OssLicensesMenuActivity::class.java))
         }
+    }
+
+    private fun setUpDebugModeButton(debugModeState: DebugModeState) {
+        val spannable = SpannableStringBuilder()
+        val header = SpannableString(getString(R.string.debug_mode))
+        header.setSpan(
+            TextAppearanceSpan(requireContext(), R.style.TextAppearance_Dgca_SettingsButtonHeader),
+            0,
+            header.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        spannable.append(header)
+
+        spannable.append("\n")
+
+        val subHeader = SpannableString(getString(debugModeState.stringRes))
+        subHeader.setSpan(
+            TextAppearanceSpan(
+                requireContext(),
+                R.style.TextAppearance_Dgca_SettingsButtonSubHeader
+            ),
+            0,
+            subHeader.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        spannable.append(subHeader)
+
+        binding.debugMode.text = spannable
+        binding.debugMode.visibility = View.VISIBLE
     }
 
     companion object {

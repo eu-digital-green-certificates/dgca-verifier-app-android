@@ -84,4 +84,8 @@
     <string name="certificate_information">Certificate information</string>
     <string name="raw_data_details_view">RAW data details view</string>
     <string name="edit_your_settings_to_hide_this_element">Edit your settings to hide this element.</string>
+    <string name="off">Off</string>
+    <string name="on_level_1">On - Level 1</string>
+    <string name="on_level_2">On - Level 2</string>
+    <string name="on_level_3">On - Level 3</string>
 </resources>
