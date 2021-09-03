@@ -22,6 +22,7 @@
 
 package dgca.verifier.app.android.verification.detailed
 
+import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -35,6 +36,7 @@ import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.utils.sha256
 import dgca.verifier.app.android.verification.DebugData
 import dgca.verifier.app.android.verification.StandardizedVerificationResultCategory
+import dgca.verifier.app.android.verification.detailed.qr.QrCodeConverter
 import dgca.verifier.app.decoder.cose.CoseService
 import dgca.verifier.app.decoder.toBase64
 import dgca.verifier.app.decoder.toHexString
@@ -61,9 +63,11 @@ fun Map<VerificationComponent, VerificationComponentState>.toVerificationResult(
     }
 
 private const val BUFFER = 1024
+private const val QR_CODE_SIZE = 400
 
 @HiltViewModel
 class DetailedBaseVerificationResultViewModel @Inject constructor(
+    private val qrCodeConverter: QrCodeConverter,
     private val anonymizationManager: AnonymizationManager,
     private val coseService: CoseService
 ) : ViewModel() {
@@ -71,7 +75,7 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
     private val _inProgress = MutableLiveData<Boolean>()
     val inProgress: LiveData<Boolean> = _inProgress
 
-    var policyLevel = PolicyLevel.L1
+    var policyLevel = PolicyLevel.L3
 
     @Suppress("BlockingMethodInNonBlockingContext")
     fun onShareClick(cachePath: String, certificateModel: CertificateModel?, hcert: String?, debugData: DebugData?) {
@@ -122,7 +126,9 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
         }
 
         if (policyLevel == PolicyLevel.L3) {
-
+            val bitmap = qrCodeConverter.convertStringIntoQrCode(qrCode, QR_CODE_SIZE)
+            val qrImageFile = bitmapToFile(cachePath, bitmap)
+            list.add(qrImageFile)
         }
 
 
@@ -211,6 +217,25 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
     }
 
     @Throws(IOException::class)
+    fun bitmapToFile(cachePath: String, bitmap: Bitmap): File {
+        var file: File?
+        file = File(cachePath.plusFile(Files.QR_PNG))
+        if (file.exists()) {
+            file.delete()
+        }
+
+        file.createNewFile()
+
+        val bos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos)
+        val bitmapData = bos.toByteArray()
+
+        file.writeBytes(bitmapData)
+
+        return file
+    }
+
+    @Throws(IOException::class)
     private fun zip(cachePath: String, files: List<File>) {
         var origin: BufferedInputStream?
         val dest = FileOutputStream(File(cachePath, Files.ZIP.fileName))
@@ -241,6 +266,7 @@ enum class Files(val fileName: String) {
     QR_BASE_64("QR.base64"),
     QR_SHA_BIN("QR-sha.bin"),
     QR_SHA_TXT("QR-sha.txt"),
+    QR_PNG("QR.png"),
     ZIP("EmergencyMode.zip")
 }
 
