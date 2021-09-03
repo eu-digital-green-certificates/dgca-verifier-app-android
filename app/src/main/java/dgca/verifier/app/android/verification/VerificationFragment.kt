@@ -61,7 +61,8 @@ class VerificationFragment : DialogFragment() {
                     VERIFY_REQUEST_KEY,
                     bundleOf(
                         STANDARDISED_VERIFICATION_RESULT_KEY to it.standardizedVerificationResult,
-                        CERTIFICATE_MODEL_KEY to it.certificateModel
+                        CERTIFICATE_MODEL_KEY to it.certificateModel,
+                        HCERT_KEY to it.hcert
                     )
                 )
             }

@@ -67,6 +67,7 @@ sealed class QrCodeVerificationResult {
     class Applicable(
         val standardizedVerificationResult: StandardizedVerificationResult,
         val certificateModel: CertificateModel?,
+        val hcert: String?,
         val rulesValidationResults: List<ValidationResult>?
     ) : QrCodeVerificationResult()
 
@@ -119,6 +120,7 @@ class VerificationViewModel @Inject constructor(
             _qrCodeVerificationResult.value = if (innerVerificationResult.isApplicableCode) {
                 val certificateModel: CertificateModel? =
                     innerVerificationResult.greenCertificateData?.greenCertificate?.toCertificateModel()
+                val hcert: String? = innerVerificationResult.greenCertificateData?.hcertJson
                 val standardizedVerificationResult: StandardizedVerificationResult =
                     extractStandardizedVerificationResultFrom(
                         verificationResult,
@@ -128,6 +130,7 @@ class VerificationViewModel @Inject constructor(
                 QrCodeVerificationResult.Applicable(
                     standardizedVerificationResult,
                     certificateModel,
+                    hcert,
                     validationResults
                 )
             } else {

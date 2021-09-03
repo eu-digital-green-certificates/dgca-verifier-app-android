@@ -81,5 +81,7 @@
     <string name="issuer_invalidation">Issuer\nInvalidation</string>
     <string name="destination_acceptance">Destination\nAcceptance</string>
     <string name="traveller_acceptance">Traveller\nAcceptance</string>
-    <string name="certificate_information">Certificate\ninformation</string>
+    <string name="certificate_information">Certificate information</string>
+    <string name="raw_data_details_view">RAW data details view</string>
+    <string name="edit_your_settings_to_hide_this_element">Edit your settings to hide this element.</string>
 </resources>

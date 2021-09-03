@@ -48,10 +48,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.base.BindingFragment
 import dgca.verifier.app.android.databinding.FragmentCodeReaderBinding
 import dgca.verifier.app.android.model.CertificateModel
-import dgca.verifier.app.android.verification.CERTIFICATE_MODEL_KEY
-import dgca.verifier.app.android.verification.STANDARDISED_VERIFICATION_RESULT_KEY
-import dgca.verifier.app.android.verification.StandardizedVerificationResult
-import dgca.verifier.app.android.verification.VERIFY_REQUEST_KEY
+import dgca.verifier.app.android.verification.*
 import dgca.verifier.app.engine.data.source.countries.COUNTRIES_MAP
 import timber.log.Timber
 import java.util.*
@@ -119,22 +116,25 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
                     STANDARDISED_VERIFICATION_RESULT_KEY
                 ) as StandardizedVerificationResult?
             val certificateModel: CertificateModel? = bundle.getParcelable(CERTIFICATE_MODEL_KEY)
+            val hcert: String? = bundle.getString(HCERT_KEY)
             if (standardizedVerificationResult != null) {
-                showVerificationResult(standardizedVerificationResult, certificateModel)
+                showVerificationResult(standardizedVerificationResult, certificateModel, hcert)
             }
         }
     }
 
     private fun showVerificationResult(
         standardizedVerificationResult: StandardizedVerificationResult,
-        certificateModel: CertificateModel?
+        certificateModel: CertificateModel?,
+        hcert: String?
     ) {
         findNavController().navigateUp()
         binding.barcodeScanner.pause()
         val action = if (viewModel.isDebugModeEnabled() == true) {
             CodeReaderFragmentDirections.actionCodeReaderFragmentToDetailedVerificationResultFragment(
                 standardizedVerificationResult,
-                certificateModel
+                certificateModel,
+                hcert
             )
         } else {
             CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationResultFragment(

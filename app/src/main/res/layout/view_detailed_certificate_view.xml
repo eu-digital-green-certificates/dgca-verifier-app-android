@@ -38,6 +38,7 @@
 
         <TextView
             android:id="@+id/title"
+            style="@style/TextAppearance.Dgca.DetailedCertificateHeader"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/certificate_information"
@@ -126,13 +127,6 @@
             app:layout_constraintTop_toBottomOf="@id/dateOfBirthTitle"
             tools:text="Feb 26, 1998" />
 
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/expandableContent"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:visibility="gone"
-            app:constraint_referenced_ids="certificateTypeTitle, certificateTypeName, possibleLimitationsTitle, possibleLimitationsName, dateOfBirthTitle, dateOfBirthName"
-            tools:visibility="visible" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </merge>

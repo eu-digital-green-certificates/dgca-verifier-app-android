@@ -55,15 +55,15 @@ class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
         setStrokeColor(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.black)))
 
         binding.expandButton.setOnClickListener {
-            isExpanded = !isExpanded
-            setExpanded(isExpanded)
+            setExpanded(!isExpanded)
             setUp(certificateModelAndStandardizedVerificationResult)
         }
     }
 
-    private fun setExpanded(expanded: Boolean) {
-        binding.expandableContent.visibility = if (expanded) View.VISIBLE else View.GONE
+    fun setExpanded(expanded: Boolean) {
+        isExpanded = expanded
         binding.expandButton.setImageResource(if (expanded) R.drawable.ic_icon_minus else R.drawable.ic_icon_plus)
+        setUp(certificateModelAndStandardizedVerificationResult)
     }
 
     fun setCertificateModel(
@@ -76,9 +76,9 @@ class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
     }
 
     private fun setUp(certificateModelAndStandardizedVerificationResult: Pair<CertificateModel?, StandardizedVerificationResult>) {
-        setUpCertificateType(this.certificateModelAndStandardizedVerificationResult.first!!)
-        setUpPossibleLimitation(this.certificateModelAndStandardizedVerificationResult.second)
-        setUpDateOfBirth(this.certificateModelAndStandardizedVerificationResult.first!!)
+        setUpCertificateType(certificateModelAndStandardizedVerificationResult.first!!)
+        setUpPossibleLimitation(certificateModelAndStandardizedVerificationResult.second)
+        setUpDateOfBirth(certificateModelAndStandardizedVerificationResult.first!!)
     }
 
     private fun setUpCertificateType(certificateModel: CertificateModel) {
@@ -92,10 +92,18 @@ class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
             certificateModel.tests?.isNotEmpty() == true -> context.getString(R.string.type_test)
             else -> context.getString(R.string.type_test)
         }
+        if (isExpanded) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }.apply {
+            binding.certificateTypeTitle.visibility = this
+            binding.certificateTypeName.visibility = this
+        }
     }
 
     private fun setUpPossibleLimitation(standardizedVerificationResult: StandardizedVerificationResult) {
-        if (standardizedVerificationResult == StandardizedVerificationResult.SUCCESS) {
+        if (standardizedVerificationResult == StandardizedVerificationResult.SUCCESS || !isExpanded) {
             View.GONE
         } else {
             binding.possibleLimitationsName.text = context.getString(
@@ -123,7 +131,7 @@ class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
     private fun setUpDateOfBirth(certificateModel: CertificateModel) {
         val dateOfBirth =
             certificateModel.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
-        if (dateOfBirth.isBlank()) {
+        if (dateOfBirth.isBlank() || !isExpanded) {
             View.GONE
         } else {
             binding.dateOfBirthName.text = dateOfBirth

@@ -63,12 +63,17 @@ class DetailedVerificationResultDialogFragment :
             ).show()
             // TODO implement handler
         }
-        handleDetailedVerificationResult(args.standardizedVerificationResult, args.certificateModel)
+        handleDetailedVerificationResult(
+            args.standardizedVerificationResult,
+            args.certificateModel,
+            args.hcert
+        )
     }
 
     private fun handleDetailedVerificationResult(
         detailedVerificationResult: StandardizedVerificationResult,
-        certificateModel: CertificateModel?
+        certificateModel: CertificateModel?,
+        hcert: String?
     ) {
         binding.detailedVerificationResultHeaderView.setUp(
             detailedVerificationResult,
@@ -87,22 +92,28 @@ class DetailedVerificationResultDialogFragment :
 
         handleCertificateModel(
             detailedVerificationResult,
-            certificateModel
+            certificateModel,
+            hcert
         )
     }
 
     private fun handleCertificateModel(
         standardizedVerificationResult: StandardizedVerificationResult,
-        certificateModel: CertificateModel?
+        certificateModel: CertificateModel?,
+        hcert: String?
     ) {
-        if (certificateModel == null) {
+        if (certificateModel == null || hcert.isNullOrBlank()) {
             binding.certificateInfo.visibility = View.GONE
+            binding.certificateRawInfo.visibility = View.GONE
         } else {
             binding.certificateInfo.setCertificateModel(
                 certificateModel,
                 standardizedVerificationResult
             )
+            binding.certificateInfo.setExpanded(true)
+            binding.certificateRawInfo.setHcert(hcert)
             binding.certificateInfo.visibility = View.VISIBLE
+            binding.certificateRawInfo.visibility = View.VISIBLE
         }
     }
 
