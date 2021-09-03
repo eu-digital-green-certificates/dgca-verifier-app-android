@@ -48,7 +48,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.base.BindingFragment
 import dgca.verifier.app.android.databinding.FragmentCodeReaderBinding
 import dgca.verifier.app.android.model.CertificateModel
-import dgca.verifier.app.android.model.rules.RuleValidationResultModel
 import dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer
 import dgca.verifier.app.android.verification.*
 import dgca.verifier.app.engine.data.source.countries.COUNTRIES_MAP
@@ -120,9 +119,18 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
             val certificateModel: CertificateModel? = bundle.getParcelable(CERTIFICATE_MODEL_KEY)
             val hcert: String? = bundle.getString(HCERT_KEY)
             val ruleValidationResultModelsContainer: RuleValidationResultModelsContainer? = bundle.getParcelable(
-                RULE_VALIDATION_RESULT_MODELS_CONTAINER_KEY)
+                RULE_VALIDATION_RESULT_MODELS_CONTAINER_KEY
+            )
+            val debugData: DebugData? = bundle.getParcelable(DEBUG_DATA)
+
             if (standardizedVerificationResult != null) {
-                showVerificationResult(standardizedVerificationResult, certificateModel, hcert, ruleValidationResultModelsContainer)
+                showVerificationResult(
+                    standardizedVerificationResult,
+                    certificateModel,
+                    hcert,
+                    ruleValidationResultModelsContainer,
+                    debugData
+                )
             }
         }
     }
@@ -131,7 +139,8 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
         standardizedVerificationResult: StandardizedVerificationResult,
         certificateModel: CertificateModel?,
         hcert: String?,
-        ruleValidationResultModelsContainer: RuleValidationResultModelsContainer?
+        ruleValidationResultModelsContainer: RuleValidationResultModelsContainer?,
+        debugData: DebugData?
     ) {
         findNavController().navigateUp()
         binding.barcodeScanner.pause()
@@ -140,7 +149,8 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
                 standardizedVerificationResult,
                 certificateModel,
                 hcert,
-                ruleValidationResultModelsContainer
+                ruleValidationResultModelsContainer,
+                debugData
             )
         } else {
             CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationResultFragment(

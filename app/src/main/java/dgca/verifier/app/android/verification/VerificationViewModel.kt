@@ -28,6 +28,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.VerifierRepository
+import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.model.rules.RuleValidationResultModel
 import dgca.verifier.app.android.model.rules.toRuleValidationResultModels
@@ -70,7 +71,8 @@ sealed class QrCodeVerificationResult {
         val standardizedVerificationResult: StandardizedVerificationResult,
         val certificateModel: CertificateModel?,
         val hcert: String?,
-        val rulesValidationResults: List<RuleValidationResultModel>?
+        val rulesValidationResults: List<RuleValidationResultModel>?,
+        val debugData: DebugData?
     ) : QrCodeVerificationResult()
 
     object NotApplicable : QrCodeVerificationResult()
@@ -88,7 +90,8 @@ class VerificationViewModel @Inject constructor(
     private val verifierRepository: VerifierRepository,
     private val engine: CertLogicEngine,
     private val getRulesUseCase: GetRulesUseCase,
-    private val valueSetsRepository: ValueSetsRepository
+    private val valueSetsRepository: ValueSetsRepository,
+    private val preferences: Preferences
 ) : ViewModel() {
 
     private val _qrCodeVerificationResult = MutableLiveData<QrCodeVerificationResult>()
@@ -120,8 +123,8 @@ class VerificationViewModel @Inject constructor(
             }
 
             _qrCodeVerificationResult.value = if (innerVerificationResult.isApplicableCode) {
-                val certificateModel: CertificateModel? =
-                    innerVerificationResult.greenCertificateData?.greenCertificate?.toCertificateModel()
+                val covidCertificate = innerVerificationResult.greenCertificateData?.greenCertificate
+                val certificateModel = covidCertificate?.toCertificateModel()
                 val hcert: String? = innerVerificationResult.greenCertificateData?.hcertJson
                 val standardizedVerificationResult: StandardizedVerificationResult =
                     extractStandardizedVerificationResultFrom(
@@ -133,7 +136,8 @@ class VerificationViewModel @Inject constructor(
                     standardizedVerificationResult,
                     certificateModel,
                     hcert,
-                    validationResults?.toRuleValidationResultModels()
+                    validationResults?.toRuleValidationResultModels(),
+                    innerVerificationResult.debugData
                 )
             } else {
                 QrCodeVerificationResult.NotApplicable
@@ -216,12 +220,20 @@ class VerificationViewModel @Inject constructor(
                 return@forEach
             }
         }
+
+        val debugData = if (preferences.isDebugModeEnabled == true) {
+            DebugData(code, cose, coseData.cbor)
+        } else {
+            null
+        }
+
         return InnerVerificationResult(
             noPublicKeysFound = noPublicKeysFound,
             certificateExpired = certificateExpired,
             greenCertificateData = greenCertificateData,
             isApplicableCode = isApplicableCode,
-            base64EncodedKid = base64EncodedKid
+            base64EncodedKid = base64EncodedKid,
+            debugData = debugData
         )
     }
 

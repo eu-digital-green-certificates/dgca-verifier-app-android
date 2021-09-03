@@ -118,6 +118,11 @@
             android:name="ruleValidationResultModelsContainer"
             app:argType="dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer"
             app:nullable="true" />
+
+        <argument
+            android:name="debugData"
+            app:argType="dgca.verifier.app.android.verification.DebugData"
+            app:nullable="true" />
     </dialog>
 
     <fragment

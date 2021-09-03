@@ -72,7 +72,7 @@ class DetailedVerificationResultDialogFragment :
             args.ruleValidationResultModelsContainer
         )
         binding.shareBtn.setOnClickListener {
-            viewModel.onShareClick(requireContext(), args.qrCodeText)
+            viewModel.onShareClick(requireContext().cacheDir.path, args.certificateModel, args.hcert, args.debugData)
         }
     }
 
@@ -102,6 +102,10 @@ class DetailedVerificationResultDialogFragment :
             certificateModel,
             hcert
         )
+
+        viewModel.inProgress.observe(viewLifecycleOwner) {
+            binding.shareProgressView.isVisible = it
+        }
     }
 
     private fun handleCertificateModel(

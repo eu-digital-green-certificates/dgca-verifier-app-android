@@ -142,6 +142,15 @@
         app:layout_constraintStart_toEndOf="@+id/actionButton"
         app:layout_constraintTop_toTopOf="@+id/actionButton" />
 
+    <ProgressBar
+        android:id="@+id/share_progress_view"
+        android:layout_width="48dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="5dp"
+        app:layout_constraintBottom_toBottomOf="@+id/share_btn"
+        app:layout_constraintStart_toStartOf="@+id/share_btn"
+        app:layout_constraintTop_toTopOf="@+id/share_btn" />
+
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/bottomBarrier"
         android:layout_width="0dp"
