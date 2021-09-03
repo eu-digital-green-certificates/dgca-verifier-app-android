@@ -22,10 +22,11 @@
 package dgca.verifier.app.android
 
 import dgca.verifier.app.android.verification.InnerVerificationResult
-import dgca.verifier.app.android.verification.VerificationError
-import dgca.verifier.app.android.verification.BaseVerificationResultViewModel.Companion.validateCertData
-import dgca.verifier.app.android.verification.fetchError
+import dgca.verifier.app.android.verification.StandardizedVerificationResult
+import dgca.verifier.app.android.verification.VerificationViewModel.Companion.validateCertData
+import dgca.verifier.app.android.verification.extractStandardizedVerificationResultFrom
 import dgca.verifier.app.decoder.model.*
+import junit.framework.Assert.assertTrue
 import org.junit.Assert
 import org.junit.Test
 import java.util.*
@@ -78,8 +79,11 @@ class CertificateTests {
     fun TestNoPublicKeysFound() {
         val result = VerificationResult(isNotExpired = true)
         result.isIssuedTimeCorrect = true
-        val error = result.fetchError(InnerVerificationResult(noPublicKeysFound = true))
-        Assert.assertTrue(error === VerificationError.VERIFICATION_FAILED)
+        val res = extractStandardizedVerificationResultFrom(
+            result,
+            InnerVerificationResult(noPublicKeysFound = true)
+        )
+        assertTrue(res === StandardizedVerificationResult.VERIFICATION_FAILED)
     }
 
     @Test
@@ -87,8 +91,11 @@ class CertificateTests {
         val result = VerificationResult()
         result.coseVerified = true
         result.isNotExpired = false
-        val error = result.fetchError(InnerVerificationResult(noPublicKeysFound = false))
-        Assert.assertTrue(error === VerificationError.GREEN_CERTIFICATE_EXPIRED)
+        val res = extractStandardizedVerificationResultFrom(
+            result,
+            InnerVerificationResult(noPublicKeysFound = false)
+        )
+        assertTrue(res === StandardizedVerificationResult.GREEN_CERTIFICATE_EXPIRED)
     }
 
     @Test
@@ -96,20 +103,24 @@ class CertificateTests {
         val result = VerificationResult()
         result.coseVerified = true
         result.isNotExpired = true
-        val error = result.fetchError(
+        val res = extractStandardizedVerificationResultFrom(
+            result,
             InnerVerificationResult(
                 noPublicKeysFound = false,
                 certificateExpired = true
             )
         )
-        Assert.assertTrue(error === VerificationError.CERTIFICATE_EXPIRED)
+        assertTrue(res === StandardizedVerificationResult.CERTIFICATE_EXPIRED)
     }
 
     @Test
     fun TestSignatureInvalid() {
         val result = VerificationResult(isNotExpired = true, coseVerified = true)
-        val error = result.fetchError(InnerVerificationResult(noPublicKeysFound = false))
-        Assert.assertTrue(error === VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID)
+        val res = extractStandardizedVerificationResultFrom(
+            result,
+            InnerVerificationResult(noPublicKeysFound = false)
+        )
+        Assert.assertTrue(res === StandardizedVerificationResult.CRYPTOGRAPHIC_SIGNATURE_INVALID)
     }
 
     @Test
@@ -119,14 +130,23 @@ class CertificateTests {
         result.isNotExpired = true
         result.coseVerified = true
         result.base45Decoded = false
-        var error = result.fetchError(InnerVerificationResult(noPublicKeysFound = false))
-        Assert.assertTrue(error === VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID)
+        var res = extractStandardizedVerificationResultFrom(
+            result,
+            InnerVerificationResult(noPublicKeysFound = false)
+        )
+        assertTrue(res === StandardizedVerificationResult.CRYPTOGRAPHIC_SIGNATURE_INVALID)
         result = result.copy(base45Decoded = true, cborDecoded = false)
-        error = result.fetchError(InnerVerificationResult(noPublicKeysFound = false))
-        Assert.assertTrue(error === VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID)
+        res = extractStandardizedVerificationResultFrom(
+            result,
+            InnerVerificationResult(noPublicKeysFound = false)
+        )
+        assertTrue(res === StandardizedVerificationResult.CRYPTOGRAPHIC_SIGNATURE_INVALID)
         result = result.copy(cborDecoded = true, isSchemaValid = false)
-        error = result.fetchError(InnerVerificationResult(noPublicKeysFound = false))
-        Assert.assertTrue(error === VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID)
+        res = extractStandardizedVerificationResultFrom(
+            result,
+            InnerVerificationResult(noPublicKeysFound = false)
+        )
+        assertTrue(res === StandardizedVerificationResult.CRYPTOGRAPHIC_SIGNATURE_INVALID)
     }
 
     @Test
@@ -135,7 +155,10 @@ class CertificateTests {
         result.isNotExpired = true
         result.coseVerified = true
         result.recoveryVerification = RecoveryVerificationResult(false, true)
-        val error = result.fetchError(InnerVerificationResult(noPublicKeysFound = false))
-        Assert.assertTrue(error === VerificationError.RECOVERY_NOT_VALID_ANYMORE)
+        val res = extractStandardizedVerificationResultFrom(
+            result,
+            InnerVerificationResult(noPublicKeysFound = false)
+        )
+        assertTrue(res === StandardizedVerificationResult.RECOVERY_NOT_VALID_ANYMORE)
     }
 }
