@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat
 import dgca.verifier.app.android.R
 import dgca.verifier.app.android.databinding.ViewDetailedVerificationResultHeaderBinding
 import dgca.verifier.app.android.model.CertificateModel
+import dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer
 import dgca.verifier.app.android.verification.StandardizedVerificationResult
 import dgca.verifier.app.android.verification.StandardizedVerificationResultCategory
 
@@ -45,7 +46,8 @@ class DetailedVerificationResultHeaderView(context: Context, attrs: AttributeSet
 
     fun setUp(
         standardizedVerificationResult: StandardizedVerificationResult,
-        certificateModel: CertificateModel?
+        certificateModel: CertificateModel?,
+        ruleValidationResultModelsContainer: RuleValidationResultModelsContainer?
     ) {
         binding.personFullName.text = certificateModel?.getFullName() ?: ""
 
@@ -64,6 +66,9 @@ class DetailedVerificationResultHeaderView(context: Context, attrs: AttributeSet
         binding.verificationStatusBackground.backgroundTintList =
             ColorStateList.valueOf(ContextCompat.getColor(context, colorRes))
 
-        binding.detailedVerificationResultView.setUp(standardizedVerificationResult.toVerificationComponentStates())
+        binding.detailedVerificationResultView.setUp(
+            standardizedVerificationResult,
+            ruleValidationResultModelsContainer
+        )
     }
 }
