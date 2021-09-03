@@ -23,31 +23,31 @@
 package dgca.verifier.app.android.verification.detailed
 
 import dgca.verifier.app.android.model.CertificateModel
-import dgca.verifier.app.android.verification.VerificationError
+import dgca.verifier.app.android.verification.StandardizedVerificationResult
 
 data class DetailedVerificationResult(
     val certificateModel: CertificateModel?,
-    val verificationError: VerificationError?
+    val standardizedVerificationResult: StandardizedVerificationResult
 )
 
-fun VerificationError?.toVerificationComponentStates(): Map<VerificationComponent, VerificationComponentState> =
+fun StandardizedVerificationResult.toVerificationComponentStates(): Map<VerificationComponent, VerificationComponentState> =
     when (this) {
-        VerificationError.GREEN_CERTIFICATE_EXPIRED, VerificationError.CERTIFICATE_EXPIRED,
-        VerificationError.CERTIFICATE_REVOKED, VerificationError.VERIFICATION_FAILED,
-        VerificationError.TEST_DATE_IS_IN_THE_FUTURE, VerificationError.TEST_RESULT_POSITIVE,
-        VerificationError.RECOVERY_NOT_VALID_SO_FAR, VerificationError.RECOVERY_NOT_VALID_ANYMORE -> mapOf(
+        StandardizedVerificationResult.GREEN_CERTIFICATE_EXPIRED, StandardizedVerificationResult.CERTIFICATE_EXPIRED,
+        StandardizedVerificationResult.CERTIFICATE_REVOKED, StandardizedVerificationResult.VERIFICATION_FAILED,
+        StandardizedVerificationResult.TEST_DATE_IS_IN_THE_FUTURE, StandardizedVerificationResult.TEST_RESULT_POSITIVE,
+        StandardizedVerificationResult.RECOVERY_NOT_VALID_SO_FAR, StandardizedVerificationResult.RECOVERY_NOT_VALID_ANYMORE -> mapOf(
             VerificationComponent.TECHNICAL_VERIFICATION to VerificationComponentState.PASSED,
             VerificationComponent.ISSUER_INVALIDATION to VerificationComponentState.OPEN,
             VerificationComponent.DESTINATION_INVALIDATION to VerificationComponentState.OPEN,
             VerificationComponent.TRAVELLER_ACCEPTANCE to VerificationComponentState.FAILED
         )
-        VerificationError.RULES_VALIDATION_FAILED -> mapOf(
+        StandardizedVerificationResult.RULES_VALIDATION_FAILED -> mapOf(
             VerificationComponent.TECHNICAL_VERIFICATION to VerificationComponentState.PASSED,
             VerificationComponent.ISSUER_INVALIDATION to VerificationComponentState.FAILED,
             VerificationComponent.DESTINATION_INVALIDATION to VerificationComponentState.FAILED,
             VerificationComponent.TRAVELLER_ACCEPTANCE to VerificationComponentState.PASSED
         )
-        VerificationError.CRYPTOGRAPHIC_SIGNATURE_INVALID -> mapOf(
+        StandardizedVerificationResult.CRYPTOGRAPHIC_SIGNATURE_INVALID -> mapOf(
             VerificationComponent.TECHNICAL_VERIFICATION to VerificationComponentState.FAILED,
             VerificationComponent.ISSUER_INVALIDATION to VerificationComponentState.OPEN,
             VerificationComponent.DESTINATION_INVALIDATION to VerificationComponentState.OPEN,

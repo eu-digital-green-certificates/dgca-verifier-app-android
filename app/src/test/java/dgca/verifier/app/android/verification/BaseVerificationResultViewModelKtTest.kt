@@ -22,7 +22,6 @@
 
 package dgca.verifier.app.android.verification
 
-import dgca.verifier.app.android.model.toCertificateModel
 import dgca.verifier.app.decoder.cbor.GreenCertificateData
 import dgca.verifier.app.decoder.model.GreenCertificate
 import dgca.verifier.app.decoder.model.Person
@@ -54,11 +53,11 @@ import java.time.ZonedDateTime
  *
  * Created by osarapulov on 09.07.21 9:57
  */
-class BaseVerificationViewModelKtTest {
+class BaseVerificationResultViewModelKtTest {
     @Test
     fun testGetGeneralResultSuccess() {
         val greenCertificateData = greenCertificateData()
-        val verificationData = VerificationData(
+        val res = extractStandardizedVerificationResultFrom(
             VerificationResult(
                 base45Decoded = true,
                 zlibDecoded = true,
@@ -74,11 +73,10 @@ class BaseVerificationViewModelKtTest {
                 greenCertificateData = greenCertificateData,
                 isApplicableCode = true,
                 base64EncodedKid = "base64EncodedKid"
-            ),
-            greenCertificateData.greenCertificate.toCertificateModel()
+            )
         )
 
-        assertEquals(GeneralVerificationResult.SUCCESS, verificationData.getGeneralResult())
+        assertEquals(StandardizedVerificationResultCategory.VALID, res.category)
     }
 
     private fun person(): Person {
@@ -101,7 +99,7 @@ class BaseVerificationViewModelKtTest {
 
     @Test
     fun testGetGeneralResultTestResultDetected() {
-        val verificationData = VerificationData(
+        val res = extractStandardizedVerificationResultFrom(
             VerificationResult(
                 base45Decoded = true,
                 zlibDecoded = true,
@@ -112,15 +110,15 @@ class BaseVerificationViewModelKtTest {
                 isNotExpired = true,
                 testVerification = TestVerificationResult(false, true),
                 rulesValidationFailed = true
-            ), InnerVerificationResult(), null
+            ), InnerVerificationResult()
         )
 
-        assertEquals(GeneralVerificationResult.FAILED, verificationData.getGeneralResult())
+        assertEquals(StandardizedVerificationResultCategory.INVALID, res.category)
     }
 
     @Test
     fun testGetGeneralResultRulesValidationFailed() {
-        val verificationData = VerificationData(
+        val res = extractStandardizedVerificationResultFrom(
             VerificationResult(
                 base45Decoded = true,
                 zlibDecoded = true,
@@ -131,18 +129,18 @@ class BaseVerificationViewModelKtTest {
                 isNotExpired = true,
                 testVerification = TestVerificationResult(true, true),
                 rulesValidationFailed = true
-            ), InnerVerificationResult(), null
+            ), InnerVerificationResult(noPublicKeysFound = false)
         )
 
         assertEquals(
-            GeneralVerificationResult.RULES_VALIDATION_FAILED,
-            verificationData.getGeneralResult()
+            StandardizedVerificationResultCategory.LIMITED_VALIDITY,
+            res.category
         )
     }
 
     @Test
     fun testGetGeneralResultValidationFailed() {
-        val verificationResult = VerificationData(
+        val res = extractStandardizedVerificationResultFrom(
             VerificationResult(
                 base45Decoded = true,
                 zlibDecoded = true,
@@ -153,9 +151,9 @@ class BaseVerificationViewModelKtTest {
                 isNotExpired = true,
                 testVerification = TestVerificationResult(true, true),
                 rulesValidationFailed = false
-            ), InnerVerificationResult(), null
+            ), InnerVerificationResult()
         )
 
-        assertEquals(GeneralVerificationResult.FAILED, verificationResult.getGeneralResult())
+        assertEquals(StandardizedVerificationResultCategory.INVALID, res.category)
     }
 }
