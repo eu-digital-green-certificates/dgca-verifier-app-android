@@ -19,12 +19,12 @@
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_codeReaderFragment_to_settingsFragment">
+                            <entry key="action_codeReaderFragment_to_detailedVerificationResultFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
                             </entry>
-                            <entry key="action_codeReaderFragment_to_verificationFragment">
+                            <entry key="action_codeReaderFragment_to_settingsFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -34,12 +34,12 @@
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="erificationDialogFragment">
+                  <entry key="detailedVerificationResultDialogFragment">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="12" />
+                            <option name="x" value="256" />
                             <option name="y" value="12" />
                           </Point>
                         </option>
@@ -59,6 +59,18 @@
                     </value>
                   </entry>
                   <entry key="verificationDialogFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="12" />
+                            <option name="y" value="12" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="verificationResultDialogFragment">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">

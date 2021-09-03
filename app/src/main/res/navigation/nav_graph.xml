@@ -33,14 +33,20 @@
         tools:layout="@layout/fragment_code_reader">
 
         <action
-            android:id="@+id/action_codeReaderFragment_to_verificationFragment"
-            app:destination="@id/verificationDialogFragment"
+            android:id="@+id/action_codeReaderFragment_to_verificationResultFragment"
+            app:destination="@id/verificationResultDialogFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left" />
 
         <action
-            android:id="@+id/action_codeReaderFragment_to_detailedVerificationFragment"
-            app:destination="@id/detailedVerificationDialogFragment"
+            android:id="@+id/action_codeReaderFragment_to_detailedVerificationResultFragment"
+            app:destination="@id/detailedVerificationResultDialogFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+
+        <action
+            android:id="@+id/action_codeReaderFragment_to_verificationDialogFragment"
+            app:destination="@id/verificationDialogFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left" />
 
@@ -52,9 +58,9 @@
 
     <dialog
         android:id="@+id/verificationDialogFragment"
-        android:name="dgca.verifier.app.android.verification.VerificationDialogFragment"
+        android:name="dgca.verifier.app.android.verification.VerificationFragment"
         android:label="Verification"
-        tools:layout="@layout/dialog_fragment_verification">
+        tools:layout="@layout/fragment_verification">
 
         <argument
             android:name="qrCodeText"
@@ -66,18 +72,52 @@
     </dialog>
 
     <dialog
-        android:id="@+id/detailedVerificationDialogFragment"
-        android:name="dgca.verifier.app.android.verification.detailed.DetailedVerificationDialogFragment"
+        android:id="@+id/verificationResultDialogFragment"
+        android:name="dgca.verifier.app.android.verification.VerificationResultDialogFragment"
+        android:label="Verification Result"
+        tools:layout="@layout/dialog_fragment_verification_result">
+
+        <argument
+            android:name="standardizedVerificationResult"
+            app:argType="dgca.verifier.app.android.verification.StandardizedVerificationResult" />
+
+        <argument
+            android:name="certificateModel"
+            android:defaultValue="@null"
+            app:argType="dgca.verifier.app.android.model.CertificateModel"
+            app:nullable="true" />
+
+        <argument
+            android:name="ruleValidationResultModelsContainer"
+            app:argType="dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer"
+            app:nullable="true" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/detailedVerificationResultDialogFragment"
+        android:name="dgca.verifier.app.android.verification.detailed.DetailedVerificationResultDialogFragment"
         android:label="Detailed Verification"
-        tools:layout="@layout/dialog_fragment_detailed_verification">
+        tools:layout="@layout/dialog_fragment_detailed_verification_result">
 
         <argument
-            android:name="qrCodeText"
-            app:argType="string" />
+            android:name="standardizedVerificationResult"
+            app:argType="dgca.verifier.app.android.verification.StandardizedVerificationResult" />
 
         <argument
-            android:name="countryIsoCode"
-            app:argType="string" />
+            android:name="certificateModel"
+            android:defaultValue="@null"
+            app:argType="dgca.verifier.app.android.model.CertificateModel"
+            app:nullable="true" />
+
+        <argument
+            android:name="hcert"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="ruleValidationResultModelsContainer"
+            app:argType="dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer"
+            app:nullable="true" />
     </dialog>
 
     <fragment

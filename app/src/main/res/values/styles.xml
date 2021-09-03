@@ -53,6 +53,14 @@
         <item name="android:singleLine">false</item>
     </style>
 
+    <style name="TextAppearance.Dgca.DetailedCertificateHeader" parent="">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextAppearance.Dgca.DetailedCertificateSubHeader" parent="">
+        <item name="android:textSize">12sp</item>
+    </style>
+
     <style name="TextAppearance.Dgca.DetailedCertificateTitle" parent="">
         <item name="android:textColor">@color/blue</item>
         <item name="android:layout_marginTop">@dimen/default_half_margin</item>

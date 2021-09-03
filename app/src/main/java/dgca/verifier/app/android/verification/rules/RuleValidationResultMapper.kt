@@ -23,6 +23,7 @@
 package dgca.verifier.app.android.verification.rules
 
 import android.content.Context
+import dgca.verifier.app.android.model.rules.RuleValidationResultModel
 import dgca.verifier.app.engine.ValidationResult
 import java.util.*
 
@@ -47,7 +48,7 @@ import java.util.*
  *
  * Created by osarapulov on 18.06.21 9:12
  */
-fun ValidationResult.toRuleValidationResultCard(context: Context): RuleValidationResultCard {
+fun RuleValidationResultModel.toRuleValidationResultCard(): RuleValidationResultCard {
     return RuleValidationResultCard(
         this.rule.getDescriptionFor(Locale.getDefault().language),
         this.result,

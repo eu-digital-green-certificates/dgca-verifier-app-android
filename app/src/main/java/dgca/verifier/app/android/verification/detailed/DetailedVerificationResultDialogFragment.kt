@@ -27,7 +27,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -35,24 +34,24 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.R
-import dgca.verifier.app.android.databinding.DialogFragmentDetailedVerificationBinding
+import dgca.verifier.app.android.databinding.DialogFragmentDetailedVerificationResultBinding
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.verification.BaseVerificationDialogFragment
-import dgca.verifier.app.android.verification.BaseVerificationViewModel
-import dgca.verifier.app.android.verification.VerificationError
+import dgca.verifier.app.android.verification.StandardizedVerificationResult
+import dgca.verifier.app.android.verification.StandardizedVerificationResultCategory
 
 @AndroidEntryPoint
-class DetailedVerificationDialogFragment :
-    BaseVerificationDialogFragment<DialogFragmentDetailedVerificationBinding>() {
+class DetailedVerificationResultDialogFragment :
+    BaseVerificationDialogFragment<DialogFragmentDetailedVerificationResultBinding>() {
 
-    private val args by navArgs<DetailedVerificationDialogFragmentArgs>()
-    private val viewModel by viewModels<DetailedBaseVerificationViewModel>()
+    private val args by navArgs<DetailedVerificationResultDialogFragmentArgs>()
+    private val viewModel by viewModels<DetailedBaseVerificationResultViewModel>()
 
     override fun onCreateBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
-    ): DialogFragmentDetailedVerificationBinding =
-        DialogFragmentDetailedVerificationBinding.inflate(inflater, container, false)
+    ): DialogFragmentDetailedVerificationResultBinding =
+        DialogFragmentDetailedVerificationResultBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -65,23 +64,28 @@ class DetailedVerificationDialogFragment :
             ).show()
             // TODO implement handler
         }
-        viewModel.detailedVerificationResult.observe(viewLifecycleOwner) {
-            handleDetailedVerificationResult(it)
-        }
-
+        handleDetailedVerificationResult(
+            args.standardizedVerificationResult,
+            args.certificateModel,
+            args.hcert
+        )
         binding.shareBtn.setOnClickListener {
             viewModel.onShareClick(requireContext(), args.qrCodeText)
         }
     }
 
-    private fun handleDetailedVerificationResult(detailedVerificationResult: DetailedVerificationResult) {
+    private fun handleDetailedVerificationResult(
+        detailedVerificationResult: StandardizedVerificationResult,
+        certificateModel: CertificateModel?,
+        hcert: String?
+    ) {
         binding.shareBtn.isVisible = true
-
         binding.detailedVerificationResultHeaderView.setUp(
-            detailedVerificationResult
+            detailedVerificationResult,
+            certificateModel
         )
 
-        val (colorRes, textRes) = detailedVerificationResult.verificationError.toVerificationComponentStates()
+        val (colorRes, textRes) = detailedVerificationResult.toVerificationComponentStates()
             .toVerificationResult()
             .getActionButtonData()
 
@@ -90,39 +94,43 @@ class DetailedVerificationDialogFragment :
         binding.actionButton.backgroundTintList =
             ColorStateList.valueOf(ContextCompat.getColor(context, colorRes))
         binding.actionButton.setOnClickListener { dismiss() }
-        binding.dataLoadedViews.visibility = View.VISIBLE
-        binding.progressBar.visibility = View.GONE
 
-        handleCertificateModel(detailedVerificationResult.certificateModel, detailedVerificationResult.verificationError)
+        handleCertificateModel(
+            detailedVerificationResult,
+            certificateModel,
+            hcert
+        )
     }
 
-    private fun handleCertificateModel(certificateModel: CertificateModel?, verificationError: VerificationError?) {
-        if (certificateModel == null) {
+    private fun handleCertificateModel(
+        standardizedVerificationResult: StandardizedVerificationResult,
+        certificateModel: CertificateModel?,
+        hcert: String?
+    ) {
+        if (certificateModel == null || hcert.isNullOrBlank()) {
             binding.certificateInfo.visibility = View.GONE
+            binding.certificateRawInfo.visibility = View.GONE
         } else {
-            binding.certificateInfo.setCertificateModel(certificateModel, verificationError)
+            binding.certificateInfo.setCertificateModel(
+                certificateModel,
+                standardizedVerificationResult
+            )
+            binding.certificateInfo.setExpanded(true)
+            binding.certificateRawInfo.setHcert(hcert)
             binding.certificateInfo.visibility = View.VISIBLE
+            binding.certificateRawInfo.visibility = View.VISIBLE
         }
     }
 
     override fun contentLayout(): ViewGroup.LayoutParams = binding.content.layoutParams
 
-    override fun timerView(): View = binding.timberView
-
-    override fun progressBar(): ProgressBar = binding.progressBar
-
-    override fun qrCodeText(): String = args.qrCodeText
-
-    override fun countryIsoCode(): String = args.countryIsoCode
-
-    private fun VerificationResult.getActionButtonData(): Pair<Int, Int> = when (this) {
-        VerificationResult.VALID -> Pair(R.color.green, R.string.done)
-        VerificationResult.INVALID -> Pair(R.color.red, R.string.retry)
-        VerificationResult.LIMITED_VALIDITY -> Pair(
-            R.color.yellow,
-            R.string.retry
-        )
-    }
-
-    override fun viewModel(): BaseVerificationViewModel = viewModel
+    private fun StandardizedVerificationResultCategory.getActionButtonData(): Pair<Int, Int> =
+        when (this) {
+            StandardizedVerificationResultCategory.VALID -> Pair(R.color.green, R.string.done)
+            StandardizedVerificationResultCategory.INVALID -> Pair(R.color.red, R.string.retry)
+            StandardizedVerificationResultCategory.LIMITED_VALIDITY -> Pair(
+                R.color.yellow,
+                R.string.retry
+            )
+        }
 }

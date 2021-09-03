@@ -216,14 +216,6 @@
                 app:constraint_referenced_ids="reason_test_result_title, reason_test_result_value"
                 tools:visibility="visible" />
 
-            <androidx.constraintlayout.widget.Group
-                android:id="@+id/successDetails"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:visibility="gone"
-                app:constraint_referenced_ids="person_standardised_family_name_title, person_standardised_family_name, person_standardised_given_name_title, person_standardised_given_name, date_of_birth_title, date_of_birth"
-                tools:visibility="visible" />
-
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/person_standardised_family_name_title"
                 style="@style/TextAppearance.Dgca.CertificateTitle"
@@ -358,16 +350,5 @@
             android:scaleType="centerInside"
             android:src="@drawable/eu_logo_big" />
     </LinearLayout>
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:indeterminateTint="@color/blue"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_container"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

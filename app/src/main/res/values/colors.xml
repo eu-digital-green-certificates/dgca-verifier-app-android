@@ -34,6 +34,7 @@
     <color name="grey_75">#707070</color>
     <color name="grey_50">#9F9F9F</color>
     <color name="grey_transparent">#3CD1D0D0</color>
+    <color name="transparent">#00000000</color>
 
     <color name="rule_card_background_color">#F2F2F2</color>
     <color name="detailed_verification_result_background">#fff8e8</color>
