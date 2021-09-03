@@ -48,7 +48,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.base.BindingFragment
 import dgca.verifier.app.android.databinding.FragmentCodeReaderBinding
 import dgca.verifier.app.android.model.CertificateModel
-import dgca.verifier.app.android.model.rules.RuleValidationResultModel
 import dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer
 import dgca.verifier.app.android.verification.*
 import dgca.verifier.app.engine.data.source.countries.COUNTRIES_MAP
@@ -121,8 +120,9 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
             val hcert: String? = bundle.getString(HCERT_KEY)
             val ruleValidationResultModelsContainer: RuleValidationResultModelsContainer? = bundle.getParcelable(
                 RULE_VALIDATION_RESULT_MODELS_CONTAINER_KEY)
+            val isDebugModeEnabled = bundle.getBoolean(IS_DEBUG_MODE_ENABLED)
             if (standardizedVerificationResult != null) {
-                showVerificationResult(standardizedVerificationResult, certificateModel, hcert, ruleValidationResultModelsContainer)
+                showVerificationResult(standardizedVerificationResult, certificateModel, hcert, ruleValidationResultModelsContainer, isDebugModeEnabled)
             }
         }
     }
@@ -131,11 +131,12 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
         standardizedVerificationResult: StandardizedVerificationResult,
         certificateModel: CertificateModel?,
         hcert: String?,
-        ruleValidationResultModelsContainer: RuleValidationResultModelsContainer?
+        ruleValidationResultModelsContainer: RuleValidationResultModelsContainer?,
+        isDebugModeEnabled: Boolean
     ) {
         findNavController().navigateUp()
         binding.barcodeScanner.pause()
-        val action = if (viewModel.isDebugModeEnabled() == true) {
+        val action = if (isDebugModeEnabled) {
             CodeReaderFragmentDirections.actionCodeReaderFragmentToDetailedVerificationResultFragment(
                 standardizedVerificationResult,
                 certificateModel,

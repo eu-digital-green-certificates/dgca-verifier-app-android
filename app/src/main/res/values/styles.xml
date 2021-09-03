@@ -85,4 +85,14 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="TextAppearance.Dgca.DebugModeRadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:button">@null</item>
+        <item name="android:paddingHorizontal">@dimen/default_margin</item>
+        <item name="android:textColor">@color/debug_mode_radio_button_text_color</item>
+    </style>
+
+    <style name="TextAppearance.Dgca.Switch" parent="Widget.AppCompat.CompoundButton.Switch">
+        <!-- active thumb & track color (30% transparency) -->
+        <item name="colorControlActivated">@color/blue</item>
+    </style>
 </resources>

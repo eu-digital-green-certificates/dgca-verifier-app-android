@@ -28,10 +28,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.VerifierRepository
+import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.model.rules.RuleValidationResultModel
 import dgca.verifier.app.android.model.rules.toRuleValidationResultModels
 import dgca.verifier.app.android.model.toCertificateModel
+import dgca.verifier.app.android.settings.debug.mode.DebugModeState
 import dgca.verifier.app.android.verification.*
 import dgca.verifier.app.decoder.base45.Base45Service
 import dgca.verifier.app.decoder.cbor.CborService
@@ -70,7 +72,8 @@ sealed class QrCodeVerificationResult {
         val standardizedVerificationResult: StandardizedVerificationResult,
         val certificateModel: CertificateModel?,
         val hcert: String?,
-        val rulesValidationResults: List<RuleValidationResultModel>?
+        val rulesValidationResults: List<RuleValidationResultModel>?,
+        val isDebugModeEnabled: Boolean
     ) : QrCodeVerificationResult()
 
     object NotApplicable : QrCodeVerificationResult()
@@ -88,7 +91,8 @@ class VerificationViewModel @Inject constructor(
     private val verifierRepository: VerifierRepository,
     private val engine: CertLogicEngine,
     private val getRulesUseCase: GetRulesUseCase,
-    private val valueSetsRepository: ValueSetsRepository
+    private val valueSetsRepository: ValueSetsRepository,
+    private val preferences: Preferences
 ) : ViewModel() {
 
     private val _qrCodeVerificationResult = MutableLiveData<QrCodeVerificationResult>()
@@ -104,6 +108,7 @@ class VerificationViewModel @Inject constructor(
             val verificationResult = VerificationResult()
             var innerVerificationResult: InnerVerificationResult
             var validationResults: List<ValidationResult>? = null
+            var isDebugModeEnabled: Boolean
 
             withContext(Dispatchers.IO) {
 
@@ -117,6 +122,8 @@ class VerificationViewModel @Inject constructor(
                     )
                 }
 
+                isDebugModeEnabled = (preferences.debugModeState?.let { DebugModeState.valueOf(it) }
+                    ?: DebugModeState.OFF) != DebugModeState.OFF
             }
 
             _qrCodeVerificationResult.value = if (innerVerificationResult.isApplicableCode) {
@@ -133,7 +140,8 @@ class VerificationViewModel @Inject constructor(
                     standardizedVerificationResult,
                     certificateModel,
                     hcert,
-                    validationResults?.toRuleValidationResultModels()
+                    validationResults?.toRuleValidationResultModels(),
+                    isDebugModeEnabled
                 )
             } else {
                 QrCodeVerificationResult.NotApplicable

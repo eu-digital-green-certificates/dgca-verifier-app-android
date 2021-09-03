@@ -27,15 +27,19 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.MainActivity
+import dgca.verifier.app.android.R
 import dgca.verifier.app.android.base.BindingFragment
 import dgca.verifier.app.android.databinding.FragmentDebugModeSettingsBinding
 
 
 @AndroidEntryPoint
 class DebugModeSettingsFragment : BindingFragment<FragmentDebugModeSettingsBinding>() {
+    private val viewModel by viewModels<DebugModeSettingsViewModel>()
+
     override fun onCreateBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -45,6 +49,27 @@ class DebugModeSettingsFragment : BindingFragment<FragmentDebugModeSettingsBindi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
         (requireActivity() as MainActivity).setSupportActionBar(binding.toolbar)
+
+        viewModel.debugModeState.observe(viewLifecycleOwner) {
+            binding.debugModeSwitch.isChecked = it != DebugModeState.OFF
+            when (it) {
+                DebugModeState.LEVEL_1 -> binding.level1.isChecked = true
+                DebugModeState.LEVEL_2 -> binding.level2.isChecked = true
+                DebugModeState.LEVEL_3 -> binding.level3.isChecked = true
+                else -> {
+                }
+            }
+
+        }
+
+        binding.debugModeSwitch.setOnCheckedChangeListener { _, _ -> saveSelectedDebugModeState() }
+        binding.debugModeLevel.setOnCheckedChangeListener { _, _ -> saveSelectedDebugModeState() }
+    }
+
+    private fun saveSelectedDebugModeState() {
+        getSelectedDebugMode().apply {
+            viewModel.saveSelectedDebugMode(this)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -55,5 +80,13 @@ class DebugModeSettingsFragment : BindingFragment<FragmentDebugModeSettingsBindi
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun getSelectedDebugMode(): DebugModeState = when {
+        !binding.debugModeSwitch.isChecked -> DebugModeState.OFF
+        binding.debugModeLevel.checkedRadioButtonId == R.id.level1 -> DebugModeState.LEVEL_1
+        binding.debugModeLevel.checkedRadioButtonId == R.id.level2 -> DebugModeState.LEVEL_2
+        binding.debugModeLevel.checkedRadioButtonId == R.id.level3 -> DebugModeState.LEVEL_3
+        else -> DebugModeState.OFF
     }
 }

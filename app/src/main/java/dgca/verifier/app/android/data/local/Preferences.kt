@@ -37,7 +37,7 @@ interface Preferences {
 
     var selectedCountryIsoCode: String?
 
-    var isDebugModeEnabled: Boolean?
+    var debugModeState: String?
 
     fun clear()
 }
@@ -61,9 +61,9 @@ class PreferencesImpl(context: Context) : Preferences {
         preferences,
         KEY_SELECTED_COUNTRY_ISO_CODE
     )
-    override var isDebugModeEnabled: Boolean? by BooleanPreference(
+    override var debugModeState: String? by StringPreference(
         preferences,
-        KEY_IS_DEBUG_MODE_ENABLED
+        KEY_DEBUG_MODE_STATE
     )
 
     override fun clear() {
@@ -75,7 +75,7 @@ class PreferencesImpl(context: Context) : Preferences {
         private const val KEY_RESUME_TOKEN = "resume_token"
         private const val KEY_LAST_KEYS_SYNC_TIME_MILLIS = "last_keys_sync_time_millis"
         private const val KEY_SELECTED_COUNTRY_ISO_CODE = "selected_country_iso_code"
-        private const val KEY_IS_DEBUG_MODE_ENABLED = "is_debug_mode_enabled"
+        private const val KEY_DEBUG_MODE_STATE = "debug_mode_state"
     }
 }
 

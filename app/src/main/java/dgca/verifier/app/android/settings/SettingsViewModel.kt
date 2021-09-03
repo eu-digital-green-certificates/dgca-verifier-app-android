@@ -67,6 +67,4 @@ class SettingsViewModel @Inject constructor(
             _inProgress.value = false
         }
     }
-
-    fun setDebugModeEnabled(enabled: Boolean?) = verifierRepository.setDebugModeEnabled(enabled)
 }

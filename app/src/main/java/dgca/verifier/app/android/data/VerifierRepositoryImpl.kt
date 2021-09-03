@@ -50,8 +50,6 @@ class VerifierRepositoryImpl @Inject constructor(
     private val mutex = Mutex()
     private val lastSyncLiveData: MutableLiveData<Long> =
         MutableLiveData(preferences.lastKeysSyncTimeMillis)
-    private val isDebugModeEnabled: MutableLiveData<Boolean?> =
-        MutableLiveData(preferences.isDebugModeEnabled)
 
     override suspend fun fetchCertificates(statusUrl: String, updateUrl: String): Boolean? {
         mutex.withLock {
@@ -77,11 +75,6 @@ class VerifierRepositoryImpl @Inject constructor(
         }
 
     override fun getLastSyncTimeMillis(): LiveData<Long> = lastSyncLiveData
-
-    override fun isDebugModeEnabled(): LiveData<Boolean?> = isDebugModeEnabled
-    override fun setDebugModeEnabled(enabled: Boolean?) {
-        preferences.isDebugModeEnabled = enabled
-    }
 
     private suspend fun fetchCertificate(url: String, resumeToken: Long) {
         val tokenFormatted = if (resumeToken == -1L) "" else resumeToken.toString()

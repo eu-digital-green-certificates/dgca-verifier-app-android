@@ -40,6 +40,52 @@
         app:title="@string/debug_mode"
         app:titleTextColor="@color/white" />
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/debugModeSwitch"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:paddingHorizontal="@dimen/default_margin"
+        android:text="@string/debug_mode"
+        android:textColor="@color/grey_50"
+        android:textSize="@dimen/text_size_medium"
+        android:theme="@style/TextAppearance.Dgca.Switch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        tools:checked="true" />
+
+    <RadioGroup
+        android:id="@+id/debugModeLevel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/debugModeSwitch">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/level1"
+            style="@style/TextAppearance.Dgca.DebugModeRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/level_1_normal_capture" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/level2"
+            style="@style/TextAppearance.Dgca.DebugModeRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/level_2_traceable_capture" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/level3"
+            style="@style/TextAppearance.Dgca.DebugModeRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/level_3_full_take" />
+    </RadioGroup>
+
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/logo"
         android:layout_width="wrap_content"
