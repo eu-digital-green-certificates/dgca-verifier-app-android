@@ -39,6 +39,8 @@ interface Preferences {
 
     var debugModeState: String?
 
+    var debugModeSelectedCountriesCodes: Set<String>?
+
     fun clear()
 }
 
@@ -65,6 +67,10 @@ class PreferencesImpl(context: Context) : Preferences {
         preferences,
         KEY_DEBUG_MODE_STATE
     )
+    override var debugModeSelectedCountriesCodes: Set<String>? by StringSetPreference(
+        preferences,
+        KEY_DEBUG_MODE_SELECTED_COUNTRIES_CODES
+    )
 
     override fun clear() {
         preferences.value.edit().clear().apply()
@@ -76,6 +82,8 @@ class PreferencesImpl(context: Context) : Preferences {
         private const val KEY_LAST_KEYS_SYNC_TIME_MILLIS = "last_keys_sync_time_millis"
         private const val KEY_SELECTED_COUNTRY_ISO_CODE = "selected_country_iso_code"
         private const val KEY_DEBUG_MODE_STATE = "debug_mode_state"
+        private const val KEY_DEBUG_MODE_SELECTED_COUNTRIES_CODES =
+            "debug_mode_selected_countries_codes"
     }
 }
 
@@ -111,24 +119,24 @@ class StringPreference(
     }
 }
 
-class BooleanPreference(
+class StringSetPreference(
     private val preferences: Lazy<SharedPreferences>,
     private val name: String,
-    private val defaultValue: Boolean = false
-) : ReadWriteProperty<Any, Boolean?> {
+    private val defaultValue: Set<String> = emptySet()
+) : ReadWriteProperty<Any, Set<String>?> {
 
     @WorkerThread
-    override fun getValue(thisRef: Any, property: KProperty<*>): Boolean? {
-        return if (preferences.value.contains(name)) preferences.value.getBoolean(
+    override fun getValue(thisRef: Any, property: KProperty<*>): Set<String>? {
+        return if (preferences.value.contains(name)) preferences.value.getStringSet(
             name,
             defaultValue
         ) else null
     }
 
-    override fun setValue(thisRef: Any, property: KProperty<*>, value: Boolean?) {
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: Set<String>?) {
         preferences.value.edit {
             value?.let {
-                putBoolean(name, value)
+                putStringSet(name, value)
             } ?: remove(name)
         }
     }

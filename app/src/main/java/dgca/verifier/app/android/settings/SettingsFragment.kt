@@ -25,14 +25,12 @@ package dgca.verifier.app.android.settings
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
 import android.text.SpannableStringBuilder
-import android.text.style.TextAppearanceSpan
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.toSpannable
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
@@ -44,8 +42,12 @@ import dgca.verifier.app.android.settings.debug.mode.DebugModeState
 
 @AndroidEntryPoint
 class SettingsFragment : BindingFragment<FragmentSettingsBinding>() {
-
     private val viewModel by viewModels<SettingsViewModel>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycle.addObserver(viewModel)
+    }
 
     override fun onCreateBinding(
         inflater: LayoutInflater,
@@ -87,11 +89,6 @@ class SettingsFragment : BindingFragment<FragmentSettingsBinding>() {
                 SettingsFragmentDirections.actionSettingsFragmentToVerificationResultFragment()
             findNavController().navigate(action)
         }
-//        binding.debugModeSwitch.setOnCheckedChangeListener { _, isChecked ->
-//            viewModel.setDebugModeEnabled(
-//                isChecked
-//            )
-//        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -122,29 +119,17 @@ class SettingsFragment : BindingFragment<FragmentSettingsBinding>() {
     }
 
     private fun setUpDebugModeButton(debugModeState: DebugModeState) {
+        val context = requireContext()
         val spannable = SpannableStringBuilder()
-        val header = SpannableString(getString(R.string.debug_mode))
-        header.setSpan(
-            TextAppearanceSpan(requireContext(), R.style.TextAppearance_Dgca_SettingsButtonHeader),
-            0,
-            header.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        spannable.append(header)
-
-        spannable.append("\n")
-
-        val subHeader = SpannableString(getString(debugModeState.stringRes))
-        subHeader.setSpan(
-            TextAppearanceSpan(
-                requireContext(),
-                R.style.TextAppearance_Dgca_SettingsButtonSubHeader
-            ),
-            0,
-            subHeader.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        spannable.append(subHeader)
+            .append(
+                getString(R.string.debug_mode).toSpannable()
+                    .applyStyle(context, R.style.TextAppearance_Dgca_SettingsButtonHeader)
+            )
+            .append("\n")
+            .append(
+                getString(debugModeState.stringRes).toSpannable()
+                    .applyStyle(context, R.style.TextAppearance_Dgca_SettingsButtonSubHeader)
+            )
 
         binding.debugMode.text = spannable
         binding.debugMode.visibility = View.VISIBLE

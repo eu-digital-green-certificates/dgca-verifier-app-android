@@ -91,4 +91,6 @@
     <string name="level_1_normal_capture">Level 1 - normal capture</string>
     <string name="level_2_traceable_capture">Level 2 - traceable capture</string>
     <string name="level_3_full_take">Level 3 - full take</string>
+    <string name="select_country">Select country</string>
+    <string name="no_countries_selected">No countries selected</string>
 </resources>

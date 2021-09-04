@@ -23,15 +23,18 @@
 package dgca.verifier.app.android.settings.debug.mode
 
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.text.toSpannable
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.MainActivity
 import dgca.verifier.app.android.R
+import dgca.verifier.app.android.applyStyle
 import dgca.verifier.app.android.base.BindingFragment
 import dgca.verifier.app.android.databinding.FragmentDebugModeSettingsBinding
 
@@ -64,6 +67,7 @@ class DebugModeSettingsFragment : BindingFragment<FragmentDebugModeSettingsBindi
 
         binding.debugModeSwitch.setOnCheckedChangeListener { _, _ -> saveSelectedDebugModeState() }
         binding.debugModeLevel.setOnCheckedChangeListener { _, _ -> saveSelectedDebugModeState() }
+        setUpSelectCountry()
     }
 
     private fun saveSelectedDebugModeState() {
@@ -80,6 +84,34 @@ class DebugModeSettingsFragment : BindingFragment<FragmentDebugModeSettingsBindi
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+
+    private fun setUpSelectCountry(selectedCountriesCodes: Set<String> = emptySet()) {
+        val selectedCountriesText =
+            if (selectedCountriesCodes.isEmpty()) getString(R.string.no_countries_selected) else selectedCountriesCodes.sorted()
+                .joinToString(
+                    separator = ", "
+                )
+
+        val context = requireContext()
+
+        val spannable = SpannableStringBuilder()
+            .append(
+                getString(R.string.select_country).toSpannable().applyStyle(
+                    context,
+                    R.style.TextAppearance_Dgca_SettingsButtonHeader
+                )
+            )
+            .append("\n")
+            .append(
+                selectedCountriesText.toSpannable().applyStyle(
+                    context,
+                    R.style.TextAppearance_Dgca_SettingsButtonSubHeader
+                )
+            )
+
+        binding.selectedCountries.text = spannable
     }
 
     private fun getSelectedDebugMode(): DebugModeState = when {

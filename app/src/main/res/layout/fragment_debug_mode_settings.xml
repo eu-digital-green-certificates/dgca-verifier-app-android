@@ -86,6 +86,14 @@
             android:text="@string/level_3_full_take" />
     </RadioGroup>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/selectedCountries"
+        style="@style/TextAppearance.Dgca.SettingsButtonHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/select_country"
+        app:layout_constraintTop_toBottomOf="@+id/debugModeLevel" />
+
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/logo"
         android:layout_width="wrap_content"

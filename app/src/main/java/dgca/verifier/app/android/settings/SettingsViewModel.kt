@@ -22,14 +22,12 @@
 
 package dgca.verifier.app.android.settings
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.BuildConfig
 import dgca.verifier.app.android.data.ConfigRepository
 import dgca.verifier.app.android.data.VerifierRepository
+import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.settings.debug.mode.DebugModeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,14 +38,26 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val configRepository: ConfigRepository,
-    private val verifierRepository: VerifierRepository
-) : ViewModel() {
+    private val verifierRepository: VerifierRepository,
+    private val preferences: Preferences
+) : ViewModel(), LifecycleObserver {
 
     private val _inProgress = MutableLiveData<Boolean>()
     val inProgress: LiveData<Boolean> = _inProgress
     val lastSyncLiveData: LiveData<Long> = verifierRepository.getLastSyncTimeMillis()
-    val debugModeState: LiveData<DebugModeState> =
-        MutableLiveData(DebugModeState.OFF)//verifierRepository.isDebugModeEnabled()
+    private val _debugModeState: MutableLiveData<DebugModeState> =
+        MutableLiveData(DebugModeState.OFF)
+    val debugModeState: LiveData<DebugModeState> = _debugModeState
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    private fun onLifeCycleStart() {
+        viewModelScope.launch {
+            val debugModeState: DebugModeState = withContext(Dispatchers.IO) {
+                preferences.debugModeState?.let { DebugModeState.valueOf(it) } ?: DebugModeState.OFF
+            }
+            _debugModeState.value = debugModeState
+        }
+    }
 
     fun syncPublicKeys() {
         viewModelScope.launch {
