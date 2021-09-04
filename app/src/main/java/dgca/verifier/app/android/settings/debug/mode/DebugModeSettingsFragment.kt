@@ -29,6 +29,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.text.toSpannable
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -67,13 +68,28 @@ class DebugModeSettingsFragment : BindingFragment<FragmentDebugModeSettingsBindi
 
         binding.debugModeSwitch.setOnCheckedChangeListener { _, _ -> saveSelectedDebugModeState() }
         binding.debugModeLevel.setOnCheckedChangeListener { _, _ -> saveSelectedDebugModeState() }
-        setUpSelectCountry()
+
+        setFragmentResultListener(COUNTRIES_SELECTOR_REQUEST_KEY) { _, bundle ->
+            val countriesData: CountriesData =
+                bundle.getParcelable(COUNTRIES_DATA_KEY)!!
+            setUpSelectCountry(countriesData)
+        }
+
+        setUpSelectCountry(CountriesData(setOf("ua, de, sg"), setOf("ua")))
     }
 
     private fun saveSelectedDebugModeState() {
         getSelectedDebugMode().apply {
             viewModel.saveSelectedDebugMode(this)
         }
+    }
+
+    private fun showCountriesSelector(countriesData: CountriesData) {
+        val action =
+            DebugModeSettingsFragmentDirections.actionDebugModeSettingsFragmentToCountriesSelectorFragment(
+                countriesData
+            )
+        findNavController().navigate(action)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -86,32 +102,36 @@ class DebugModeSettingsFragment : BindingFragment<FragmentDebugModeSettingsBindi
         }
     }
 
+    private fun setUpSelectCountry(countriesData: CountriesData) {
+        if (countriesData.availableCountriesCodes.isNotEmpty()) {
+            val selectedCountriesText =
+                if (countriesData.selectedCountriesCodes.isEmpty()) getString(R.string.no_countries_selected) else countriesData.selectedCountriesCodes.sorted()
+                    .joinToString(
+                        separator = ", "
+                    )
 
-    private fun setUpSelectCountry(selectedCountriesCodes: Set<String> = emptySet()) {
-        val selectedCountriesText =
-            if (selectedCountriesCodes.isEmpty()) getString(R.string.no_countries_selected) else selectedCountriesCodes.sorted()
-                .joinToString(
-                    separator = ", "
+            val context = requireContext()
+
+            val spannable = SpannableStringBuilder()
+                .append(
+                    getString(R.string.select_country).toSpannable().applyStyle(
+                        context,
+                        R.style.TextAppearance_Dgca_SettingsButtonHeader
+                    )
+                )
+                .append("\n")
+                .append(
+                    selectedCountriesText.toSpannable().applyStyle(
+                        context,
+                        R.style.TextAppearance_Dgca_SettingsButtonSubHeader
+                    )
                 )
 
-        val context = requireContext()
+            binding.selectedCountries.text = spannable
 
-        val spannable = SpannableStringBuilder()
-            .append(
-                getString(R.string.select_country).toSpannable().applyStyle(
-                    context,
-                    R.style.TextAppearance_Dgca_SettingsButtonHeader
-                )
-            )
-            .append("\n")
-            .append(
-                selectedCountriesText.toSpannable().applyStyle(
-                    context,
-                    R.style.TextAppearance_Dgca_SettingsButtonSubHeader
-                )
-            )
-
-        binding.selectedCountries.text = spannable
+            binding.selectedCountries.setOnClickListener { showCountriesSelector(countriesData) }
+            binding.selectedCountries.visibility = View.VISIBLE
+        }
     }
 
     private fun getSelectedDebugMode(): DebugModeState = when {

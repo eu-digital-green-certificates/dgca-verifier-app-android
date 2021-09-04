@@ -92,7 +92,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/select_country"
-        app:layout_constraintTop_toBottomOf="@+id/debugModeLevel" />
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/debugModeLevel"
+        tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/logo"

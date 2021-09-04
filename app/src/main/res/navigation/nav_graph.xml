@@ -135,6 +135,21 @@
     <fragment
         android:id="@+id/debugModeSettingsFragment"
         android:name="dgca.verifier.app.android.settings.debug.mode.DebugModeSettingsFragment"
-        android:label="Debug Mode Settings" />
+        android:label="Debug Mode Settings">
+        <action
+            android:id="@+id/action_debugModeSettingsFragment_to_countriesSelectorFragment"
+            app:destination="@id/countriesSelectorFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/countriesSelectorFragment"
+        android:name="dgca.verifier.app.android.settings.debug.mode.CountriesSelectorFragment"
+        android:label="Countries Selector">
+        <argument
+            android:name="countriesData"
+            app:argType="dgca.verifier.app.android.settings.debug.mode.CountriesData" />
+    </fragment>
 
 </navigation>
