@@ -72,10 +72,12 @@ class DebugModeSettingsFragment : BindingFragment<FragmentDebugModeSettingsBindi
         setFragmentResultListener(COUNTRIES_SELECTOR_REQUEST_KEY) { _, bundle ->
             val countriesData: CountriesData =
                 bundle.getParcelable(COUNTRIES_DATA_KEY)!!
-            setUpSelectCountry(countriesData)
+            viewModel.saveSelectedCountries(countriesData)
         }
 
-        setUpSelectCountry(CountriesData(setOf("ua, de, sg"), setOf("ua")))
+        viewModel.countriesData.observe(viewLifecycleOwner) {
+            setUpSelectCountry(it)
+        }
     }
 
     private fun saveSelectedDebugModeState() {

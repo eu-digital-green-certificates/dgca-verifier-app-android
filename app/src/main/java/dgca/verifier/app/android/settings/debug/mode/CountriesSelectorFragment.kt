@@ -31,6 +31,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.MainActivity
 import dgca.verifier.app.android.base.BindingFragment
@@ -51,13 +52,12 @@ class CountriesSelectorFragment : BindingFragment<FragmentCountriesSelectorBindi
         setHasOptionsMenu(true)
         (requireActivity() as MainActivity).setSupportActionBar(binding.toolbar)
 
+        binding.countriesList.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = CountriesAdapter(layoutInflater, args.countriesData)
+        }
+
         binding.actionButton.setOnClickListener {
-            setFragmentResult(
-                COUNTRIES_SELECTOR_REQUEST_KEY,
-                bundleOf(
-                    COUNTRIES_DATA_KEY to args.countriesData.copy(selectedCountriesCodes = args.countriesData.selectedCountriesCodes.toMutableSet().apply { add("de") })
-                )
-            )
             close()
         }
     }
@@ -73,6 +73,12 @@ class CountriesSelectorFragment : BindingFragment<FragmentCountriesSelectorBindi
     }
 
     private fun close() {
+        setFragmentResult(
+            COUNTRIES_SELECTOR_REQUEST_KEY,
+            bundleOf(
+                COUNTRIES_DATA_KEY to (binding.countriesList.adapter as CountriesAdapter).getCountriesData()
+            )
+        )
         findNavController().popBackStack()
     }
 }

@@ -22,19 +22,41 @@
 
 package dgca.verifier.app.android.settings.debug.mode
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
+import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.local.Preferences
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class DebugModeSettingsViewModel @Inject constructor(
     private val preferences: Preferences
 ) : ViewModel() {
+    private val _countriesData: MutableLiveData<CountriesData> = MutableLiveData()
+    val countriesData: LiveData<CountriesData> = _countriesData
+
+    init {
+        viewModelScope.launch {
+            val countriesData: CountriesData = withContext(Dispatchers.IO) {
+                val selectedCountriesCodes: Set<String> =
+                    (preferences.debugModeSelectedCountriesCodes ?: emptySet())
+                val availableCountries: Set<String> =
+                    setOf("ua", "de", "sg") + selectedCountriesCodes
+                return@withContext CountriesData(availableCountries, selectedCountriesCodes)
+            }
+            _countriesData.value = countriesData
+        }
+    }
+
     fun saveSelectedDebugMode(debugModeState: DebugModeState) {
         preferences.debugModeState = debugModeState.toString()
+    }
+
+    fun saveSelectedCountries(countriesData: CountriesData) {
+        _countriesData.value = countriesData
+        preferences.debugModeSelectedCountriesCodes = countriesData.selectedCountriesCodes
     }
 
     val debugModeState: LiveData<DebugModeState> = liveData {
