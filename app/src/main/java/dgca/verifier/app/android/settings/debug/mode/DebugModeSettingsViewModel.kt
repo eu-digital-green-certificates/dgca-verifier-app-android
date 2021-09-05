@@ -25,14 +25,18 @@ package dgca.verifier.app.android.settings.debug.mode
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.local.Preferences
+import dgca.verifier.app.engine.data.source.countries.CountriesRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class DebugModeSettingsViewModel @Inject constructor(
-    private val preferences: Preferences
+    private val preferences: Preferences,
+    private val countriesRepository: CountriesRepository
 ) : ViewModel() {
     private val _countriesData: MutableLiveData<CountriesData> = MutableLiveData()
     val countriesData: LiveData<CountriesData> = _countriesData
@@ -41,9 +45,16 @@ class DebugModeSettingsViewModel @Inject constructor(
         viewModelScope.launch {
             val countriesData: CountriesData = withContext(Dispatchers.IO) {
                 val selectedCountriesCodes: Set<String> =
-                    (preferences.debugModeSelectedCountriesCodes ?: emptySet())
-                val availableCountries: Set<String> =
-                    setOf("ua", "de", "sg") + selectedCountriesCodes
+                    preferences.debugModeSelectedCountriesCodes ?: emptySet()
+                val availableCountries: Set<String> = try {
+                    mutableSetOf<String>().apply {
+                        countriesRepository.getCountries().firstOrNull()?.let {
+                            this.addAll(it)
+                        }
+                    } + selectedCountriesCodes
+                } catch (exception: Exception) {
+                    selectedCountriesCodes
+                }
                 return@withContext CountriesData(availableCountries, selectedCountriesCodes)
             }
             _countriesData.value = countriesData
