@@ -28,7 +28,6 @@ import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.engine.data.source.countries.CountriesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

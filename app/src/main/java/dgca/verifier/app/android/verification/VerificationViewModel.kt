@@ -123,7 +123,9 @@ class VerificationViewModel @Inject constructor(
                 }
 
                 isDebugModeEnabled = (preferences.debugModeState?.let { DebugModeState.valueOf(it) }
-                    ?: DebugModeState.OFF) != DebugModeState.OFF
+                    ?: DebugModeState.OFF) != DebugModeState.OFF && preferences.debugModeSelectedCountriesCodes?.contains(
+                    innerVerificationResult.greenCertificateData?.getNormalizedIssuingCountry()
+                ) == true
             }
 
             _qrCodeVerificationResult.value = if (innerVerificationResult.isApplicableCode) {
@@ -241,10 +243,7 @@ class VerificationViewModel @Inject constructor(
         this.apply {
             val engineCertificateType = this.greenCertificate.getEngineCertificateType()
             return if (countryIsoCode.isNotBlank()) {
-                val issuingCountry: String =
-                    (if (this.issuingCountry?.isNotBlank() == true && this.issuingCountry != null) this.issuingCountry!! else this.greenCertificate.getIssuingCountry()).toLowerCase(
-                        Locale.ROOT
-                    )
+                val issuingCountry: String = this.getNormalizedIssuingCountry()
                 val rules = getRulesUseCase.invoke(
                     ZonedDateTime.now().withZoneSameInstant(UTC_ZONE_ID),
                     countryIsoCode,
