@@ -71,10 +71,10 @@ class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
         }
     }
 
-    fun setExpanded(expanded: Boolean) {
+    private fun setExpanded(expanded: Boolean) {
         isExpanded = expanded
         binding.expandButton.setImageResource(if (expanded) R.drawable.ic_icon_minus else R.drawable.ic_icon_plus)
-        setUp(data)
+        setUpVisibility(data)
     }
 
     private fun setUpPersonData(personModel: PersonModel) {
@@ -162,13 +162,13 @@ class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
         binding.reasonForCertificateInvalidityName.setOnClickListener {
             isRulesListExpanded = !isRulesListExpanded
             binding.rulesList.visibility =
-                if (isRulesListExpanded) View.GONE else View.VISIBLE
+                if (isRulesListExpanded) View.VISIBLE else View.GONE
             binding.reasonForCertificateInvalidityName.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 null,
                 null,
                 ResourcesCompat.getDrawable(
                     resources,
-                    if (isRulesListExpanded) R.drawable.icon_collapsed else R.drawable.icon_expanded,
+                    if (isRulesListExpanded) R.drawable.icon_expanded else R.drawable.icon_collapsed,
                     null
                 ),
                 null
@@ -209,21 +209,31 @@ class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
             setUpRules(ruleValidationResultModelsContainer)
         }
 
+        data = Triple(
+            certificateModel,
+            standardizedVerificationResult,
+            ruleValidationResultModelsContainer
+        )
         setExpanded(true)
     }
 
-    private fun setUp(data: Triple<CertificateModel, StandardizedVerificationResult, RuleValidationResultModelsContainer?>) {
+    private fun setUpVisibility(data: Triple<CertificateModel, StandardizedVerificationResult, RuleValidationResultModelsContainer?>) {
         val certificateModel = data.first
         val standardizedVerificationResult: StandardizedVerificationResult =
             data.second
-        setUpCertificateType(
-            standardizedVerificationResult.category,
-            certificateModel
-        )
-        setCertStatusError(standardizedVerificationResult)
+        val ruleValidationResultModelsContainer: RuleValidationResultModelsContainer? = data.third
+
+        if (standardizedVerificationResult.category != StandardizedVerificationResultCategory.INVALID) {
+            setPersonDataVisibility(certificateModel)
+        }
+
+        binding.greenCertificate.visibility =
+            if (isExpanded && standardizedVerificationResult.category != StandardizedVerificationResultCategory.INVALID) View.VISIBLE else View.GONE
+
+        setErrorVisibility(standardizedVerificationResult, ruleValidationResultModelsContainer)
     }
 
-    private fun showUserData(certificate: CertificateModel) {
+    private fun setPersonDataVisibility(certificateModel: CertificateModel) {
         if (isExpanded) {
             View.VISIBLE
         } else {
@@ -233,7 +243,7 @@ class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
             binding.personStandardisedFamilyName.visibility = this
         }
 
-        if (isExpanded && certificate.person.standardisedGivenName?.isNotBlank() == true) {
+        if (isExpanded && certificateModel.person.standardisedGivenName?.isNotBlank() == true) {
             View.VISIBLE
         } else {
             View.GONE
@@ -242,7 +252,7 @@ class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
             binding.personStandardisedGivenName.visibility = this
         }
 
-        certificate.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
+        certificateModel.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
             .let { birthday ->
                 if (birthday.isNotBlank() && isExpanded) {
                     binding.dateOfBirthValue.text = birthday
@@ -256,19 +266,9 @@ class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
             }
     }
 
-    private fun setUpCertificateType(
-        standardizedVerificationResultCategory: StandardizedVerificationResultCategory,
-        certificateModel: CertificateModel
-    ) {
-        if (standardizedVerificationResultCategory != StandardizedVerificationResultCategory.INVALID) {
-            showUserData(certificateModel)
-        }
-        binding.greenCertificate.visibility =
-            if (isExpanded && standardizedVerificationResultCategory != StandardizedVerificationResultCategory.INVALID) View.VISIBLE else View.GONE
-    }
-
-    private fun setCertStatusError(
+    private fun setErrorVisibility(
         standardizedVerificationResult: StandardizedVerificationResult,
+        ruleValidationResultModelsContainer: RuleValidationResultModelsContainer?,
     ) {
         if (standardizedVerificationResult.category != StandardizedVerificationResultCategory.VALID && isExpanded) {
             View.VISIBLE
@@ -288,7 +288,10 @@ class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
             binding.errorTestResult.visibility = visibility
         }
 
-        if (standardizedVerificationResult == StandardizedVerificationResult.RULES_VALIDATION_FAILED && isExpanded && isRulesListExpanded) {
+        if (standardizedVerificationResult == StandardizedVerificationResult.RULES_VALIDATION_FAILED
+            && ruleValidationResultModelsContainer?.ruleValidationResultModels?.isNotEmpty() == true
+            && isExpanded && isRulesListExpanded
+        ) {
             View.VISIBLE
         } else {
             View.GONE

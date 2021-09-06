@@ -150,14 +150,6 @@
             tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.Group
-            android:id="@+id/errorDetails"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:visibility="gone"
-            app:constraint_referenced_ids="reasonForCertificateInvalidityTitle, reasonForCertificateInvalidityName"
-            tools:visibility="visible" />
-
-        <androidx.constraintlayout.widget.Group
             android:id="@+id/errorTestResult"
             android:layout_width="0dp"
             android:layout_height="0dp"

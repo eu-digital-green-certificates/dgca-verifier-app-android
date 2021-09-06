@@ -115,7 +115,6 @@ class DetailedVerificationResultDialogFragment :
                 standardizedVerificationResult,
                 ruleValidationResultModelsContainer
             )
-            binding.certificateInfo.setExpanded(true)
             binding.certificateRawInfo.setHcert(hcert)
             binding.certificateInfo.visibility = View.VISIBLE
             binding.certificateRawInfo.visibility = View.VISIBLE
