@@ -147,6 +147,9 @@
         android:layout_width="48dp"
         android:layout_height="40dp"
         android:layout_marginStart="5dp"
+        android:elevation="4dp"
+        android:indeterminateTint="@color/blue"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/share_btn"
         app:layout_constraintStart_toStartOf="@+id/share_btn"
         app:layout_constraintTop_toTopOf="@+id/share_btn" />

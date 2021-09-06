@@ -22,13 +22,16 @@
 
 package dgca.verifier.app.android.verification.detailed
 
+import android.content.Intent
 import android.content.res.ColorStateList
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
@@ -40,6 +43,9 @@ import dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer
 import dgca.verifier.app.android.verification.BaseVerificationDialogFragment
 import dgca.verifier.app.android.verification.StandardizedVerificationResult
 import dgca.verifier.app.android.verification.StandardizedVerificationResultCategory
+import timber.log.Timber
+import java.io.File
+
 
 @AndroidEntryPoint
 class DetailedVerificationResultDialogFragment :
@@ -74,7 +80,15 @@ class DetailedVerificationResultDialogFragment :
         binding.shareBtn.setOnClickListener {
             viewModel.onShareClick(requireContext().cacheDir.path, args.certificateModel, args.hcert, args.debugData)
         }
+
+        viewModel.event.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let {
+                onViewModelEvent(it)
+            }
+        }
     }
+
+    override fun contentLayout(): ViewGroup.LayoutParams = binding.content.layoutParams
 
     private fun handleDetailedVerificationResult(
         standardizedVerificationResult: StandardizedVerificationResult,
@@ -128,8 +142,6 @@ class DetailedVerificationResultDialogFragment :
         }
     }
 
-    override fun contentLayout(): ViewGroup.LayoutParams = binding.content.layoutParams
-
     private fun StandardizedVerificationResultCategory.getActionButtonData(): Pair<Int, Int> =
         when (this) {
             StandardizedVerificationResultCategory.VALID -> Pair(R.color.green, R.string.done)
@@ -139,4 +151,36 @@ class DetailedVerificationResultDialogFragment :
                 R.string.retry
             )
         }
+
+    private fun onViewModelEvent(event: DetailedViewEvent) {
+        when (event) {
+            is DetailedViewEvent.OnZipCreated -> {
+                val path = event.filePath
+
+                if (path.isEmpty()) {
+                    Toast.makeText(requireContext(), "Failed to prepare file", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+                val intent = Intent(Intent.ACTION_SEND).apply {
+                    type = "application/zip"
+                    val uri: Uri = FileProvider.getUriForFile(
+                        requireContext(),
+                        requireContext().applicationContext.packageName + ".provider",
+                        File(path)
+                    )
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                }
+
+                val pm = requireActivity().packageManager
+                if (intent.resolveActivity(pm) != null) {
+                    Intent.createChooser(intent, getString(R.string.share))
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(requireContext(), "Failed to share file", Toast.LENGTH_SHORT).show()
+                    Timber.d("Cannot shared file")
+                }
+            }
+        }
+    }
 }

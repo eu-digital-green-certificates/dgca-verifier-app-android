@@ -30,6 +30,7 @@ import androidx.lifecycle.viewModelScope
 import com.fasterxml.jackson.databind.ObjectMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.BuildConfig
+import dgca.verifier.app.android.Event
 import dgca.verifier.app.android.anonymization.AnonymizationManager
 import dgca.verifier.app.android.anonymization.PolicyLevel
 import dgca.verifier.app.android.model.CertificateModel
@@ -75,6 +76,9 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
     private val _inProgress = MutableLiveData<Boolean>()
     val inProgress: LiveData<Boolean> = _inProgress
 
+    private val _event = MutableLiveData<Event<DetailedViewEvent>>()
+    val event: LiveData<Event<DetailedViewEvent>> = _event
+
     var policyLevel = PolicyLevel.L3
 
     @Suppress("BlockingMethodInNonBlockingContext")
@@ -86,22 +90,21 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
         _inProgress.value = true
 
         viewModelScope.launch {
+            var zipPath = ""
             withContext(Dispatchers.IO) {
                 try {
-                    generateZip(cachePath, certificateModel, debugData)
+                    zipPath = generateZip(cachePath, certificateModel, debugData)
                 } catch (ex: Exception) {
                     Timber.w(ex, "Exception during zip creation")
                 }
             }
-
             _inProgress.value = false
-
-            // TODO: return path to zip file. Share via email
+            _event.value = Event(DetailedViewEvent.OnZipCreated(zipPath))
         }
     }
 
     @Throws(IOException::class)
-    private fun generateZip(cachePath: String, certificateModel: CertificateModel, debugData: DebugData) {
+    private fun generateZip(cachePath: String, certificateModel: CertificateModel, debugData: DebugData): String {
         val cose = debugData.cose
         val cbor = debugData.cbor
         val qrCode = debugData.qrCode
@@ -146,7 +149,7 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
             list.add(payloadBase64)
         }
 
-        zip(cachePath, list)
+        return zip(cachePath, list)
     }
 
     @Throws(IOException::class)
@@ -226,9 +229,11 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
         createAndWriteToFile(cachePath.plusFile(Files.PAYLOAD_BASE64), "${cbor?.toBase64()}")
 
     @Throws(IOException::class)
-    private fun zip(cachePath: String, files: List<File>) {
+    private fun zip(cachePath: String, files: List<File>): String {
         var origin: BufferedInputStream?
-        val dest = FileOutputStream(File(cachePath, Files.ZIP.fileName))
+
+        val zipFile = File(cachePath, Files.ZIP.fileName)
+        val dest = FileOutputStream(zipFile)
         val out = ZipOutputStream(BufferedOutputStream(dest))
         val data = ByteArray(BUFFER)
         for (i in files.indices) {
@@ -244,6 +249,8 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
             origin.close()
         }
         out.close()
+
+        return zipFile.path
     }
 
     @Throws(IOException::class)
@@ -274,6 +281,10 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
 
         return file
     }
+}
+
+sealed class DetailedViewEvent {
+    data class OnZipCreated(val filePath: String) : DetailedViewEvent()
 }
 
 enum class Files(val fileName: String) {
