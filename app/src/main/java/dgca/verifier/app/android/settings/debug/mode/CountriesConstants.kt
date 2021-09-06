@@ -17,19 +17,10 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 4/24/21 2:20 PM
+ *  Created by osarapulov on 9/4/21 8:49 PM
  */
 
-package dgca.verifier.app.android.data
+package dgca.verifier.app.android.settings.debug.mode
 
-import androidx.lifecycle.LiveData
-import java.security.cert.Certificate
-
-interface VerifierRepository {
-
-    suspend fun fetchCertificates(statusUrl: String, updateUrl: String): Boolean?
-
-    suspend fun getCertificatesBy(kid: String): List<Certificate>
-
-    fun getLastSyncTimeMillis(): LiveData<Long>
-}
+const val COUNTRIES_SELECTOR_REQUEST_KEY = "COUNTRIES_SELECTOR_REQUEST"
+const val COUNTRIES_DATA_KEY = "COUNTRIES_DATA"

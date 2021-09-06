@@ -121,6 +121,7 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
             val ruleValidationResultModelsContainer: RuleValidationResultModelsContainer? = bundle.getParcelable(
                 RULE_VALIDATION_RESULT_MODELS_CONTAINER_KEY
             )
+            val isDebugModeEnabled = bundle.getBoolean(IS_DEBUG_MODE_ENABLED)
             val debugData: DebugData? = bundle.getParcelable(DEBUG_DATA)
 
             if (standardizedVerificationResult != null) {
@@ -129,6 +130,7 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
                     certificateModel,
                     hcert,
                     ruleValidationResultModelsContainer,
+                    isDebugModeEnabled,
                     debugData
                 )
             }
@@ -140,11 +142,12 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
         certificateModel: CertificateModel?,
         hcert: String?,
         ruleValidationResultModelsContainer: RuleValidationResultModelsContainer?,
+        isDebugModeEnabled: Boolean,
         debugData: DebugData?
     ) {
         findNavController().navigateUp()
         binding.barcodeScanner.pause()
-        val action = if (viewModel.isDebugModeEnabled() == true) {
+        val action = if (isDebugModeEnabled) {
             CodeReaderFragmentDirections.actionCodeReaderFragmentToDetailedVerificationResultFragment(
                 standardizedVerificationResult,
                 certificateModel,

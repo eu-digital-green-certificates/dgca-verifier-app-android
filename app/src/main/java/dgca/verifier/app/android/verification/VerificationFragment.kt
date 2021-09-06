@@ -67,6 +67,7 @@ class VerificationFragment : DialogFragment() {
                         RULE_VALIDATION_RESULT_MODELS_CONTAINER_KEY to qrCodeVerificationResult.rulesValidationResults?.let {
                             RuleValidationResultModelsContainer(it)
                         },
+                        IS_DEBUG_MODE_ENABLED to qrCodeVerificationResult.isDebugModeEnabled,
                         DEBUG_DATA to qrCodeVerificationResult.debugData
                     )
                 )

@@ -223,21 +223,25 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/default_margin_top"
                 android:text="@string/standardised_family_name_title"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@id/person_standardised_family_name"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/reason_test_result_value" />
+                app:layout_constraintTop_toBottomOf="@id/reason_test_result_value"
+                tools:visibility="visible" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/person_standardised_family_name"
                 style="@style/TextAppearance.Dgca.CertificateValue"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@id/person_standardised_given_name_title"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/person_standardised_family_name_title"
-                tools:text="MUSTERFRAU" />
+                tools:text="MUSTERFRAU"
+                tools:visibility="visible" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/person_standardised_given_name_title"
@@ -246,21 +250,25 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/default_margin_top"
                 android:text="@string/standardised_given_name_title"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@id/person_standardised_given_name"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/person_standardised_family_name" />
+                app:layout_constraintTop_toBottomOf="@id/person_standardised_family_name"
+                tools:visibility="visible" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/person_standardised_given_name"
                 style="@style/TextAppearance.Dgca.CertificateValue"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@id/date_of_birth_title"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/person_standardised_given_name_title"
-                tools:text="GABRIELE" />
+                tools:text="GABRIELE"
+                tools:visibility="visible" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/date_of_birth_title"
@@ -269,21 +277,25 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/default_margin_top"
                 android:text="@string/date_of_birth_title"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@id/date_of_birth"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/person_standardised_given_name" />
+                app:layout_constraintTop_toBottomOf="@id/person_standardised_given_name"
+                tools:visibility="visible" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/date_of_birth"
                 style="@style/TextAppearance.Dgca.CertificateValue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@id/greenCertificate"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/date_of_birth_title"
-                tools:text="Feb 26, 1988" />
+                tools:text="Feb 26, 1988"
+                tools:visibility="visible" />
 
             <ViewStub
                 android:id="@+id/greenCertificate"

@@ -17,19 +17,16 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 4/24/21 2:20 PM
+ *  Created by osarapulov on 9/4/21 8:26 PM
  */
 
-package dgca.verifier.app.android.data
+package dgca.verifier.app.android.settings.debug.mode
 
-import androidx.lifecycle.LiveData
-import java.security.cert.Certificate
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-interface VerifierRepository {
-
-    suspend fun fetchCertificates(statusUrl: String, updateUrl: String): Boolean?
-
-    suspend fun getCertificatesBy(kid: String): List<Certificate>
-
-    fun getLastSyncTimeMillis(): LiveData<Long>
-}
+@Parcelize
+data class CountriesData(
+    val availableCountriesCodes: Set<String>,
+    val selectedCountriesCodes: Set<String>
+) : Parcelable

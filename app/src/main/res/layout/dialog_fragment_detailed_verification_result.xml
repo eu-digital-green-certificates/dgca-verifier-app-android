@@ -112,16 +112,14 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/actionButton"
+        style="@style/TextAppearance.Dgca.ActionButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/default_margin"
         android:layout_marginBottom="@dimen/default_margin"
         android:backgroundTint="@color/green"
-        android:letterSpacing="-0.02"
         android:minWidth="176dp"
         android:text="@string/done"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/share_btn"
