@@ -247,23 +247,6 @@ class VerificationViewModel @Inject constructor(
         countryIsoCode: String,
         base64EncodedKid: String
     ): List<ValidationResult>? {
-        if (true) return listOf(ValidationResult(
-            Rule(
-                "id",
-                Type.INVALIDATION,
-                "version",
-                "schemaVersion",
-                "engine",
-                "engineVersion",
-                RuleCertificateType.VACCINATION,
-                emptyMap<String, String>(),
-                ZonedDateTime.now(),
-                ZonedDateTime.now(),
-                emptyList<String>(),
-                jacksonObjectMapper().createObjectNode(),
-                "de",
-                null
-            ), Result.FAIL, "Current", null)).apply { verificationResult.rulesValidationFailed = true }
         this.apply {
             val engineCertificateType = this.greenCertificate.getEngineCertificateType()
             return if (countryIsoCode.isNotBlank()) {
