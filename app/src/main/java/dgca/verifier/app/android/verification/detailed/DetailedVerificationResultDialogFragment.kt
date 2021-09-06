@@ -68,7 +68,7 @@ class DetailedVerificationResultDialogFragment :
             args.standardizedVerificationResult,
             args.certificateModel,
             args.hcert,
-            args.ruleValidationResultModelsContainer
+            args.ruleValidationResultModelsContainer,
         )
     }
 
@@ -95,14 +95,16 @@ class DetailedVerificationResultDialogFragment :
         handleCertificateModel(
             standardizedVerificationResult,
             certificateModel,
-            hcert
+            hcert,
+            ruleValidationResultModelsContainer
         )
     }
 
     private fun handleCertificateModel(
         standardizedVerificationResult: StandardizedVerificationResult,
         certificateModel: CertificateModel?,
-        hcert: String?
+        hcert: String?,
+        ruleValidationResultModelsContainer: RuleValidationResultModelsContainer?
     ) {
         if (certificateModel == null || hcert.isNullOrBlank()) {
             binding.certificateInfo.visibility = View.GONE
@@ -110,7 +112,8 @@ class DetailedVerificationResultDialogFragment :
         } else {
             binding.certificateInfo.setCertificateModel(
                 certificateModel,
-                standardizedVerificationResult
+                standardizedVerificationResult,
+                ruleValidationResultModelsContainer
             )
             binding.certificateInfo.setExpanded(true)
             binding.certificateRawInfo.setHcert(hcert)

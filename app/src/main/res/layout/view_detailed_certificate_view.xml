@@ -60,72 +60,202 @@
             app:layout_constraintTop_toTopOf="@id/title"
             tools:src="@drawable/ic_icon_minus" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/certificateTypeTitle"
-            style="@style/TextAppearance.Dgca.DetailedCertificateTitle"
+            style="@style/TextAppearance.Dgca.CertificateTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/default_margin"
             android:text="@string/certificate_type_title"
-            app:layout_constraintBottom_toTopOf="@id/certificateTypeName"
+            app:layout_constraintBottom_toTopOf="@id/certificateTypeText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title" />
 
-        <TextView
-            android:id="@+id/certificateTypeName"
-            style="@style/TextAppearance.Dgca.DetailedCertificateName"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/certificateTypeText"
+            style="@style/TextAppearance.Dgca.CertificateValue"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/possibleLimitationsTitle"
+            app:layout_constraintBottom_toTopOf="@id/reasonForCertificateInvalidityTitle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/certificateTypeTitle"
-            tools:text="Vaccination Shot #1" />
+            app:layout_constraintTop_toBottomOf="@+id/certificateTypeTitle"
+            tools:text="@string/type_test" />
 
-        <TextView
-            android:id="@+id/possibleLimitationsTitle"
-            style="@style/TextAppearance.Dgca.DetailedCertificateTitle"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/reasonForCertificateInvalidityTitle"
+            style="@style/TextAppearance.Dgca.CertificateTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/possible_limitation"
-            app:layout_constraintBottom_toTopOf="@id/possibleLimitationsName"
+            android:layout_marginTop="@dimen/default_margin_top"
+            android:text="@string/reason_for_invalidity"
+            app:layout_constraintBottom_toTopOf="@id/reasonForCertificateInvalidityName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/certificateTypeName" />
+            app:layout_constraintTop_toBottomOf="@id/certificateTypeText" />
 
-        <TextView
-            android:id="@+id/possibleLimitationsName"
-            style="@style/TextAppearance.Dgca.DetailedCertificateName"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/reasonForCertificateInvalidityName"
+            style="@style/TextAppearance.Dgca.CertificateValue"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/rulesList"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/reasonForCertificateInvalidityTitle"
+            tools:text="Test error" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rulesList"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/default_margin_top"
+            android:overScrollMode="never"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/testResultTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/reasonForCertificateInvalidityName" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/testResultTitle"
+            style="@style/TextAppearance.Dgca.CertificateTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_margin_top"
+            android:text="@string/test_result_title"
+            app:layout_constraintBottom_toTopOf="@id/testResultValue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rulesList" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/testResultValue"
+            style="@style/TextAppearance.Dgca.CertificateValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/negative"
+            app:layout_constraintBottom_toTopOf="@id/personStandardisedFamilyNameTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/testResultTitle" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/generalInfo"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:constraint_referenced_ids="certificateTypeTitle, certificateTypeText"
+            tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/errorDetails"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:constraint_referenced_ids="reasonForCertificateInvalidityTitle, reasonForCertificateInvalidityName"
+            tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/errorTestResult"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:constraint_referenced_ids="testResultTitle, testResultValue"
+            tools:visibility="visible" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/personStandardisedFamilyNameTitle"
+            style="@style/TextAppearance.Dgca.CertificateTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_margin_top"
+            android:text="@string/standardised_family_name_title"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/personStandardisedFamilyName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/testResultValue"
+            tools:visibility="visible" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/personStandardisedFamilyName"
+            style="@style/TextAppearance.Dgca.CertificateValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/personStandardisedGivenNameTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/personStandardisedFamilyNameTitle"
+            tools:text="MUSTERFRAU"
+            tools:visibility="visible" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/personStandardisedGivenNameTitle"
+            style="@style/TextAppearance.Dgca.CertificateTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_margin_top"
+            android:text="@string/standardised_given_name_title"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/personStandardisedGivenName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/personStandardisedFamilyName"
+            tools:visibility="visible" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/personStandardisedGivenName"
+            style="@style/TextAppearance.Dgca.CertificateValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/dateOfBirthTitle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/possibleLimitationsTitle"
-            tools:text="Country rules validation failed" />
+            app:layout_constraintTop_toBottomOf="@id/personStandardisedGivenNameTitle"
+            tools:text="GABRIELE"
+            tools:visibility="visible" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/dateOfBirthTitle"
-            style="@style/TextAppearance.Dgca.DetailedCertificateTitle"
-            android:layout_width="0dp"
+            style="@style/TextAppearance.Dgca.CertificateTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_margin_top"
             android:text="@string/date_of_birth_title"
-            app:layout_constraintBottom_toTopOf="@id/dateOfBirthName"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/dateOfBirthValue"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/possibleLimitationsName" />
+            app:layout_constraintTop_toBottomOf="@id/personStandardisedGivenName"
+            tools:visibility="visible" />
 
-        <TextView
-            android:id="@+id/dateOfBirthName"
-            style="@style/TextAppearance.Dgca.DetailedCertificateName"
-            android:layout_width="0dp"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/dateOfBirthValue"
+            style="@style/TextAppearance.Dgca.CertificateValue"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/greenCertificate"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/dateOfBirthTitle"
-            tools:text="Feb 26, 1998" />
+            tools:text="Feb 26, 1988"
+            tools:visibility="visible" />
+
+        <ViewStub
+            android:id="@+id/greenCertificate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:inflatedId="@+id/inflatedGreenCertificate"
+            android:layout="@layout/item_recovery"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dateOfBirthValue" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

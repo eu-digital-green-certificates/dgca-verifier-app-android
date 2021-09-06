@@ -26,6 +26,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.android.data.local.Preferences
@@ -52,8 +54,7 @@ import dgca.verifier.app.engine.CertLogicEngine
 import dgca.verifier.app.engine.Result
 import dgca.verifier.app.engine.UTC_ZONE_ID
 import dgca.verifier.app.engine.ValidationResult
-import dgca.verifier.app.engine.data.CertificateType
-import dgca.verifier.app.engine.data.ExternalParameter
+import dgca.verifier.app.engine.data.*
 import dgca.verifier.app.engine.data.source.valuesets.ValueSetsRepository
 import dgca.verifier.app.engine.domain.rules.GetRulesUseCase
 import kotlinx.coroutines.Dispatchers
@@ -134,9 +135,9 @@ class VerificationViewModel @Inject constructor(
                         standardizedVerificationResult.category != StandardizedVerificationResultCategory.VALID
                                 && (preferences.debugModeState?.let { DebugModeState.valueOf(it) }
                             ?: DebugModeState.OFF) != DebugModeState.OFF
-                                && preferences.debugModeSelectedCountriesCodes?.contains(
-                            innerVerificationResult.greenCertificateData?.getNormalizedIssuingCountry()
-                        ) == true
+//                                && preferences.debugModeSelectedCountriesCodes?.contains(
+//                            innerVerificationResult.greenCertificateData?.getNormalizedIssuingCountry()
+//                        ) == true
 
                     QrCodeVerificationResult.Applicable(
                         standardizedVerificationResult,
@@ -243,6 +244,23 @@ class VerificationViewModel @Inject constructor(
         countryIsoCode: String,
         base64EncodedKid: String
     ): List<ValidationResult>? {
+        if (true) return listOf(ValidationResult(
+            Rule(
+                "id",
+                Type.INVALIDATION,
+                "version",
+                "schemaVersion",
+                "engine",
+                "engineVersion",
+                RuleCertificateType.VACCINATION,
+                emptyMap<String, String>(),
+                ZonedDateTime.now(),
+                ZonedDateTime.now(),
+                emptyList<String>(),
+                jacksonObjectMapper().createObjectNode(),
+                "de",
+                null
+            ), Result.FAIL, "Current", null)).apply { verificationResult.rulesValidationFailed = true }
         this.apply {
             val engineCertificateType = this.greenCertificate.getEngineCertificateType()
             return if (countryIsoCode.isNotBlank()) {

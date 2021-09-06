@@ -274,7 +274,7 @@ class VerificationResultDialogFragment :
             binding.personStandardisedGivenName.visibility = this
         }
 
-        binding.dateOfBirth.text =
+        binding. dateOfBirthValue.text =
             certificate.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
 
         val dateOfBirth =
@@ -282,11 +282,11 @@ class VerificationResultDialogFragment :
         if (dateOfBirth.isBlank()) {
             View.GONE
         } else {
-            binding.dateOfBirth.text = dateOfBirth
+            binding.dateOfBirthValue.text = dateOfBirth
             View.VISIBLE
         }.apply {
             binding.dateOfBirthTitle.visibility = this
-            binding.dateOfBirth.visibility = this
+            binding.dateOfBirthValue.visibility = this
         }
     }
 
