@@ -22,7 +22,6 @@
 
 package dgca.verifier.app.android.verification
 
-
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.TypedValue
@@ -51,7 +50,6 @@ import dgca.verifier.app.android.verification.certs.VaccinationViewHolder
 import dgca.verifier.app.android.verification.rules.RuleValidationResultCard
 import dgca.verifier.app.android.verification.rules.RuleValidationResultsAdapter
 import dgca.verifier.app.android.verification.rules.toRuleValidationResultCard
-
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint

@@ -73,7 +73,8 @@ sealed class QrCodeVerificationResult {
         val certificateModel: CertificateModel?,
         val hcert: String?,
         val rulesValidationResults: List<RuleValidationResultModel>?,
-        val isDebugModeEnabled: Boolean
+        val isDebugModeEnabled: Boolean,
+        val debugData: DebugData?
     ) : QrCodeVerificationResult()
 
     object NotApplicable : QrCodeVerificationResult()
@@ -121,8 +122,8 @@ class VerificationViewModel @Inject constructor(
                     }
 
                 if (innerVerificationResult.isApplicableCode) {
-                    val certificateModel: CertificateModel? =
-                        innerVerificationResult.greenCertificateData?.greenCertificate?.toCertificateModel()
+                    val covidCertificate = innerVerificationResult.greenCertificateData?.greenCertificate
+                    val certificateModel = covidCertificate?.toCertificateModel()
                     val hcert: String? = innerVerificationResult.greenCertificateData?.hcertJson
                     val standardizedVerificationResult: StandardizedVerificationResult =
                         extractStandardizedVerificationResultFrom(
@@ -143,7 +144,8 @@ class VerificationViewModel @Inject constructor(
                         certificateModel,
                         hcert,
                         validationResults?.toRuleValidationResultModels(),
-                        isDebugModeEnabled
+                        isDebugModeEnabled,
+                        innerVerificationResult.debugData
                     )
                 } else {
                     QrCodeVerificationResult.NotApplicable
@@ -229,12 +231,14 @@ class VerificationViewModel @Inject constructor(
                 return@forEach
             }
         }
+
         return InnerVerificationResult(
             noPublicKeysFound = noPublicKeysFound,
             certificateExpired = certificateExpired,
             greenCertificateData = greenCertificateData,
             isApplicableCode = isApplicableCode,
-            base64EncodedKid = base64EncodedKid
+            base64EncodedKid = base64EncodedKid,
+            debugData = DebugData(code, cose, coseData.cbor)
         )
     }
 

@@ -122,8 +122,35 @@
         android:text="@string/done"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/share_btn"
         app:layout_constraintStart_toEndOf="@id/logo" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/share_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/default_margin"
+        android:backgroundTint="@color/green"
+        android:letterSpacing="-0.02"
+        android:text="@string/share"
+        android:textColor="@color/white"
+        app:icon="@android:drawable/ic_menu_share"
+        app:layout_constraintBottom_toBottomOf="@+id/actionButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/actionButton"
+        app:layout_constraintTop_toTopOf="@+id/actionButton" />
+
+    <ProgressBar
+        android:id="@+id/share_progress_view"
+        android:layout_width="48dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="5dp"
+        android:elevation="4dp"
+        android:indeterminateTint="@color/blue"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/share_btn"
+        app:layout_constraintStart_toStartOf="@+id/share_btn"
+        app:layout_constraintTop_toTopOf="@+id/share_btn" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/bottomBarrier"
