@@ -17,86 +17,48 @@
   ~  limitations under the License.
   ~  license-end
   ~
-  ~  Created by osarapulov on 8/30/21 10:01 AM
+  ~  Created by osarapulov on 9/4/21 8:06 PM
   -->
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="50dp"
-    android:minHeight="500dp">
+    android:background="@color/white">
 
-    <dgca.verifier.app.android.verification.detailed.DetailedVerificationResultHeaderView
-        android:id="@+id/detailedVerificationResultHeaderView"
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@color/blue"
+        android:theme="@style/DgcaVerifierAppAndroid.Toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/ic_baseline_arrow_back_24"
+        app:title="@string/select_country"
+        app:titleTextColor="@color/white" />
 
-    <View
-        android:id="@+id/whiteBackground"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/detailedVerificationResultHeaderView" />
-
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrollView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/countriesList"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="@id/bottomBarrier"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/detailedVerificationResultHeaderView">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/infoContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/default_half_margin"
-            android:paddingVertical="@dimen/default_margin_top">
-
-            <dgca.verifier.app.android.verification.detailed.DetailedCertificateView
-                android:id="@+id/certificateInfo"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/certificateRawInfo"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="visible" />
-
-            <dgca.verifier.app.android.verification.detailed.DetailedCertificateRawView
-                android:id="@+id/certificateRawInfo"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/default_margin"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/certificateInfo"
-                tools:visibility="visible" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        tools:listitem="@layout/item_country" />
 
     <View
         android:id="@+id/gradient"
         android:layout_width="0dp"
         android:layout_height="@dimen/default_margin_top"
         android:background="@drawable/white_gradient"
-        app:layout_constraintBottom_toBottomOf="@+id/nestedScrollView"
+        app:layout_constraintBottom_toBottomOf="@+id/countriesList"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/logo"
@@ -117,8 +79,6 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/default_margin"
         android:layout_marginBottom="@dimen/default_margin"
-        android:backgroundTint="@color/green"
-        android:minWidth="176dp"
         android:text="@string/done"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"

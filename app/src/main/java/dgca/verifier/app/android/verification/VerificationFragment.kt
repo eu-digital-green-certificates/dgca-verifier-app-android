@@ -68,7 +68,8 @@ class VerificationFragment : DialogFragment() {
                             RuleValidationResultModelsContainer(
                                 it
                             )
-                        }
+                        },
+                        IS_DEBUG_MODE_ENABLED to qrCodeVerificationResult.isDebugModeEnabled
                     )
                 )
             }

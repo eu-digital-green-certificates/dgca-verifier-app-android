@@ -17,19 +17,25 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 4/24/21 2:20 PM
+ *  Created by osarapulov on 9/4/21 7:43 PM
  */
 
-package dgca.verifier.app.android.data
+package dgca.verifier.app.android
 
-import androidx.lifecycle.LiveData
-import java.security.cert.Certificate
+import android.content.Context
+import android.text.Spannable
+import android.text.style.TextAppearanceSpan
+import androidx.annotation.StyleRes
 
-interface VerifierRepository {
-
-    suspend fun fetchCertificates(statusUrl: String, updateUrl: String): Boolean?
-
-    suspend fun getCertificatesBy(kid: String): List<Certificate>
-
-    fun getLastSyncTimeMillis(): LiveData<Long>
-}
+fun Spannable.applyStyle(context: Context, @StyleRes styleRes: Int): Spannable =
+    apply {
+        setSpan(
+            TextAppearanceSpan(
+                context,
+                styleRes
+            ),
+            0,
+            length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+    }

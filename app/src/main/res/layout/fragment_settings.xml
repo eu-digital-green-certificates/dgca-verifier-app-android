@@ -54,7 +54,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/privacyInformation"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
+        style="@style/TextAppearance.Dgca.SettingsButtonHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableEnd="@drawable/ic_baseline_arrow_forward_24"
@@ -72,7 +72,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/licenses"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
+        style="@style/TextAppearance.Dgca.SettingsButtonHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableEnd="@drawable/ic_baseline_arrow_forward_24"
@@ -84,8 +84,6 @@
         android:paddingHorizontal="@dimen/default_padding"
         android:text="@string/licenses"
         android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@+id/privacyInformation" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -104,7 +102,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/syncPublicKeys"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
+        style="@style/TextAppearance.Dgca.SettingsButtonHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableEnd="@drawable/ic_synchronize_solid"
@@ -116,8 +114,6 @@
         android:paddingHorizontal="@dimen/default_padding"
         android:text="@string/reload"
         android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@+id/trustedPublicKeys" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -158,18 +154,25 @@
         tools:layout_editor_absoluteX="16dp"
         tools:text="Version: 1.0.0" />
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/debugModeSwitch"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/debugMode"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/default_margin"
-        android:ellipsize="end"
-        android:maxLines="2"
+        android:drawableEnd="@drawable/ic_baseline_arrow_forward_24"
+        android:gravity="start|center"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:letterSpacing="0"
+        android:minHeight="48dp"
+        android:paddingHorizontal="@dimen/default_padding"
         android:text="@string/debug_mode"
-        android:textColor="@color/grey_50"
-        android:textSize="@dimen/text_size_medium"
-        app:layout_constraintTop_toBottomOf="@id/version"
-        tools:layout_editor_absoluteX="16dp" />
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/version"
+        tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/logo"

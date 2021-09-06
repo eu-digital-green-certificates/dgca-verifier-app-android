@@ -17,19 +17,14 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 4/24/21 2:20 PM
+ *  Created by osarapulov on 9/3/21 6:02 PM
  */
 
-package dgca.verifier.app.android.data
+package dgca.verifier.app.android.settings.debug.mode
 
-import androidx.lifecycle.LiveData
-import java.security.cert.Certificate
+import androidx.annotation.StringRes
+import dgca.verifier.app.android.R
 
-interface VerifierRepository {
-
-    suspend fun fetchCertificates(statusUrl: String, updateUrl: String): Boolean?
-
-    suspend fun getCertificatesBy(kid: String): List<Certificate>
-
-    fun getLastSyncTimeMillis(): LiveData<Long>
+enum class DebugModeState(@StringRes val stringRes: Int) {
+    OFF(R.string.off), LEVEL_1(R.string.on_level_1), LEVEL_2(R.string.on_level_2), LEVEL_3(R.string.on_level_3)
 }
