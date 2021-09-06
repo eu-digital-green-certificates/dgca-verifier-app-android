@@ -26,7 +26,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.VerifierRepository
@@ -136,9 +135,9 @@ class VerificationViewModel @Inject constructor(
                         standardizedVerificationResult.category != StandardizedVerificationResultCategory.VALID
                                 && (preferences.debugModeState?.let { DebugModeState.valueOf(it) }
                             ?: DebugModeState.OFF) != DebugModeState.OFF
-//                                && preferences.debugModeSelectedCountriesCodes?.contains(
-//                            innerVerificationResult.greenCertificateData?.getNormalizedIssuingCountry()
-//                        ) == true
+                                && preferences.debugModeSelectedCountriesCodes?.contains(
+                            innerVerificationResult.greenCertificateData?.getNormalizedIssuingCountry()
+                        ) == true
 
                     QrCodeVerificationResult.Applicable(
                         standardizedVerificationResult,
