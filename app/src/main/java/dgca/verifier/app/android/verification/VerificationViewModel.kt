@@ -26,7 +26,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.android.data.local.Preferences
@@ -122,7 +121,8 @@ class VerificationViewModel @Inject constructor(
                     }
 
                 if (innerVerificationResult.isApplicableCode) {
-                    val covidCertificate = innerVerificationResult.greenCertificateData?.greenCertificate
+                    val covidCertificate =
+                        innerVerificationResult.greenCertificateData?.greenCertificate
                     val certificateModel = covidCertificate?.toCertificateModel()
                     val hcert: String? = innerVerificationResult.greenCertificateData?.hcertJson
                     val standardizedVerificationResult: StandardizedVerificationResult =
