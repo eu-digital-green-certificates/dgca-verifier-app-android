@@ -17,15 +17,28 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 9/2/21 7:45 PM
+ *  Created by mykhailo.nester on 06/09/2021, 09:01
  */
 
-package dgca.verifier.app.android.verification
+package dgca.verifier.app.android
 
-const val VERIFY_REQUEST_KEY = "VERIFY_REQUEST"
-const val STANDARDISED_VERIFICATION_RESULT_KEY = "STANDARDISED_VERIFICATION_RESULT"
-const val CERTIFICATE_MODEL_KEY = "CERTIFICATE_MODEL"
-const val HCERT_KEY = "HCERT"
-const val RULE_VALIDATION_RESULT_MODELS_CONTAINER_KEY = "RULE_VALIDATION_RESULT_MODELS_CONTAINER"
-const val IS_DEBUG_MODE_ENABLED = "IS_DEBUG_MODE_ENABLED"
-const val DEBUG_DATA = "DEBUG_DATA"
+/**
+ * Used as a wrapper for data that is exposed via a LiveData that represents an event.
+ */
+open class Event<out T>(private val content: T) {
+
+    var hasBeenHandled = false
+        private set // Allow external read but not write
+
+    /**
+     * Returns the content and prevents its use again.
+     */
+    fun getContentIfNotHandled(): T? {
+        return if (hasBeenHandled) {
+            null
+        } else {
+            hasBeenHandled = true
+            content
+        }
+    }
+}

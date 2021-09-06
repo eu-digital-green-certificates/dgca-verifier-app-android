@@ -119,10 +119,20 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
             val certificateModel: CertificateModel? = bundle.getParcelable(CERTIFICATE_MODEL_KEY)
             val hcert: String? = bundle.getString(HCERT_KEY)
             val ruleValidationResultModelsContainer: RuleValidationResultModelsContainer? = bundle.getParcelable(
-                RULE_VALIDATION_RESULT_MODELS_CONTAINER_KEY)
+                RULE_VALIDATION_RESULT_MODELS_CONTAINER_KEY
+            )
             val isDebugModeEnabled = bundle.getBoolean(IS_DEBUG_MODE_ENABLED)
+            val debugData: DebugData? = bundle.getParcelable(DEBUG_DATA)
+
             if (standardizedVerificationResult != null) {
-                showVerificationResult(standardizedVerificationResult, certificateModel, hcert, ruleValidationResultModelsContainer, isDebugModeEnabled)
+                showVerificationResult(
+                    standardizedVerificationResult,
+                    certificateModel,
+                    hcert,
+                    ruleValidationResultModelsContainer,
+                    isDebugModeEnabled,
+                    debugData
+                )
             }
         }
     }
@@ -132,7 +142,8 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
         certificateModel: CertificateModel?,
         hcert: String?,
         ruleValidationResultModelsContainer: RuleValidationResultModelsContainer?,
-        isDebugModeEnabled: Boolean
+        isDebugModeEnabled: Boolean,
+        debugData: DebugData?
     ) {
         findNavController().navigateUp()
         binding.barcodeScanner.pause()
@@ -141,7 +152,8 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
                 standardizedVerificationResult,
                 certificateModel,
                 hcert,
-                ruleValidationResultModelsContainer
+                ruleValidationResultModelsContainer,
+                debugData
             )
         } else {
             CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationResultFragment(

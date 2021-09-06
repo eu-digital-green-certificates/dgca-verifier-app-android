@@ -93,4 +93,5 @@
     <string name="level_3_full_take">Level 3 - full take</string>
     <string name="select_country">Select country</string>
     <string name="no_countries_selected">No countries selected</string>
+    <string name="share" translatable="false">Share</string>
 </resources>

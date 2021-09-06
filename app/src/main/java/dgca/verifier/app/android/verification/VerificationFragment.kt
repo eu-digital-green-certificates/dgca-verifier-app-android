@@ -65,11 +65,10 @@ class VerificationFragment : DialogFragment() {
                         CERTIFICATE_MODEL_KEY to qrCodeVerificationResult.certificateModel,
                         HCERT_KEY to qrCodeVerificationResult.hcert,
                         RULE_VALIDATION_RESULT_MODELS_CONTAINER_KEY to qrCodeVerificationResult.rulesValidationResults?.let {
-                            RuleValidationResultModelsContainer(
-                                it
-                            )
+                            RuleValidationResultModelsContainer(it)
                         },
-                        IS_DEBUG_MODE_ENABLED to qrCodeVerificationResult.isDebugModeEnabled
+                        IS_DEBUG_MODE_ENABLED to qrCodeVerificationResult.isDebugModeEnabled,
+                        DEBUG_DATA to qrCodeVerificationResult.debugData
                     )
                 )
             }
