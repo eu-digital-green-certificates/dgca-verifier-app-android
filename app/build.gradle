@@ -97,9 +97,6 @@ dependencies {
     implementation project(':decoder')
     implementation project(':engine')
 
-
-    implementation "com.google.code.gson:gson:2.8.6"
-
     implementation Deps.kotlin_stdlib
     implementation Deps.androidx_core
     implementation Deps.androidx_appcompat
