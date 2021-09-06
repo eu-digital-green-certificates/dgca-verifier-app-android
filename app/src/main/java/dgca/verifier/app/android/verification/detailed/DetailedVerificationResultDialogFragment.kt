@@ -78,7 +78,12 @@ class DetailedVerificationResultDialogFragment :
             args.ruleValidationResultModelsContainer,
         )
         binding.shareBtn.setOnClickListener {
-            viewModel.onShareClick(requireContext().cacheDir.path, args.certificateModel, args.hcert, args.debugData)
+            viewModel.onShareClick(
+                requireContext().cacheDir.path,
+                args.certificateModel,
+                args.hcert,
+                args.debugData
+            )
         }
 
         viewModel.event.observe(viewLifecycleOwner) { event ->
@@ -107,8 +112,10 @@ class DetailedVerificationResultDialogFragment :
 
         val context = requireContext()
         binding.actionButton.text = context.getString(textRes)
-        binding.actionButton.backgroundTintList =
-            ColorStateList.valueOf(ContextCompat.getColor(context, colorRes))
+        ColorStateList.valueOf(ContextCompat.getColor(context, colorRes)).apply {
+            binding.actionButton.backgroundTintList = this
+            binding.shareBtn.backgroundTintList = this
+        }
         binding.actionButton.setOnClickListener { dismiss() }
 
         handleCertificateModel(
@@ -160,7 +167,8 @@ class DetailedVerificationResultDialogFragment :
                 val path = event.filePath
 
                 if (path.isEmpty()) {
-                    Toast.makeText(requireContext(), "Failed to prepare file", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Failed to prepare file", Toast.LENGTH_SHORT)
+                        .show()
                     return
                 }
 
@@ -179,7 +187,8 @@ class DetailedVerificationResultDialogFragment :
                     Intent.createChooser(intent, getString(R.string.share))
                     startActivity(intent)
                 } else {
-                    Toast.makeText(requireContext(), "Failed to share file", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Failed to share file", Toast.LENGTH_SHORT)
+                        .show()
                     Timber.d("Cannot shared file")
                 }
             }
