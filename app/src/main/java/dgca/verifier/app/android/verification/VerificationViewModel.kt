@@ -104,49 +104,52 @@ class VerificationViewModel @Inject constructor(
 
     private fun decode(code: String, countryIsoCode: String) {
         viewModelScope.launch {
-
-            val verificationResult = VerificationResult()
-            var innerVerificationResult: InnerVerificationResult
-            var validationResults: List<ValidationResult>? = null
-            var isDebugModeEnabled: Boolean
-
             withContext(Dispatchers.IO) {
+                val verificationResult = VerificationResult()
+                val innerVerificationResult: InnerVerificationResult =
+                    validateCertificate(code, verificationResult)
 
-                innerVerificationResult = validateCertificate(code, verificationResult)
+                val validationResults: List<ValidationResult>? =
+                    if (verificationResult.isValid() && innerVerificationResult.base64EncodedKid?.isNotBlank() == true) {
+                        innerVerificationResult.greenCertificateData?.validateRules(
+                            verificationResult,
+                            countryIsoCode,
+                            innerVerificationResult.base64EncodedKid
+                        )
+                    } else {
+                        null
+                    }
 
-                if (verificationResult.isValid() && innerVerificationResult.base64EncodedKid?.isNotBlank() == true) {
-                    validationResults = innerVerificationResult.greenCertificateData?.validateRules(
-                        verificationResult,
-                        countryIsoCode,
-                        innerVerificationResult.base64EncodedKid!!
+                if (innerVerificationResult.isApplicableCode) {
+                    val certificateModel: CertificateModel? =
+                        innerVerificationResult.greenCertificateData?.greenCertificate?.toCertificateModel()
+                    val hcert: String? = innerVerificationResult.greenCertificateData?.hcertJson
+                    val standardizedVerificationResult: StandardizedVerificationResult =
+                        extractStandardizedVerificationResultFrom(
+                            verificationResult,
+                            innerVerificationResult
+                        )
+
+                    val isDebugModeEnabled =
+                        standardizedVerificationResult.category != StandardizedVerificationResultCategory.VALID
+                                && (preferences.debugModeState?.let { DebugModeState.valueOf(it) }
+                            ?: DebugModeState.OFF) != DebugModeState.OFF
+                                && preferences.debugModeSelectedCountriesCodes?.contains(
+                            innerVerificationResult.greenCertificateData?.getNormalizedIssuingCountry()
+                        ) == true
+
+                    QrCodeVerificationResult.Applicable(
+                        standardizedVerificationResult,
+                        certificateModel,
+                        hcert,
+                        validationResults?.toRuleValidationResultModels(),
+                        isDebugModeEnabled
                     )
+                } else {
+                    QrCodeVerificationResult.NotApplicable
                 }
-
-                isDebugModeEnabled = (preferences.debugModeState?.let { DebugModeState.valueOf(it) }
-                    ?: DebugModeState.OFF) != DebugModeState.OFF && preferences.debugModeSelectedCountriesCodes?.contains(
-                    innerVerificationResult.greenCertificateData?.getNormalizedIssuingCountry()
-                ) == true
-            }
-
-            _qrCodeVerificationResult.value = if (innerVerificationResult.isApplicableCode) {
-                val certificateModel: CertificateModel? =
-                    innerVerificationResult.greenCertificateData?.greenCertificate?.toCertificateModel()
-                val hcert: String? = innerVerificationResult.greenCertificateData?.hcertJson
-                val standardizedVerificationResult: StandardizedVerificationResult =
-                    extractStandardizedVerificationResultFrom(
-                        verificationResult,
-                        innerVerificationResult
-                    )
-
-                QrCodeVerificationResult.Applicable(
-                    standardizedVerificationResult,
-                    certificateModel,
-                    hcert,
-                    validationResults?.toRuleValidationResultModels(),
-                    isDebugModeEnabled
-                )
-            } else {
-                QrCodeVerificationResult.NotApplicable
+            }.let { qrCodeVerificationResultInner ->
+                _qrCodeVerificationResult.value = qrCodeVerificationResultInner
             }
         }
     }
