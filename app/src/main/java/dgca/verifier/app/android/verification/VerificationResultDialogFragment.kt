@@ -143,8 +143,6 @@ class VerificationResultDialogFragment :
                         }
                     }
                 }
-            } else {
-                binding.toBeHiddenForInvalid.visibility = View.GONE
             }
         }
     }
@@ -264,6 +262,8 @@ class VerificationResultDialogFragment :
 
     private fun showUserData(certificate: CertificateModel) {
         binding.personStandardisedFamilyName.text = certificate.person.standardisedFamilyName
+        binding.personStandardisedFamilyNameTitle.visibility = View.VISIBLE
+        binding.personStandardisedFamilyName.visibility = View.VISIBLE
         binding.personStandardisedGivenName.text = certificate.person.standardisedGivenName
         if (certificate.person.standardisedGivenName?.isNotBlank() == true) {
             View.VISIBLE
