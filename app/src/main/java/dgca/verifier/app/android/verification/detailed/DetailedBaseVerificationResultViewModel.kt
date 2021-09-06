@@ -36,8 +36,8 @@ import dgca.verifier.app.android.anonymization.PolicyLevel
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.utils.sha256
 import dgca.verifier.app.android.verification.DebugData
-import dgca.verifier.app.android.verification.StandardizedVerificationResultCategory
 import dgca.verifier.app.android.verification.detailed.qr.QrCodeConverter
+import dgca.verifier.app.decoder.cbor.CborService
 import dgca.verifier.app.decoder.cose.CoseService
 import dgca.verifier.app.decoder.toBase64
 import dgca.verifier.app.decoder.toHexString
@@ -52,17 +52,6 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import javax.inject.Inject
 
-enum class VerificationComponent { TECHNICAL_VERIFICATION, ISSUER_INVALIDATION, DESTINATION_INVALIDATION, TRAVELLER_ACCEPTANCE }
-
-enum class VerificationComponentState { PASSED, FAILED, OPEN }
-
-fun Map<VerificationComponent, VerificationComponentState>.toVerificationResult(): StandardizedVerificationResultCategory =
-    when {
-        this[VerificationComponent.TECHNICAL_VERIFICATION] != VerificationComponentState.PASSED || this[VerificationComponent.TRAVELLER_ACCEPTANCE] != VerificationComponentState.PASSED -> StandardizedVerificationResultCategory.INVALID
-        this[VerificationComponent.ISSUER_INVALIDATION] == VerificationComponentState.PASSED && this[VerificationComponent.DESTINATION_INVALIDATION] == VerificationComponentState.PASSED -> StandardizedVerificationResultCategory.VALID
-        else -> StandardizedVerificationResultCategory.LIMITED_VALIDITY
-    }
-
 private const val BUFFER = 1024
 private const val QR_CODE_SIZE = 400
 
@@ -70,7 +59,8 @@ private const val QR_CODE_SIZE = 400
 class DetailedBaseVerificationResultViewModel @Inject constructor(
     private val qrCodeConverter: QrCodeConverter,
     private val anonymizationManager: AnonymizationManager,
-    private val coseService: CoseService
+    private val coseService: CoseService,
+    private val cborService: CborService
 ) : ViewModel() {
 
     private val _inProgress = MutableLiveData<Boolean>()
@@ -166,12 +156,16 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
         )
 
     @Throws(IOException::class)
-    private fun generatePayloadShaBin(cachePath: String, cbor: ByteArray?): File =
-        createAndWriteToFile(cachePath.plusFile(Files.PAYLOAD_SHA_BIN), cbor?.sha256())
+    private fun generatePayloadShaBin(cachePath: String, cbor: ByteArray?): File {
+        val payload = cbor?.let { cborService.getPayload(it) } ?: byteArrayOf()
+        return createAndWriteToFile(cachePath.plusFile(Files.PAYLOAD_SHA_BIN), payload.sha256())
+    }
 
     @Throws(IOException::class)
-    private fun generatePayloadShaTxt(cachePath: String, cbor: ByteArray?): File =
-        createAndWriteToFile(cachePath.plusFile(Files.PAYLOAD_SHA_TXT), "${cbor?.toHexString()?.sha256()}\n")
+    private fun generatePayloadShaTxt(cachePath: String, cbor: ByteArray?): File {
+        val payload = cbor?.let { cborService.getPayload(it) } ?: byteArrayOf()
+        return createAndWriteToFile(cachePath.plusFile(Files.PAYLOAD_SHA_TXT), "${payload.toHexString().sha256()}\n")
+    }
 
     @Throws(IOException::class)
     private fun generateQrBase64(cachePath: String, cose: ByteArray?, policyLevel: PolicyLevel): File {
@@ -225,8 +219,10 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
         createAndWriteToFile(cachePath.plusFile(Files.COSE_BASE64), "${cose?.toBase64()}")
 
     @Throws(IOException::class)
-    private fun generatePayloadBase64(cachePath: String, cbor: ByteArray?): File =
-        createAndWriteToFile(cachePath.plusFile(Files.PAYLOAD_BASE64), "${cbor?.toBase64()}")
+    private fun generatePayloadBase64(cachePath: String, cbor: ByteArray?): File {
+        val payload = cbor?.let { cborService.getPayload(it) } ?: byteArrayOf()
+        return createAndWriteToFile(cachePath.plusFile(Files.PAYLOAD_BASE64), payload.toBase64())
+    }
 
     @Throws(IOException::class)
     private fun zip(cachePath: String, files: List<File>): String {
