@@ -143,6 +143,8 @@ class VerificationResultDialogFragment :
                         }
                     }
                 }
+            } else {
+                binding.toBeHiddenForInvalid.visibility = View.GONE
             }
         }
     }

@@ -216,6 +216,12 @@
                 app:constraint_referenced_ids="reason_test_result_title, reason_test_result_value"
                 tools:visibility="visible" />
 
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/toBeHiddenForInvalid"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:constraint_referenced_ids="person_standardised_family_name_title, person_standardised_family_name, person_standardised_given_name_title, person_standardised_given_name, date_of_birth_title, date_of_birth" />
+
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/person_standardised_family_name_title"
                 style="@style/TextAppearance.Dgca.CertificateTitle"
