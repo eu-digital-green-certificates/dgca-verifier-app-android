@@ -23,15 +23,16 @@
 package dgca.verifier.app.android.anonymization
 
 import dgca.verifier.app.android.model.CertificateModel
+import dgca.verifier.app.android.settings.debug.mode.DebugModeState
 import javax.inject.Inject
 
 class AnonymizationManager @Inject constructor() {
 
-    fun anonymizeDcc(certificateModel: CertificateModel, policyLevel: PolicyLevel = PolicyLevel.L1): CertificateModel {
-        return when (policyLevel) {
-            PolicyLevel.L1 -> l1Anonymization(certificateModel)
-            PolicyLevel.L2 -> l2Anonymization(certificateModel)
-            PolicyLevel.L3 -> certificateModel
+    fun anonymizeDcc(certificateModel: CertificateModel, state: DebugModeState = DebugModeState.LEVEL_1): CertificateModel {
+        return when (state) {
+            DebugModeState.LEVEL_1 -> l1Anonymization(certificateModel)
+            DebugModeState.LEVEL_2 -> l2Anonymization(certificateModel)
+            else -> certificateModel
         }
     }
 

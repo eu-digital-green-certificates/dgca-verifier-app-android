@@ -32,8 +32,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.BuildConfig
 import dgca.verifier.app.android.Event
 import dgca.verifier.app.android.anonymization.AnonymizationManager
-import dgca.verifier.app.android.anonymization.PolicyLevel
+import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.model.CertificateModel
+import dgca.verifier.app.android.settings.debug.mode.DebugModeState
 import dgca.verifier.app.android.utils.sha256
 import dgca.verifier.app.android.verification.DebugData
 import dgca.verifier.app.android.verification.detailed.qr.QrCodeConverter
@@ -60,7 +61,8 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
     private val qrCodeConverter: QrCodeConverter,
     private val anonymizationManager: AnonymizationManager,
     private val coseService: CoseService,
-    private val cborService: CborService
+    private val cborService: CborService,
+    private val preferences: Preferences
 ) : ViewModel() {
 
     private val _inProgress = MutableLiveData<Boolean>()
@@ -68,8 +70,6 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
 
     private val _event = MutableLiveData<Event<DetailedViewEvent>>()
     val event: LiveData<Event<DetailedViewEvent>> = _event
-
-    var policyLevel = PolicyLevel.L3
 
     @Suppress("BlockingMethodInNonBlockingContext")
     fun onShareClick(cachePath: String, certificateModel: CertificateModel?, hcert: String?, debugData: DebugData?) {
@@ -95,6 +95,7 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
 
     @Throws(IOException::class)
     private fun generateZip(cachePath: String, certificateModel: CertificateModel, debugData: DebugData): String {
+        val debugPolicyLevel = (preferences.debugModeState?.let { DebugModeState.valueOf(it) } ?: DebugModeState.OFF)
         val cose = debugData.cose
         val cbor = debugData.cbor
         val qrCode = debugData.qrCode
@@ -103,14 +104,14 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
         val readme = generateReadmeFile(cachePath)
         val payloadShaBin = generatePayloadShaBin(cachePath, cbor)
         val payloadShaTxt = generatePayloadShaTxt(cachePath, cbor)
-        val qrBase64 = generateQrBase64(cachePath, cose, policyLevel)
-        val payload = generatePayloadJson(cachePath, certificateModel, policyLevel)
+        val qrBase64 = generateQrBase64(cachePath, cose, debugPolicyLevel)
+        val payload = generatePayloadJson(cachePath, certificateModel, debugPolicyLevel)
 
         // Base list of files
         val list = mutableListOf(version, readme, payloadShaBin, payloadShaTxt, qrBase64, payload)
 
         //  L2/L3 Section
-        if (policyLevel == PolicyLevel.L2 || policyLevel == PolicyLevel.L3) {
+        if (debugPolicyLevel == DebugModeState.LEVEL_2 || debugPolicyLevel == DebugModeState.LEVEL_3) {
             val qrShaBin = generateQrShaBin(cachePath, qrCode)
             list.add(qrShaBin)
 
@@ -118,7 +119,7 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
             list.add(qrShaTxt)
         }
 
-        if (policyLevel == PolicyLevel.L3) {
+        if (debugPolicyLevel == DebugModeState.LEVEL_3) {
             val bitmap = qrCodeConverter.convertStringIntoQrCode(qrCode, QR_CODE_SIZE)
             val qrImageFile = bitmapToFile(cachePath, bitmap)
             list.add(qrImageFile)
@@ -168,8 +169,8 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
     }
 
     @Throws(IOException::class)
-    private fun generateQrBase64(cachePath: String, cose: ByteArray?, policyLevel: PolicyLevel): File {
-        val coseByteArray = if (policyLevel == PolicyLevel.L3) {
+    private fun generateQrBase64(cachePath: String, cose: ByteArray?, state: DebugModeState): File {
+        val coseByteArray = if (state == DebugModeState.LEVEL_3) {
             cose
         } else {
             cose?.let { coseService.anonymizeCose(it) }
@@ -179,8 +180,8 @@ class DetailedBaseVerificationResultViewModel @Inject constructor(
     }
 
     @Throws(IOException::class)
-    private fun generatePayloadJson(cachePath: String, certificateModel: CertificateModel, policyLevel: PolicyLevel): File {
-        val result = anonymizationManager.anonymizeDcc(certificateModel, policyLevel)
+    private fun generatePayloadJson(cachePath: String, certificateModel: CertificateModel, state: DebugModeState): File {
+        val result = anonymizationManager.anonymizeDcc(certificateModel, state)
         val json = ObjectMapper().writeValueAsString(result)
         return createAndWriteToFile(cachePath.plusFile(Files.PAYLOAD_JSON), json)
     }
