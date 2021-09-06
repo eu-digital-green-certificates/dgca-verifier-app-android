@@ -232,19 +232,13 @@ class VerificationViewModel @Inject constructor(
             }
         }
 
-        val debugData = if (preferences.isDebugModeEnabled == true) {
-            DebugData(code, cose, coseData.cbor)
-        } else {
-            null
-        }
-
         return InnerVerificationResult(
             noPublicKeysFound = noPublicKeysFound,
             certificateExpired = certificateExpired,
             greenCertificateData = greenCertificateData,
             isApplicableCode = isApplicableCode,
             base64EncodedKid = base64EncodedKid,
-            debugData = debugData
+            debugData = DebugData(code, cose, coseData.cbor)
         )
     }
 
