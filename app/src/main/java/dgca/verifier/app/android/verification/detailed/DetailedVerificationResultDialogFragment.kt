@@ -75,10 +75,15 @@ class DetailedVerificationResultDialogFragment :
             args.standardizedVerificationResult,
             args.certificateModel,
             args.hcert,
-            args.ruleValidationResultModelsContainer
+            args.ruleValidationResultModelsContainer,
         )
         binding.shareBtn.setOnClickListener {
-            viewModel.onShareClick(requireContext().cacheDir.path, args.certificateModel, args.hcert, args.debugData)
+            viewModel.onShareClick(
+                requireContext().cacheDir.path,
+                args.certificateModel,
+                args.hcert,
+                args.debugData
+            )
         }
 
         viewModel.event.observe(viewLifecycleOwner) { event ->
@@ -107,14 +112,17 @@ class DetailedVerificationResultDialogFragment :
 
         val context = requireContext()
         binding.actionButton.text = context.getString(textRes)
-        binding.actionButton.backgroundTintList =
-            ColorStateList.valueOf(ContextCompat.getColor(context, colorRes))
+        ColorStateList.valueOf(ContextCompat.getColor(context, colorRes)).apply {
+            binding.actionButton.backgroundTintList = this
+            binding.shareBtn.backgroundTintList = this
+        }
         binding.actionButton.setOnClickListener { dismiss() }
 
         handleCertificateModel(
             standardizedVerificationResult,
             certificateModel,
-            hcert
+            hcert,
+            ruleValidationResultModelsContainer
         )
 
         viewModel.inProgress.observe(viewLifecycleOwner) {
@@ -125,7 +133,8 @@ class DetailedVerificationResultDialogFragment :
     private fun handleCertificateModel(
         standardizedVerificationResult: StandardizedVerificationResult,
         certificateModel: CertificateModel?,
-        hcert: String?
+        hcert: String?,
+        ruleValidationResultModelsContainer: RuleValidationResultModelsContainer?
     ) {
         if (certificateModel == null || hcert.isNullOrBlank()) {
             binding.certificateInfo.visibility = View.GONE
@@ -133,9 +142,9 @@ class DetailedVerificationResultDialogFragment :
         } else {
             binding.certificateInfo.setCertificateModel(
                 certificateModel,
-                standardizedVerificationResult
+                standardizedVerificationResult,
+                ruleValidationResultModelsContainer
             )
-            binding.certificateInfo.setExpanded(true)
             binding.certificateRawInfo.setHcert(hcert)
             binding.certificateInfo.visibility = View.VISIBLE
             binding.certificateRawInfo.visibility = View.VISIBLE
@@ -158,7 +167,8 @@ class DetailedVerificationResultDialogFragment :
                 val path = event.filePath
 
                 if (path.isEmpty()) {
-                    Toast.makeText(requireContext(), "Failed to prepare file", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Failed to prepare file", Toast.LENGTH_SHORT)
+                        .show()
                     return
                 }
 
@@ -177,7 +187,8 @@ class DetailedVerificationResultDialogFragment :
                     Intent.createChooser(intent, getString(R.string.share))
                     startActivity(intent)
                 } else {
-                    Toast.makeText(requireContext(), "Failed to share file", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Failed to share file", Toast.LENGTH_SHORT)
+                        .show()
                     Timber.d("Cannot shared file")
                 }
             }

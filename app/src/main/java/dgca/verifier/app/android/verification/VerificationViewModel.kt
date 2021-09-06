@@ -52,8 +52,7 @@ import dgca.verifier.app.engine.CertLogicEngine
 import dgca.verifier.app.engine.Result
 import dgca.verifier.app.engine.UTC_ZONE_ID
 import dgca.verifier.app.engine.ValidationResult
-import dgca.verifier.app.engine.data.CertificateType
-import dgca.verifier.app.engine.data.ExternalParameter
+import dgca.verifier.app.engine.data.*
 import dgca.verifier.app.engine.data.source.valuesets.ValueSetsRepository
 import dgca.verifier.app.engine.domain.rules.GetRulesUseCase
 import kotlinx.coroutines.Dispatchers
@@ -122,7 +121,8 @@ class VerificationViewModel @Inject constructor(
                     }
 
                 if (innerVerificationResult.isApplicableCode) {
-                    val covidCertificate = innerVerificationResult.greenCertificateData?.greenCertificate
+                    val covidCertificate =
+                        innerVerificationResult.greenCertificateData?.greenCertificate
                     val certificateModel = covidCertificate?.toCertificateModel()
                     val hcert: String? = innerVerificationResult.greenCertificateData?.hcertJson
                     val standardizedVerificationResult: StandardizedVerificationResult =
