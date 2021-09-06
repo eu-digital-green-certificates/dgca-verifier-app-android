@@ -272,7 +272,7 @@ class VerificationResultDialogFragment :
             binding.personStandardisedGivenName.visibility = this
         }
 
-        binding. dateOfBirthValue.text =
+        binding.dateOfBirthValue.text =
             certificate.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
 
         val dateOfBirth =
