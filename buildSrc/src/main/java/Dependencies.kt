@@ -65,7 +65,7 @@ object Deps {
     const val jackson_cbor = "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${Versions.jackson_cbor}"
     const val bouncy_castle = "org.bouncycastle:bcpkix-jdk15to18:${Versions.bouncy_castle}"
     const val jackson_kotlin = "com.fasterxml.jackson.module:jackson-module-kotlin:${Versions.jackson_kotlin}"
-    const val jackson_datetype = "com.fasterxml.jackson.datatype:${Versions.jackson_datetype}"
+    const val jackson_datetype = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${Versions.jackson_datetype}"
     const val appache_commons = "commons-io:commons-io:${Versions.appache_commons}"
 
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
