@@ -54,7 +54,7 @@ object Versions {
 
     // QR
     const val zxing = "4.2.0"
-    const val zxing_core = "3.3.0"
+    const val zxing_core = "3.3.2"
     const val guave_conflict_resolver_version = "9999.0-empty-to-avoid-conflict-with-guava"
 
     // Decoder
@@ -63,7 +63,8 @@ object Versions {
     const val java_cose = "1.1.0"
     const val bouncy_castle = "1.68"
     const val jackson_kotlin = "2.12.0"
-    const val jackson_datetype = "jackson-datatype-jsr310"
+    // const val jackson_datetype = "jackson-datatype-jsr310"
+    const val jackson_datetype = "2.12.0"
     const val appache_commons = "2.9.0"
 
     // Validation
