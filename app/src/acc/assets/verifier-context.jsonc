@@ -26,21 +26,21 @@
           ]
         },
         "countryList": {
-          "url": "https://dgca-businessrule-service.cfapps.eu10.hana.ondemand.com/countrylist",
+          "url": "https://dgca-businessrule-service-eu-acc.cfapps.eu10.hana.ondemand.com/countrylist",
           "pubKeys": [
             "lKdU1EbQubxyDDm2q3N8KclZ2C94Num3xXjG0pk+3eI=",
             "r/mIkG3eEpVdm+u/ko/cwxzOMo1bk4TyHIlByibiA5E="
           ]
         },
         "rules": {
-          "url": "https://dgca-businessrule-service.cfapps.eu10.hana.ondemand.com/rules",
+          "url": "https://dgca-businessrule-service-eu-acc.cfapps.eu10.hana.ondemand.com/rules",
           "pubKeys": [
             "lKdU1EbQubxyDDm2q3N8KclZ2C94Num3xXjG0pk+3eI=",
             "r/mIkG3eEpVdm+u/ko/cwxzOMo1bk4TyHIlByibiA5E="
           ]
         },
         "valuesets": {
-          "url": "https://dgca-businessrule-service.cfapps.eu10.hana.ondemand.com/valuesets",
+          "url": "https://dgca-businessrule-service-eu-acc.cfapps.eu10.hana.ondemand.com/valuesets",
           "pubKeys": [
             "lKdU1EbQubxyDDm2q3N8KclZ2C94Num3xXjG0pk+3eI=",
             "r/mIkG3eEpVdm+u/ko/cwxzOMo1bk4TyHIlByibiA5E="
