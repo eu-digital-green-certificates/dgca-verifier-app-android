@@ -26,6 +26,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import dgca.verifier.app.android.R
@@ -51,6 +52,10 @@ class DetailedVerificationResultHeaderView(context: Context, attrs: AttributeSet
     ) {
         binding.personFullName.text = certificateModel?.getFullName() ?: ""
 
+        val isValid =
+            standardizedVerificationResult.category == StandardizedVerificationResultCategory.VALID
+        binding.information.visibility = if (isValid) View.GONE else View.VISIBLE
+
         val (colorRes, textRes) = when (standardizedVerificationResult.category) {
             StandardizedVerificationResultCategory.VALID -> Pair(R.color.green, R.string.cert_valid)
             StandardizedVerificationResultCategory.INVALID -> Pair(
@@ -66,9 +71,18 @@ class DetailedVerificationResultHeaderView(context: Context, attrs: AttributeSet
         binding.verificationStatusBackground.backgroundTintList =
             ColorStateList.valueOf(ContextCompat.getColor(context, colorRes))
 
-        binding.detailedVerificationResultView.setUp(
-            standardizedVerificationResult,
-            ruleValidationResultModelsContainer
-        )
+        if (isValid) {
+            binding.detailedVerificationResultView.visibility = View.GONE
+            binding.certStatusIcon.visibility = View.VISIBLE
+            View.GONE
+        } else {
+            binding.detailedVerificationResultView.visibility = View.VISIBLE
+            binding.certStatusIcon.visibility = View.GONE
+            binding.detailedVerificationResultView.setUp(
+                standardizedVerificationResult,
+                ruleValidationResultModelsContainer
+            )
+            View.VISIBLE
+        }
     }
 }
