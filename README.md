@@ -45,9 +45,11 @@ android-app
 |___dgca-app-core-android
 ```
 
-#### Android Studio based build
+#### Android Studio based build 
 
-This project uses the Gradle build system. To build this project, use the `gradlew build` command or use "Run" in Android Studio.
+Modifiy `app\build.gradle` file, changing `BASE_URL`, `SERVER_HOST` and `CERTIFICATE_SHA` `debug` config values with `release` config values.
+
+This project uses the Gradle build system. To build this project, use the `gradlew build` command or use `"Run"` in Android Studio.
 
 ## Documentation  
 
