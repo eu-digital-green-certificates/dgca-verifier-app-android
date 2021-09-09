@@ -98,7 +98,7 @@ it:
     pagopa: false
     spid: false
 legal:
-  license: AGPL-3.0-only
+  license: Apache-2.0
   mainCopyrightOwner: >-
     Ministero della Salute
   repoOwner: Ministero della Salute
