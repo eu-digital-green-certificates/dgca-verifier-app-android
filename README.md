@@ -47,7 +47,7 @@ android-app
 
 #### Android Studio based build 
 
-Modifiy `app\build.gradle` file, changing `BASE_URL`, `SERVER_HOST` and `CERTIFICATE_SHA` `debug` config values with `release` config values.
+Modifiy `app\build.gradle` file, changing `BASE_URL`, `SERVER_HOST` and `CERTIFICATE_SHA` `debug` config values with `release` config values. [Here](https://github.com/ministero-salute/it-dgc-documentation/blob/master/openapi.yaml) you can find more info on app's endpoints.
 
 This project uses the Gradle build system. To build this project, use the `gradlew build` command or use `"Run"` in Android Studio.
 
