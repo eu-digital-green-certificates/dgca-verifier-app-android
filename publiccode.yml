@@ -1,6 +1,6 @@
 publiccodeYmlVersion: "0.2"
 applicationSuite: it-dgc
-url: "https://github.com/ministero-salute"
+url: "https://github.com/ministero-salute/it-dgc-verificaC19-android"
 name: VerificaC19
 releaseDate: '2021-06-26'
 softwareType: standalone/mobile
@@ -64,9 +64,7 @@ description:
       certificate holder ID card.
     shortDescription: >-
       VerificaC19 is the official app of the Italian government for enable 
-      operators to verify the validity and authenticity of COVID-19 Green 
-      Certificates issued by Italy National DGC Platform of the Ministry of 
-      Health and by the other Member States of the European Union.
+      operators to verify COVID-19 Green Certificates.
     screenshots:
       - screenshots/Main.png
       - screenshots/Valid.png
