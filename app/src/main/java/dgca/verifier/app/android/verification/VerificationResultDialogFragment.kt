@@ -85,6 +85,7 @@ class VerificationResultDialogFragment :
     override fun actionButton(): Button = binding.actionButton
 
     private fun handleDecodeResult() {
+        binding.verificationResultHeaderView.setUp(args.standardizedVerificationResult, args.certificateModel, args.ruleValidationResultModelsContainer)
         handleVerificationResult(
             args.certificateModel,
             args.standardizedVerificationResult.category
@@ -101,7 +102,6 @@ class VerificationResultDialogFragment :
         setCertStatusUI(standardizedVerificationResultCategory)
         setCertDataVisibility(standardizedVerificationResultCategory)
         certificateModel?.let { it ->
-            binding.personFullName.text = it.getFullName()
             toggleButton(it)
 
             if (standardizedVerificationResultCategory != StandardizedVerificationResultCategory.INVALID) {
@@ -175,9 +175,6 @@ class VerificationResultDialogFragment :
             }
         }
 
-        binding.status.text = text
-        binding.certStatusIcon.setImageResource(imageId)
-        binding.verificationStatusBg.backgroundTintList = statusColor
         actionButton().isVisible = true
         actionButton().backgroundTintList = statusColor
         actionButton().text = actionBtnText
