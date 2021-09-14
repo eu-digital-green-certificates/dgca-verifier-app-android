@@ -61,7 +61,7 @@ class DgcaApplication : Application(), Configuration.Provider {
             try {
                 configDataSource.local().getConfig()
             } catch (fileNotFoundException: FileNotFoundException) {
-                throw IllegalStateException("It's required to provide config json files. As and example may be used 'app/src/acc/assets/verifier-context.jsonc' or 'app/src/tst/assets/verifier-context.jsonc' files")
+                throw IllegalStateException("It's required to provide config json files. As an example may be used 'app/src/acc/assets/verifier-context.jsonc' or 'app/src/tst/assets/verifier-context.jsonc' files")
             }
         }
 
