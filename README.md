@@ -46,6 +46,11 @@ android-app
 |___dgc-certlogic-android
 ```
 
+- To build project - it's required to add config json file to application assets folder. Structure of the file should be similar to:
+'app/src/acc/assets/verifier-context.jsonc' or 'app/src/tst/assets/verifier-context.jsonc', depending on chosen flavor.
+After related file has been added - it's name should be passed via gradle properties:
+gradlew -PCONFIG_FILE_NAME="config.json"
+
 #### Android Studio based build
 
 This project uses the Gradle build system. To build this project, use the `gradlew build` command or use "Run" in Android Studio.

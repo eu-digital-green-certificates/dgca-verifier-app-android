@@ -25,6 +25,7 @@ package dgca.verifier.app.android.data.local
 import android.content.Context
 import com.fasterxml.jackson.databind.ObjectMapper
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dgca.verifier.app.android.BuildConfig
 import dgca.verifier.app.android.data.Config
 import timber.log.Timber
 import java.io.*
@@ -38,7 +39,6 @@ class LocalConfigDataSource @Inject constructor(
     private lateinit var config: Config
 
     companion object {
-        const val DEFAULT_CONFIG_FILE = "verifier-context.jsonc"
         const val CONFIG_FILE = "config.json"
     }
 
@@ -76,7 +76,7 @@ class LocalConfigDataSource @Inject constructor(
     }
 
     private fun defaultConfig(): Config =
-        context.assets.open(DEFAULT_CONFIG_FILE).bufferedReader().use {
+        context.assets.open(BuildConfig.CONFIG_FILE_NAME).bufferedReader().use {
             objectMapper.readValue(it.readText(), Config::class.java)
         }
 }
