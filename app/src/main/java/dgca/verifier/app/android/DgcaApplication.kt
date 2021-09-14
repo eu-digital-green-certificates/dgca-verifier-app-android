@@ -26,8 +26,12 @@ import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.*
 import dagger.hilt.android.HiltAndroidApp
+import dgca.verifier.app.android.data.ConfigRepository
 import dgca.verifier.app.android.worker.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.FileNotFoundException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.reflect.KClass
@@ -37,6 +41,9 @@ class DgcaApplication : Application(), Configuration.Provider {
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
+
+    @Inject
+    lateinit var configDataSource: ConfigRepository
 
     override fun getWorkManagerConfiguration(): Configuration {
         return Configuration.Builder()
@@ -48,6 +55,14 @@ class DgcaApplication : Application(), Configuration.Provider {
         super.onCreate()
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
+        }
+
+        GlobalScope.launch {
+            try {
+                configDataSource.local().getConfig()
+            } catch (fileNotFoundException: FileNotFoundException) {
+                throw IllegalStateException("It's required to provide config json files. As an example may be used 'app/src/acc/assets/verifier-context.jsonc' or 'app/src/tst/assets/verifier-context.jsonc' files")
+            }
         }
 
         WorkManager.getInstance(this).apply {

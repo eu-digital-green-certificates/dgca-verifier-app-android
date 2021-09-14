@@ -37,7 +37,7 @@ jobs:
     - name: build
       working-directory: ./dgca-verifier-app-android
       run: |-
-        ./gradlew --no-daemon build
+        ./gradlew --no-daemon build -PCONFIG_FILE_NAME="verifier-context.jsonc"
     - name: sign-tst
       working-directory: ./dgca-verifier-app-android
       run: |-

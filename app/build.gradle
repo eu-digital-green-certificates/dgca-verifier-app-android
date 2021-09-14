@@ -41,6 +41,11 @@ android {
         versionCode Config.versionCode
         versionName Config.versionName
 
+        // It's required to provide config json files, and path to it.
+        // Examples based on different flavors could be found here: 'app/src/acc/assets/verifier-context.jsonc' or 'app/src/tst/assets/verifier-context.jsonc'
+
+        buildConfigField "String", "CONFIG_FILE_NAME", "\"$CONFIG_FILE_NAME\""
+
         testInstrumentationRunner Config.androidTestInstrumentation
     }
 
