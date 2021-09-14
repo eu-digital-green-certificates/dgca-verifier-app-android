@@ -51,18 +51,18 @@ class DgcaApplication : Application(), Configuration.Provider {
         }
 
         WorkManager.getInstance(this).apply {
-            schedulePeriodicWorker<ConfigsLoadingWorker>()
-            schedulePeriodicWorker<RulesLoadWorker>()
-            schedulePeriodicWorker<LoadKeysWorker>()
-            schedulePeriodicWorker<CountriesLoadWorker>()
-            schedulePeriodicWorker<ValueSetsLoadWorker>()
+            schedulePeriodicWorker<ConfigsLoadingWorker>(WORKER_CONFIGS)
+            schedulePeriodicWorker<RulesLoadWorker>(WORKER_RULES)
+            schedulePeriodicWorker<LoadKeysWorker>(WORKER_KEYS)
+            schedulePeriodicWorker<CountriesLoadWorker>(WORKER_COUNTRIES)
+            schedulePeriodicWorker<ValueSetsLoadWorker>(WORKER_VALUESETS)
         }
 
         Timber.i("DGCA version ${BuildConfig.VERSION_NAME} is starting")
     }
 
-    private inline fun <reified T : ListenableWorker> WorkManager.schedulePeriodicWorker() =
-        this.enqueue(
+    private inline fun <reified T : ListenableWorker> WorkManager.schedulePeriodicWorker(workerId: String) =
+        this.enqueueUniquePeriodicWork(workerId, ExistingPeriodicWorkPolicy.KEEP,
             PeriodicWorkRequestBuilder<T>(1, TimeUnit.DAYS)
                 .setConstraints(
                     Constraints.Builder()
@@ -71,4 +71,12 @@ class DgcaApplication : Application(), Configuration.Provider {
                 )
                 .build()
         )
+
+    companion object {
+        const val WORKER_CONFIGS = "workerConfigs"
+        const val WORKER_RULES = "workerRules"
+        const val WORKER_KEYS = "workerKeys"
+        const val WORKER_COUNTRIES = "workerCountries"
+        const val WORKER_VALUESETS = "workerValueSets"
+    }
 }
