@@ -190,6 +190,7 @@ class VerificationResultDialogFragment :
                 StandardizedVerificationResult.CERTIFICATE_REVOKED -> R.string.certificate_was_revoked
                 StandardizedVerificationResult.VERIFICATION_FAILED -> R.string.verification_failed
                 StandardizedVerificationResult.CERTIFICATE_EXPIRED -> R.string.signing_certificate_is_expired
+                StandardizedVerificationResult.VACCINATION_DATE_IS_IN_THE_FUTURE -> R.string.the_vaccination_date_is_in_the_future
                 StandardizedVerificationResult.TEST_DATE_IS_IN_THE_FUTURE -> R.string.the_test_date_is_in_the_future
                 StandardizedVerificationResult.TEST_RESULT_POSITIVE -> R.string.test_result_positive
                 StandardizedVerificationResult.RECOVERY_NOT_VALID_SO_FAR -> R.string.recovery_not_valid_yet
