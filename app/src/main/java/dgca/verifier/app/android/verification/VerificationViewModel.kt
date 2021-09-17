@@ -17,7 +17,7 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 4/24/21 2:54 PM
+ *  Created by osarapulov on 9/2/21 9:36 AM
  */
 
 package dgca.verifier.app.android.verification
@@ -28,8 +28,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.VerifierRepository
+import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.model.CertificateModel
+import dgca.verifier.app.android.model.rules.RuleValidationResultModel
+import dgca.verifier.app.android.model.rules.toRuleValidationResultModels
 import dgca.verifier.app.android.model.toCertificateModel
+import dgca.verifier.app.android.settings.debug.mode.DebugModeState
+import dgca.verifier.app.android.verification.*
 import dgca.verifier.app.decoder.base45.Base45Service
 import dgca.verifier.app.decoder.cbor.CborService
 import dgca.verifier.app.decoder.cbor.GreenCertificateData
@@ -43,9 +48,11 @@ import dgca.verifier.app.decoder.model.VerificationResult
 import dgca.verifier.app.decoder.prefixvalidation.PrefixValidationService
 import dgca.verifier.app.decoder.schema.SchemaValidator
 import dgca.verifier.app.decoder.toBase64
-import dgca.verifier.app.engine.*
-import dgca.verifier.app.engine.data.CertificateType
-import dgca.verifier.app.engine.data.ExternalParameter
+import dgca.verifier.app.engine.CertLogicEngine
+import dgca.verifier.app.engine.Result
+import dgca.verifier.app.engine.UTC_ZONE_ID
+import dgca.verifier.app.engine.ValidationResult
+import dgca.verifier.app.engine.data.*
 import dgca.verifier.app.engine.data.source.valuesets.ValueSetsRepository
 import dgca.verifier.app.engine.domain.rules.GetRulesUseCase
 import kotlinx.coroutines.Dispatchers
@@ -59,24 +66,18 @@ import java.time.ZonedDateTime
 import java.util.*
 import javax.inject.Inject
 
-enum class GeneralVerificationResult {
-    SUCCESS, FAILED, RULES_VALIDATION_FAILED
-}
+sealed class QrCodeVerificationResult {
+    class Applicable(
+        val standardizedVerificationResult: StandardizedVerificationResult,
+        val certificateModel: CertificateModel?,
+        val hcert: String?,
+        val rulesValidationResults: List<RuleValidationResultModel>?,
+        val isDebugModeEnabled: Boolean,
+        val debugData: DebugData?
+    ) : QrCodeVerificationResult()
 
-fun VerificationData.getGeneralResult(): GeneralVerificationResult {
-    return when {
-        verificationResult?.isValid() == true && innerVerificationResult.isValid() -> GeneralVerificationResult.SUCCESS
-        verificationResult?.isTestWithPositiveResult() == true -> GeneralVerificationResult.FAILED
-        verificationResult?.rulesValidationFailed == true -> GeneralVerificationResult.RULES_VALIDATION_FAILED
-        else -> GeneralVerificationResult.FAILED
-    }
+    object NotApplicable : QrCodeVerificationResult()
 }
-
-data class VerificationData(
-    val verificationResult: VerificationResult?,
-    val innerVerificationResult: InnerVerificationResult,
-    val certificateModel: CertificateModel?
-)
 
 @HiltViewModel
 class VerificationViewModel @Inject constructor(
@@ -90,20 +91,12 @@ class VerificationViewModel @Inject constructor(
     private val verifierRepository: VerifierRepository,
     private val engine: CertLogicEngine,
     private val getRulesUseCase: GetRulesUseCase,
-    private val valueSetsRepository: ValueSetsRepository
+    private val valueSetsRepository: ValueSetsRepository,
+    private val preferences: Preferences
 ) : ViewModel() {
 
-    private val _verificationData = MutableLiveData<VerificationData>()
-    val verificationData: LiveData<VerificationData> = _verificationData
-
-    private val _verificationError = MutableLiveData<VerificationError>()
-    val verificationError: LiveData<VerificationError> = _verificationError
-
-    private val _validationResults = MutableLiveData<List<ValidationResult>>()
-    val validationResults: LiveData<List<ValidationResult>> = _validationResults
-
-    private val _inProgress = MutableLiveData<Boolean>()
-    val inProgress: LiveData<Boolean> = _inProgress
+    private val _qrCodeVerificationResult = MutableLiveData<QrCodeVerificationResult>()
+    val qrCodeVerificationResult: LiveData<QrCodeVerificationResult> = _qrCodeVerificationResult
 
     fun init(qrCodeText: String, countryIsoCode: String) {
         decode(qrCodeText, countryIsoCode)
@@ -111,36 +104,55 @@ class VerificationViewModel @Inject constructor(
 
     private fun decode(code: String, countryIsoCode: String) {
         viewModelScope.launch {
-            _inProgress.value = true
-
-            val verificationResult = VerificationResult()
-            var innerVerificationResult: InnerVerificationResult
-
             withContext(Dispatchers.IO) {
+                val verificationResult = VerificationResult()
+                val innerVerificationResult: InnerVerificationResult =
+                    validateCertificate(code, verificationResult)
 
-                innerVerificationResult = validateCertificate(code, verificationResult)
+                val validationResults: List<ValidationResult>? =
+                    if (verificationResult.isValid() && innerVerificationResult.base64EncodedKid?.isNotBlank() == true) {
+                        innerVerificationResult.greenCertificateData?.validateRules(
+                            verificationResult,
+                            countryIsoCode,
+                            innerVerificationResult.base64EncodedKid
+                        )
+                    } else {
+                        null
+                    }
 
-                if (verificationResult.isValid() && innerVerificationResult.base64EncodedKid?.isNotBlank() == true) {
-                    innerVerificationResult.greenCertificateData?.validateRules(
-                        verificationResult,
-                        countryIsoCode,
-                        innerVerificationResult.base64EncodedKid!!
+                if (innerVerificationResult.isApplicableCode) {
+                    val covidCertificate =
+                        innerVerificationResult.greenCertificateData?.greenCertificate
+                    val certificateModel = covidCertificate?.toCertificateModel()
+                    val hcert: String? = innerVerificationResult.greenCertificateData?.hcertJson
+                    val standardizedVerificationResult: StandardizedVerificationResult =
+                        extractStandardizedVerificationResultFrom(
+                            verificationResult,
+                            innerVerificationResult
+                        )
+
+                    val isDebugModeEnabled =
+                        standardizedVerificationResult.category != StandardizedVerificationResultCategory.VALID
+                                && (preferences.debugModeState?.let { DebugModeState.valueOf(it) }
+                            ?: DebugModeState.OFF) != DebugModeState.OFF
+                                && preferences.debugModeSelectedCountriesCodes?.contains(
+                            innerVerificationResult.greenCertificateData?.getNormalizedIssuingCountry()
+                        ) == true
+
+                    QrCodeVerificationResult.Applicable(
+                        standardizedVerificationResult,
+                        certificateModel,
+                        hcert,
+                        validationResults?.toRuleValidationResultModels(),
+                        isDebugModeEnabled,
+                        innerVerificationResult.debugData
                     )
+                } else {
+                    QrCodeVerificationResult.NotApplicable
                 }
-
+            }.let { qrCodeVerificationResultInner ->
+                _qrCodeVerificationResult.value = qrCodeVerificationResultInner
             }
-
-            verificationResult.fetchError(innerVerificationResult)
-                ?.apply { _verificationError.value = this }
-
-            _inProgress.value = false
-            val certificateModel: CertificateModel? =
-                innerVerificationResult.greenCertificateData?.greenCertificate?.toCertificateModel()
-            _verificationData.value = VerificationData(
-                if (innerVerificationResult.isApplicableCode) verificationResult else null,
-                innerVerificationResult,
-                certificateModel
-            )
         }
     }
 
@@ -219,12 +231,14 @@ class VerificationViewModel @Inject constructor(
                 return@forEach
             }
         }
+
         return InnerVerificationResult(
             noPublicKeysFound = noPublicKeysFound,
             certificateExpired = certificateExpired,
             greenCertificateData = greenCertificateData,
             isApplicableCode = isApplicableCode,
-            base64EncodedKid = base64EncodedKid
+            base64EncodedKid = base64EncodedKid,
+            debugData = DebugData(code, cose, coseData.cbor)
         )
     }
 
@@ -232,14 +246,11 @@ class VerificationViewModel @Inject constructor(
         verificationResult: VerificationResult,
         countryIsoCode: String,
         base64EncodedKid: String
-    ) {
+    ): List<ValidationResult>? {
         this.apply {
             val engineCertificateType = this.greenCertificate.getEngineCertificateType()
-            if (countryIsoCode.isNotBlank()) {
-                val issuingCountry: String =
-                    (if (this.issuingCountry?.isNotBlank() == true && this.issuingCountry != null) this.issuingCountry!! else this.greenCertificate.getIssuingCountry()).toLowerCase(
-                        Locale.ROOT
-                    )
+            return if (countryIsoCode.isNotBlank()) {
+                val issuingCountry: String = this.getNormalizedIssuingCountry()
                 val rules = getRulesUseCase.invoke(
                     ZonedDateTime.now().withZoneSameInstant(UTC_ZONE_ID),
                     countryIsoCode,
@@ -273,14 +284,16 @@ class VerificationViewModel @Inject constructor(
                     this.hcertJson
                 )
 
-                _validationResults.postValue(validationResults)
-
                 validationResults.forEach {
                     if (it.result != Result.PASSED) {
                         verificationResult.rulesValidationFailed = true
                         return@forEach
                     }
                 }
+
+                validationResults
+            } else {
+                null
             }
         }
     }
@@ -295,7 +308,6 @@ class VerificationViewModel @Inject constructor(
     }
 
     companion object {
-        private const val ENGINE_VERSION = "1.0.0"
 
         fun validateCertData(
             certificate: GreenCertificate?,

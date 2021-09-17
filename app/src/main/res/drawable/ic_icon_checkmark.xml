@@ -1,0 +1,35 @@
+<!--
+  ~  license-start
+  ~  eu-digital-green-certificates / dgca-verifier-app-android
+  ~
+  ~  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  ~  license-end
+  ~
+  ~  Created by osarapulov on 9/4/21 9:35 PM
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <group>
+    <clip-path
+        android:pathData="M1,1L23.028,1L23.028,23.028L1,23.028Z"/>
+    <path
+        android:pathData="M12.014,23.028a11.015,11.015 0,0 1,-7.788 -18.8A11.014,11.014 0,1 1,19.8 19.8,10.94 10.94,0 0,1 12.014,23.028ZM12.014,2.513a9.5,9.5 0,1 0,9.5 9.5A9.526,9.526 0,0 0,12.013 2.514Z"
+        android:fillColor="#262626"/>
+  </group>
+</vector>

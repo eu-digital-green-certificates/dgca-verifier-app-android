@@ -22,15 +22,25 @@
 
 package dgca.verifier.app.android.verification
 
+import android.os.Parcelable
 import dgca.verifier.app.decoder.cbor.GreenCertificateData
+import kotlinx.parcelize.Parcelize
 
 data class InnerVerificationResult(
     val noPublicKeysFound: Boolean = true,
     val certificateExpired: Boolean = false,
     val greenCertificateData: GreenCertificateData? = null,
     val isApplicableCode: Boolean = false,
-    val base64EncodedKid: String? = null
+    val base64EncodedKid: String? = null,
+    val debugData: DebugData? = null
 ) {
     fun isValid() =
         !noPublicKeysFound && !certificateExpired && greenCertificateData != null && isApplicableCode && base64EncodedKid?.isNotBlank() == true
 }
+
+@Parcelize
+data class DebugData(
+    val qrCode: String,
+    @Suppress("ArrayInDataClass") val cose: ByteArray? = null,
+    @Suppress("ArrayInDataClass") val cbor: ByteArray? = null
+) : Parcelable

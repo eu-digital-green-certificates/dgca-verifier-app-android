@@ -29,61 +29,13 @@
     android:layout_marginTop="50dp"
     android:minHeight="500dp">
 
-    <View
-        android:id="@+id/verification_status_bg"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@drawable/bottom_sheet_bg"
-        app:layout_constraintBottom_toBottomOf="@id/bottomStatusViewStub"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:backgroundTint="@color/green" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/person_full_name"
+    <dgca.verifier.app.android.verification.detailed.DetailedVerificationResultHeaderView
+        android:id="@+id/verificationResultHeaderView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/default_margin"
-        android:layout_marginTop="@dimen/default_double_margin"
-        android:textColor="@color/white"
-        android:textSize="26sp"
-        android:typeface="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Gabriele \nMusterfrau" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/cert_status_icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="@dimen/default_margin"
-        android:scaleType="centerInside"
-        app:layout_constraintBottom_toBottomOf="@id/status"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/status"
-        tools:src="@drawable/check" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/status"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:textColor="@color/white"
-        android:textSize="42sp"
-        app:layout_constraintEnd_toEndOf="@id/person_full_name"
-        app:layout_constraintStart_toEndOf="@+id/cert_status_icon"
-        app:layout_constraintTop_toBottomOf="@id/person_full_name"
-        tools:text="@string/cert_valid" />
-
-    <View
-        android:id="@+id/bottomStatusViewStub"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="@dimen/default_double_margin"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/status" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/whiteBackground"
@@ -93,7 +45,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/verification_status_bg" />
+        app:layout_constraintTop_toBottomOf="@id/verificationResultHeaderView" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
@@ -103,7 +55,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bottom_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/verification_status_bg"
+        app:layout_constraintTop_toBottomOf="@+id/verificationResultHeaderView"
         tools:visibility="visible">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -187,7 +139,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/negative"
-                app:layout_constraintBottom_toTopOf="@id/person_standardised_family_name_title"
+                app:layout_constraintBottom_toTopOf="@id/personStandardisedFamilyNameTitle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/reason_test_result_title" />
@@ -216,93 +168,97 @@
                 app:constraint_referenced_ids="reason_test_result_title, reason_test_result_value"
                 tools:visibility="visible" />
 
-            <androidx.constraintlayout.widget.Group
-                android:id="@+id/sucessDetails"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:visibility="gone"
-                app:constraint_referenced_ids="person_standardised_family_name_title, person_standardised_family_name, person_standardised_given_name_title, person_standardised_given_name, date_of_birth_title, date_of_birth"
-                tools:visibility="visible" />
-
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/person_standardised_family_name_title"
+                android:id="@+id/personStandardisedFamilyNameTitle"
                 style="@style/TextAppearance.Dgca.CertificateTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/default_margin_top"
                 android:text="@string/standardised_family_name_title"
-                app:layout_constraintBottom_toTopOf="@id/person_standardised_family_name"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/personStandardisedFamilyName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/reason_test_result_value" />
+                app:layout_constraintTop_toBottomOf="@id/reason_test_result_value"
+                tools:visibility="visible" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/person_standardised_family_name"
+                android:id="@+id/personStandardisedFamilyName"
                 style="@style/TextAppearance.Dgca.CertificateValue"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@id/person_standardised_given_name_title"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/personStandardisedGivenNameTitle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/person_standardised_family_name_title"
-                tools:text="MUSTERFRAU" />
+                app:layout_constraintTop_toBottomOf="@id/personStandardisedFamilyNameTitle"
+                tools:text="MUSTERFRAU"
+                tools:visibility="visible" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/person_standardised_given_name_title"
+                android:id="@+id/personStandardisedGivenNameTitle"
                 style="@style/TextAppearance.Dgca.CertificateTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/default_margin_top"
                 android:text="@string/standardised_given_name_title"
-                app:layout_constraintBottom_toTopOf="@id/person_standardised_given_name"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/personStandardisedGivenName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/person_standardised_family_name" />
+                app:layout_constraintTop_toBottomOf="@id/personStandardisedFamilyName"
+                tools:visibility="visible" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/person_standardised_given_name"
+                android:id="@+id/personStandardisedGivenName"
                 style="@style/TextAppearance.Dgca.CertificateValue"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@id/date_of_birth_title"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/dateOfBirthTitle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/person_standardised_given_name_title"
-                tools:text="GABRIELE" />
+                app:layout_constraintTop_toBottomOf="@id/personStandardisedGivenNameTitle"
+                tools:text="GABRIELE"
+                tools:visibility="visible" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/date_of_birth_title"
+                android:id="@+id/dateOfBirthTitle"
                 style="@style/TextAppearance.Dgca.CertificateTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/default_margin_top"
                 android:text="@string/date_of_birth_title"
-                app:layout_constraintBottom_toTopOf="@id/date_of_birth"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/dateOfBirthValue"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/person_standardised_given_name" />
+                app:layout_constraintTop_toBottomOf="@id/personStandardisedGivenName"
+                tools:visibility="visible" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/date_of_birth"
+                android:id="@+id/dateOfBirthValue"
                 style="@style/TextAppearance.Dgca.CertificateValue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@id/greenCertificate"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/date_of_birth_title"
-                tools:text="Feb 26, 1988" />
+                app:layout_constraintTop_toBottomOf="@id/dateOfBirthTitle"
+                tools:text="Feb 26, 1988"
+                tools:visibility="visible" />
 
             <ViewStub
                 android:id="@+id/greenCertificate"
-                android:inflatedId="@+id/inflatedGreenCertificate"
                 android:layout_width="0dp"
-                android:layout="@layout/item_recovery"
                 android:layout_height="wrap_content"
+                android:inflatedId="@+id/inflatedGreenCertificate"
+                android:layout="@layout/item_recovery"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/date_of_birth" />
+                app:layout_constraintTop_toBottomOf="@id/dateOfBirthValue" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
@@ -339,7 +295,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/action_btn"
+            android:id="@+id/actionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/default_margin_top"
@@ -358,16 +314,5 @@
             android:scaleType="centerInside"
             android:src="@drawable/eu_logo_big" />
     </LinearLayout>
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:indeterminateTint="@color/blue"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_container"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

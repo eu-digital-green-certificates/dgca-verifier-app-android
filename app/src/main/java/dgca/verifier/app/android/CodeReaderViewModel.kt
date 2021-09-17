@@ -25,18 +25,23 @@ package dgca.verifier.app.android
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.local.Preferences
+import dgca.verifier.app.android.settings.debug.mode.DebugModeState
 import dgca.verifier.app.engine.data.source.countries.CountriesRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class CodeReaderViewModel @Inject constructor(
-    private val countriesRepository: CountriesRepository,
+    countriesRepository: CountriesRepository,
     private val preferences: Preferences
 ) : ViewModel() {
     private val _countries: MediatorLiveData<Pair<List<String>, String?>> = MediatorLiveData()
     val countries: LiveData<Pair<List<String>, String?>> = _countries
     private val _selectedCountry: LiveData<String?> = liveData {
         emit(preferences.selectedCountryIsoCode)
+    }
+
+    val debugModeState: LiveData<DebugModeState> = liveData {
+        emit(preferences.debugModeState?.let { DebugModeState.valueOf(it) } ?: DebugModeState.OFF)
     }
 
     fun selectCountry(countryIsoCode: String) {

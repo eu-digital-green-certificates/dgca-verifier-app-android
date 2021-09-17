@@ -48,7 +48,8 @@ class VerifierRepositoryImpl @Inject constructor(
 
     private val validCertList = mutableListOf<String>()
     private val mutex = Mutex()
-    private val lastSyncLiveData: MutableLiveData<Long> = MutableLiveData(preferences.lastKeysSyncTimeMillis)
+    private val lastSyncLiveData: MutableLiveData<Long> =
+        MutableLiveData(preferences.lastKeysSyncTimeMillis)
 
     override suspend fun fetchCertificates(statusUrl: String, updateUrl: String): Boolean? {
         mutex.withLock {

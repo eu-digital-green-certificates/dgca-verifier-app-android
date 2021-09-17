@@ -28,6 +28,7 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'com.google.android.gms.oss-licenses-plugin'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -39,6 +40,11 @@ android {
         targetSdkVersion Config.targetSdk
         versionCode Config.versionCode
         versionName Config.versionName
+
+        // It's required to provide config json files, and path to it.
+        // Examples based on different flavors could be found here: 'app/src/acc/assets/verifier-context.jsonc' or 'app/src/tst/assets/verifier-context.jsonc'
+
+        buildConfigField "String", "CONFIG_FILE_NAME", "\"$CONFIG_FILE_NAME\""
 
         testInstrumentationRunner Config.androidTestInstrumentation
     }
@@ -103,6 +109,7 @@ dependencies {
     implementation Deps.androidx_constraint
     implementation Deps.androidx_navigation_fragment
     implementation Deps.androidx_navigation_ui
+    implementation Deps.androidx_fragment_ktx
     implementation Deps.androidx_lifecycle_livedata_ktx
     implementation Deps.room_runtime
     implementation Deps.room_ktx

@@ -33,7 +33,19 @@
         tools:layout="@layout/fragment_code_reader">
 
         <action
-            android:id="@+id/action_codeReaderFragment_to_verificationFragment"
+            android:id="@+id/action_codeReaderFragment_to_verificationResultFragment"
+            app:destination="@id/verificationResultDialogFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+
+        <action
+            android:id="@+id/action_codeReaderFragment_to_detailedVerificationResultFragment"
+            app:destination="@id/detailedVerificationResultDialogFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+
+        <action
+            android:id="@+id/action_codeReaderFragment_to_verificationDialogFragment"
             app:destination="@id/verificationDialogFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left" />
@@ -46,9 +58,9 @@
 
     <dialog
         android:id="@+id/verificationDialogFragment"
-        android:name="dgca.verifier.app.android.verification.VerificationDialogFragment"
+        android:name="dgca.verifier.app.android.verification.VerificationFragment"
         android:label="Verification"
-        tools:layout="@layout/dialog_fragment_verification">
+        tools:layout="@layout/fragment_verification">
 
         <argument
             android:name="qrCodeText"
@@ -58,9 +70,91 @@
             android:name="countryIsoCode"
             app:argType="string" />
     </dialog>
+
+    <dialog
+        android:id="@+id/verificationResultDialogFragment"
+        android:name="dgca.verifier.app.android.verification.VerificationResultDialogFragment"
+        android:label="Verification Result"
+        tools:layout="@layout/dialog_fragment_verification_result">
+
+        <argument
+            android:name="standardizedVerificationResult"
+            app:argType="dgca.verifier.app.android.verification.StandardizedVerificationResult" />
+
+        <argument
+            android:name="certificateModel"
+            android:defaultValue="@null"
+            app:argType="dgca.verifier.app.android.model.CertificateModel"
+            app:nullable="true" />
+
+        <argument
+            android:name="ruleValidationResultModelsContainer"
+            app:argType="dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer"
+            app:nullable="true" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/detailedVerificationResultDialogFragment"
+        android:name="dgca.verifier.app.android.verification.detailed.DetailedVerificationResultDialogFragment"
+        android:label="Detailed Verification"
+        tools:layout="@layout/dialog_fragment_detailed_verification_result">
+
+        <argument
+            android:name="standardizedVerificationResult"
+            app:argType="dgca.verifier.app.android.verification.StandardizedVerificationResult" />
+
+        <argument
+            android:name="certificateModel"
+            android:defaultValue="@null"
+            app:argType="dgca.verifier.app.android.model.CertificateModel"
+            app:nullable="true" />
+
+        <argument
+            android:name="hcert"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="ruleValidationResultModelsContainer"
+            app:argType="dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer"
+            app:nullable="true" />
+
+        <argument
+            android:name="debugData"
+            app:argType="dgca.verifier.app.android.verification.DebugData"
+            app:nullable="true" />
+    </dialog>
+
     <fragment
         android:id="@+id/settingsFragment"
         android:name="dgca.verifier.app.android.settings.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:label="SettingsFragment">
+
+        <action
+            android:id="@+id/action_settingsFragment_to_verificationResultFragment"
+            app:destination="@id/debugModeSettingsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/debugModeSettingsFragment"
+        android:name="dgca.verifier.app.android.settings.debug.mode.DebugModeSettingsFragment"
+        android:label="Debug Mode Settings">
+        <action
+            android:id="@+id/action_debugModeSettingsFragment_to_countriesSelectorFragment"
+            app:destination="@id/countriesSelectorFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/countriesSelectorFragment"
+        android:name="dgca.verifier.app.android.settings.debug.mode.CountriesSelectorFragment"
+        android:label="Countries Selector">
+        <argument
+            android:name="countriesData"
+            app:argType="dgca.verifier.app.android.settings.debug.mode.CountriesData" />
+    </fragment>
 
 </navigation>

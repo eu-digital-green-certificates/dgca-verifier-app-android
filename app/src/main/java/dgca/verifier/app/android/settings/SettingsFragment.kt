@@ -25,29 +25,35 @@ package dgca.verifier.app.android.settings
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import androidx.core.text.toSpannable
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.*
+import dgca.verifier.app.android.base.BindingFragment
 import dgca.verifier.app.android.databinding.FragmentSettingsBinding
+import dgca.verifier.app.android.settings.debug.mode.DebugModeState
 
 @AndroidEntryPoint
-class SettingsFragment : Fragment() {
-
-    private var _binding: FragmentSettingsBinding? = null
-    private val binding get() = _binding!!
+class SettingsFragment : BindingFragment<FragmentSettingsBinding>() {
     private val viewModel by viewModels<SettingsViewModel>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
-        return binding.root
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycle.addObserver(viewModel)
     }
+
+    override fun onCreateBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentSettingsBinding =
+        FragmentSettingsBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -75,6 +81,14 @@ class SettingsFragment : Fragment() {
                 )
             }
         })
+        viewModel.debugModeState.observe(viewLifecycleOwner) {
+            setUpDebugModeButton(it)
+        }
+        binding.debugMode.setOnClickListener {
+            val action =
+                SettingsFragmentDirections.actionSettingsFragmentToVerificationResultFragment()
+            findNavController().navigate(action)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -104,8 +118,26 @@ class SettingsFragment : Fragment() {
         }
     }
 
+    private fun setUpDebugModeButton(debugModeState: DebugModeState) {
+        val context = requireContext()
+        val spannable = SpannableStringBuilder()
+            .append(
+                getString(R.string.debug_mode).toSpannable()
+                    .applyStyle(context, R.style.TextAppearance_Dgca_SettingsButtonHeader)
+            )
+            .append("\n")
+            .append(
+                getString(debugModeState.stringRes).toSpannable()
+                    .applyStyle(context, R.style.TextAppearance_Dgca_SettingsButtonSubHeader)
+            )
+
+        binding.debugMode.text = spannable
+        binding.debugMode.visibility = View.VISIBLE
+    }
+
     companion object {
-        const val PRIVACY_POLICY = "https://op.europa.eu/en/web/about-us/legal-notices/eu-mobile-apps"
+        const val PRIVACY_POLICY =
+            "https://op.europa.eu/en/web/about-us/legal-notices/eu-mobile-apps"
         private const val LAST_UPDATE_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm"
     }
 }

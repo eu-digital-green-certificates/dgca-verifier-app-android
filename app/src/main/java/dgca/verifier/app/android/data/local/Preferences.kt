@@ -37,6 +37,10 @@ interface Preferences {
 
     var selectedCountryIsoCode: String?
 
+    var debugModeState: String?
+
+    var debugModeSelectedCountriesCodes: Set<String>?
+
     fun clear()
 }
 
@@ -59,6 +63,14 @@ class PreferencesImpl(context: Context) : Preferences {
         preferences,
         KEY_SELECTED_COUNTRY_ISO_CODE
     )
+    override var debugModeState: String? by StringPreference(
+        preferences,
+        KEY_DEBUG_MODE_STATE
+    )
+    override var debugModeSelectedCountriesCodes: Set<String>? by StringSetPreference(
+        preferences,
+        KEY_DEBUG_MODE_SELECTED_COUNTRIES_CODES
+    )
 
     override fun clear() {
         preferences.value.edit().clear().apply()
@@ -69,6 +81,9 @@ class PreferencesImpl(context: Context) : Preferences {
         private const val KEY_RESUME_TOKEN = "resume_token"
         private const val KEY_LAST_KEYS_SYNC_TIME_MILLIS = "last_keys_sync_time_millis"
         private const val KEY_SELECTED_COUNTRY_ISO_CODE = "selected_country_iso_code"
+        private const val KEY_DEBUG_MODE_STATE = "debug_mode_state"
+        private const val KEY_DEBUG_MODE_SELECTED_COUNTRIES_CODES =
+            "debug_mode_selected_countries_codes"
     }
 }
 
@@ -101,5 +116,28 @@ class StringPreference(
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: String?) {
         preferences.value.edit { putString(name, value) }
+    }
+}
+
+class StringSetPreference(
+    private val preferences: Lazy<SharedPreferences>,
+    private val name: String,
+    private val defaultValue: Set<String> = emptySet()
+) : ReadWriteProperty<Any, Set<String>?> {
+
+    @WorkerThread
+    override fun getValue(thisRef: Any, property: KProperty<*>): Set<String>? {
+        return if (preferences.value.contains(name)) preferences.value.getStringSet(
+            name,
+            defaultValue
+        ) else null
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: Set<String>?) {
+        preferences.value.edit {
+            value?.let {
+                putStringSet(name, value)
+            } ?: remove(name)
+        }
     }
 }
