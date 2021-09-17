@@ -52,9 +52,10 @@ import java.util.*
  * Created by osarapulov on 08.07.21 0:01
  */
 class CountriesAdapter(
-    private val refinedCountries: List<String>,
     private val layoutInflater: LayoutInflater
 ) : BaseAdapter() {
+
+    private var refinedCountries: List<String> = listOf()
 
     override fun getCount(): Int = refinedCountries.size
 
@@ -75,4 +76,9 @@ class CountriesAdapter(
                 val locale = Locale("", COUNTRIES_MAP[countryIsoCode] ?: countryIsoCode)
                 textView.text = locale.displayCountry
             }
+
+    fun update(list: List<String>) {
+        refinedCountries = list
+        notifyDataSetChanged()
+    }
 }

@@ -27,6 +27,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.settings.debug.mode.DebugModeState
 import dgca.verifier.app.engine.data.source.countries.CountriesRepository
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,11 +36,12 @@ class CodeReaderViewModel @Inject constructor(
     countriesRepository: CountriesRepository,
     private val preferences: Preferences
 ) : ViewModel() {
-    private val _countries: MediatorLiveData<Pair<List<String>, String?>> = MediatorLiveData()
-    val countries: LiveData<Pair<List<String>, String?>> = _countries
-    private val _selectedCountry: LiveData<String?> = liveData {
-        emit(preferences.selectedCountryIsoCode)
-    }
+
+    private val _countries = MediatorLiveData<List<String>>()
+    val countries: LiveData<List<String>> = _countries
+
+    private val _selectedCountry = MutableLiveData<String>()
+    val selectedCountry: LiveData<String> = _selectedCountry
 
     val debugModeState: LiveData<DebugModeState> = liveData {
         emit(preferences.debugModeState?.let { DebugModeState.valueOf(it) } ?: DebugModeState.OFF)
@@ -46,16 +49,14 @@ class CodeReaderViewModel @Inject constructor(
 
     fun selectCountry(countryIsoCode: String) {
         preferences.selectedCountryIsoCode = countryIsoCode
+        _selectedCountry.value = countryIsoCode
     }
 
     init {
-        _countries.addSource(countriesRepository.getCountries().asLiveData()) {
-            _countries.value = Pair(it, _countries.value?.second)
-        }
-
-        _countries.addSource(_selectedCountry) {
-            if (_countries.value?.second == null || _countries.value?.second != it) {
-                _countries.value = Pair(_countries.value?.first ?: emptyList(), it ?: "")
+        viewModelScope.launch {
+            countriesRepository.getCountries().collectLatest {
+                _countries.value = it
+                _selectedCountry.value = preferences.selectedCountryIsoCode
             }
         }
     }
