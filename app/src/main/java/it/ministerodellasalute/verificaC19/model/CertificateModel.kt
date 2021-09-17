@@ -74,6 +74,11 @@ enum class TestResult(val value: String) {
     NOT_DETECTED("NOT DETECTED")
 }
 
+enum class TestType(val value: String) {
+    RAPID("LP217198-3"),
+    MOLECULAR("LP6464-4")
+}
+
 data class RecoveryModel(
     override val disease: String,
     val dateOfFirstPositiveTest: String,
