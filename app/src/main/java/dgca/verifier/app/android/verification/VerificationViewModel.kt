@@ -41,10 +41,7 @@ import dgca.verifier.app.decoder.cbor.GreenCertificateData
 import dgca.verifier.app.decoder.compression.CompressorService
 import dgca.verifier.app.decoder.cose.CoseService
 import dgca.verifier.app.decoder.cose.CryptoService
-import dgca.verifier.app.decoder.model.GreenCertificate
-import dgca.verifier.app.decoder.model.RecoveryVerificationResult
-import dgca.verifier.app.decoder.model.TestVerificationResult
-import dgca.verifier.app.decoder.model.VerificationResult
+import dgca.verifier.app.decoder.model.*
 import dgca.verifier.app.decoder.prefixvalidation.PrefixValidationService
 import dgca.verifier.app.decoder.schema.SchemaValidator
 import dgca.verifier.app.decoder.toBase64
@@ -53,6 +50,7 @@ import dgca.verifier.app.engine.Result
 import dgca.verifier.app.engine.UTC_ZONE_ID
 import dgca.verifier.app.engine.ValidationResult
 import dgca.verifier.app.engine.data.*
+import dgca.verifier.app.engine.data.CertificateType
 import dgca.verifier.app.engine.data.source.valuesets.ValueSetsRepository
 import dgca.verifier.app.engine.domain.rules.GetRulesUseCase
 import kotlinx.coroutines.Dispatchers
@@ -313,11 +311,17 @@ class VerificationViewModel @Inject constructor(
             certificate: GreenCertificate?,
             verificationResult: VerificationResult
         ) {
+            certificate?.vaccinations?.let {
+                if (it.isNotEmpty()) {
+                    val vaccination = it.first()
+                    verificationResult.vaccinationVerification = VaccinationVerificationResult(vaccination.isDateInThePast())
+                }
+            }
+
             certificate?.tests?.let {
                 if (it.isNotEmpty()) {
                     val test = it.first()
-                    verificationResult.testVerification =
-                        TestVerificationResult(test.isResultNegative(), test.isDateInThePast())
+                    verificationResult.testVerification = TestVerificationResult(test.isResultNegative(), test.isDateInThePast())
                 }
             }
             certificate?.recoveryStatements?.let {

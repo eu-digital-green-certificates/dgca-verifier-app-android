@@ -33,6 +33,7 @@
     <string name="certificate_was_revoked">Certificaat is ingetrokken.</string>
     <string name="verification_failed">Verificatie mislukt.</string>
     <string name="signing_certificate_is_expired">Ondertekeningscertificaat is verlopen.</string>
+    <string name="the_vaccination_date_is_in_the_future">Vaccinatie testdatum is in de toekomst.</string>
     <string name="the_test_date_is_in_the_future">De testdatum is in de toekomst.</string>
     <string name="test_result_positive">Testresultaat positief.</string>
     <string name="recovery_not_valid_yet">Herstelverklaring is nog niet geldig.</string>
