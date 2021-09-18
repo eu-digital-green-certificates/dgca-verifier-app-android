@@ -151,6 +151,11 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
+        viewModel.getAppMinVersion().let {
+            if (Utility.versionCompare(it, BuildConfig.VERSION_NAME) > 0) {
+                createForceUpdateDialog()
+            }
+        }
     }
 
     private fun openQrCodeReader() {
@@ -178,6 +183,32 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
         }
         val dialog = builder.create()
         dialog.show()
+    }
+
+    private fun createForceUpdateDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.updateTitle))
+        builder.setMessage(getString(R.string.updateMessage))
+
+        builder.setPositiveButton(getString(R.string.updateLabel)) { dialog, which ->
+            openGooglePlay()
+        }
+        val dialog = builder.create()
+        dialog.setCancelable(false)
+        dialog.show()
+    }
+
+    private fun openGooglePlay() {
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")))
+        } catch (e: ActivityNotFoundException) {
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+                )
+            )
+        }
     }
 
 }

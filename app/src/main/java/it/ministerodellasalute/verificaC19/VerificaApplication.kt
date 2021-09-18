@@ -51,7 +51,7 @@ class VerificaApplication : Application(), Configuration.Provider {
         val uploadWorkRequest: WorkRequest =
             PeriodicWorkRequestBuilder<LoadKeysWorker>(1, TimeUnit.DAYS)
                 .setConstraints(Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build())
                 .build()
         WorkManager
