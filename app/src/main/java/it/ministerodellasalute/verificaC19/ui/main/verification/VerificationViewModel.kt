@@ -143,6 +143,20 @@ class VerificationViewModel @Inject constructor(
             }
     }
 
+    fun getMolecularTestStartHour(): String {
+        return getValidationRules().find { it.name == ValidationRulesEnum.MOLECULAR_TEST_START_HOUR.value }?.value
+            ?: run {
+                ""
+            }
+    }
+
+    fun getMolecularTestEndHour(): String {
+        return getValidationRules().find { it.name == ValidationRulesEnum.MOLECULAR_TEST_END_HOUR.value }?.value
+            ?: run {
+                ""
+            }
+    }
+
     fun getRapidTestStartHour(): String {
         return getValidationRules().find { it.name == ValidationRulesEnum.RAPID_TEST_START_HOUR.value }?.value
             ?: run {
@@ -273,13 +287,29 @@ class VerificationViewModel @Inject constructor(
             val odtDateTimeOfCollection = OffsetDateTime.parse(it.last().dateTimeOfCollection)
             val ldtDateTimeOfCollection = odtDateTimeOfCollection.toLocalDateTime()
 
-            val startDate: LocalDateTime =
-                ldtDateTimeOfCollection
-                    .plusHours(Integer.parseInt(getRapidTestStartHour()).toLong())
+            val testType = it!!.last().typeOfTest
 
-            val endDate: LocalDateTime =
-                ldtDateTimeOfCollection
-                    .plusHours(Integer.parseInt(getRapidTestEndHour()).toLong())
+            val startDate: LocalDateTime
+            val endDate: LocalDateTime
+
+            when (testType) {
+                TestType.MOLECULAR.value -> {
+                    startDate = ldtDateTimeOfCollection
+                        .plusHours(Integer.parseInt(getMolecularTestStartHour()).toLong())
+                    endDate = ldtDateTimeOfCollection
+                        .plusHours(Integer.parseInt(getMolecularTestEndHour()).toLong())
+                }
+                TestType.RAPID.value -> {
+                    startDate = ldtDateTimeOfCollection
+                        .plusHours(Integer.parseInt(getRapidTestStartHour()).toLong())
+                    endDate = ldtDateTimeOfCollection
+                        .plusHours(Integer.parseInt(getRapidTestEndHour()).toLong())
+                }
+                else -> {
+                    return CertificateStatus.NOT_VALID
+                }
+            }
+
             Log.d("dates", "start:$startDate end: $endDate")
             return when {
                 startDate.isAfter(LocalDateTime.now()) -> CertificateStatus.NOT_VALID_YET
