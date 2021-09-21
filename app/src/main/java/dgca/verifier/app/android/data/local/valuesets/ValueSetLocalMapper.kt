@@ -23,6 +23,7 @@
 package dgca.verifier.app.android.data.local.valuesets
 
 import dgca.verifier.app.engine.data.ValueSet
+import dgca.verifier.app.engine.data.ValueSetIdentifier
 
 fun ValueSet.toValueSetLocal(): ValueSetLocal = ValueSetLocal(
     valueSetId = this.valueSetId,
@@ -30,25 +31,18 @@ fun ValueSet.toValueSetLocal(): ValueSetLocal = ValueSetLocal(
     valueSetValues = this.valueSetValues
 )
 
-
 fun ValueSetLocal.toValueSet(): ValueSet = ValueSet(
     valueSetId = this.valueSetId,
     valueSetDate = this.valueSetDate,
     valueSetValues = this.valueSetValues
 )
 
-fun List<ValueSetLocal>.toValueSets(): List<ValueSet> {
-    val valueSets = mutableListOf<ValueSet>()
-    forEach {
-        valueSets.add(it.toValueSet())
-    }
-    return valueSets
-}
+fun ValueSetIdentifier.toValueSetIdentifierLocal(): ValueSetIdentifierLocal = ValueSetIdentifierLocal(
+    valueSetIdentifierId = id,
+    valueSetHash = hash
+)
 
-fun List<ValueSet>.toValueSetsLocal(): List<ValueSetLocal> {
-    val valueSetsLocal = mutableListOf<ValueSetLocal>()
-    forEach {
-        valueSetsLocal.add(it.toValueSetLocal())
-    }
-    return valueSetsLocal
-}
+fun ValueSetIdentifierLocal.toValueSetIdentifier(): ValueSetIdentifier = ValueSetIdentifier(
+    id = valueSetIdentifierId,
+    hash = valueSetHash
+)
