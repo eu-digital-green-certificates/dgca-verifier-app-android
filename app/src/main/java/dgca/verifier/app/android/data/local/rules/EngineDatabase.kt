@@ -27,11 +27,19 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import dgca.verifier.app.android.data.local.countries.CountriesDao
 import dgca.verifier.app.android.data.local.countries.CountryLocal
+import dgca.verifier.app.android.data.local.valuesets.ValueSetIdentifierLocal
 import dgca.verifier.app.android.data.local.valuesets.ValueSetLocal
 import dgca.verifier.app.android.data.local.valuesets.ValueSetsDao
 
 @Database(
-    entities = [RuleIdentifierLocal::class, RuleLocal::class, DescriptionLocal::class, CountryLocal::class, ValueSetLocal::class],
+    entities = [
+        RuleIdentifierLocal::class,
+        RuleLocal::class,
+        DescriptionLocal::class,
+        CountryLocal::class,
+        ValueSetLocal::class,
+        ValueSetIdentifierLocal::class
+    ],
     version = 1
 )
 @TypeConverters(Converters::class)

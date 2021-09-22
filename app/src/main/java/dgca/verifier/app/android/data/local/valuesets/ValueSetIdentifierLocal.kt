@@ -17,20 +17,17 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 7/26/21 12:08 PM
+ *  Created by mykhailo.nester on 21/09/2021, 22:19
  */
 
 package dgca.verifier.app.android.data.local.valuesets
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.fasterxml.jackson.databind.JsonNode
-import java.time.LocalDate
 
-@Entity(tableName = "valuesets")
-class ValueSetLocal(
+@Entity(tableName = "value_set_identifier")
+class ValueSetIdentifierLocal(
     @PrimaryKey
-    val valueSetId: String,
-    val valueSetDate: LocalDate,
-    val valueSetValues: JsonNode
+    val valueSetIdentifierId: String,
+    val valueSetHash: String
 )
