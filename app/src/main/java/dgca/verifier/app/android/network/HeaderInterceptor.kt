@@ -23,6 +23,7 @@
 package dgca.verifier.app.android.network
 
 import android.os.Build
+import dgca.verifier.app.android.BuildConfig
 import dgca.verifier.app.android.utils.sha256
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
@@ -34,7 +35,8 @@ import java.net.HttpURLConnection.HTTP_BAD_REQUEST
 
 class HeaderInterceptor : Interceptor {
 
-    private val userAgent = "DGCA verifier Android ${Build.VERSION.SDK_INT}, ${Build.MODEL};"
+    private val userAgent =
+        "DGCA verifier: ${BuildConfig.VERSION_NAME}, Android: ${Build.VERSION.SDK_INT}, Model: ${Build.MODEL};"
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
