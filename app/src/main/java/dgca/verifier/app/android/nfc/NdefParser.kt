@@ -58,8 +58,6 @@ fun NdefRecord.parse(): ParsedNdefRecord? {
              * The text is encoded in UTF16
              *
              * Bit_6 is reserved for future use and must be set to zero.
-             *
-             * Bits 5 to 0 are the length of the IANA language code.
              */
             val textEncoding = if (recordPayload[0] and 128.toByte() == 0.toByte()) {
                 Charsets.UTF_8
@@ -67,11 +65,7 @@ fun NdefRecord.parse(): ParsedNdefRecord? {
                 Charsets.UTF_16
             }
 
-            val languageCodeLength: Int = (recordPayload[0] and 63.toByte()).toInt()
-            val text = String(
-                recordPayload, languageCodeLength + 1,
-                recordPayload.size - languageCodeLength - 1, textEncoding
-            )
+            val text = String(recordPayload, textEncoding)
             return TextRecord(text)
         } catch (e: UnsupportedEncodingException) {
             Timber.w("We got a malformed tag.")
