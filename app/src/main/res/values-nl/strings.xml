@@ -25,7 +25,7 @@
     <string name="trusted_public_keys">Vertrouwde openbare sleutels</string>
     <string name="reload">Herladen</string>
     <string name="last_updated">Laatst bijgewerkt: %s</string>
-    <string name="version">Versie: %1$s</string>
+    <string name="version">Versie: %1$s (%2$d)</string>
     <string name="about">Over</string>
     <string name="app_name">Verificatie app</string>
     <string name="settings_version_title">Verificatie App</string>
