@@ -39,9 +39,18 @@ class DebugModeSettingsViewModel @Inject constructor(
 ) : ViewModel() {
     private val _countriesData: MutableLiveData<CountriesData> = MutableLiveData()
     val countriesData: LiveData<CountriesData> = _countriesData
+    private val _debugModeState: MutableLiveData<DebugModeState> =
+        MutableLiveData(DebugModeState.OFF)
+    val debugModeState: LiveData<DebugModeState> = _debugModeState
 
     init {
         viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                preferences.debugModeState?.let { DebugModeState.valueOf(it) } ?: DebugModeState.OFF
+            }.apply {
+                _debugModeState.value = this
+            }
+
             val countriesData: CountriesData = withContext(Dispatchers.IO) {
                 val selectedCountriesCodes: Set<String> =
                     preferences.debugModeSelectedCountriesCodes ?: emptySet()
@@ -61,15 +70,14 @@ class DebugModeSettingsViewModel @Inject constructor(
     }
 
     fun saveSelectedDebugMode(debugModeState: DebugModeState) {
-        preferences.debugModeState = debugModeState.toString()
+        if (debugModeState != _debugModeState.value) {
+            _debugModeState.value = debugModeState
+            preferences.debugModeState = debugModeState.toString()
+        }
     }
 
     fun saveSelectedCountries(countriesData: CountriesData) {
         _countriesData.value = countriesData
         preferences.debugModeSelectedCountriesCodes = countriesData.selectedCountriesCodes
-    }
-
-    val debugModeState: LiveData<DebugModeState> = liveData {
-        emit(preferences.debugModeState?.let { DebugModeState.valueOf(it) } ?: DebugModeState.OFF)
     }
 }
