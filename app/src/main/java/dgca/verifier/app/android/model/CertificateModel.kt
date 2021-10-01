@@ -25,7 +25,6 @@ package dgca.verifier.app.android.model
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
-
 @Parcelize
 data class CertificateModel(
     val person: PersonModel,
@@ -65,7 +64,7 @@ data class PersonModel(
     val familyName: String?,
     val standardisedGivenName: String?,
     val givenName: String?
-): Parcelable
+) : Parcelable
 
 @Parcelize
 data class VaccinationModel(

@@ -54,6 +54,13 @@ class DetailedVerificationResultDialogFragment :
     private val args by navArgs<DetailedVerificationResultDialogFragmentArgs>()
     private val viewModel by viewModels<DetailedBaseVerificationResultViewModel>()
 
+    private lateinit var adapter: CertificateContentAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        adapter = CertificateContentAdapter(layoutInflater)
+    }
+
     override fun onCreateBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -63,14 +70,6 @@ class DetailedVerificationResultDialogFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.detailedVerificationResultHeaderView.setInfoClickListener {
-            Toast.makeText(
-                requireContext(),
-                "TODO implement info click handler",
-                Toast.LENGTH_SHORT
-            ).show()
-            // TODO implement handler
-        }
         handleDetailedVerificationResult(
             args.standardizedVerificationResult,
             args.certificateModel,
@@ -138,6 +137,7 @@ class DetailedVerificationResultDialogFragment :
     ) {
         if (certificateModel == null || hcert.isNullOrBlank()) {
             binding.certificateInfo.visibility = View.GONE
+            binding.certificateContent.visibility = View.GONE
             binding.certificateRawInfo.visibility = View.GONE
         } else {
             binding.certificateInfo.setCertificateModel(
@@ -145,8 +145,11 @@ class DetailedVerificationResultDialogFragment :
                 standardizedVerificationResult,
                 ruleValidationResultModelsContainer
             )
+            binding.certificateContent.setCertificateModel(certificateModel, adapter)
             binding.certificateRawInfo.setHcert(hcert)
+
             binding.certificateInfo.visibility = View.VISIBLE
+            binding.certificateContent.visibility = View.VISIBLE
             binding.certificateRawInfo.visibility = View.VISIBLE
         }
     }
