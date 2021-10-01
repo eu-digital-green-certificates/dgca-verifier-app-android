@@ -36,14 +36,10 @@ import dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer
 import dgca.verifier.app.android.verification.StandardizedVerificationResult
 import dgca.verifier.app.android.verification.StandardizedVerificationResultCategory
 
-class DetailedVerificationResultHeaderView(context: Context, attrs: AttributeSet?) :
-    ConstraintLayout(context, attrs) {
+class DetailedVerificationResultHeaderView(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs) {
+
     private val binding: ViewDetailedVerificationResultHeaderBinding =
         ViewDetailedVerificationResultHeaderBinding.inflate(LayoutInflater.from(context), this)
-
-    fun setInfoClickListener(infoClickListener: OnClickListener?) {
-        binding.information.setOnClickListener { infoClickListener?.onClick(it) }
-    }
 
     fun setUp(
         standardizedVerificationResult: StandardizedVerificationResult,
@@ -52,9 +48,7 @@ class DetailedVerificationResultHeaderView(context: Context, attrs: AttributeSet
     ) {
         binding.personFullName.text = certificateModel?.getFullName() ?: ""
 
-        val isValid =
-            standardizedVerificationResult.category == StandardizedVerificationResultCategory.VALID
-        binding.information.visibility = if (isValid) View.GONE else View.VISIBLE
+        val isValid = standardizedVerificationResult.category == StandardizedVerificationResultCategory.VALID
 
         val (colorRes, textRes) = when (standardizedVerificationResult.category) {
             StandardizedVerificationResultCategory.VALID -> Pair(R.color.green, R.string.cert_valid)
