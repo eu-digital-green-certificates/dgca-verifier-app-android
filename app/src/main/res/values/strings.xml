@@ -20,7 +20,7 @@
   ~  Created by Mykhailo Nester on 4/23/21 9:53 AM
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">Verifier App</string>
     <string name="cert_valid">Valid</string>
     <string name="cert_limited_validity">Limited validity</string>
@@ -34,7 +34,9 @@
     <string name="possible_limitation">Possible limitation</string>
     <string name="certificate_type_title">Certificate Type</string>
     <string name="standardised_family_name_title">Standardised Family Name</string>
+    <string name="family_name_title">Family Name</string>
     <string name="standardised_given_name_title">Standardised Given Name</string>
+    <string name="given_name_title">Given Name</string>
     <string name="date_of_birth_title">Date of Birth</string>
     <string name="date_of_vaccination_title">Date of Vaccination</string>
     <string name="issuer_country">Issuer Country</string>
@@ -84,7 +86,6 @@
     <string name="traveller_acceptance">Traveller\nAcceptance</string>
     <string name="certificate_information">Certificate information</string>
     <string name="raw_data_details_view">RAW data details view</string>
-    <string name="edit_your_settings_to_hide_this_element">Edit your settings to hide this element.</string>
     <string name="off">Off</string>
     <string name="on_level_1">On - Level 1</string>
     <string name="on_level_2">On - Level 2</string>
@@ -94,5 +95,28 @@
     <string name="level_3_full_take">Level 3 - full take</string>
     <string name="select_country">Select country</string>
     <string name="no_countries_selected">No countries selected</string>
-    <string name="share" translatable="false">Share</string>
+    <string name="share">Share</string>
+    <string name="certificate_content">Content</string>
+    <string name="vaccination_title">Vaccination:</string>
+    <string name="vaccine_title">Vaccine</string>
+    <string name="medical_product_title">Medicinal product</string>
+    <string name="manufacturer_title">Manufacturer</string>
+    <string name="dose_number_title">Dose number</string>
+    <string name="total_doses_title">Total series of doses</string>
+    <string name="country_of_vaccination_title">Country of vaccination</string>
+    <string name="certificate_issuer_title">Certificate issuer</string>
+    <string name="certificate_identifier_title">Certificate identifier</string>
+    <string name="test_title">Test:</string>
+    <string name="type_of_test_title">Type of test</string>
+    <string name="test_name_title">Test name</string>
+    <string name="test_name_manufacturer_title">Test name and manufacturer</string>
+    <string name="date_time_of_collection_title">Date time of collection</string>
+    <string name="date_time_of_test_result_title">Date time of test result</string>
+    <string name="testing_centre_title">Testing centre</string>
+    <string name="result_type_title">Result type</string>
+    <string name="recovery_title">Recovery:</string>
+    <string name="date_of_first_positive_test_title">Date of first positive test</string>
+    <string name="certificate_valid_from_title">Certificate valid from</string>
+    <string name="certificate_valid_until_title">Certificate valid until</string>
+    <string name="personal_data_title">Personal data:</string>
 </resources>
