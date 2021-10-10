@@ -37,15 +37,12 @@ import dgca.verifier.app.android.MainActivity
 import dgca.verifier.app.android.base.BindingFragment
 import dgca.verifier.app.android.databinding.FragmentCountriesSelectorBinding
 
-
 @AndroidEntryPoint
 class CountriesSelectorFragment : BindingFragment<FragmentCountriesSelectorBinding>() {
+
     private val args by navArgs<CountriesSelectorFragmentArgs>()
 
-    override fun onCreateBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): FragmentCountriesSelectorBinding =
+    override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentCountriesSelectorBinding =
         FragmentCountriesSelectorBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -57,20 +54,17 @@ class CountriesSelectorFragment : BindingFragment<FragmentCountriesSelectorBindi
             adapter = CountriesAdapter(layoutInflater, args.countriesData)
         }
 
-        binding.actionButton.setOnClickListener {
-            close()
-        }
+        binding.actionButton.setOnClickListener { close() }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean =
+        when (item.itemId) {
             android.R.id.home -> {
                 close()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
 
     private fun close() {
         setFragmentResult(

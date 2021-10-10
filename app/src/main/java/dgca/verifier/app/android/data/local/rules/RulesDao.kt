@@ -26,6 +26,10 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import dgca.verifier.app.android.data.local.model.DescriptionLocal
+import dgca.verifier.app.android.data.local.model.RuleIdentifierLocal
+import dgca.verifier.app.android.data.local.model.RuleLocal
+import dgca.verifier.app.android.data.local.model.RuleWithDescriptionsLocal
 import dgca.verifier.app.engine.data.RuleCertificateType
 import dgca.verifier.app.engine.data.Type
 import java.time.ZonedDateTime

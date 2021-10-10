@@ -22,6 +22,9 @@
 
 package dgca.verifier.app.android.data.local.rules
 
+import dgca.verifier.app.android.data.local.model.DescriptionLocal
+import dgca.verifier.app.android.data.local.model.RuleLocal
+import dgca.verifier.app.android.data.local.model.RuleWithDescriptionsLocal
 import dgca.verifier.app.engine.UTC_ZONE_ID
 import dgca.verifier.app.engine.data.Rule
 import java.util.*
@@ -29,21 +32,22 @@ import java.util.*
 fun Rule.toRuleWithDescriptionLocal(): RuleWithDescriptionsLocal =
     RuleWithDescriptionsLocal(toRuleLocal(), descriptions.toDescriptionsLocal())
 
-fun Rule.toRuleLocal(): RuleLocal = RuleLocal(
-    identifier = identifier,
-    type = type,
-    version = version,
-    schemaVersion = schemaVersion,
-    engine = engine,
-    engineVersion = engineVersion,
-    ruleCertificateType = ruleCertificateType,
-    validFrom = validFrom.withZoneSameInstant(UTC_ZONE_ID),
-    validTo = validTo.withZoneSameInstant(UTC_ZONE_ID),
-    affectedString = affectedString,
-    logic = logic,
-    countryCode = countryCode,
-    region = region
-)
+fun Rule.toRuleLocal(): RuleLocal =
+    RuleLocal(
+        identifier = identifier,
+        type = type,
+        version = version,
+        schemaVersion = schemaVersion,
+        engine = engine,
+        engineVersion = engineVersion,
+        ruleCertificateType = ruleCertificateType,
+        validFrom = validFrom.withZoneSameInstant(UTC_ZONE_ID),
+        validTo = validTo.withZoneSameInstant(UTC_ZONE_ID),
+        affectedString = affectedString,
+        logic = logic,
+        countryCode = countryCode,
+        region = region
+    )
 
 fun Map<String, String>.toDescriptionsLocal(): List<DescriptionLocal> {
     val descriptionsLocal = mutableListOf<DescriptionLocal>()
@@ -59,21 +63,22 @@ fun List<DescriptionLocal>.toDescriptions(): Map<String, String> {
     return descriptions
 }
 
-fun RuleWithDescriptionsLocal.toRule(): Rule = Rule(
-    identifier = rule.identifier,
-    type = rule.type,
-    version = rule.version,
-    schemaVersion = rule.schemaVersion,
-    engine = rule.engine,
-    engineVersion = rule.engineVersion,
-    ruleCertificateType = rule.ruleCertificateType,
-    validFrom = rule.validFrom.withZoneSameInstant(UTC_ZONE_ID),
-    validTo = rule.validTo.withZoneSameInstant(UTC_ZONE_ID),
-    affectedString = rule.affectedString,
-    logic = rule.logic,
-    countryCode = rule.countryCode,
-    descriptions = descriptions.toDescriptions(),
-    region = rule.region
-)
+fun RuleWithDescriptionsLocal.toRule(): Rule =
+    Rule(
+        identifier = rule.identifier,
+        type = rule.type,
+        version = rule.version,
+        schemaVersion = rule.schemaVersion,
+        engine = rule.engine,
+        engineVersion = rule.engineVersion,
+        ruleCertificateType = rule.ruleCertificateType,
+        validFrom = rule.validFrom.withZoneSameInstant(UTC_ZONE_ID),
+        validTo = rule.validTo.withZoneSameInstant(UTC_ZONE_ID),
+        affectedString = rule.affectedString,
+        logic = rule.logic,
+        countryCode = rule.countryCode,
+        descriptions = descriptions.toDescriptions(),
+        region = rule.region
+    )
 
 fun List<RuleWithDescriptionsLocal>.toRules(): List<Rule> = map { it.toRule() }

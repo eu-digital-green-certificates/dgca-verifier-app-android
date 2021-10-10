@@ -17,17 +17,20 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 7/26/21 11:56 AM
+ *  Created by osarapulov on 7/26/21 12:08 PM
  */
 
-package dgca.verifier.app.android.data.local.countries
+package dgca.verifier.app.android.data.local.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.fasterxml.jackson.databind.JsonNode
+import java.time.LocalDate
 
-@Entity(tableName = "countries")
-data class CountryLocal(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-    val isoCode: String,
+@Entity(tableName = "valuesets")
+class ValueSetLocal(
+    @PrimaryKey
+    val valueSetId: String,
+    val valueSetDate: LocalDate,
+    val valueSetValues: JsonNode
 )

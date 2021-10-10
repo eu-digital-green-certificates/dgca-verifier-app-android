@@ -62,8 +62,7 @@ import java.util.*
 private const val CAMERA_REQUEST_CODE = 1003
 
 @AndroidEntryPoint
-class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
-    NavController.OnDestinationChangedListener {
+class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(), NavController.OnDestinationChangedListener {
 
     private val viewModel by viewModels<CodeReaderViewModel>()
 
@@ -163,6 +162,29 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        findNavController().addOnDestinationChangedListener(this)
+        lastText = ""
+    }
+
+    override fun onPause() {
+        super.onPause()
+        findNavController().removeOnDestinationChangedListener(this)
+        binding.barcodeScanner.pause()
+    }
+
+    override fun onDestinationChanged(
+        controller: NavController,
+        destination: NavDestination,
+        arguments: Bundle?
+    ) {
+        if (destination.id == R.id.codeReaderFragment) {
+            binding.barcodeScanner.resume()
+            lastText = ""
+        }
+    }
+
     private fun showVerificationResult(
         standardizedVerificationResult: StandardizedVerificationResult,
         certificateModel: CertificateModel?,
@@ -191,18 +213,6 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
         findNavController().navigate(action)
     }
 
-    override fun onResume() {
-        super.onResume()
-        findNavController().addOnDestinationChangedListener(this)
-        lastText = ""
-    }
-
-    override fun onPause() {
-        super.onPause()
-        findNavController().removeOnDestinationChangedListener(this)
-        binding.barcodeScanner.pause()
-    }
-
     private fun navigateToVerificationPage(text: String) {
         val action =
             CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationDialogFragment(
@@ -221,17 +231,6 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
                 arrayOf(Manifest.permission.CAMERA),
                 CAMERA_REQUEST_CODE
             )
-        }
-    }
-
-    override fun onDestinationChanged(
-        controller: NavController,
-        destination: NavDestination,
-        arguments: Bundle?
-    ) {
-        if (destination.id == R.id.codeReaderFragment) {
-            binding.barcodeScanner.resume()
-            lastText = ""
         }
     }
 

@@ -26,6 +26,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import dgca.verifier.app.android.data.local.model.Key
 
 @Dao
 interface KeyDao {

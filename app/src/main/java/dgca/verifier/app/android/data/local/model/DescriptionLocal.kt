@@ -17,19 +17,28 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 7/26/21 12:06 PM
+ *  Created by mykhailo.nester on 10/10/2021, 10:51
  */
 
-package dgca.verifier.app.android.data.local.rules
+package dgca.verifier.app.android.data.local.model
 
-import androidx.room.Embedded
-import androidx.room.Relation
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
 
-data class RuleWithDescriptionsLocal(
-    @Embedded val rule: RuleLocal,
-    @Relation(
-        parentColumn = "ruleId",
-        entityColumn = "ruleContainerId"
-    )
-    val descriptions: List<DescriptionLocal>
+@Entity(
+    tableName = "descriptions",
+    foreignKeys = [ForeignKey(
+        entity = RuleLocal::class,
+        parentColumns = arrayOf("ruleId"),
+        childColumns = arrayOf("ruleContainerId"),
+        onDelete = ForeignKey.CASCADE
+    )]
+)
+data class DescriptionLocal(
+    @PrimaryKey(autoGenerate = true)
+    val descriptionId: Long = 0,
+    val ruleContainerId: Long = 0,
+    val lang: String,
+    val desc: String
 )

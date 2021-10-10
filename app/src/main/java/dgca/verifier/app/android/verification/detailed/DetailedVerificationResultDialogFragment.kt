@@ -46,7 +46,6 @@ import dgca.verifier.app.android.verification.model.StandardizedVerificationResu
 import timber.log.Timber
 import java.io.File
 
-
 @AndroidEntryPoint
 class DetailedVerificationResultDialogFragment :
     BaseVerificationDialogFragment<DialogFragmentDetailedVerificationResultBinding>() {

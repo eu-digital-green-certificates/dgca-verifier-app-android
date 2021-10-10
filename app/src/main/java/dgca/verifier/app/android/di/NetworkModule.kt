@@ -87,10 +87,7 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    internal fun provideOkhttpClient(
-        cache: Cache, interceptor: Interceptor,
-        certificatePinner: CertificatePinner
-    ): OkHttpClient {
+    internal fun provideOkhttpClient(cache: Cache, interceptor: Interceptor, certificatePinner: CertificatePinner): OkHttpClient {
         val httpClient = getHttpClient(cache).apply {
             addInterceptor(HeaderInterceptor())
             certificatePinner(certificatePinner)
@@ -134,7 +131,8 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    internal fun provideConverterFactory(objectMapper: ObjectMapper): Converter.Factory = JacksonConverterFactory.create(objectMapper)
+    internal fun provideConverterFactory(objectMapper: ObjectMapper): Converter.Factory =
+        JacksonConverterFactory.create(objectMapper)
 
     private fun createRetrofit(converterFactory: Converter.Factory, okHttpClient: Provider<OkHttpClient>): Retrofit {
         return Retrofit.Builder()

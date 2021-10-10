@@ -25,8 +25,8 @@ package dgca.verifier.app.android.model.rules
 import dgca.verifier.app.engine.ValidationResult
 import dgca.verifier.app.engine.data.Rule
 
-fun Rule.toRuleModel(): RuleModel {
-    return RuleModel(
+fun Rule.toRuleModel(): RuleModel =
+    RuleModel(
         identifier = identifier,
         type = type,
         version = version,
@@ -42,7 +42,6 @@ fun Rule.toRuleModel(): RuleModel {
         countryCode = countryCode,
         region = region
     )
-}
 
 fun ValidationResult.toRuleValidationResultModel(): RuleValidationResultModel =
     RuleValidationResultModel(

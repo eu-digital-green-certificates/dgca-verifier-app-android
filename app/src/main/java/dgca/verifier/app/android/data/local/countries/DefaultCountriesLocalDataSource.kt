@@ -22,6 +22,7 @@
 
 package dgca.verifier.app.android.data.local.countries
 
+import dgca.verifier.app.android.data.local.model.CountryLocal
 import dgca.verifier.app.engine.data.source.local.countries.CountriesLocalDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

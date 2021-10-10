@@ -26,9 +26,12 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import dgca.verifier.app.android.data.local.countries.CountriesDao
-import dgca.verifier.app.android.data.local.countries.CountryLocal
-import dgca.verifier.app.android.data.local.valuesets.ValueSetIdentifierLocal
-import dgca.verifier.app.android.data.local.valuesets.ValueSetLocal
+import dgca.verifier.app.android.data.local.model.CountryLocal
+import dgca.verifier.app.android.data.local.model.DescriptionLocal
+import dgca.verifier.app.android.data.local.model.RuleIdentifierLocal
+import dgca.verifier.app.android.data.local.model.RuleLocal
+import dgca.verifier.app.android.data.local.model.ValueSetIdentifierLocal
+import dgca.verifier.app.android.data.local.model.ValueSetLocal
 import dgca.verifier.app.android.data.local.valuesets.ValueSetsDao
 
 @Database(

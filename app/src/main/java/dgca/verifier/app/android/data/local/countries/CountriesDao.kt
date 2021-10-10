@@ -25,6 +25,7 @@ package dgca.verifier.app.android.data.local.countries
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import dgca.verifier.app.android.data.local.model.CountryLocal
 import kotlinx.coroutines.flow.Flow
 
 @Dao

@@ -117,7 +117,10 @@ object EngineModule {
 
     @Singleton
     @Provides
-    fun provideCertLogicEngine(affectedFieldsDataRetriever: AffectedFieldsDataRetriever, jsonLogicValidator: JsonLogicValidator): CertLogicEngine =
+    fun provideCertLogicEngine(
+        affectedFieldsDataRetriever: AffectedFieldsDataRetriever,
+        jsonLogicValidator: JsonLogicValidator
+    ): CertLogicEngine =
         DefaultCertLogicEngine(affectedFieldsDataRetriever, jsonLogicValidator)
 
     // Dependencies for countries.

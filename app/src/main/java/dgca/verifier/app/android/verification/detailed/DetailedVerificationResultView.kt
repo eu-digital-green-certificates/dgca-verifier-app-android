@@ -37,8 +37,8 @@ import dgca.verifier.app.engine.data.RuleCertificateType
 import dgca.verifier.app.engine.data.Type
 
 
-class DetailedVerificationResultView(context: Context, attrs: AttributeSet?) :
-    CardView(context, attrs) {
+class DetailedVerificationResultView(context: Context, attrs: AttributeSet?) : CardView(context, attrs) {
+
     private val binding: ViewDetailedVerificationResultBinding =
         ViewDetailedVerificationResultBinding.inflate(LayoutInflater.from(context), this)
 
@@ -62,6 +62,7 @@ class DetailedVerificationResultView(context: Context, attrs: AttributeSet?) :
             } else {
                 R.drawable.ic_traffic_fail
             }
+
         binding.techVerificationImage.setImageResource(techVerificationAsset)
         val (invalidationAsset, nonGeneralAcceptanceAsset, generalAcceptanceAsset) = ruleValidationResultModelsContainer?.getAssets()
             ?: Triple(
@@ -110,6 +111,7 @@ class DetailedVerificationResultView(context: Context, attrs: AttributeSet?) :
             }
 
         }
+
         return Triple(
             invalidationAsset,
             nonGeneralAcceptanceAsset,

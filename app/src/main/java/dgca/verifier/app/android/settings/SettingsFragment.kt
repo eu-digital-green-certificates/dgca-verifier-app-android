@@ -35,7 +35,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import dagger.hilt.android.AndroidEntryPoint
-import dgca.verifier.app.android.*
+import dgca.verifier.app.android.BuildConfig
+import dgca.verifier.app.android.MainActivity
+import dgca.verifier.app.android.R
 import dgca.verifier.app.android.base.BindingFragment
 import dgca.verifier.app.android.databinding.FragmentSettingsBinding
 import dgca.verifier.app.android.settings.debug.mode.DebugModeState
@@ -45,6 +47,7 @@ import dgca.verifier.app.android.utils.toLocalDateTime
 
 @AndroidEntryPoint
 class SettingsFragment : BindingFragment<FragmentSettingsBinding>() {
+
     private val viewModel by viewModels<SettingsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,10 +55,7 @@ class SettingsFragment : BindingFragment<FragmentSettingsBinding>() {
         lifecycle.addObserver(viewModel)
     }
 
-    override fun onCreateBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): FragmentSettingsBinding =
+    override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSettingsBinding =
         FragmentSettingsBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -139,8 +139,7 @@ class SettingsFragment : BindingFragment<FragmentSettingsBinding>() {
     }
 
     companion object {
-        const val PRIVACY_POLICY =
-            "https://op.europa.eu/en/web/about-us/legal-notices/eu-mobile-apps"
+        private const val PRIVACY_POLICY = "https://op.europa.eu/en/web/about-us/legal-notices/eu-mobile-apps"
         private const val LAST_UPDATE_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm"
     }
 }

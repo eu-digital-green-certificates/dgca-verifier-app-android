@@ -22,27 +22,33 @@
 
 package dgca.verifier.app.android.data.local.valuesets
 
+import dgca.verifier.app.android.data.local.model.ValueSetIdentifierLocal
+import dgca.verifier.app.android.data.local.model.ValueSetLocal
 import dgca.verifier.app.engine.data.ValueSet
 import dgca.verifier.app.engine.data.ValueSetIdentifier
 
-fun ValueSet.toValueSetLocal(): ValueSetLocal = ValueSetLocal(
-    valueSetId = this.valueSetId,
-    valueSetDate = this.valueSetDate,
-    valueSetValues = this.valueSetValues
-)
+fun ValueSet.toValueSetLocal(): ValueSetLocal =
+    ValueSetLocal(
+        valueSetId = valueSetId,
+        valueSetDate = valueSetDate,
+        valueSetValues = valueSetValues
+    )
 
-fun ValueSetLocal.toValueSet(): ValueSet = ValueSet(
-    valueSetId = this.valueSetId,
-    valueSetDate = this.valueSetDate,
-    valueSetValues = this.valueSetValues
-)
+fun ValueSetLocal.toValueSet(): ValueSet =
+    ValueSet(
+        valueSetId = valueSetId,
+        valueSetDate = valueSetDate,
+        valueSetValues = valueSetValues
+    )
 
-fun ValueSetIdentifier.toValueSetIdentifierLocal(): ValueSetIdentifierLocal = ValueSetIdentifierLocal(
-    valueSetIdentifierId = id,
-    valueSetHash = hash
-)
+fun ValueSetIdentifier.toValueSetIdentifierLocal(): ValueSetIdentifierLocal =
+    ValueSetIdentifierLocal(
+        valueSetIdentifierId = id,
+        valueSetHash = hash
+    )
 
-fun ValueSetIdentifierLocal.toValueSetIdentifier(): ValueSetIdentifier = ValueSetIdentifier(
-    id = valueSetIdentifierId,
-    hash = valueSetHash
-)
+fun ValueSetIdentifierLocal.toValueSetIdentifier(): ValueSetIdentifier =
+    ValueSetIdentifier(
+        id = valueSetIdentifierId,
+        hash = valueSetHash
+    )

@@ -25,11 +25,10 @@ package dgca.verifier.app.android.data.remote.countries
 import dgca.verifier.app.engine.data.source.remote.countries.CountriesRemoteDataSrouce
 import retrofit2.Response
 
-class DefaultCountriesRemoteDataSource(private val countriesApiService: CountriesApiService) :
-    CountriesRemoteDataSrouce {
+class DefaultCountriesRemoteDataSource(private val countriesApiService: CountriesApiService) : CountriesRemoteDataSrouce {
+
     override suspend fun getCountries(countriesUrl: String): List<String> {
-        val countriesResponse: Response<List<String>> =
-            countriesApiService.getCountries(countriesUrl)
+        val countriesResponse: Response<List<String>> = countriesApiService.getCountries(countriesUrl)
         return countriesResponse.body() ?: listOf()
     }
 }

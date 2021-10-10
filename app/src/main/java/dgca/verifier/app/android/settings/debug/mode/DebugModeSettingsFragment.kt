@@ -35,19 +35,16 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.MainActivity
 import dgca.verifier.app.android.R
-import dgca.verifier.app.android.utils.applyStyle
 import dgca.verifier.app.android.base.BindingFragment
 import dgca.verifier.app.android.databinding.FragmentDebugModeSettingsBinding
-
+import dgca.verifier.app.android.utils.applyStyle
 
 @AndroidEntryPoint
 class DebugModeSettingsFragment : BindingFragment<FragmentDebugModeSettingsBinding>() {
+
     private val viewModel by viewModels<DebugModeSettingsViewModel>()
 
-    override fun onCreateBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): FragmentDebugModeSettingsBinding =
+    override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentDebugModeSettingsBinding =
         FragmentDebugModeSettingsBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,7 +60,6 @@ class DebugModeSettingsFragment : BindingFragment<FragmentDebugModeSettingsBindi
                 else -> {
                 }
             }
-
         }
 
         binding.debugModeSwitch.setOnCheckedChangeListener { _, _ -> saveSelectedDebugModeState() }
@@ -75,8 +71,16 @@ class DebugModeSettingsFragment : BindingFragment<FragmentDebugModeSettingsBindi
             viewModel.saveSelectedCountries(countriesData)
         }
 
-        viewModel.countriesData.observe(viewLifecycleOwner) {
-            setUpSelectCountry(it)
+        viewModel.countriesData.observe(viewLifecycleOwner) { setUpSelectCountry(it) }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                findNavController().popBackStack()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -94,46 +98,39 @@ class DebugModeSettingsFragment : BindingFragment<FragmentDebugModeSettingsBindi
         findNavController().navigate(action)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                findNavController().popBackStack()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     private fun setUpSelectCountry(countriesData: CountriesData) {
-        if (countriesData.availableCountriesCodes.isNotEmpty()) {
-            val selectedCountriesText =
-                if (countriesData.selectedCountriesCodes.isEmpty()) getString(R.string.no_countries_selected) else countriesData.selectedCountriesCodes.sorted()
-                    .joinToString(
-                        separator = ", "
-                    )
-
-            val context = requireContext()
-
-            val spannable = SpannableStringBuilder()
-                .append(
-                    getString(R.string.select_country).toSpannable().applyStyle(
-                        context,
-                        R.style.TextAppearance_Dgca_SettingsButtonHeader
-                    )
-                )
-                .append("\n")
-                .append(
-                    selectedCountriesText.toSpannable().applyStyle(
-                        context,
-                        R.style.TextAppearance_Dgca_SettingsButtonSubHeader
-                    )
-                )
-
-            binding.selectedCountries.text = spannable
-
-            binding.selectedCountries.setOnClickListener { showCountriesSelector(countriesData) }
-            binding.selectedCountries.visibility = View.VISIBLE
+        if (countriesData.availableCountriesCodes.isEmpty()) {
+            return
         }
+
+        val selectedCountriesText =
+            if (countriesData.selectedCountriesCodes.isEmpty()) {
+                getString(R.string.no_countries_selected)
+            } else {
+                countriesData.selectedCountriesCodes
+                    .sorted()
+                    .joinToString(separator = ", ")
+            }
+
+        val context = requireContext()
+        val spannable = SpannableStringBuilder()
+            .append(
+                getString(R.string.select_country).toSpannable().applyStyle(
+                    context,
+                    R.style.TextAppearance_Dgca_SettingsButtonHeader
+                )
+            )
+            .append("\n")
+            .append(
+                selectedCountriesText.toSpannable().applyStyle(
+                    context,
+                    R.style.TextAppearance_Dgca_SettingsButtonSubHeader
+                )
+            )
+
+        binding.selectedCountries.text = spannable
+        binding.selectedCountries.setOnClickListener { showCountriesSelector(countriesData) }
+        binding.selectedCountries.visibility = View.VISIBLE
     }
 
     private fun getSelectedDebugMode(): DebugModeState = when {

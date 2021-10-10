@@ -33,24 +33,24 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.card.MaterialCardView
-import dgca.verifier.app.android.utils.FORMATTED_YEAR_MONTH_DAY
 import dgca.verifier.app.android.R
-import dgca.verifier.app.android.utils.YEAR_MONTH_DAY
 import dgca.verifier.app.android.databinding.ViewDetailedCertificateViewBinding
 import dgca.verifier.app.android.model.*
 import dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer
+import dgca.verifier.app.android.utils.FORMATTED_YEAR_MONTH_DAY
+import dgca.verifier.app.android.utils.YEAR_MONTH_DAY
 import dgca.verifier.app.android.utils.parseFromTo
-import dgca.verifier.app.android.verification.model.StandardizedVerificationResult
-import dgca.verifier.app.android.verification.model.StandardizedVerificationResultCategory
 import dgca.verifier.app.android.verification.certs.RecoveryViewHolder
 import dgca.verifier.app.android.verification.certs.TestViewHolder
 import dgca.verifier.app.android.verification.certs.VaccinationViewHolder
-import dgca.verifier.app.android.verification.model.RuleValidationResultCard
-import dgca.verifier.app.android.verification.rules.RuleValidationResultsAdapter
 import dgca.verifier.app.android.verification.mapper.toRuleValidationResultCard
+import dgca.verifier.app.android.verification.model.RuleValidationResultCard
+import dgca.verifier.app.android.verification.model.StandardizedVerificationResult
+import dgca.verifier.app.android.verification.model.StandardizedVerificationResultCategory
+import dgca.verifier.app.android.verification.rules.RuleValidationResultsAdapter
 
-class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
-    MaterialCardView(context, attrs) {
+class DetailedCertificateView(context: Context, attrs: AttributeSet?) : MaterialCardView(context, attrs) {
+
     private val binding: ViewDetailedCertificateViewBinding =
         ViewDetailedCertificateViewBinding.inflate(LayoutInflater.from(context), this)
     private var isExpanded = false
@@ -110,20 +110,16 @@ class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
     }
 
     private fun setUpGreenCertificateData(certificateModel: CertificateModel) {
-        if (binding.greenCertificate.parent != null) {
-            when {
-                certificateModel.vaccinations?.size == 1 -> {
-                    setUpVaccination(certificateModel.vaccinations)
-                }
-                certificateModel.recoveryStatements?.size == 1 -> {
-                    setUpRecovery(certificateModel.recoveryStatements)
-                }
-                certificateModel.tests?.size == 1 -> {
-                    setUpTest(certificateModel.tests)
-                }
-            }
-            binding.greenCertificate.inflate()
+        if (binding.greenCertificate.parent == null) {
+            return
         }
+
+        when {
+            certificateModel.vaccinations?.size == 1 -> setUpVaccination(certificateModel.vaccinations)
+            certificateModel.recoveryStatements?.size == 1 -> setUpRecovery(certificateModel.recoveryStatements)
+            certificateModel.tests?.size == 1 -> setUpTest(certificateModel.tests)
+        }
+        binding.greenCertificate.inflate()
     }
 
     private fun setUpErrorType(standardizedVerificationResult: StandardizedVerificationResult) {

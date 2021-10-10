@@ -31,34 +31,18 @@ import dgca.verifier.app.android.databinding.ItemCountryBinding
 import dgca.verifier.app.engine.data.source.countries.COUNTRIES_MAP
 import java.util.*
 
-
 class CountriesAdapter(private val inflater: LayoutInflater, countriesData: CountriesData) :
     RecyclerView.Adapter<CountriesAdapter.ViewHolder>() {
+
     private val availableCountriesCodes = countriesData.availableCountriesCodes.sortedBy {
         Locale(
             "",
             COUNTRIES_MAP[it] ?: it
         ).displayCountry
     }
-    private val selectedCountriesCodes: MutableSet<String> =
-        countriesData.selectedCountriesCodes.toMutableSet()
+    private val selectedCountriesCodes: MutableSet<String> = countriesData.selectedCountriesCodes.toMutableSet()
 
-    fun getCountriesData() = CountriesData(availableCountriesCodes.toSet(), selectedCountriesCodes)
-
-    inner class ViewHolder(val binding: ItemCountryBinding) :
-        RecyclerView.ViewHolder(binding.root)
-
-    fun create(inflater: LayoutInflater, parent: ViewGroup) =
-        ViewHolder(
-            ItemCountryBinding.inflate(
-                inflater,
-                parent,
-                false
-            )
-        )
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
-        create(inflater, parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = create(inflater, parent)
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val countryCode = availableCountriesCodes[position]
@@ -94,8 +78,20 @@ class CountriesAdapter(private val inflater: LayoutInflater, countriesData: Coun
                 null
             )
         }
-
     }
 
     override fun getItemCount(): Int = availableCountriesCodes.size
+
+    fun getCountriesData() = CountriesData(availableCountriesCodes.toSet(), selectedCountriesCodes)
+
+    private fun create(inflater: LayoutInflater, parent: ViewGroup) =
+        ViewHolder(
+            ItemCountryBinding.inflate(
+                inflater,
+                parent,
+                false
+            )
+        )
+
+    inner class ViewHolder(val binding: ItemCountryBinding) : RecyclerView.ViewHolder(binding.root)
 }

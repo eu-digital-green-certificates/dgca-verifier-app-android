@@ -34,6 +34,7 @@ class DefaultQrCodeConverter(
 
     override fun convertStringIntoQrCode(text: String, size: Int): Bitmap {
         val bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE, size, size)
+
         return barcodeEncoder.createBitmap(bitMatrix)
     }
 }
