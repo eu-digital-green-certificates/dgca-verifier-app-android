@@ -17,10 +17,10 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 9/4/21 7:43 PM
+ *  Created by mykhailo.nester on 10/10/2021, 09:10
  */
 
-package dgca.verifier.app.android
+package dgca.verifier.app.android.utils
 
 import android.content.Context
 import android.text.Spannable

@@ -24,12 +24,12 @@ package dgca.verifier.app.android.verification.certs
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import dgca.verifier.app.android.FORMATTED_YEAR_MONTH_DAY
-import dgca.verifier.app.android.YEAR_MONTH_DAY
-import dgca.verifier.app.android.bindCountryWith
+import dgca.verifier.app.android.utils.FORMATTED_YEAR_MONTH_DAY
+import dgca.verifier.app.android.utils.YEAR_MONTH_DAY
+import dgca.verifier.app.android.utils.bindCountryWith
 import dgca.verifier.app.android.databinding.ItemVaccinationBinding
 import dgca.verifier.app.android.model.VaccinationModel
-import dgca.verifier.app.android.parseFromTo
+import dgca.verifier.app.android.utils.parseFromTo
 
 class VaccinationViewHolder(private val binding: ItemVaccinationBinding) :
     RecyclerView.ViewHolder(binding.root) {

@@ -17,14 +17,13 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 8/31/21 5:45 PM
+ *  Created by mykhailo.nester on 10/10/2021, 09:13
  */
 
-package dgca.verifier.app.android.verification
+package dgca.verifier.app.android.utils;
 
-import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-
-@HiltViewModel
-class VerificationResultResultViewModel @Inject constructor() : ViewModel()
+public class BackportUtils {
+    public static int byteToUnsignedInt(byte x) {
+        return x & 0xff;
+    }
+}

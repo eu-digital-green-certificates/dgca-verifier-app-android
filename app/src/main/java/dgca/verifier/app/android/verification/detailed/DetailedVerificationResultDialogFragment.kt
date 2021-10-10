@@ -41,8 +41,8 @@ import dgca.verifier.app.android.databinding.DialogFragmentDetailedVerificationR
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer
 import dgca.verifier.app.android.verification.BaseVerificationDialogFragment
-import dgca.verifier.app.android.verification.StandardizedVerificationResult
-import dgca.verifier.app.android.verification.StandardizedVerificationResultCategory
+import dgca.verifier.app.android.verification.model.StandardizedVerificationResult
+import dgca.verifier.app.android.verification.model.StandardizedVerificationResultCategory
 import timber.log.Timber
 import java.io.File
 

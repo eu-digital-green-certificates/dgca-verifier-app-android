@@ -17,10 +17,10 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:48 AM
+ *  Created by mykhailo.nester on 10/10/2021, 09:14
  */
 
-package dgca.verifier.app.android
+package dgca.verifier.app.android.reader
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -46,11 +46,15 @@ import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import dagger.hilt.android.AndroidEntryPoint
+import dgca.verifier.app.android.MainActivity
+import dgca.verifier.app.android.R
 import dgca.verifier.app.android.base.BindingFragment
 import dgca.verifier.app.android.databinding.FragmentCodeReaderBinding
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer
 import dgca.verifier.app.android.verification.*
+import dgca.verifier.app.android.verification.model.DebugData
+import dgca.verifier.app.android.verification.model.StandardizedVerificationResult
 import dgca.verifier.app.engine.data.source.countries.COUNTRIES_MAP
 import timber.log.Timber
 import java.util.*
@@ -93,10 +97,7 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
         adapter = CountriesAdapter(layoutInflater)
     }
 
-    override fun onCreateBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): FragmentCodeReaderBinding =
+    override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentCodeReaderBinding =
         FragmentCodeReaderBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -115,9 +116,7 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
 
         setFragmentResultListener(VERIFY_REQUEST_KEY) { _, bundle ->
             val standardizedVerificationResult: StandardizedVerificationResult? =
-                bundle.getSerializable(
-                    STANDARDISED_VERIFICATION_RESULT_KEY
-                ) as StandardizedVerificationResult?
+                bundle.getSerializable(STANDARDISED_VERIFICATION_RESULT_KEY) as StandardizedVerificationResult?
             val certificateModel: CertificateModel? = bundle.getParcelable(CERTIFICATE_MODEL_KEY)
             val hcert: String? = bundle.getString(HCERT_KEY)
             val ruleValidationResultModelsContainer: RuleValidationResultModelsContainer? = bundle.getParcelable(
@@ -140,12 +139,7 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
 
         binding.countrySelector.adapter = adapter
         binding.countrySelector.onItemSelectedListener = object : OnItemSelectedListener {
-            override fun onItemSelected(
-                parentView: AdapterView<*>?,
-                selectedItemView: View?,
-                position: Int,
-                id: Long
-            ) {
+            override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View?, position: Int, id: Long) {
                 viewModel.selectCountry(adapter.getItem(position))
             }
 

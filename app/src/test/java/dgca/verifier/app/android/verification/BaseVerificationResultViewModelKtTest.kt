@@ -22,6 +22,9 @@
 
 package dgca.verifier.app.android.verification
 
+import dgca.verifier.app.android.verification.model.InnerVerificationResult
+import dgca.verifier.app.android.verification.model.StandardizedVerificationResultCategory
+import dgca.verifier.app.android.verification.model.extractStandardizedVerificationResultFrom
 import dgca.verifier.app.decoder.cbor.GreenCertificateData
 import dgca.verifier.app.decoder.model.GreenCertificate
 import dgca.verifier.app.decoder.model.Person

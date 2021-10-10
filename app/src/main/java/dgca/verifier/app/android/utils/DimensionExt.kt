@@ -17,13 +17,13 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Admin on 7/26/21, 3:18 AM
+ *  Created by mykhailo.nester on 5/5/21 8:18 PM
  */
 
-package dgca.verifier.app.android;
+package dgca.verifier.app.android.utils
 
-public class BackportUtils {
-    public static int byteToUnsignedInt(byte x) {
-        return x & 0xff;
-    }
-}
+import android.content.res.Resources
+
+private fun density() = Resources.getSystem().displayMetrics.density
+
+fun Int.dpToPx() = this * density().toInt()

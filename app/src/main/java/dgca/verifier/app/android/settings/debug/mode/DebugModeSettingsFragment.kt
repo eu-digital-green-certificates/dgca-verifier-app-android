@@ -35,7 +35,7 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.MainActivity
 import dgca.verifier.app.android.R
-import dgca.verifier.app.android.applyStyle
+import dgca.verifier.app.android.utils.applyStyle
 import dgca.verifier.app.android.base.BindingFragment
 import dgca.verifier.app.android.databinding.FragmentDebugModeSettingsBinding
 

@@ -36,19 +36,21 @@ import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
-import dgca.verifier.app.android.FORMATTED_YEAR_MONTH_DAY
 import dgca.verifier.app.android.R
-import dgca.verifier.app.android.YEAR_MONTH_DAY
 import dgca.verifier.app.android.databinding.DialogFragmentVerificationResultBinding
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.model.TestResult
-import dgca.verifier.app.android.parseFromTo
+import dgca.verifier.app.android.utils.FORMATTED_YEAR_MONTH_DAY
+import dgca.verifier.app.android.utils.YEAR_MONTH_DAY
+import dgca.verifier.app.android.utils.parseFromTo
 import dgca.verifier.app.android.verification.certs.RecoveryViewHolder
 import dgca.verifier.app.android.verification.certs.TestViewHolder
 import dgca.verifier.app.android.verification.certs.VaccinationViewHolder
-import dgca.verifier.app.android.verification.rules.RuleValidationResultCard
+import dgca.verifier.app.android.verification.mapper.toRuleValidationResultCard
+import dgca.verifier.app.android.verification.model.RuleValidationResultCard
+import dgca.verifier.app.android.verification.model.StandardizedVerificationResult
+import dgca.verifier.app.android.verification.model.StandardizedVerificationResultCategory
 import dgca.verifier.app.android.verification.rules.RuleValidationResultsAdapter
-import dgca.verifier.app.android.verification.rules.toRuleValidationResultCard
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
@@ -57,10 +59,7 @@ class VerificationResultDialogFragment : BaseVerificationDialogFragment<DialogFr
     private val hideLiveData: MutableLiveData<Void?> = MutableLiveData()
     private val args by navArgs<VerificationResultDialogFragmentArgs>()
 
-    override fun onCreateBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): DialogFragmentVerificationResultBinding =
+    override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): DialogFragmentVerificationResultBinding =
         DialogFragmentVerificationResultBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -68,17 +67,16 @@ class VerificationResultDialogFragment : BaseVerificationDialogFragment<DialogFr
         binding.rulesList.apply {
             layoutManager = LinearLayoutManager(requireContext())
         }
+
         handleDecodeResult()
-
-        hideLiveData.observe(viewLifecycleOwner, {
-            dismiss()
-        })
-
+        hideLiveData.observe(viewLifecycleOwner, { dismiss() })
         startTimer()
     }
 
     override fun contentLayout(): ViewGroup.LayoutParams = binding.content.layoutParams
+
     override fun timerView(): View = binding.timerView
+
     override fun actionButton(): Button = binding.actionButton
 
     private fun handleDecodeResult() {
@@ -91,6 +89,7 @@ class VerificationResultDialogFragment : BaseVerificationDialogFragment<DialogFr
             args.certificateModel,
             args.standardizedVerificationResult.category
         )
+
         if (args.standardizedVerificationResult.category != StandardizedVerificationResultCategory.VALID) {
             setCertStatusError(args.standardizedVerificationResult)
         }
@@ -102,105 +101,89 @@ class VerificationResultDialogFragment : BaseVerificationDialogFragment<DialogFr
     ) {
         setCertStatusUI(standardizedVerificationResultCategory)
         setCertDataVisibility(standardizedVerificationResultCategory)
-        certificateModel?.let { it ->
-            toggleButton(it)
 
-            if (standardizedVerificationResultCategory != StandardizedVerificationResultCategory.INVALID) {
-                showUserData(it)
+        if (certificateModel == null || standardizedVerificationResultCategory == StandardizedVerificationResultCategory.INVALID) {
+            return
+        }
 
-                if (binding.greenCertificate.parent != null) {
-                    when {
-                        it.vaccinations?.size == 1 -> {
-                            binding.greenCertificate.layoutResource =
-                                R.layout.item_vaccination
-                            binding.greenCertificate.setOnInflateListener { stub, inflated ->
-                                VaccinationViewHolder.create(
-                                    inflated as ViewGroup
-                                ).bind(it.vaccinations.first())
-                            }
-                            binding.greenCertificate.inflate()
-                        }
-                        it.recoveryStatements?.size == 1 -> {
-                            binding.greenCertificate.layoutResource = R.layout.item_recovery
+        toggleButton(certificateModel)
+        showUserData(certificateModel)
 
-                            binding.greenCertificate.setOnInflateListener { stub, inflated ->
-                                RecoveryViewHolder.create(
-                                    inflated as ViewGroup
-                                ).bind(it.recoveryStatements.first())
-                            }
-                            binding.greenCertificate.inflate()
-                        }
-                        it.tests?.size == 1 -> {
-                            binding.greenCertificate.layoutResource = R.layout.item_test
-
-                            binding.greenCertificate.setOnInflateListener { stub, inflated ->
-                                TestViewHolder.create(
-                                    inflated as ViewGroup
-                                ).bind(it.tests.first())
-                            }
-                            binding.greenCertificate.inflate()
-                        }
+        if (binding.greenCertificate.parent != null) {
+            when {
+                certificateModel.vaccinations?.size == 1 -> {
+                    binding.greenCertificate.layoutResource = R.layout.item_vaccination
+                    binding.greenCertificate.setOnInflateListener { stub, inflated ->
+                        VaccinationViewHolder.create(inflated as ViewGroup).bind(certificateModel.vaccinations.first())
                     }
+                    binding.greenCertificate.inflate()
+                }
+                certificateModel.recoveryStatements?.size == 1 -> {
+                    binding.greenCertificate.layoutResource = R.layout.item_recovery
+                    binding.greenCertificate.setOnInflateListener { stub, inflated ->
+                        RecoveryViewHolder.create(inflated as ViewGroup).bind(certificateModel.recoveryStatements.first())
+                    }
+                    binding.greenCertificate.inflate()
+                }
+                certificateModel.tests?.size == 1 -> {
+                    binding.greenCertificate.layoutResource = R.layout.item_test
+                    binding.greenCertificate.setOnInflateListener { stub, inflated ->
+                        TestViewHolder.create(inflated as ViewGroup).bind(certificateModel.tests.first())
+                    }
+                    binding.greenCertificate.inflate()
                 }
             }
         }
     }
 
     private fun setCertStatusUI(standardizedVerificationResultCategory: StandardizedVerificationResultCategory) {
-        val text: String
-        val imageId: Int
         val statusColor: ColorStateList
         val actionBtnText: String
 
         when (standardizedVerificationResultCategory) {
             StandardizedVerificationResultCategory.VALID -> {
-                text = getString(R.string.cert_valid)
-                imageId = R.drawable.check
-                statusColor =
-                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
+                statusColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
                 actionBtnText = getString(R.string.done)
             }
             StandardizedVerificationResultCategory.LIMITED_VALIDITY -> {
-                text = getString(R.string.cert_limited_validity)
-                imageId = R.drawable.check
-                statusColor =
-                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.yellow))
+                statusColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.yellow))
                 actionBtnText = getString(R.string.retry)
             }
             StandardizedVerificationResultCategory.INVALID -> {
-                text = getString(R.string.cert_invalid)
-                imageId = R.drawable.error
-                statusColor =
-                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.red))
+                statusColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.red))
                 actionBtnText = getString(R.string.retry)
             }
         }
 
-        actionButton().isVisible = true
-        actionButton().backgroundTintList = statusColor
-        actionButton().text = actionBtnText
-        actionButton().isVisible = true
+        actionButton().apply {
+            isVisible = true
+            backgroundTintList = statusColor
+            text = actionBtnText
+            isVisible = true
+        }
     }
 
     private fun setCertStatusError(standardizedVerificationResult: StandardizedVerificationResult) {
         binding.reasonForCertificateInvalidityTitle.visibility = View.VISIBLE
         binding.reasonForCertificateInvalidityName.visibility = View.VISIBLE
-        binding.reasonForCertificateInvalidityName.text = getString(
-            when (standardizedVerificationResult) {
-                StandardizedVerificationResult.GREEN_CERTIFICATE_EXPIRED -> R.string.certificate_is_expired
-                StandardizedVerificationResult.CERTIFICATE_REVOKED -> R.string.certificate_was_revoked
-                StandardizedVerificationResult.VERIFICATION_FAILED -> R.string.verification_failed
-                StandardizedVerificationResult.CERTIFICATE_EXPIRED -> R.string.signing_certificate_is_expired
-                StandardizedVerificationResult.VACCINATION_DATE_IS_IN_THE_FUTURE -> R.string.the_vaccination_date_is_in_the_future
-                StandardizedVerificationResult.TEST_DATE_IS_IN_THE_FUTURE -> R.string.the_test_date_is_in_the_future
-                StandardizedVerificationResult.TEST_RESULT_POSITIVE -> R.string.test_result_positive
-                StandardizedVerificationResult.RECOVERY_NOT_VALID_SO_FAR -> R.string.recovery_not_valid_yet
-                StandardizedVerificationResult.RECOVERY_NOT_VALID_ANYMORE -> R.string.recover_not_valid_anymore
-                StandardizedVerificationResult.RULES_VALIDATION_FAILED -> R.string.rules_validation_failed
-                StandardizedVerificationResult.CRYPTOGRAPHIC_SIGNATURE_INVALID -> R.string.cryptographic_signature_invalid
-                else -> throw IllegalArgumentException()
-            }
-        )
+
+        val invalidityReason = when (standardizedVerificationResult) {
+            StandardizedVerificationResult.GREEN_CERTIFICATE_EXPIRED -> R.string.certificate_is_expired
+            StandardizedVerificationResult.CERTIFICATE_REVOKED -> R.string.certificate_was_revoked
+            StandardizedVerificationResult.VERIFICATION_FAILED -> R.string.verification_failed
+            StandardizedVerificationResult.CERTIFICATE_EXPIRED -> R.string.signing_certificate_is_expired
+            StandardizedVerificationResult.VACCINATION_DATE_IS_IN_THE_FUTURE -> R.string.the_vaccination_date_is_in_the_future
+            StandardizedVerificationResult.TEST_DATE_IS_IN_THE_FUTURE -> R.string.the_test_date_is_in_the_future
+            StandardizedVerificationResult.TEST_RESULT_POSITIVE -> R.string.test_result_positive
+            StandardizedVerificationResult.RECOVERY_NOT_VALID_SO_FAR -> R.string.recovery_not_valid_yet
+            StandardizedVerificationResult.RECOVERY_NOT_VALID_ANYMORE -> R.string.recover_not_valid_anymore
+            StandardizedVerificationResult.RULES_VALIDATION_FAILED -> R.string.rules_validation_failed
+            StandardizedVerificationResult.CRYPTOGRAPHIC_SIGNATURE_INVALID -> R.string.cryptographic_signature_invalid
+            else -> throw IllegalArgumentException()
+        }
+
+        binding.reasonForCertificateInvalidityName.text = getString(invalidityReason)
+
         if (standardizedVerificationResult == StandardizedVerificationResult.TEST_RESULT_POSITIVE) {
             binding.errorTestResult.visibility = View.VISIBLE
             binding.reasonTestResultValue.text = TestResult.DETECTED.value
@@ -215,11 +198,9 @@ class VerificationResultDialogFragment : BaseVerificationDialogFragment<DialogFr
                     it.toRuleValidationResultCard()
                 )
             }
-            binding.rulesList.adapter =
-                RuleValidationResultsAdapter(layoutInflater, ruleValidationResultCards)
+            binding.rulesList.adapter = RuleValidationResultsAdapter(layoutInflater, ruleValidationResultCards)
             binding.reasonForCertificateInvalidityName.setOnClickListener {
-                binding.rulesList.visibility =
-                    if (binding.rulesList.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                binding.rulesList.isVisible = !binding.rulesList.isVisible
                 binding.reasonForCertificateInvalidityName.setCompoundDrawablesRelativeWithIntrinsicBounds(
                     null,
                     null,
@@ -231,8 +212,7 @@ class VerificationResultDialogFragment : BaseVerificationDialogFragment<DialogFr
                     null
                 )
             }
-            binding.reasonForCertificateInvalidityTitle.text =
-                getString(R.string.possible_limitation)
+            binding.reasonForCertificateInvalidityTitle.text = getString(R.string.possible_limitation)
             val outValue = TypedValue()
             requireContext().theme.resolveAttribute(
                 android.R.attr.selectableItemBackground,
@@ -250,8 +230,8 @@ class VerificationResultDialogFragment : BaseVerificationDialogFragment<DialogFr
     }
 
     private fun setCertDataVisibility(standardizedVerificationResultCategory: StandardizedVerificationResultCategory) {
-        binding.errorDetails.visibility =
-            if (standardizedVerificationResultCategory == StandardizedVerificationResultCategory.VALID) View.GONE else View.VISIBLE
+        binding.errorDetails.isVisible = standardizedVerificationResultCategory != StandardizedVerificationResultCategory.VALID
+
         if (standardizedVerificationResultCategory == StandardizedVerificationResultCategory.VALID) {
             binding.errorTestResult.visibility = View.GONE
         }
@@ -271,11 +251,9 @@ class VerificationResultDialogFragment : BaseVerificationDialogFragment<DialogFr
             binding.personStandardisedGivenName.visibility = this
         }
 
-        binding.dateOfBirthValue.text =
-            certificate.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
+        binding.dateOfBirthValue.text = certificate.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
 
-        val dateOfBirth =
-            certificate.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
+        val dateOfBirth = certificate.dateOfBirth.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
         if (dateOfBirth.isBlank()) {
             View.GONE
         } else {

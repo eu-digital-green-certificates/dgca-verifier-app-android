@@ -33,6 +33,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.nfc.NdefParser
+import dgca.verifier.app.android.reader.CodeReaderFragment
 import timber.log.Timber
 
 @AndroidEntryPoint

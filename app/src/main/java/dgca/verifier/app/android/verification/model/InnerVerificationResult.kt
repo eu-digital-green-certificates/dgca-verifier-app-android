@@ -20,7 +20,7 @@
  *  Created by osarapulov on 7/22/21 11:44 AM
  */
 
-package dgca.verifier.app.android.verification
+package dgca.verifier.app.android.verification.model
 
 import android.os.Parcelable
 import dgca.verifier.app.decoder.cbor.GreenCertificateData

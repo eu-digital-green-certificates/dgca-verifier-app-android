@@ -22,7 +22,6 @@
 
 package dgca.verifier.app.android.utils
 
-import dgca.verifier.app.android.BackportUtils
 import timber.log.Timber
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException

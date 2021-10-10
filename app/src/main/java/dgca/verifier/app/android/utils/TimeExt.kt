@@ -17,10 +17,10 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 5/5/21 11:57 PM
+ *  Created by mykhailo.nester on 10/10/2021, 09:10
  */
 
-package dgca.verifier.app.android
+package dgca.verifier.app.android.utils
 
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -33,35 +33,36 @@ import java.util.*
 const val YEAR_MONTH_DAY = "yyyy-MM-dd"
 const val FORMATTED_YEAR_MONTH_DAY = "MMM d, yyyy"
 private const val FORMATTED_DATE_TIME = "MMM d, yyyy, HH:mm"
-
-private fun String.toZonedDateTime(): ZonedDateTime? = try {
-    ZonedDateTime.parse(this)
-} catch (error: Throwable) {
-    null
-}
-
-private fun String.toLocalDateTime(): LocalDateTime? = try {
-    LocalDateTime.parse(this)
-} catch (error: Throwable) {
-    null
-}
-
 private val DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(FORMATTED_DATE_TIME)
-fun String.toFormattedDateTime(): String? =
-    this.toZonedDateTime()?.let { "${DATE_TIME_FORMATTER.format(it)} (UTC)" }
-        ?: this.toLocalDateTime()?.let { "${DATE_TIME_FORMATTER.format(it)} (UTC)" }
 
-fun String.parseFromTo(from: String, to: String): String {
-    return try {
+private fun String.toZonedDateTime(): ZonedDateTime? =
+    try {
+        ZonedDateTime.parse(this)
+    } catch (error: Throwable) {
+        null
+    }
+
+private fun String.toLocalDateTime(): LocalDateTime? =
+    try {
+        LocalDateTime.parse(this)
+    } catch (error: Throwable) {
+        null
+    }
+
+fun String.toFormattedDateTime(): String? =
+    toZonedDateTime()?.let { "${DATE_TIME_FORMATTER.format(it)} (UTC)" }
+        ?: toLocalDateTime()?.let { "${DATE_TIME_FORMATTER.format(it)} (UTC)" }
+
+fun String.parseFromTo(from: String, to: String): String =
+    try {
         val parser = SimpleDateFormat(from, Locale.US)
         val formatter = SimpleDateFormat(to, Locale.US)
-        return formatter.format(parser.parse(this)!!)
+
+        formatter.format(parser.parse(this)!!)
     } catch (ex: Exception) {
         ""
     }
-}
 
-fun Long.toLocalDateTime(): LocalDateTime =
-    LocalDateTime.ofInstant(Instant.ofEpochMilli(this), ZoneId.systemDefault())
+fun Long.toLocalDateTime(): LocalDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(this), ZoneId.systemDefault())
 
 fun LocalDateTime.formatWith(pattern: String): String = DateTimeFormatter.ofPattern(pattern).format(this)

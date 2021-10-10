@@ -21,10 +21,10 @@
  */
 package dgca.verifier.app.android
 
-import dgca.verifier.app.android.verification.InnerVerificationResult
-import dgca.verifier.app.android.verification.StandardizedVerificationResult
+import dgca.verifier.app.android.verification.model.InnerVerificationResult
+import dgca.verifier.app.android.verification.model.StandardizedVerificationResult
 import dgca.verifier.app.android.verification.VerificationViewModel.Companion.validateCertData
-import dgca.verifier.app.android.verification.extractStandardizedVerificationResultFrom
+import dgca.verifier.app.android.verification.model.extractStandardizedVerificationResultFrom
 import dgca.verifier.app.decoder.model.*
 import junit.framework.Assert.assertTrue
 import org.junit.Assert

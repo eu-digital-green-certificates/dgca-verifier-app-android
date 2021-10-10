@@ -20,7 +20,7 @@
  *  Created by mykhailo.nester on 4/24/21 2:54 PM
  */
 
-package dgca.verifier.app.android
+package dgca.verifier.app.android.reader
 
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,11 +47,6 @@ class CodeReaderViewModel @Inject constructor(
         emit(preferences.debugModeState?.let { DebugModeState.valueOf(it) } ?: DebugModeState.OFF)
     }
 
-    fun selectCountry(countryIsoCode: String) {
-        preferences.selectedCountryIsoCode = countryIsoCode
-        _selectedCountry.value = countryIsoCode
-    }
-
     init {
         viewModelScope.launch {
             countriesRepository.getCountries().collectLatest {
@@ -59,5 +54,10 @@ class CodeReaderViewModel @Inject constructor(
                 _selectedCountry.value = preferences.selectedCountryIsoCode
             }
         }
+    }
+
+    fun selectCountry(countryIsoCode: String) {
+        preferences.selectedCountryIsoCode = countryIsoCode
+        _selectedCountry.value = countryIsoCode
     }
 }

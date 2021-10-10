@@ -30,8 +30,8 @@ import androidx.cardview.widget.CardView
 import dgca.verifier.app.android.R
 import dgca.verifier.app.android.databinding.ViewDetailedVerificationResultBinding
 import dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer
-import dgca.verifier.app.android.verification.StandardizedVerificationResult
-import dgca.verifier.app.android.verification.StandardizedVerificationResultCategory
+import dgca.verifier.app.android.verification.model.StandardizedVerificationResult
+import dgca.verifier.app.android.verification.model.StandardizedVerificationResultCategory
 import dgca.verifier.app.engine.Result
 import dgca.verifier.app.engine.data.RuleCertificateType
 import dgca.verifier.app.engine.data.Type

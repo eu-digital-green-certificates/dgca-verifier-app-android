@@ -24,9 +24,9 @@ package dgca.verifier.app.android.verification.certs
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import dgca.verifier.app.android.*
 import dgca.verifier.app.android.databinding.ItemRecoveryBinding
 import dgca.verifier.app.android.model.RecoveryModel
+import dgca.verifier.app.android.utils.*
 
 class RecoveryViewHolder(private val binding: ItemRecoveryBinding) :
     RecyclerView.ViewHolder(binding.root) {

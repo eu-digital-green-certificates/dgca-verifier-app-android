@@ -39,6 +39,9 @@ import dgca.verifier.app.android.*
 import dgca.verifier.app.android.base.BindingFragment
 import dgca.verifier.app.android.databinding.FragmentSettingsBinding
 import dgca.verifier.app.android.settings.debug.mode.DebugModeState
+import dgca.verifier.app.android.utils.applyStyle
+import dgca.verifier.app.android.utils.formatWith
+import dgca.verifier.app.android.utils.toLocalDateTime
 
 @AndroidEntryPoint
 class SettingsFragment : BindingFragment<FragmentSettingsBinding>() {

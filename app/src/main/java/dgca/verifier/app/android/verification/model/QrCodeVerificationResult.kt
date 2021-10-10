@@ -17,13 +17,23 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 5/5/21 8:18 PM
+ *  Created by mykhailo.nester on 10/10/2021, 10:05
  */
 
-package dgca.verifier.app.android
+package dgca.verifier.app.android.verification.model
 
-import android.content.res.Resources
+import dgca.verifier.app.android.model.CertificateModel
+import dgca.verifier.app.android.model.rules.RuleValidationResultModel
 
-private fun density() = Resources.getSystem().displayMetrics.density
+sealed class QrCodeVerificationResult {
+    class Applicable(
+        val standardizedVerificationResult: StandardizedVerificationResult,
+        val certificateModel: CertificateModel?,
+        val hcert: String?,
+        val rulesValidationResults: List<RuleValidationResultModel>?,
+        val isDebugModeEnabled: Boolean,
+        val debugData: DebugData?
+    ) : QrCodeVerificationResult()
 
-fun Int.dpToPx() = this * density().toInt()
+    object NotApplicable : QrCodeVerificationResult()
+}

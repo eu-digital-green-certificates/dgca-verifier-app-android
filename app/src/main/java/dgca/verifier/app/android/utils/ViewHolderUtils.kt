@@ -20,7 +20,7 @@
  *  Created by osarapulov on 7/22/21 8:42 PM
  */
 
-package dgca.verifier.app.android
+package dgca.verifier.app.android.utils
 
 import android.view.View
 import android.widget.TextView

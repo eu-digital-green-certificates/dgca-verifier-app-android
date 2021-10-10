@@ -33,21 +33,21 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.card.MaterialCardView
-import dgca.verifier.app.android.FORMATTED_YEAR_MONTH_DAY
+import dgca.verifier.app.android.utils.FORMATTED_YEAR_MONTH_DAY
 import dgca.verifier.app.android.R
-import dgca.verifier.app.android.YEAR_MONTH_DAY
+import dgca.verifier.app.android.utils.YEAR_MONTH_DAY
 import dgca.verifier.app.android.databinding.ViewDetailedCertificateViewBinding
 import dgca.verifier.app.android.model.*
 import dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer
-import dgca.verifier.app.android.parseFromTo
-import dgca.verifier.app.android.verification.StandardizedVerificationResult
-import dgca.verifier.app.android.verification.StandardizedVerificationResultCategory
+import dgca.verifier.app.android.utils.parseFromTo
+import dgca.verifier.app.android.verification.model.StandardizedVerificationResult
+import dgca.verifier.app.android.verification.model.StandardizedVerificationResultCategory
 import dgca.verifier.app.android.verification.certs.RecoveryViewHolder
 import dgca.verifier.app.android.verification.certs.TestViewHolder
 import dgca.verifier.app.android.verification.certs.VaccinationViewHolder
-import dgca.verifier.app.android.verification.rules.RuleValidationResultCard
+import dgca.verifier.app.android.verification.model.RuleValidationResultCard
 import dgca.verifier.app.android.verification.rules.RuleValidationResultsAdapter
-import dgca.verifier.app.android.verification.rules.toRuleValidationResultCard
+import dgca.verifier.app.android.verification.mapper.toRuleValidationResultCard
 
 class DetailedCertificateView(context: Context, attrs: AttributeSet?) :
     MaterialCardView(context, attrs) {
