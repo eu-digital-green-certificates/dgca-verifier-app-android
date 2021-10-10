@@ -22,9 +22,7 @@
 
 package dgca.verifier.app.android.verification.rules
 
-import android.content.Context
 import dgca.verifier.app.android.model.rules.RuleValidationResultModel
-import dgca.verifier.app.engine.ValidationResult
 import java.util.*
 
 /*-

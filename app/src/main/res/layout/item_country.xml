@@ -33,6 +33,4 @@
     android:paddingVertical="@dimen/default_half_margin"
     app:drawableStartCompat="@drawable/ic_icon_checkmark"
     tools:background="@color/white"
-    tools:text="Germany">
-
-</TextView>
+    tools:text="Germany" />

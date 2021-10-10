@@ -32,7 +32,6 @@ import android.widget.Button
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -53,11 +52,9 @@ import dgca.verifier.app.android.verification.rules.toRuleValidationResultCard
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
-class VerificationResultDialogFragment :
-    BaseVerificationDialogFragment<DialogFragmentVerificationResultBinding>() {
-    private val hideLiveData: MutableLiveData<Void?> = MutableLiveData()
+class VerificationResultDialogFragment : BaseVerificationDialogFragment<DialogFragmentVerificationResultBinding>() {
 
-    private val viewModel by viewModels<VerificationResultResultViewModel>()
+    private val hideLiveData: MutableLiveData<Void?> = MutableLiveData()
     private val args by navArgs<VerificationResultDialogFragmentArgs>()
 
     override fun onCreateBinding(
@@ -85,7 +82,11 @@ class VerificationResultDialogFragment :
     override fun actionButton(): Button = binding.actionButton
 
     private fun handleDecodeResult() {
-        binding.verificationResultHeaderView.setUp(args.standardizedVerificationResult, args.certificateModel, args.ruleValidationResultModelsContainer)
+        binding.verificationResultHeaderView.setUp(
+            args.standardizedVerificationResult,
+            args.certificateModel,
+            args.ruleValidationResultModelsContainer
+        )
         handleVerificationResult(
             args.certificateModel,
             args.standardizedVerificationResult.category

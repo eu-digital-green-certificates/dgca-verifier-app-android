@@ -44,7 +44,4 @@ interface ApiService {
 
     @GET
     suspend fun getCertStatus(@Url url: String): Response<List<String>>
-
-    @GET
-    suspend fun getRules(@Url url: String): Response<List<Rule>>
 }

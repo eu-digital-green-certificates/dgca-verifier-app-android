@@ -32,8 +32,9 @@ import org.junit.Test
 import java.util.*
 
 class CertificateTests {
+
     @Test
-    fun TestRecoveryValidity() {
+    fun testRecoveryValidity() {
         val result = VerificationResult()
         result.base45Decoded = true
         result.cborDecoded = true
@@ -76,7 +77,7 @@ class CertificateTests {
     }
 
     @Test
-    fun TestNoPublicKeysFound() {
+    fun testNoPublicKeysFound() {
         val result = VerificationResult(isNotExpired = true)
         result.isIssuedTimeCorrect = true
         val res = extractStandardizedVerificationResultFrom(
@@ -87,7 +88,7 @@ class CertificateTests {
     }
 
     @Test
-    fun TestGreenCertExpired() {
+    fun testGreenCertExpired() {
         val result = VerificationResult()
         result.coseVerified = true
         result.isNotExpired = false
@@ -99,7 +100,7 @@ class CertificateTests {
     }
 
     @Test
-    fun TestCertExpired() {
+    fun testCertExpired() {
         val result = VerificationResult()
         result.coseVerified = true
         result.isNotExpired = true
@@ -114,7 +115,7 @@ class CertificateTests {
     }
 
     @Test
-    fun TestSignatureInvalid() {
+    fun testSignatureInvalid() {
         val result = VerificationResult(isNotExpired = true, coseVerified = true)
         val res = extractStandardizedVerificationResultFrom(
             result,
@@ -124,7 +125,7 @@ class CertificateTests {
     }
 
     @Test
-    fun TestVerificationFailed() {
+    fun testVerificationFailed() {
         var result =
             VerificationResult(isNotExpired = true, coseVerified = true, base45Decoded = false)
         result.isNotExpired = true
@@ -150,11 +151,11 @@ class CertificateTests {
     }
 
     @Test
-    fun TestRecoveryExpiration() {
+    fun testRecoveryExpiration() {
         val result = VerificationResult()
         result.isNotExpired = true
         result.coseVerified = true
-        result.recoveryVerification = RecoveryVerificationResult(false, true)
+        result.recoveryVerification = RecoveryVerificationResult(isNotValidSoFar = false, isNotValidAnymore = true)
         val res = extractStandardizedVerificationResultFrom(
             result,
             InnerVerificationResult(noPublicKeysFound = false)

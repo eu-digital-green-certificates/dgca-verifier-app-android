@@ -27,8 +27,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.*
 
-class DefaultCountriesLocalDataSource(private val countriesDao: CountriesDao) :
-    CountriesLocalDataSource {
+class DefaultCountriesLocalDataSource(private val countriesDao: CountriesDao) : CountriesLocalDataSource {
+
     override suspend fun updateCountries(countriesIsoCodes: List<String>) {
         countriesDao.apply {
             deleteAll()
@@ -37,9 +37,9 @@ class DefaultCountriesLocalDataSource(private val countriesDao: CountriesDao) :
     }
 
     override fun getCountries(): Flow<List<String>> =
-        countriesDao.getAll().map { it.map { it.toCountry() } }
+        countriesDao.getAll().map { it.map { countryLocal -> countryLocal.toCountry() } }
 }
 
-fun String.toCountryLocal(): CountryLocal = CountryLocal(isoCode = this.toLowerCase(Locale.ROOT))
+fun String.toCountryLocal(): CountryLocal = CountryLocal(isoCode = toLowerCase(Locale.ROOT))
 
-fun CountryLocal.toCountry(): String = this.isoCode
+fun CountryLocal.toCountry(): String = isoCode
