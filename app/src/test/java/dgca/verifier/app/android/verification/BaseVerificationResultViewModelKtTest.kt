@@ -22,6 +22,9 @@
 
 package dgca.verifier.app.android.verification
 
+import dgca.verifier.app.android.verification.model.InnerVerificationResult
+import dgca.verifier.app.android.verification.model.StandardizedVerificationResultCategory
+import dgca.verifier.app.android.verification.model.extractStandardizedVerificationResultFrom
 import dgca.verifier.app.decoder.cbor.GreenCertificateData
 import dgca.verifier.app.decoder.model.GreenCertificate
 import dgca.verifier.app.decoder.model.Person
@@ -54,6 +57,7 @@ import java.time.ZonedDateTime
  * Created by osarapulov on 09.07.21 9:57
  */
 class BaseVerificationResultViewModelKtTest {
+
     @Test
     fun testGetGeneralResultSuccess() {
         val greenCertificateData = greenCertificateData()
@@ -66,7 +70,7 @@ class BaseVerificationResultViewModelKtTest {
                 isSchemaValid = true,
                 isIssuedTimeCorrect = true,
                 isNotExpired = true,
-                testVerification = TestVerificationResult(true, true)
+                testVerification = TestVerificationResult(isTestResultNegative = true, isTestDateInThePast = true)
             ),
             InnerVerificationResult(
                 noPublicKeysFound = false,
@@ -108,7 +112,7 @@ class BaseVerificationResultViewModelKtTest {
                 isSchemaValid = true,
                 isIssuedTimeCorrect = true,
                 isNotExpired = true,
-                testVerification = TestVerificationResult(false, true),
+                testVerification = TestVerificationResult(isTestResultNegative = false, isTestDateInThePast = true),
                 rulesValidationFailed = true
             ), InnerVerificationResult()
         )
@@ -127,7 +131,7 @@ class BaseVerificationResultViewModelKtTest {
                 isSchemaValid = true,
                 isIssuedTimeCorrect = true,
                 isNotExpired = true,
-                testVerification = TestVerificationResult(true, true),
+                testVerification = TestVerificationResult(isTestResultNegative = true, isTestDateInThePast = true),
                 rulesValidationFailed = true
             ), InnerVerificationResult(noPublicKeysFound = false)
         )
@@ -149,7 +153,7 @@ class BaseVerificationResultViewModelKtTest {
                 isSchemaValid = false,
                 isIssuedTimeCorrect = true,
                 isNotExpired = true,
-                testVerification = TestVerificationResult(true, true),
+                testVerification = TestVerificationResult(isTestResultNegative = true, isTestDateInThePast = true),
                 rulesValidationFailed = false
             ), InnerVerificationResult()
         )

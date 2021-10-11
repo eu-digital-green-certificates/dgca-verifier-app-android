@@ -27,11 +27,10 @@ import dgca.verifier.app.engine.data.source.remote.valuesets.ValueSetRemote
 import dgca.verifier.app.engine.data.source.remote.valuesets.ValueSetsRemoteDataSource
 import retrofit2.Response
 
-class DefaultValueSetsRemoteDataSource(private val apiService: ValueSetsApiService) :
-    ValueSetsRemoteDataSource {
+class DefaultValueSetsRemoteDataSource(private val apiService: ValueSetsApiService) : ValueSetsRemoteDataSource {
+
     override suspend fun getValueSetsIdentifiers(url: String): List<ValueSetIdentifierRemote> {
-        val response: Response<List<ValueSetIdentifierRemote>> =
-            apiService.getValueSetsIdentifiers(url)
+        val response: Response<List<ValueSetIdentifierRemote>> = apiService.getValueSetsIdentifiers(url)
         return response.body() ?: listOf()
     }
 

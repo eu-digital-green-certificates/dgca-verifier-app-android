@@ -17,17 +17,23 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 7/26/21 11:56 AM
+ *  Created by mykhailo.nester on 10/10/2021, 10:05
  */
 
-package dgca.verifier.app.android.data.local.countries
+package dgca.verifier.app.android.verification.model
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import dgca.verifier.app.android.model.CertificateModel
+import dgca.verifier.app.android.model.rules.RuleValidationResultModel
 
-@Entity(tableName = "countries")
-data class CountryLocal(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-    val isoCode: String,
-)
+sealed class QrCodeVerificationResult {
+    class Applicable(
+        val standardizedVerificationResult: StandardizedVerificationResult,
+        val certificateModel: CertificateModel?,
+        val hcert: String?,
+        val rulesValidationResults: List<RuleValidationResultModel>?,
+        val isDebugModeEnabled: Boolean,
+        val debugData: DebugData?
+    ) : QrCodeVerificationResult()
+
+    object NotApplicable : QrCodeVerificationResult()
+}

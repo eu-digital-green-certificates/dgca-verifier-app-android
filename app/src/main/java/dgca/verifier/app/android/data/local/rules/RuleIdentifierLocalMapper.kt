@@ -22,18 +22,21 @@
 
 package dgca.verifier.app.android.data.local.rules
 
+import dgca.verifier.app.android.data.local.model.RuleIdentifierLocal
 import dgca.verifier.app.engine.data.RuleIdentifier
 
-fun RuleIdentifier.toRuleIdentifierLocal() = RuleIdentifierLocal(
-    identifier = this.identifier,
-    version = this.version,
-    country = this.country,
-    hash = this.hash
-)
+fun RuleIdentifier.toRuleIdentifierLocal() =
+    RuleIdentifierLocal(
+        identifier = identifier,
+        version = version,
+        country = country,
+        hash = hash
+    )
 
-fun RuleIdentifierLocal.toRuleIdentifier() = RuleIdentifier(
-    identifier = this.identifier,
-    version = this.version,
-    country = this.country,
-    hash = this.hash
-)
+fun RuleIdentifierLocal.toRuleIdentifier() =
+    RuleIdentifier(
+        identifier = identifier,
+        version = version,
+        country = country,
+        hash = hash
+    )

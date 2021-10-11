@@ -35,8 +35,7 @@ import dgca.verifier.app.android.R
 import dgca.verifier.app.android.databinding.ViewCertificateContentViewBinding
 import dgca.verifier.app.android.model.CertificateModel
 
-class CertificateContentView(context: Context, attrs: AttributeSet?) :
-    MaterialCardView(context, attrs) {
+class CertificateContentView(context: Context, attrs: AttributeSet?) : MaterialCardView(context, attrs) {
 
     private val binding: ViewCertificateContentViewBinding =
         ViewCertificateContentViewBinding.inflate(LayoutInflater.from(context), this)

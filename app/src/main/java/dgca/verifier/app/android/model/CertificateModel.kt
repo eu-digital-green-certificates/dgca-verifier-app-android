@@ -33,6 +33,7 @@ data class CertificateModel(
     val tests: List<TestModel>?,
     val recoveryStatements: List<RecoveryModel>?
 ) : Parcelable {
+
     fun getFullName(): String {
         val givenName: String? = person.givenName?.trim()
         val familyName: String? = person.familyName?.trim()
@@ -40,19 +41,23 @@ data class CertificateModel(
         if (givenName?.isNotEmpty() == true) {
             stringBuilder.append(givenName)
         }
+
         if (familyName?.isNotEmpty() == true) {
             stringBuilder.append(" ").append(familyName)
         }
+
         if (stringBuilder.isEmpty()) {
             val standardisedGivenName = person.standardisedGivenName
             if (standardisedGivenName?.isNotEmpty() == true) {
                 stringBuilder.append(standardisedGivenName)
             }
+
             val standardisedFamilyName = person.standardisedFamilyName
             if (standardisedFamilyName.isNotEmpty()) {
                 stringBuilder.append(" ").append(standardisedFamilyName)
             }
         }
+
         return stringBuilder.trim().toString()
     }
 }

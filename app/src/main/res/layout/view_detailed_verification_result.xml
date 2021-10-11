@@ -91,7 +91,7 @@
             app:layout_constraintStart_toEndOf="@id/techVerificationImage"
             app:layout_constraintTop_toTopOf="@id/techVerificationImage" />
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/techVerificationImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -102,7 +102,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/techVerificationTitle" />
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/issuerInvalidationImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -111,7 +111,7 @@
             app:layout_constraintStart_toEndOf="@id/techVerificationImage"
             app:layout_constraintTop_toBottomOf="@id/issuerInvalidationTitle" />
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/destinationAcceptanceImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -120,7 +120,7 @@
             app:layout_constraintStart_toEndOf="@id/issuerInvalidationImage"
             app:layout_constraintTop_toBottomOf="@id/destinationAcceptanceTitle" />
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/travellerAcceptanceImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

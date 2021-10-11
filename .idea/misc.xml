@@ -8,11 +8,27 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/ic_icon_information.xml" value="0.45092592592592595" />
         <entry key="app/src/main/res/layout/dialog_fragment_detailed_verification.xml" value="0.44907407407407407" />
         <entry key="app/src/main/res/layout/dialog_fragment_detailed_verification_result.xml" value="0.44537037037037036" />
         <entry key="app/src/main/res/layout/dialog_fragment_verification.xml" value="0.4527777777777778" />
+        <entry key="app/src/main/res/layout/fragment_countries_selector.xml" value="0.44635416666666666" />
+        <entry key="app/src/main/res/layout/item_certificate_content.xml" value="0.4101851851851852" />
+        <entry key="app/src/main/res/layout/item_country.xml" value="0.30185185185185187" />
+        <entry key="app/src/main/res/layout/item_rule_validation_result.xml" value="0.44635416666666666" />
+        <entry key="app/src/main/res/layout/view_certificate_content_view.xml" value="0.4101851851851852" />
+        <entry key="app/src/main/res/layout/view_detailed_certificate_raw_view.xml" value="0.30185185185185187" />
+        <entry key="app/src/main/res/layout/view_detailed_certificate_view.xml" value="0.30185185185185187" />
+        <entry key="app/src/main/res/layout/view_detailed_verification_result.xml" value="0.44635416666666666" />
+        <entry key="app/src/main/res/layout/view_detailed_verification_result_header.xml" value="0.30520833333333336" />
       </map>
     </option>
+  </component>
+  <component name="EntryPointsManager">
+    <list size="2">
+      <item index="0" class="java.lang.String" itemvalue="dagger.Binds" />
+      <item index="1" class="java.lang.String" itemvalue="dagger.Provides" />
+    </list>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />

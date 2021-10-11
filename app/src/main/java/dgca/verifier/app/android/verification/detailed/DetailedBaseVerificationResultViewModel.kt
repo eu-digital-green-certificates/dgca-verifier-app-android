@@ -36,7 +36,7 @@ import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.settings.debug.mode.DebugModeState
 import dgca.verifier.app.android.utils.sha256
-import dgca.verifier.app.android.verification.DebugData
+import dgca.verifier.app.android.verification.model.DebugData
 import dgca.verifier.app.android.verification.detailed.qr.QrCodeConverter
 import dgca.verifier.app.decoder.cbor.CborService
 import dgca.verifier.app.decoder.cose.CoseService

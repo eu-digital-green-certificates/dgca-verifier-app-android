@@ -26,5 +26,4 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class RuleValidationResultModelsContainer(val ruleValidationResultModels: List<RuleValidationResultModel>) :
-    Parcelable
+data class RuleValidationResultModelsContainer(val ruleValidationResultModels: List<RuleValidationResultModel>) : Parcelable

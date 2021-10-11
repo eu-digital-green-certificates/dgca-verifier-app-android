@@ -24,27 +24,28 @@ package dgca.verifier.app.android.verification.certs
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import dgca.verifier.app.android.*
 import dgca.verifier.app.android.databinding.ItemRecoveryBinding
 import dgca.verifier.app.android.model.RecoveryModel
+import dgca.verifier.app.android.utils.*
 
-class RecoveryViewHolder(private val binding: ItemRecoveryBinding) :
-    RecyclerView.ViewHolder(binding.root) {
+class RecoveryViewHolder(private val binding: ItemRecoveryBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(data: RecoveryModel) {
         data.disease.value.bindText(binding.diseaseTitle, binding.diseaseValue)
-        val validFrom =
-            data.certificateValidFrom.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
-        val validTo =
-            data.certificateValidUntil.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
-        val validFromTo =
-            if (validFrom.isNotBlank() && validTo.isNotBlank()) "$validFrom - $validTo" else ""
+        val validFrom = data.certificateValidFrom.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
+        val validTo = data.certificateValidUntil.parseFromTo(YEAR_MONTH_DAY, FORMATTED_YEAR_MONTH_DAY)
+
+        val validFromTo = if (validFrom.isNotBlank() && validTo.isNotBlank()) {
+            "$validFrom - $validTo"
+        } else {
+            ""
+        }
+
         validFromTo.bindText(binding.validFromTitle, binding.validFromValue)
         data.countryOfVaccination.bindCountryWith(binding.countryTitle, binding.countryValue)
     }
 
     companion object {
-        fun create(parent: ViewGroup) =
-            RecoveryViewHolder(ItemRecoveryBinding.bind(parent))
+        fun create(parent: ViewGroup) = RecoveryViewHolder(ItemRecoveryBinding.bind(parent))
     }
 }

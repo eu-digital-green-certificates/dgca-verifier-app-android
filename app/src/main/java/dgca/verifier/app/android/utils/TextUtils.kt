@@ -17,25 +17,25 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 7/26/21 11:53 AM
+ *  Created by mykhailo.nester on 10/10/2021, 09:10
  */
 
-package dgca.verifier.app.android.data.local.countries
+package dgca.verifier.app.android.utils
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import dgca.verifier.app.android.data.local.model.CountryLocal
-import kotlinx.coroutines.flow.Flow
+import android.content.Context
+import android.text.Spannable
+import android.text.style.TextAppearanceSpan
+import androidx.annotation.StyleRes
 
-@Dao
-interface CountriesDao {
-    @Query("SELECT * from countries")
-    fun getAll(): Flow<List<CountryLocal>>
-
-    @Insert
-    fun insertAll(vararg countriesLocal: CountryLocal)
-
-    @Query("DELETE FROM countries")
-    fun deleteAll()
-}
+fun Spannable.applyStyle(context: Context, @StyleRes styleRes: Int): Spannable =
+    apply {
+        setSpan(
+            TextAppearanceSpan(
+                context,
+                styleRes
+            ),
+            0,
+            length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+    }

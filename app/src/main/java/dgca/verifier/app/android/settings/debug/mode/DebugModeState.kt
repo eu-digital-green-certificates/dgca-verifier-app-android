@@ -26,5 +26,8 @@ import androidx.annotation.StringRes
 import dgca.verifier.app.android.R
 
 enum class DebugModeState(@StringRes val stringRes: Int) {
-    OFF(R.string.off), LEVEL_1(R.string.on_level_1), LEVEL_2(R.string.on_level_2), LEVEL_3(R.string.on_level_3)
+    OFF(R.string.off),
+    LEVEL_1(R.string.on_level_1),
+    LEVEL_2(R.string.on_level_2),
+    LEVEL_3(R.string.on_level_3)
 }

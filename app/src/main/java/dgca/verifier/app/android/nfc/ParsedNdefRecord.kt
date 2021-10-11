@@ -23,5 +23,6 @@
 package dgca.verifier.app.android.nfc
 
 interface ParsedNdefRecord {
+
     fun str(): String
 }

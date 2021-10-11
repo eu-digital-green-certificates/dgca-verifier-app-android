@@ -90,7 +90,6 @@ class AnonymizationManager @Inject constructor() {
             dateOfBirth = dateOfBirth
         )
     }
-
 }
 
 fun String.anonymize(): String {
@@ -143,5 +142,6 @@ fun String.anonymize(): String {
 fun String.anonymizeCi(): String {
     val ciPart = substring(lastIndexOf(":") + 1)
     val ciAnonymize = "[A-Za-z0-9]".toRegex().replace(ciPart, "X")
+
     return replaceAfterLast(":", ciAnonymize)
 }

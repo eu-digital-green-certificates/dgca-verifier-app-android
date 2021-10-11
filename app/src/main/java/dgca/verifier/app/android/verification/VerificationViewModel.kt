@@ -29,12 +29,11 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.android.data.local.Preferences
-import dgca.verifier.app.android.model.CertificateModel
-import dgca.verifier.app.android.model.rules.RuleValidationResultModel
 import dgca.verifier.app.android.model.rules.toRuleValidationResultModels
 import dgca.verifier.app.android.model.toCertificateModel
 import dgca.verifier.app.android.settings.debug.mode.DebugModeState
 import dgca.verifier.app.android.verification.*
+import dgca.verifier.app.android.verification.model.*
 import dgca.verifier.app.decoder.base45.Base45Service
 import dgca.verifier.app.decoder.cbor.CborService
 import dgca.verifier.app.decoder.cbor.GreenCertificateData
@@ -64,19 +63,6 @@ import java.time.ZonedDateTime
 import java.util.*
 import javax.inject.Inject
 
-sealed class QrCodeVerificationResult {
-    class Applicable(
-        val standardizedVerificationResult: StandardizedVerificationResult,
-        val certificateModel: CertificateModel?,
-        val hcert: String?,
-        val rulesValidationResults: List<RuleValidationResultModel>?,
-        val isDebugModeEnabled: Boolean,
-        val debugData: DebugData?
-    ) : QrCodeVerificationResult()
-
-    object NotApplicable : QrCodeVerificationResult()
-}
-
 @HiltViewModel
 class VerificationViewModel @Inject constructor(
     private val prefixValidationService: PrefixValidationService,
@@ -104,8 +90,7 @@ class VerificationViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val verificationResult = VerificationResult()
-                val innerVerificationResult: InnerVerificationResult =
-                    validateCertificate(code, verificationResult)
+                val innerVerificationResult: InnerVerificationResult = validateCertificate(code, verificationResult)
 
                 val validationResults: List<ValidationResult>? =
                     if (verificationResult.isValid() && innerVerificationResult.base64EncodedKid?.isNotBlank() == true) {
@@ -119,8 +104,7 @@ class VerificationViewModel @Inject constructor(
                     }
 
                 if (innerVerificationResult.isApplicableCode) {
-                    val covidCertificate =
-                        innerVerificationResult.greenCertificateData?.greenCertificate
+                    val covidCertificate = innerVerificationResult.greenCertificateData?.greenCertificate
                     val certificateModel = covidCertificate?.toCertificateModel()
                     val hcert: String? = innerVerificationResult.greenCertificateData?.hcertJson
                     val standardizedVerificationResult: StandardizedVerificationResult =
@@ -217,15 +201,20 @@ class VerificationViewModel @Inject constructor(
                 greenCertificateData?.greenCertificate?.getType()
                     ?: dgca.verifier.app.decoder.model.CertificateType.UNKNOWN
             )
+
             if (verificationResult.coseVerified) {
-                val expirationTime: ZonedDateTime? =
-                    if (innerCertificate is X509Certificate) innerCertificate.notAfter.toInstant()
-                        .atZone(UTC_ZONE_ID) else null
-                val currentTime: ZonedDateTime =
-                    ZonedDateTime.now().withZoneSameInstant(UTC_ZONE_ID)
+                val expirationTime: ZonedDateTime? = if (innerCertificate is X509Certificate) {
+                    innerCertificate.notAfter.toInstant().atZone(UTC_ZONE_ID)
+                } else {
+                    null
+                }
+
+                val currentTime: ZonedDateTime = ZonedDateTime.now().withZoneSameInstant(UTC_ZONE_ID)
+
                 if (expirationTime != null && currentTime.isAfter(expirationTime)) {
                     certificateExpired = true
                 }
+
                 return@forEach
             }
         }

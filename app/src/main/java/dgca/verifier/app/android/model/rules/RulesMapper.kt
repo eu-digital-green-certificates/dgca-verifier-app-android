@@ -22,71 +22,34 @@
 
 package dgca.verifier.app.android.model.rules
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
 import dgca.verifier.app.engine.ValidationResult
 import dgca.verifier.app.engine.data.Rule
 
-fun Rule.toRuleModel(): RuleModel {
-    return RuleModel(
-        identifier = this.identifier,
-        type = this.type,
-        version = this.version,
-        schemaVersion = this.schemaVersion,
-        engine = this.engine,
-        engineVersion = this.engineVersion,
-        ruleCertificateType = this.ruleCertificateType,
-        descriptions = this.descriptions,
-        validFrom = this.validFrom,
-        validTo = this.validTo,
-        affectedString = this.affectedString,
-        logic = this.logic.asText(),
-        countryCode = this.countryCode,
-        region = this.region
+fun Rule.toRuleModel(): RuleModel =
+    RuleModel(
+        identifier = identifier,
+        type = type,
+        version = version,
+        schemaVersion = schemaVersion,
+        engine = engine,
+        engineVersion = engineVersion,
+        ruleCertificateType = ruleCertificateType,
+        descriptions = descriptions,
+        validFrom = validFrom,
+        validTo = validTo,
+        affectedString = affectedString,
+        logic = logic.asText(),
+        countryCode = countryCode,
+        region = region
     )
-}
 
-fun RuleModel.toRule(objectMapper: ObjectMapper): Rule {
-    return Rule(
-        identifier = this.identifier,
-        type = this.type,
-        version = this.version,
-        schemaVersion = this.schemaVersion,
-        engine = this.engine,
-        engineVersion = this.engineVersion,
-        ruleCertificateType = this.ruleCertificateType,
-        descriptions = this.descriptions,
-        validFrom = this.validFrom,
-        validTo = this.validTo,
-        affectedString = this.affectedString,
-        logic = objectMapper.readValue(this.logic, JsonNode::class.java),
-        countryCode = this.countryCode,
-        region = this.region
+fun ValidationResult.toRuleValidationResultModel(): RuleValidationResultModel =
+    RuleValidationResultModel(
+        rule = rule.toRuleModel(),
+        result = result,
+        current = current,
+        validationErrors = validationErrors
     )
-}
 
-fun ValidationResult.toRuleValidationResultModel(): RuleValidationResultModel {
-    return RuleValidationResultModel(
-        rule = this.rule.toRuleModel(),
-        result = this.result,
-        current = this.current,
-        validationErrors = this.validationErrors
-    )
-}
-
-fun RuleValidationResultModel.toRuleValidationResult(objectMapper: ObjectMapper): ValidationResult {
-    return ValidationResult(
-        rule = this.rule.toRule(objectMapper),
-        result = this.result,
-        current = this.current,
-        validationErrors = this.validationErrors
-    )
-}
-
-fun List<ValidationResult>.toRuleValidationResultModels(): List<RuleValidationResultModel> {
-    return this.map { it.toRuleValidationResultModel() }
-}
-
-fun List<RuleValidationResultModel>.toRuleValidationResults(objectMapper: ObjectMapper): List<ValidationResult> {
-    return this.map { it.toRuleValidationResult(objectMapper) }
-}
+fun List<ValidationResult>.toRuleValidationResultModels(): List<RuleValidationResultModel> =
+    map { it.toRuleValidationResultModel() }

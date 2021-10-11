@@ -28,7 +28,7 @@
 
     <fragment
         android:id="@+id/codeReaderFragment"
-        android:name="dgca.verifier.app.android.CodeReaderFragment"
+        android:name="dgca.verifier.app.android.reader.CodeReaderFragment"
         android:label="CodeReader"
         tools:layout="@layout/fragment_code_reader">
 
@@ -79,7 +79,7 @@
 
         <argument
             android:name="standardizedVerificationResult"
-            app:argType="dgca.verifier.app.android.verification.StandardizedVerificationResult" />
+            app:argType="dgca.verifier.app.android.verification.model.StandardizedVerificationResult" />
 
         <argument
             android:name="certificateModel"
@@ -101,7 +101,7 @@
 
         <argument
             android:name="standardizedVerificationResult"
-            app:argType="dgca.verifier.app.android.verification.StandardizedVerificationResult" />
+            app:argType="dgca.verifier.app.android.verification.model.StandardizedVerificationResult" />
 
         <argument
             android:name="certificateModel"
@@ -121,7 +121,7 @@
 
         <argument
             android:name="debugData"
-            app:argType="dgca.verifier.app.android.verification.DebugData"
+            app:argType="dgca.verifier.app.android.verification.model.DebugData"
             app:nullable="true" />
     </dialog>
 

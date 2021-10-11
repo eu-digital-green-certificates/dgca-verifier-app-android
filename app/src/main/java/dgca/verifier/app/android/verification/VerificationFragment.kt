@@ -38,9 +38,11 @@ import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import dgca.verifier.app.android.databinding.FragmentVerificationBinding
 import dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer
+import dgca.verifier.app.android.verification.model.QrCodeVerificationResult
 
 @AndroidEntryPoint
 class VerificationFragment : DialogFragment() {
+
     private val viewModel by viewModels<VerificationViewModel>()
     private val args by navArgs<VerificationFragmentArgs>()
 
