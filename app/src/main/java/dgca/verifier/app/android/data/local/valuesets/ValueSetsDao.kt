@@ -26,6 +26,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import dgca.verifier.app.android.data.local.model.ValueSetIdentifierLocal
+import dgca.verifier.app.android.data.local.model.ValueSetLocal
 
 @Dao
 abstract class ValueSetsDao {

@@ -28,7 +28,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dgca.verifier.app.android.databinding.ItemCertificateContentBinding
 
-
 class CertificateContentAdapter(private val inflater: LayoutInflater) :
     RecyclerView.Adapter<CertificateContentAdapter.ViewHolder>() {
 

@@ -27,7 +27,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:weightSum="2">
+    android:weightSum="2"
+    tools:ignore="RtlSymmetry">
 
     <TextView
         android:id="@+id/field"

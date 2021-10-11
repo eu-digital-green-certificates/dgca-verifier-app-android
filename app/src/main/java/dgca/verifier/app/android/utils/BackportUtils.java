@@ -17,19 +17,13 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 7/26/21 12:06 PM
+ *  Created by mykhailo.nester on 10/10/2021, 09:13
  */
 
-package dgca.verifier.app.android.data.local.rules
+package dgca.verifier.app.android.utils;
 
-import androidx.room.Embedded
-import androidx.room.Relation
-
-data class RuleWithDescriptionsLocal(
-    @Embedded val rule: RuleLocal,
-    @Relation(
-        parentColumn = "ruleId",
-        entityColumn = "ruleContainerId"
-    )
-    val descriptions: List<DescriptionLocal>
-)
+public class BackportUtils {
+    public static int byteToUnsignedInt(byte x) {
+        return x & 0xff;
+    }
+}

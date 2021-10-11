@@ -25,8 +25,8 @@ package dgca.verifier.app.android.data
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import dgca.verifier.app.android.data.local.AppDatabase
-import dgca.verifier.app.android.data.local.Key
 import dgca.verifier.app.android.data.local.Preferences
+import dgca.verifier.app.android.data.local.model.Key
 import dgca.verifier.app.android.data.remote.ApiService
 import dgca.verifier.app.android.security.KeyStoreCryptor
 import dgca.verifier.app.decoder.base64ToX509Certificate
@@ -48,8 +48,7 @@ class VerifierRepositoryImpl @Inject constructor(
 
     private val validCertList = mutableListOf<String>()
     private val mutex = Mutex()
-    private val lastSyncLiveData: MutableLiveData<Long> =
-        MutableLiveData(preferences.lastKeysSyncTimeMillis)
+    private val lastSyncLiveData: MutableLiveData<Long> = MutableLiveData(preferences.lastKeysSyncTimeMillis)
 
     override suspend fun fetchCertificates(statusUrl: String, updateUrl: String): Boolean? {
         mutex.withLock {

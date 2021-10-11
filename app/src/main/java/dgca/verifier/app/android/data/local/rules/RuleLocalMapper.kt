@@ -22,76 +22,63 @@
 
 package dgca.verifier.app.android.data.local.rules
 
+import dgca.verifier.app.android.data.local.model.DescriptionLocal
+import dgca.verifier.app.android.data.local.model.RuleLocal
+import dgca.verifier.app.android.data.local.model.RuleWithDescriptionsLocal
 import dgca.verifier.app.engine.UTC_ZONE_ID
-import dgca.verifier.app.engine.data.Description
 import dgca.verifier.app.engine.data.Rule
 import java.util.*
 
 fun Rule.toRuleWithDescriptionLocal(): RuleWithDescriptionsLocal =
-    RuleWithDescriptionsLocal(this.toRuleLocal(), descriptions.toDescriptionsLocal())
+    RuleWithDescriptionsLocal(toRuleLocal(), descriptions.toDescriptionsLocal())
 
-fun List<Rule>.toRulesWithDescriptionLocal(): List<RuleWithDescriptionsLocal> {
-    val rulesWithDescriptionLocal = mutableListOf<RuleWithDescriptionsLocal>()
-    forEach {
-        rulesWithDescriptionLocal.add(it.toRuleWithDescriptionLocal())
-    }
-    return rulesWithDescriptionLocal
-}
-
-fun Rule.toRuleLocal(): RuleLocal = RuleLocal(
-    identifier = this.identifier,
-    type = this.type,
-    version = this.version,
-    schemaVersion = this.schemaVersion,
-    engine = this.engine,
-    engineVersion = this.engineVersion,
-    ruleCertificateType = this.ruleCertificateType,
-    validFrom = this.validFrom.withZoneSameInstant(UTC_ZONE_ID),
-    validTo = this.validTo.withZoneSameInstant(UTC_ZONE_ID),
-    affectedString = this.affectedString,
-    logic = this.logic,
-    countryCode = this.countryCode,
-    region = this.region
-)
-
-fun Description.toDescriptionLocal(): DescriptionLocal =
-    DescriptionLocal(lang = this.lang, desc = this.desc)
+fun Rule.toRuleLocal(): RuleLocal =
+    RuleLocal(
+        identifier = identifier,
+        type = type,
+        version = version,
+        schemaVersion = schemaVersion,
+        engine = engine,
+        engineVersion = engineVersion,
+        ruleCertificateType = ruleCertificateType,
+        validFrom = validFrom.withZoneSameInstant(UTC_ZONE_ID),
+        validTo = validTo.withZoneSameInstant(UTC_ZONE_ID),
+        affectedString = affectedString,
+        logic = logic,
+        countryCode = countryCode,
+        region = region
+    )
 
 fun Map<String, String>.toDescriptionsLocal(): List<DescriptionLocal> {
     val descriptionsLocal = mutableListOf<DescriptionLocal>()
     forEach { descriptionsLocal.add(DescriptionLocal(lang = it.key, desc = it.value)) }
+
     return descriptionsLocal
 }
-
-fun DescriptionLocal.toDescription(): Description = Description(lang = this.lang, desc = this.desc)
 
 fun List<DescriptionLocal>.toDescriptions(): Map<String, String> {
     val descriptions = mutableMapOf<String, String>()
     forEach { descriptions[it.lang.toLowerCase(Locale.ROOT)] = it.desc }
+
     return descriptions
 }
 
-fun RuleWithDescriptionsLocal.toRule(): Rule = Rule(
-    identifier = this.rule.identifier,
-    type = this.rule.type,
-    version = this.rule.version,
-    schemaVersion = this.rule.schemaVersion,
-    engine = this.rule.engine,
-    engineVersion = this.rule.engineVersion,
-    ruleCertificateType = this.rule.ruleCertificateType,
-    validFrom = this.rule.validFrom.withZoneSameInstant(UTC_ZONE_ID),
-    validTo = this.rule.validTo.withZoneSameInstant(UTC_ZONE_ID),
-    affectedString = this.rule.affectedString,
-    logic = this.rule.logic,
-    countryCode = this.rule.countryCode,
-    descriptions = this.descriptions.toDescriptions(),
-    region = this.rule.region
-)
+fun RuleWithDescriptionsLocal.toRule(): Rule =
+    Rule(
+        identifier = rule.identifier,
+        type = rule.type,
+        version = rule.version,
+        schemaVersion = rule.schemaVersion,
+        engine = rule.engine,
+        engineVersion = rule.engineVersion,
+        ruleCertificateType = rule.ruleCertificateType,
+        validFrom = rule.validFrom.withZoneSameInstant(UTC_ZONE_ID),
+        validTo = rule.validTo.withZoneSameInstant(UTC_ZONE_ID),
+        affectedString = rule.affectedString,
+        logic = rule.logic,
+        countryCode = rule.countryCode,
+        descriptions = descriptions.toDescriptions(),
+        region = rule.region
+    )
 
-fun List<RuleWithDescriptionsLocal>.toRules(): List<Rule> {
-    val rules = mutableListOf<Rule>()
-    forEach {
-        rules.add(it.toRule())
-    }
-    return rules
-}
+fun List<RuleWithDescriptionsLocal>.toRules(): List<Rule> = map { it.toRule() }

@@ -28,7 +28,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.fasterxml.jackson.databind.ObjectMapper
 import dgca.verifier.app.android.data.local.rules.EngineDatabase
-import dgca.verifier.app.android.data.local.rules.RuleWithDescriptionsLocal
+import dgca.verifier.app.android.data.local.model.RuleWithDescriptionsLocal
 import dgca.verifier.app.android.data.local.rules.RulesDao
 import dgca.verifier.app.android.data.local.rules.toRuleWithDescriptionLocal
 import dgca.verifier.app.engine.data.RuleCertificateType

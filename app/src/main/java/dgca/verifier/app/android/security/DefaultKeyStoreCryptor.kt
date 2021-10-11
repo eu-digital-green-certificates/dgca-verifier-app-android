@@ -26,12 +26,7 @@ import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import timber.log.Timber
 import java.io.IOException
-import java.security.InvalidAlgorithmParameterException
-import java.security.KeyStore
-import java.security.KeyStoreException
-import java.security.NoSuchAlgorithmException
-import java.security.NoSuchProviderException
-import java.security.UnrecoverableEntryException
+import java.security.*
 import java.security.cert.CertificateException
 import javax.crypto.KeyGenerator
 import javax.inject.Inject
@@ -94,11 +89,9 @@ class DefaultKeyStoreCryptor @Inject constructor() : KeyStoreCryptor {
         } catch (e: InvalidAlgorithmParameterException) {
             Timber.w(e)
         }
+
         try {
-            val entry = keyStore.getEntry(
-                KEY_ALIAS,
-                null
-            ) as KeyStore.SecretKeyEntry
+            val entry = keyStore.getEntry(KEY_ALIAS, null) as KeyStore.SecretKeyEntry
             return SecurityKeyWrapper(entry.secretKey)
         } catch (e: KeyStoreException) {
             Timber.w(e)
@@ -111,7 +104,6 @@ class DefaultKeyStoreCryptor @Inject constructor() : KeyStoreCryptor {
     }
 
     companion object {
-
         const val ANDROID_KEY_STORE = "AndroidKeyStore"
         const val KEY_ALIAS = "KEY_ALIAS"
     }

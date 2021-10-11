@@ -29,18 +29,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.lifecycle.MutableLiveData
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import dgca.verifier.app.android.dpToPx
+import dgca.verifier.app.android.utils.dpToPx
 
 abstract class BaseVerificationDialogFragment<T : ViewBinding> : BottomSheetDialogFragment() {
 
-    abstract fun contentLayout(): ViewGroup.LayoutParams
+    private var _binding: T? = null
+    val binding get() = _binding!!
+
     open fun timerView(): View? = null
+
     open fun actionButton(): Button? = null
+
+    abstract fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): T
+
+    abstract fun contentLayout(): ViewGroup.LayoutParams
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val displayMetrics = DisplayMetrics()
@@ -57,21 +63,14 @@ abstract class BaseVerificationDialogFragment<T : ViewBinding> : BottomSheetDial
         actionButton()?.setOnClickListener { dismiss() }
     }
 
-    private var _binding: T? = null
-    val binding get() = _binding!!
-
-    abstract fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): T
 
     open fun onDestroyBinding(binding: T) {
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val innerBinding = onCreateBinding(inflater, container)
         _binding = innerBinding
+
         return innerBinding.root
     }
 

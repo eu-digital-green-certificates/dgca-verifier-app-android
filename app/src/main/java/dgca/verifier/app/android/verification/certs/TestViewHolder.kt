@@ -24,25 +24,26 @@ package dgca.verifier.app.android.verification.certs
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import dgca.verifier.app.android.bindCountryWith
-import dgca.verifier.app.android.bindText
 import dgca.verifier.app.android.databinding.ItemTestBinding
 import dgca.verifier.app.android.model.TestModel
-import dgca.verifier.app.android.toFormattedDateTime
+import dgca.verifier.app.android.utils.bindCountryWith
+import dgca.verifier.app.android.utils.bindText
+import dgca.verifier.app.android.utils.toFormattedDateTime
 
 class TestViewHolder(private val binding: ItemTestBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(data: TestModel) {
         data.disease.value.bindText(binding.diseaseTitle, binding.diseaseValue)
         data.resultType.value.bindText(binding.testResultTitle, binding.testResultValue)
-        (data.dateTimeOfCollection.toFormattedDateTime()
-            ?: "").bindText(binding.dateOfCollectionTitle, binding.dateOfCollectionValue)
+        (data.dateTimeOfCollection.toFormattedDateTime() ?: "").bindText(
+            binding.dateOfCollectionTitle,
+            binding.dateOfCollectionValue
+        )
         data.typeOfTest.value.bindText(binding.typeOfTestTitle, binding.typeOfTestValue)
         data.countryOfVaccination.bindCountryWith(binding.countryTitle, binding.countryValue)
     }
 
     companion object {
-        fun create(parent: ViewGroup) =
-            TestViewHolder(ItemTestBinding.bind(parent))
+        fun create(parent: ViewGroup) = TestViewHolder(ItemTestBinding.bind(parent))
     }
 }

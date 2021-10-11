@@ -17,25 +17,13 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 9/4/21 7:43 PM
+ *  Created by mykhailo.nester on 5/5/21 8:18 PM
  */
 
-package dgca.verifier.app.android
+package dgca.verifier.app.android.utils
 
-import android.content.Context
-import android.text.Spannable
-import android.text.style.TextAppearanceSpan
-import androidx.annotation.StyleRes
+import android.content.res.Resources
 
-fun Spannable.applyStyle(context: Context, @StyleRes styleRes: Int): Spannable =
-    apply {
-        setSpan(
-            TextAppearanceSpan(
-                context,
-                styleRes
-            ),
-            0,
-            length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-    }
+private fun density() = Resources.getSystem().displayMetrics.density
+
+fun Int.dpToPx() = this * density().toInt()

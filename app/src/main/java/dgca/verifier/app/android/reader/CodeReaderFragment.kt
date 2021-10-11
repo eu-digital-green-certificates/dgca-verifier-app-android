@@ -17,10 +17,10 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:48 AM
+ *  Created by mykhailo.nester on 10/10/2021, 09:14
  */
 
-package dgca.verifier.app.android
+package dgca.verifier.app.android.reader
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -46,11 +46,15 @@ import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import dagger.hilt.android.AndroidEntryPoint
+import dgca.verifier.app.android.MainActivity
+import dgca.verifier.app.android.R
 import dgca.verifier.app.android.base.BindingFragment
 import dgca.verifier.app.android.databinding.FragmentCodeReaderBinding
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer
 import dgca.verifier.app.android.verification.*
+import dgca.verifier.app.android.verification.model.DebugData
+import dgca.verifier.app.android.verification.model.StandardizedVerificationResult
 import dgca.verifier.app.engine.data.source.countries.COUNTRIES_MAP
 import timber.log.Timber
 import java.util.*
@@ -58,8 +62,7 @@ import java.util.*
 private const val CAMERA_REQUEST_CODE = 1003
 
 @AndroidEntryPoint
-class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
-    NavController.OnDestinationChangedListener {
+class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(), NavController.OnDestinationChangedListener {
 
     private val viewModel by viewModels<CodeReaderViewModel>()
 
@@ -93,10 +96,7 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
         adapter = CountriesAdapter(layoutInflater)
     }
 
-    override fun onCreateBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): FragmentCodeReaderBinding =
+    override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentCodeReaderBinding =
         FragmentCodeReaderBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -115,9 +115,7 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
 
         setFragmentResultListener(VERIFY_REQUEST_KEY) { _, bundle ->
             val standardizedVerificationResult: StandardizedVerificationResult? =
-                bundle.getSerializable(
-                    STANDARDISED_VERIFICATION_RESULT_KEY
-                ) as StandardizedVerificationResult?
+                bundle.getSerializable(STANDARDISED_VERIFICATION_RESULT_KEY) as StandardizedVerificationResult?
             val certificateModel: CertificateModel? = bundle.getParcelable(CERTIFICATE_MODEL_KEY)
             val hcert: String? = bundle.getString(HCERT_KEY)
             val ruleValidationResultModelsContainer: RuleValidationResultModelsContainer? = bundle.getParcelable(
@@ -140,12 +138,7 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
 
         binding.countrySelector.adapter = adapter
         binding.countrySelector.onItemSelectedListener = object : OnItemSelectedListener {
-            override fun onItemSelected(
-                parentView: AdapterView<*>?,
-                selectedItemView: View?,
-                position: Int,
-                id: Long
-            ) {
+            override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View?, position: Int, id: Long) {
                 viewModel.selectCountry(adapter.getItem(position))
             }
 
@@ -166,6 +159,29 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
             if (position > 0) {
                 binding.countrySelector.setSelection(position)
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        findNavController().addOnDestinationChangedListener(this)
+        lastText = ""
+    }
+
+    override fun onPause() {
+        super.onPause()
+        findNavController().removeOnDestinationChangedListener(this)
+        binding.barcodeScanner.pause()
+    }
+
+    override fun onDestinationChanged(
+        controller: NavController,
+        destination: NavDestination,
+        arguments: Bundle?
+    ) {
+        if (destination.id == R.id.codeReaderFragment) {
+            binding.barcodeScanner.resume()
+            lastText = ""
         }
     }
 
@@ -197,18 +213,6 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
         findNavController().navigate(action)
     }
 
-    override fun onResume() {
-        super.onResume()
-        findNavController().addOnDestinationChangedListener(this)
-        lastText = ""
-    }
-
-    override fun onPause() {
-        super.onPause()
-        findNavController().removeOnDestinationChangedListener(this)
-        binding.barcodeScanner.pause()
-    }
-
     private fun navigateToVerificationPage(text: String) {
         val action =
             CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationDialogFragment(
@@ -227,17 +231,6 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(),
                 arrayOf(Manifest.permission.CAMERA),
                 CAMERA_REQUEST_CODE
             )
-        }
-    }
-
-    override fun onDestinationChanged(
-        controller: NavController,
-        destination: NavDestination,
-        arguments: Bundle?
-    ) {
-        if (destination.id == R.id.codeReaderFragment) {
-            binding.barcodeScanner.resume()
-            lastText = ""
         }
     }
 

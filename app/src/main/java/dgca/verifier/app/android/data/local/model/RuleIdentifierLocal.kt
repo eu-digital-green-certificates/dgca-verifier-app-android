@@ -17,13 +17,20 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Admin on 7/26/21, 3:18 AM
+ *  Created by osarapulov on 7/26/21 12:04 PM
  */
 
-package dgca.verifier.app.android;
+package dgca.verifier.app.android.data.local.model
 
-public class BackportUtils {
-    public static int byteToUnsignedInt(byte x) {
-        return x & 0xff;
-    }
-}
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "rule_identifiers")
+data class RuleIdentifierLocal(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val identifier: String,
+    val version: String,
+    val country: String,
+    val hash: String
+)

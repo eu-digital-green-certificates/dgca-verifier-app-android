@@ -17,17 +17,17 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 21/09/2021, 22:19
+ *  Created by osarapulov on 7/26/21 11:56 AM
  */
 
-package dgca.verifier.app.android.data.local.valuesets
+package dgca.verifier.app.android.data.local.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "value_set_identifier")
-class ValueSetIdentifierLocal(
-    @PrimaryKey
-    val valueSetIdentifierId: String,
-    val valueSetHash: String
+@Entity(tableName = "countries")
+data class CountryLocal(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val isoCode: String,
 )

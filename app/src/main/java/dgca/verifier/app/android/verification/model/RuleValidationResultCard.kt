@@ -17,28 +17,16 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 7/26/21 12:01 PM
+ *  Created by mykhailo.nester on 10/10/2021, 09:20
  */
 
-package dgca.verifier.app.android.data.local.rules
+package dgca.verifier.app.android.verification.model
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+import dgca.verifier.app.engine.Result
 
-@Entity(
-    tableName = "descriptions",
-    foreignKeys = [ForeignKey(
-        entity = RuleLocal::class,
-        parentColumns = arrayOf("ruleId"),
-        childColumns = arrayOf("ruleContainerId"),
-        onDelete = ForeignKey.CASCADE
-    )]
-)
-data class DescriptionLocal(
-    @PrimaryKey(autoGenerate = true)
-    val descriptionId: Long = 0,
-    val ruleContainerId: Long = 0,
-    val lang: String,
-    val desc: String
+data class RuleValidationResultCard(
+    val description: String,
+    val result: Result,
+    val current: String,
+    val countryIsoCode: String
 )

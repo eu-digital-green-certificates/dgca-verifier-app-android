@@ -17,33 +17,28 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 7/26/21 12:05 PM
+ *  Created by mykhailo.nester on 10/10/2021, 10:51
  */
 
-package dgca.verifier.app.android.data.local.rules
+package dgca.verifier.app.android.data.local.model
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.fasterxml.jackson.databind.JsonNode
-import dgca.verifier.app.engine.data.RuleCertificateType
-import dgca.verifier.app.engine.data.Type
-import java.time.ZonedDateTime
 
-@Entity(tableName = "rules")
-data class RuleLocal(
+@Entity(
+    tableName = "descriptions",
+    foreignKeys = [ForeignKey(
+        entity = RuleLocal::class,
+        parentColumns = arrayOf("ruleId"),
+        childColumns = arrayOf("ruleContainerId"),
+        onDelete = ForeignKey.CASCADE
+    )]
+)
+data class DescriptionLocal(
     @PrimaryKey(autoGenerate = true)
-    val ruleId: Long = 0,
-    val identifier: String,
-    val type: Type,
-    val version: String,
-    val schemaVersion: String,
-    val engine: String,
-    val engineVersion: String,
-    val ruleCertificateType: RuleCertificateType,
-    val validFrom: ZonedDateTime,
-    val validTo: ZonedDateTime,
-    val affectedString: List<String>,
-    val logic: JsonNode,
-    val countryCode: String,
-    val region: String?,
+    val descriptionId: Long = 0,
+    val ruleContainerId: Long = 0,
+    val lang: String,
+    val desc: String
 )

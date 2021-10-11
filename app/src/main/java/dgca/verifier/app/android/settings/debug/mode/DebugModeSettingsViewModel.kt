@@ -37,10 +37,11 @@ class DebugModeSettingsViewModel @Inject constructor(
     private val preferences: Preferences,
     private val countriesRepository: CountriesRepository
 ) : ViewModel() {
+
     private val _countriesData: MutableLiveData<CountriesData> = MutableLiveData()
     val countriesData: LiveData<CountriesData> = _countriesData
-    private val _debugModeState: MutableLiveData<DebugModeState> =
-        MutableLiveData(DebugModeState.OFF)
+
+    private val _debugModeState: MutableLiveData<DebugModeState> = MutableLiveData(DebugModeState.OFF)
     val debugModeState: LiveData<DebugModeState> = _debugModeState
 
     init {
@@ -52,8 +53,7 @@ class DebugModeSettingsViewModel @Inject constructor(
             }
 
             val countriesData: CountriesData = withContext(Dispatchers.IO) {
-                val selectedCountriesCodes: Set<String> =
-                    preferences.debugModeSelectedCountriesCodes ?: emptySet()
+                val selectedCountriesCodes: Set<String> = preferences.debugModeSelectedCountriesCodes ?: emptySet()
                 val availableCountries: Set<String> = try {
                     mutableSetOf<String>().apply {
                         countriesRepository.getCountries().firstOrNull()?.let {
@@ -65,6 +65,7 @@ class DebugModeSettingsViewModel @Inject constructor(
                 }
                 return@withContext CountriesData(availableCountries, selectedCountriesCodes)
             }
+
             _countriesData.value = countriesData
         }
     }

@@ -27,12 +27,10 @@ import dgca.verifier.app.engine.data.RuleIdentifier
 import dgca.verifier.app.engine.data.source.remote.rules.*
 import retrofit2.Response
 
-class DefaultRulesRemoteDataSource(private val rulesApiService: RulesApiService) :
-    RulesRemoteDataSource {
+class DefaultRulesRemoteDataSource(private val rulesApiService: RulesApiService) : RulesRemoteDataSource {
 
     override suspend fun getRuleIdentifiers(rulesUrl: String): List<RuleIdentifier> {
-        val rulesResponse: Response<List<RuleIdentifierRemote>> =
-            rulesApiService.getRuleIdentifiers(rulesUrl)
+        val rulesResponse: Response<List<RuleIdentifierRemote>> = rulesApiService.getRuleIdentifiers(rulesUrl)
         return rulesResponse.body()?.map { it.toRuleIdentifier() } ?: listOf()
     }
 

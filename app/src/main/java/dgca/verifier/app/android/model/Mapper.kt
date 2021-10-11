@@ -24,18 +24,17 @@ package dgca.verifier.app.android.model
 
 import dgca.verifier.app.decoder.model.*
 
-fun GreenCertificate.toCertificateModel(): CertificateModel {
-    return CertificateModel(
+fun GreenCertificate.toCertificateModel(): CertificateModel =
+    CertificateModel(
         person = person.toPersonModel(),
         dateOfBirth = dateOfBirth,
         vaccinations = vaccinations?.map { it.toVaccinationModel() },
         tests = tests?.map { it.toTestModel() },
         recoveryStatements = recoveryStatements?.map { it.toRecoveryModel() }
     )
-}
 
-fun RecoveryStatement.toRecoveryModel(): RecoveryModel {
-    return RecoveryModel(
+fun RecoveryStatement.toRecoveryModel(): RecoveryModel =
+    RecoveryModel(
         disease = disease.toDiseaseCode().toDiseaseType(),
         dateOfFirstPositiveTest = dateOfFirstPositiveTest,
         countryOfVaccination = countryOfVaccination,
@@ -44,10 +43,9 @@ fun RecoveryStatement.toRecoveryModel(): RecoveryModel {
         certificateValidUntil = certificateValidUntil,
         certificateIdentifier = certificateIdentifier
     )
-}
 
-fun Test.toTestModel(): TestModel {
-    return TestModel(
+fun Test.toTestModel(): TestModel =
+    TestModel(
         disease = disease.toDiseaseCode().toDiseaseType(),
         typeOfTest = typeOfTest.toTypeOfTestCode().toTypeOfTest(),
         testName = testName,
@@ -61,28 +59,28 @@ fun Test.toTestModel(): TestModel {
         certificateIdentifier = certificateIdentifier,
         resultType = getTestResultType().toTestResult()
     )
-}
 
-fun Test.TestResult.toTestResult(): TestResult {
-    return when (this) {
+fun Test.TestResult.toTestResult(): TestResult =
+    when (this) {
         Test.TestResult.DETECTED -> TestResult.DETECTED
         Test.TestResult.NOT_DETECTED -> TestResult.NOT_DETECTED
     }
-}
 
-fun DiseaseCode.toDiseaseType(): DiseaseType = when (this) {
-    DiseaseCode.COVID_19 -> DiseaseType.COVID_19
-    else -> DiseaseType.UNDEFINED
-}
+fun DiseaseCode.toDiseaseType(): DiseaseType =
+    when (this) {
+        DiseaseCode.COVID_19 -> DiseaseType.COVID_19
+        else -> DiseaseType.UNDEFINED
+    }
 
-fun TypeOfTestCode.toTypeOfTest(): TypeOfTest = when (this) {
-    TypeOfTestCode.NUCLEIC_ACID_AMPLIFICATION_WITH_PROBE_DETECTION -> TypeOfTest.NUCLEIC_ACID_AMPLIFICATION_WITH_PROBE_DETECTION
-    TypeOfTestCode.RAPID_IMMUNOASSAY -> TypeOfTest.RAPID_IMMUNOASSAY
-    else -> TypeOfTest.UNDEFINED
-}
+fun TypeOfTestCode.toTypeOfTest(): TypeOfTest =
+    when (this) {
+        TypeOfTestCode.NUCLEIC_ACID_AMPLIFICATION_WITH_PROBE_DETECTION -> TypeOfTest.NUCLEIC_ACID_AMPLIFICATION_WITH_PROBE_DETECTION
+        TypeOfTestCode.RAPID_IMMUNOASSAY -> TypeOfTest.RAPID_IMMUNOASSAY
+        else -> TypeOfTest.UNDEFINED
+    }
 
-fun Vaccination.toVaccinationModel(): VaccinationModel {
-    return VaccinationModel(
+fun Vaccination.toVaccinationModel(): VaccinationModel =
+    VaccinationModel(
         disease = disease.toDiseaseCode().toDiseaseType(),
         vaccine = vaccine,
         medicinalProduct = medicinalProduct,
@@ -94,27 +92,27 @@ fun Vaccination.toVaccinationModel(): VaccinationModel {
         certificateIssuer = certificateIssuer,
         certificateIdentifier = certificateIdentifier
     )
-}
 
-fun Person.toPersonModel(): PersonModel {
-    return PersonModel(
+fun Person.toPersonModel(): PersonModel =
+    PersonModel(
         standardisedFamilyName = standardisedFamilyName,
         familyName = familyName,
         standardisedGivenName = standardisedGivenName,
         givenName = givenName
     )
-}
 
-fun String.toDiseaseCode(): DiseaseCode = when (this) {
-    DiseaseCode.COVID_19.value -> DiseaseCode.COVID_19
-    else -> DiseaseCode.UNDEFINED
-}
+fun String.toDiseaseCode(): DiseaseCode =
+    when (this) {
+        DiseaseCode.COVID_19.value -> DiseaseCode.COVID_19
+        else -> DiseaseCode.UNDEFINED
+    }
 
-fun String.toTypeOfTestCode(): TypeOfTestCode = when (this) {
-    TypeOfTestCode.NUCLEIC_ACID_AMPLIFICATION_WITH_PROBE_DETECTION.value -> TypeOfTestCode.NUCLEIC_ACID_AMPLIFICATION_WITH_PROBE_DETECTION
-    TypeOfTestCode.RAPID_IMMUNOASSAY.value -> TypeOfTestCode.RAPID_IMMUNOASSAY
-    else -> TypeOfTestCode.UNDEFINED
-}
+fun String.toTypeOfTestCode(): TypeOfTestCode =
+    when (this) {
+        TypeOfTestCode.NUCLEIC_ACID_AMPLIFICATION_WITH_PROBE_DETECTION.value -> TypeOfTestCode.NUCLEIC_ACID_AMPLIFICATION_WITH_PROBE_DETECTION
+        TypeOfTestCode.RAPID_IMMUNOASSAY.value -> TypeOfTestCode.RAPID_IMMUNOASSAY
+        else -> TypeOfTestCode.UNDEFINED
+    }
 
 enum class DiseaseCode(val value: String) {
     COVID_19("840539006"),

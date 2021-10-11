@@ -36,6 +36,7 @@ class SecurityKeyWrapper(private val secretKey: SecretKey) {
 
     fun encrypt(token: String?): String? {
         if (token == null) return null
+
         try {
             val cipher = getCipher(Cipher.ENCRYPT_MODE)
             val encrypted = cipher.doFinal(token.toByteArray())
@@ -43,11 +44,13 @@ class SecurityKeyWrapper(private val secretKey: SecretKey) {
         } catch (e: GeneralSecurityException) {
             Timber.w(e)
         }
+
         return null
     }
 
     fun decrypt(encryptedToken: String?): String? {
         if (encryptedToken == null) return null
+
         try {
             val cipher = getCipher(Cipher.DECRYPT_MODE)
             val decoded = Base64.decode(encryptedToken, Base64.URL_SAFE)
@@ -56,6 +59,7 @@ class SecurityKeyWrapper(private val secretKey: SecretKey) {
         } catch (e: GeneralSecurityException) {
             Timber.w(e)
         }
+
         return null
     }
 
@@ -69,7 +73,6 @@ class SecurityKeyWrapper(private val secretKey: SecretKey) {
     }
 
     companion object {
-
         private const val AES_GCM_NO_PADDING = "AES/GCM/NoPadding"
     }
 }

@@ -33,8 +33,8 @@ import com.google.android.material.card.MaterialCardView
 import dgca.verifier.app.android.R
 import dgca.verifier.app.android.databinding.ViewDetailedCertificateRawViewBinding
 
-class DetailedCertificateRawView(context: Context, attrs: AttributeSet?) :
-    MaterialCardView(context, attrs) {
+class DetailedCertificateRawView(context: Context, attrs: AttributeSet?) : MaterialCardView(context, attrs) {
+
     private val binding: ViewDetailedCertificateRawViewBinding =
         ViewDetailedCertificateRawViewBinding.inflate(LayoutInflater.from(context), this)
 

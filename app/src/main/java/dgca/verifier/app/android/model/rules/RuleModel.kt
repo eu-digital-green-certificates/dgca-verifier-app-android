@@ -45,10 +45,16 @@ data class RuleModel(
     val logic: String,
     val countryCode: String,
     val region: String?
-): Parcelable {
+) : Parcelable {
+
     fun getDescriptionFor(languageCode: String): String {
         val description = descriptions[languageCode.toLowerCase(Locale.ROOT)]
-        return if (description?.isNotBlank() == true) description else descriptions[Locale.ENGLISH.language]
-            ?: ""
+
+        return if (description?.isNotBlank() == true) {
+            description
+        } else {
+            descriptions[Locale.ENGLISH.language]
+                ?: ""
+        }
     }
 }

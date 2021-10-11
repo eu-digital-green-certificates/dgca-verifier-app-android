@@ -17,13 +17,17 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 5/5/21 8:18 PM
+ *  Created by mykhailo.nester on 21/09/2021, 22:19
  */
 
-package dgca.verifier.app.android
+package dgca.verifier.app.android.data.local.model
 
-import android.content.res.Resources
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-private fun density() = Resources.getSystem().displayMetrics.density
-
-fun Int.dpToPx() = this * density().toInt()
+@Entity(tableName = "value_set_identifier")
+class ValueSetIdentifierLocal(
+    @PrimaryKey
+    val valueSetIdentifierId: String,
+    val valueSetHash: String
+)

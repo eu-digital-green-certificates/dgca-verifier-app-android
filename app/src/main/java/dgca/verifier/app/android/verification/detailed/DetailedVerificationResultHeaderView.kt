@@ -33,8 +33,8 @@ import dgca.verifier.app.android.R
 import dgca.verifier.app.android.databinding.ViewDetailedVerificationResultHeaderBinding
 import dgca.verifier.app.android.model.CertificateModel
 import dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer
-import dgca.verifier.app.android.verification.StandardizedVerificationResult
-import dgca.verifier.app.android.verification.StandardizedVerificationResultCategory
+import dgca.verifier.app.android.verification.model.StandardizedVerificationResult
+import dgca.verifier.app.android.verification.model.StandardizedVerificationResultCategory
 
 class DetailedVerificationResultHeaderView(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs) {
 

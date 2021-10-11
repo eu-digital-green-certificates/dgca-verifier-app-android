@@ -22,6 +22,7 @@
 
 package dgca.verifier.app.android
 
+import dgca.verifier.app.android.utils.toFormattedDateTime
 import org.junit.Assert
 import org.junit.Test
 

@@ -17,14 +17,19 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 8/31/21 5:45 PM
+ *  Created by mykhailo.nester on 10/10/2021, 11:13
  */
 
-package dgca.verifier.app.android.verification
+package dgca.verifier.app.android.data.local.model
 
-import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import androidx.room.Embedded
+import androidx.room.Relation
 
-@HiltViewModel
-class VerificationResultResultViewModel @Inject constructor() : ViewModel()
+data class RuleWithDescriptionsLocal(
+    @Embedded val rule: RuleLocal,
+    @Relation(
+        parentColumn = "ruleId",
+        entityColumn = "ruleContainerId"
+    )
+    val descriptions: List<DescriptionLocal>
+)

@@ -43,8 +43,7 @@ class Converters {
 
     @TypeConverter
     fun localDateToTimestamp(localDate: LocalDate?): Long {
-        return (localDate?.atStartOfDay(UTC_ZONE_ID)
-            ?: ZonedDateTime.now(UTC_ZONE_ID)).toInstant().toEpochMilli()
+        return (localDate?.atStartOfDay(UTC_ZONE_ID) ?: ZonedDateTime.now(UTC_ZONE_ID)).toInstant().toEpochMilli()
     }
 
     @TypeConverter

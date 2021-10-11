@@ -44,9 +44,10 @@ class SettingsViewModel @Inject constructor(
 
     private val _inProgress = MutableLiveData<Boolean>()
     val inProgress: LiveData<Boolean> = _inProgress
+
     val lastSyncLiveData: LiveData<Long> = verifierRepository.getLastSyncTimeMillis()
-    private val _debugModeState: MutableLiveData<DebugModeState> =
-        MutableLiveData(DebugModeState.OFF)
+
+    private val _debugModeState: MutableLiveData<DebugModeState> = MutableLiveData(DebugModeState.OFF)
     val debugModeState: LiveData<DebugModeState> = _debugModeState
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
