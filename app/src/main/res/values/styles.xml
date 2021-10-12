@@ -23,7 +23,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/blue</item>
         <item name="colorPrimaryDark">@color/blue_dark</item>
-        <item name="colorAccent">@color/red</item>
+        <item name="colorAccent">@color/blue_dark</item>
 
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <item name="android:windowFullscreen">true</item>

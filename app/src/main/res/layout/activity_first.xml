@@ -88,12 +88,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingStart="@dimen/padding_16dp"
-                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_baseline_settings"
-                    tools:visibility="visible" />
+                    app:srcCompat="@drawable/ic_baseline_settings" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -181,9 +179,7 @@
                     android:textColor="@color/blue_dark"
                     android:textStyle="bold" />
 
-
             </androidx.cardview.widget.CardView>
-
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/verify_cert_title"

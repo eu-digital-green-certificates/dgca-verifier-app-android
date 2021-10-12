@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~  license-start
+  ~  eu-digital-green-certificates / dgca-verifier-app-android
+  ~
+  ~  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  ~  license-end
+  ~
+  ~  Created by nicolamcornelio on 07/10/2021, 11:49
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_light"
+    tools:context=".ui.SettingsActivity">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/toolbar_layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:minHeight="@dimen/size_60dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/back_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_32dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_arrow_back"
+                    app:tint="@color/blue_dark" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/back_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_16dp"
+                    android:fontFamily="@font/titiliumfont"
+                    android:text="@string/label_return_home"
+                    android:textAllCaps="true"
+                    android:textColor="@color/blue_dark"
+                    android:textSize="@dimen/text_size_16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/back_image"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/settings_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/titiliumfont"
+                android:textSize="@dimen/text_size_16sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="@dimen/margin_24dp"
+                android:background="@color/grey_light"
+                android:text="@string/settings_title"
+                android:textAllCaps="true"
+                android:textColor="@color/blue_dark"
+                android:layout_marginTop="@dimen/padding_24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
+
+            <View
+                android:id="@+id/horizontal_line"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/margin_24dp"
+                android:background="@color/grey_50"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/settings_text" />
+
+
+            <TextView
+                android:id="@+id/preferences_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/titiliumfont"
+                android:textSize="@dimen/text_size_16sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="@dimen/margin_24dp"
+                android:background="@color/grey_light"
+                android:text="@string/preferences_title"
+                android:textColor="@color/blue_dark"
+                android:layout_marginTop="@dimen/padding_30dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/horizontal_line" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/totem_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_16dp"
+                android:layout_marginTop="@dimen/margin_16dp"
+                android:background="@color/white"
+                app:cardCornerRadius="4dp"
+                app:cardElevation="@dimen/size_8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/preferences_text">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/totem_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/titiliumfont"
+                    android:paddingHorizontal="@dimen/margin_24dp"
+                    android:paddingVertical="@dimen/margin_16dp"
+                    android:textAllCaps="true"
+                    android:text="@string/label_totem_mode"
+                    android:textColor="@color/blue_dark"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/totem_switch"
+                    android:layout_width="220dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="14dp"
+                    android:fontFamily="@font/titiliumfont"
+                    android:textColor="@color/blue"
+                    android:textSize="@dimen/text_size_14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="parent"
+                    app:layout_constraintTop_toBottomOf="parent" />
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/information_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/titiliumfont"
+                android:textSize="@dimen/text_size_16sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="@dimen/margin_24dp"
+                android:background="@color/grey_light"
+                android:text="@string/info_title"
+                android:textColor="@color/blue_dark"
+                android:layout_marginTop="@dimen/padding_30dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/totem_card" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/faq_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_16dp"
+                android:layout_marginTop="@dimen/margin_16dp"
+                android:background="@color/white"
+                app:cardCornerRadius="4dp"
+                app:cardElevation="@dimen/size_8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/information_text">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/faq_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/titiliumfont"
+                    android:paddingHorizontal="@dimen/margin_24dp"
+                    android:paddingVertical="@dimen/margin_16dp"
+                    android:text="@string/faq_card_title"
+                    android:textAllCaps="true"
+                    android:textColor="@color/blue_dark"
+                    android:textStyle="bold"/>
+
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/privacy_policy_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_16dp"
+                android:layout_marginTop="@dimen/margin_16dp"
+                android:background="@color/white"
+                app:cardCornerRadius="4dp"
+                app:cardElevation="@dimen/size_8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/faq_card">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/privacy_policy_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/titiliumfont"
+                    android:paddingHorizontal="@dimen/margin_24dp"
+                    android:paddingVertical="@dimen/margin_16dp"
+                    android:text="@string/privacy_card_title"
+                    android:textAllCaps="true"
+                    android:textColor="@color/blue_dark"
+                    android:textStyle="bold" />
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

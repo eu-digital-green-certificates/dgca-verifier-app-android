@@ -21,27 +21,34 @@
 
 package it.ministerodellasalute.verificaC19.ui.main.codeReader
 
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.findNavController
 import com.google.zxing.BarcodeFormat
+import com.google.zxing.DecodeHintType
 import com.google.zxing.ResultPoint
 import com.google.zxing.client.android.BeepManager
 import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
+import com.journeyapps.barcodescanner.DecoratedBarcodeView
 import com.journeyapps.barcodescanner.DefaultDecoderFactory
+import com.journeyapps.barcodescanner.camera.CameraSettings
+import dagger.hilt.android.AndroidEntryPoint
 import it.ministerodellasalute.verificaC19.R
 import it.ministerodellasalute.verificaC19.databinding.FragmentCodeReaderBinding
-import java.lang.Exception
+import it.ministerodellasalute.verificaC19sdk.model.VerificationViewModel
 
+@AndroidEntryPoint
 class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListener,
-    View.OnClickListener {
+    View.OnClickListener, DecoratedBarcodeView.TorchListener {
 
     private var _binding: FragmentCodeReaderBinding? = null
     private val binding get() = _binding!!
@@ -49,14 +56,15 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
     private lateinit var beepManager: BeepManager
     private var lastText: String? = null
 
+    private val viewModel by viewModels<VerificationViewModel>()
+    private var torchOn = false
+
     private val callback: BarcodeCallback = object : BarcodeCallback {
         override fun barcodeResult(result: BarcodeResult) {
-            // Prevent errors from finding patterns of other QR code types inside DCCs
             if (result.barcodeFormat != BarcodeFormat.QR_CODE && result.barcodeFormat != BarcodeFormat.AZTEC) {
                 return
             }
             if (result.text == null || result.text == lastText) {
-                // Prevent duplicate scans
                 return
             }
             binding.barcodeScanner.pause()
@@ -90,15 +98,38 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val formats: Collection<BarcodeFormat> = listOf(BarcodeFormat.AZTEC, BarcodeFormat.QR_CODE)
-        binding.barcodeScanner.barcodeView.decoderFactory = DefaultDecoderFactory(formats)
+        val hintsMap: MutableMap<DecodeHintType, Any> = HashMap()
+        val formats: Collection<BarcodeFormat> = listOf(BarcodeFormat.QR_CODE, BarcodeFormat.AZTEC)
+        hintsMap[DecodeHintType.TRY_HARDER] = false
+        binding.barcodeScanner.barcodeView.decoderFactory = DefaultDecoderFactory(formats, hintsMap, null, 0)
+        binding.barcodeScanner.cameraSettings.isAutoFocusEnabled = true
+
+        if (viewModel.getFrontCameraStatus()) {
+            binding.barcodeScanner.barcodeView.cameraSettings.focusMode =
+                CameraSettings.FocusMode.INFINITY
+        }
         binding.barcodeScanner.initializeFromIntent(requireActivity().intent)
+
+        if (viewModel.getFrontCameraStatus()) {
+            binding.barcodeScanner.cameraSettings.requestedCameraId = 1
+        } else {
+            binding.barcodeScanner.cameraSettings.requestedCameraId = -1
+        }
+
+        if (!hasFlash()) {
+            binding.torchButton.visibility = View.GONE
+        } else {
+            binding.torchButton.setOnClickListener(this)
+            binding.barcodeScanner.setTorchListener(this)
+        }
+
         binding.barcodeScanner.decodeContinuous(callback)
         binding.barcodeScanner.statusView.text = ""
         beepManager = BeepManager(requireActivity())
 
         binding.backImage.setOnClickListener(this)
         binding.backText.setOnClickListener(this)
+        binding.flipCamera.setOnClickListener(this)
     }
 
     override fun onDestroyView() {
@@ -142,6 +173,38 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
         when (v?.id) {
             R.id.back_image -> requireActivity().finish()
             R.id.back_text -> requireActivity().finish()
+            R.id.flip_camera -> {
+                binding.barcodeScanner.pause()
+                binding.barcodeScanner.cameraSettings.requestedCameraId *= -1
+                binding.barcodeScanner.resume()
+
+                if (binding.barcodeScanner.cameraSettings.requestedCameraId == 1) {
+                    viewModel.setFrontCameraStatus(true)
+                } else if (binding.barcodeScanner.cameraSettings.requestedCameraId == -1) {
+                    viewModel.setFrontCameraStatus(false)
+                }
+            }
+            R.id.torch_button -> {
+                if (torchOn) {
+                    binding.barcodeScanner.setTorchOff()
+                } else {
+                    binding.barcodeScanner.setTorchOn()
+                }
+            }
         }
+    }
+
+
+    private fun hasFlash(): Boolean {
+        return requireActivity().packageManager
+            .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
+    }
+
+    override fun onTorchOn() {
+        torchOn = true
+    }
+
+    override fun onTorchOff() {
+        torchOn = false
     }
 }

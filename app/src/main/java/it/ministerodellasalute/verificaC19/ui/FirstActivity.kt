@@ -38,7 +38,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.text.set
 import androidx.lifecycle.observe
 import dagger.hilt.android.AndroidEntryPoint
 import it.ministerodellasalute.verificaC19.BuildConfig
@@ -49,7 +48,6 @@ import it.ministerodellasalute.verificaC19sdk.util.Utility
 import it.ministerodellasalute.verificaC19sdk.model.FirstViewModel
 import it.ministerodellasalute.verificaC19sdk.util.FORMATTED_DATE_LAST_SYNC
 import it.ministerodellasalute.verificaC19sdk.util.TimeUtility.parseTo
-
 
 @AndroidEntryPoint
 class FirstActivity : AppCompatActivity(), View.OnClickListener {
@@ -76,6 +74,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(binding.root)
 
         binding.qrButton.setOnClickListener(this)
+        binding.settings.setOnClickListener(this)
 
         val string = getString(R.string.version, BuildConfig.VERSION_NAME)
         val spannableString = SpannableString(string).also {
@@ -165,6 +164,11 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
         startActivity(intent)
     }
 
+    private fun openSettings() {
+        val intent = Intent(this, SettingsActivity::class.java)
+        startActivity(intent)
+    }
+
     override fun onClick(v: View?) {
         viewModel.getDateLastSync().let {
             if (it == -1L) {
@@ -174,6 +178,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
         }
         when (v?.id) {
             R.id.qrButton -> checkCameraPermission()
+            R.id.settings -> openSettings()
         }
     }
 
