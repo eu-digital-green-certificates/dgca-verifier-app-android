@@ -42,12 +42,14 @@ import androidx.core.text.set
 import androidx.lifecycle.observe
 import dagger.hilt.android.AndroidEntryPoint
 import it.ministerodellasalute.verificaC19.BuildConfig
-import it.ministerodellasalute.verificaC19.FORMATTED_DATE_LAST_SYNC
 import it.ministerodellasalute.verificaC19.R
 import it.ministerodellasalute.verificaC19.databinding.ActivityFirstBinding
-import it.ministerodellasalute.verificaC19.parseTo
 import it.ministerodellasalute.verificaC19.ui.main.MainActivity
-import it.ministerodellasalute.verificaC19.util.Utility
+import it.ministerodellasalute.verificaC19sdk.util.Utility
+import it.ministerodellasalute.verificaC19sdk.model.FirstViewModel
+import it.ministerodellasalute.verificaC19sdk.util.FORMATTED_DATE_LAST_SYNC
+import it.ministerodellasalute.verificaC19sdk.util.TimeUtility.parseTo
+
 
 @AndroidEntryPoint
 class FirstActivity : AppCompatActivity(), View.OnClickListener {
@@ -152,7 +154,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
     override fun onResume() {
         super.onResume()
         viewModel.getAppMinVersion().let {
-            if (Utility.versionCompare(it, BuildConfig.VERSION_NAME) > 0) {
+            if (Utility.versionCompare(it, BuildConfig.VERSION_NAME) > 0 || viewModel.isSDKVersionObsoleted()) {
                 createForceUpdateDialog()
             }
         }

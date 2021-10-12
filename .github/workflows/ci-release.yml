@@ -8,12 +8,18 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       APP_VERSION: ${{ github.event.release.tag_name }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
     - uses: actions/checkout@v2
       with:
         repository: eu-digital-green-certificates/dgca-app-core-android
         ref: main
         path: dgca-app-core-android
+    - uses: actions/checkout@v2
+      with:
+        repository: ministero-salute/it-dgc-verificac19-sdk-android
+        ref: initial-sdk
+        path: it-dgc-verificac19-sdk-android
     - uses: actions/checkout@v2
       with:
         path: dgca-verifier-app-android

@@ -20,6 +20,11 @@ resources:
     name: eu-digital-green-certificates/dgca-app-core-android
     ref: 'main'
     endpoint: 'GitHub - it-eucert-team'
+  - repository: it-dgc-verificac19-sdk-android
+    type: github
+    name: ministero-salute/it-dgc-verificac19-sdk-android
+    ref: 'feature/initial-sdk'
+    endpoint: 'GitHub - it-eucert-team'
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -34,6 +39,7 @@ stages:
     - checkout: self
       clean: true
     - checkout: dgca-app-core-android
+    - checkout: it-dgc-verificac19-sdk-android
 
     - task: Bash@3
       displayName: set init value
@@ -115,6 +121,7 @@ stages:
     - checkout: self
       clean: true
     - checkout: dgca-app-core-android
+    - checkout: it-dgc-verificac19-sdk-android
     
     - task: ExtractVersionFromTag@1
       inputs:

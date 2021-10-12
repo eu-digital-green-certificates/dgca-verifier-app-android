@@ -11,12 +11,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-20.04
+    env:
+      ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
     steps:
     - uses: actions/checkout@v2
       with:
         repository: eu-digital-green-certificates/dgca-app-core-android
         ref: main
         path: dgca-app-core-android
+    - name: cloning private repo
+      run: |
+        git clone "https://oauth2:$ACCESS_TOKEN@github.com/ministero-salute/it-dgc-verificac19-sdk-android.git"
+        cd it-dgc-verificac19-sdk-android && git checkout feature/initial-sdk && cd ..
     - uses: actions/checkout@v2
       with:
         path: dgca-verifier-app-android
@@ -34,4 +40,4 @@ jobs:
     - name: build
       working-directory: ./dgca-verifier-app-android
       run: |-
-        ./gradlew --no-daemon build
+        ./gradlew --no-daemon app:assembleRelease
