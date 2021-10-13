@@ -145,17 +145,18 @@
                     android:fontFamily="@font/titiliumfont"
                     android:paddingHorizontal="@dimen/margin_24dp"
                     android:paddingVertical="@dimen/margin_16dp"
-                    android:textAllCaps="true"
                     android:text="@string/label_totem_mode"
+                    android:textAllCaps="true"
                     android:textColor="@color/blue_dark"
                     android:textStyle="bold" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/totem_switch"
-                    android:layout_width="220dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="14dp"
+                    android:layout_marginEnd="16dp"
                     android:fontFamily="@font/titiliumfont"
                     android:textColor="@color/blue"
                     android:textSize="@dimen/text_size_14sp"

@@ -116,8 +116,8 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
             binding.barcodeScanner.cameraSettings.requestedCameraId = -1
         }
 
-        if (!hasFlash()) {
-            binding.torchButton.visibility = View.GONE
+        if (!hasFlash() || viewModel.getFrontCameraStatus()) {
+            binding.torchButton.visibility = View.INVISIBLE
         } else {
             binding.torchButton.setOnClickListener(this)
             binding.barcodeScanner.setTorchListener(this)
@@ -182,6 +182,12 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
                     viewModel.setFrontCameraStatus(true)
                 } else if (binding.barcodeScanner.cameraSettings.requestedCameraId == -1) {
                     viewModel.setFrontCameraStatus(false)
+                }
+
+                if (viewModel.getFrontCameraStatus()) {
+                    binding.torchButton.visibility = View.INVISIBLE
+                } else {
+                    binding.torchButton.visibility = View.VISIBLE
                 }
             }
             R.id.torch_button -> {
