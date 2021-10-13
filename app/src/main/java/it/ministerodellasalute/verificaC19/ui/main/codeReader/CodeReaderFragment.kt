@@ -116,8 +116,12 @@ class CodeReaderFragment : Fragment(), NavController.OnDestinationChangedListene
             binding.barcodeScanner.cameraSettings.requestedCameraId = -1
         }
 
-        if (!hasFlash() || viewModel.getFrontCameraStatus()) {
+        if (viewModel.getFrontCameraStatus()) {
             binding.torchButton.visibility = View.INVISIBLE
+        }
+
+        if (!hasFlash()) {
+            binding.torchButton.visibility = View.GONE
         } else {
             binding.torchButton.setOnClickListener(this)
             binding.barcodeScanner.setTorchListener(this)
