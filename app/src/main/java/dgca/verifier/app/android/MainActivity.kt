@@ -22,9 +22,12 @@
 
 package dgca.verifier.app.android
 
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
+import android.nfc.NfcManager
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
@@ -39,6 +42,7 @@ import timber.log.Timber
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    private var adapter: NfcAdapter? = null
     private lateinit var navHostFragment: NavHostFragment
     private lateinit var navController: NavController
 
@@ -67,6 +71,31 @@ class MainActivity : AppCompatActivity() {
 
     fun clearBackground() {
         window.setBackgroundDrawable(ContextCompat.getDrawable(this, R.color.white))
+    }
+
+    fun enableNfcForegroundDispatch() {
+        if (adapter == null) {
+            val nfcManager = getSystemService(Context.NFC_SERVICE) as NfcManager
+            adapter = nfcManager.defaultAdapter
+        }
+
+        try {
+            val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            val nfcPendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
+            adapter?.enableForegroundDispatch(this, nfcPendingIntent, null, null)
+
+        } catch (ex: IllegalStateException) {
+            Timber.e(ex, "Error enabling NFC foreground dispatch")
+        }
+    }
+
+
+    fun disableNfcForegroundDispatch() {
+        try {
+            adapter?.disableForegroundDispatch(this)
+        } catch (ex: IllegalStateException) {
+            Timber.e(ex, "Error disabling NFC foreground dispatch")
+        }
     }
 
     private fun checkNdefMessage(intent: Intent) {

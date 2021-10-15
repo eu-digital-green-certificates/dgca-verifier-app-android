@@ -22,6 +22,7 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -47,6 +48,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.85" />
 
+    <TextView
+        android:id="@+id/nfc_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        android:gravity="center"
+        android:text="@string/nfc_enabled"
+        android:textSize="@dimen/text_size_medium"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/settings"
         android:layout_width="48dp"
@@ -58,6 +70,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/nfc_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:checked="false"
+        android:paddingHorizontal="@dimen/default_margin"
+        android:text="@string/nfc_scan"
+        android:textColor="@color/grey_50"
+        android:textSize="@dimen/text_size_medium"
+        android:theme="@style/TextAppearance.Dgca.Switch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settings" />
 
     <TextView
         android:id="@+id/validate_with"
@@ -80,4 +105,5 @@
         app:layout_constraintBottom_toBottomOf="@id/validate_with"
         app:layout_constraintStart_toEndOf="@id/validate_with"
         app:layout_constraintTop_toTopOf="@id/validate_with" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
