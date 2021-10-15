@@ -119,4 +119,6 @@
     <string name="certificate_valid_from_title">Certificate valid from</string>
     <string name="certificate_valid_until_title">Certificate valid until</string>
     <string name="personal_data_title">Personal data:</string>
+    <string name="nfc_enabled">NFC enabled</string>
+    <string name="nfc_scan">NFC scan</string>
 </resources>
