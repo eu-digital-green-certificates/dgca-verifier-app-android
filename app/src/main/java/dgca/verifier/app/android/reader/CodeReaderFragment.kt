@@ -160,18 +160,33 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(), NavCont
                 binding.countrySelector.setSelection(position)
             }
         }
+
+        binding.nfcSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                enableNFC()
+            } else {
+                enableCamera()
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
         findNavController().addOnDestinationChangedListener(this)
         lastText = ""
+
+        if (binding.nfcSwitch.isChecked) {
+            enableNFC()
+        } else {
+            enableCamera()
+        }
     }
 
     override fun onPause() {
         super.onPause()
         findNavController().removeOnDestinationChangedListener(this)
         binding.barcodeScanner.pause()
+        (requireActivity() as MainActivity).disableNfcForegroundDispatch()
     }
 
     override fun onDestinationChanged(
@@ -180,9 +195,26 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(), NavCont
         arguments: Bundle?
     ) {
         if (destination.id == R.id.codeReaderFragment) {
-            binding.barcodeScanner.resume()
+            if (binding.nfcSwitch.isChecked) {
+                enableNFC()
+            } else {
+                enableCamera()
+            }
+
             lastText = ""
         }
+    }
+
+    private fun enableNFC() {
+        binding.barcodeScanner.pause()
+        binding.nfcOverlay.isVisible = true
+        (requireActivity() as MainActivity).enableNfcForegroundDispatch()
+    }
+
+    private fun enableCamera() {
+        binding.barcodeScanner.resume()
+        binding.nfcOverlay.isVisible = false
+        (requireActivity() as MainActivity).disableNfcForegroundDispatch()
     }
 
     private fun showVerificationResult(
