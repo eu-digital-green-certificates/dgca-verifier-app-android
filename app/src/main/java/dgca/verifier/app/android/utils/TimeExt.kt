@@ -23,10 +23,7 @@
 package dgca.verifier.app.android.utils
 
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
+import java.time.*
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -49,9 +46,13 @@ private fun String.toLocalDateTime(): LocalDateTime? =
         null
     }
 
-fun String.toFormattedDateTime(): String? =
-    toZonedDateTime()?.let { "${DATE_TIME_FORMATTER.format(it)} (UTC)" }
-        ?: toLocalDateTime()?.let { "${DATE_TIME_FORMATTER.format(it)} (UTC)" }
+fun String.toFormattedDateTime(): String {
+    if (isEmpty()) {
+        return ""
+    }
+
+    return "${parseDateOfCollectionToUtcTimestamp()} (UTC)"
+}
 
 fun String.parseFromTo(from: String, to: String): String =
     try {
@@ -66,3 +67,23 @@ fun String.parseFromTo(from: String, to: String): String =
 fun Long.toLocalDateTime(): LocalDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(this), ZoneId.systemDefault())
 
 fun LocalDateTime.formatWith(pattern: String): String = DateTimeFormatter.ofPattern(pattern).format(this)
+
+fun String?.parseDateOfCollectionToUtcTimestamp(): String {
+    if (isNullOrEmpty()) {
+        return ""
+    }
+
+    return try {
+        val dateTime =
+            DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(this, OffsetDateTime::from).withOffsetSameInstant(ZoneOffset.UTC)
+        DATE_TIME_FORMATTER.format(dateTime)
+    } catch (ex: Exception) {
+        try {
+            val dateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssSX").parse(this, OffsetDateTime::from)
+                .withOffsetSameInstant(ZoneOffset.UTC)
+            DATE_TIME_FORMATTER.format(dateTime)
+        } catch (ex: Exception) {
+            ""
+        }
+    }
+}

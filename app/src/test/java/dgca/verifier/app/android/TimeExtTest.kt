@@ -27,32 +27,24 @@ import org.junit.Assert
 import org.junit.Test
 
 class TimeExtTest {
-    @Test
-    fun testLocalToFormattedDateTime() {
-        val localDateTimeString = "2021-05-25T09:02:07"
-        val expectedFormattedLocalDateTime = "May 25, 2021, 09:02 (UTC)"
-
-        val actualFormattedLocalDateTime = localDateTimeString.toFormattedDateTime()
-
-        Assert.assertEquals(expectedFormattedLocalDateTime, actualFormattedLocalDateTime)
-    }
 
     @Test
-    fun testZonedToFormattedDateTime() {
-        val zonedDateTimeString = "2021-05-19T08:20:00Z"
-        val expectedFormattedLocalDateTime = "May 19, 2021, 08:20 (UTC)"
+    fun testTimeToUTC_ISO8601_format_SuccessTest() {
+        val format1 = "2021-08-20T05:03:12Z"      // (UTC time)
+        val format2 = "2021-08-20T07:03:12+02"    // (CEST time)
+        val format3 = "2021-08-20T07:03:12+0200"  // (CEST time)
+        val format4 = "2021-08-20T07:03:12+02:00" // (CEST time)
 
-        val actualFormattedLocalDateTime = zonedDateTimeString.toFormattedDateTime()
+        val result1 = format1.toFormattedDateTime()
+        val result2 = format2.toFormattedDateTime()
+        val result3 = format3.toFormattedDateTime()
+        val result4 = format4.toFormattedDateTime()
 
-        Assert.assertEquals(expectedFormattedLocalDateTime, actualFormattedLocalDateTime)
-    }
+        val expectedResult = "Aug 20, 2021, 05:03 (UTC)"
 
-    @Test
-    fun testCustomDateTime() {
-        val zonedDateTimeString = "1 1 2021"
-
-        val actualFormattedLocalDateTime = zonedDateTimeString.toFormattedDateTime()
-
-        Assert.assertNull(actualFormattedLocalDateTime)
+        Assert.assertEquals(expectedResult, result1)
+        Assert.assertEquals(expectedResult, result2)
+        Assert.assertEquals(expectedResult, result3)
+        Assert.assertEquals(expectedResult, result4)
     }
 }
