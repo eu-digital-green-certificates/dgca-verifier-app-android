@@ -35,7 +35,7 @@ class TestViewHolder(private val binding: ItemTestBinding) : RecyclerView.ViewHo
     fun bind(data: TestModel) {
         data.disease.value.bindText(binding.diseaseTitle, binding.diseaseValue)
         data.resultType.value.bindText(binding.testResultTitle, binding.testResultValue)
-        (data.dateTimeOfCollection.toFormattedDateTime() ?: "").bindText(
+        data.dateTimeOfCollection.toFormattedDateTime().bindText(
             binding.dateOfCollectionTitle,
             binding.dateOfCollectionValue
         )
