@@ -336,11 +336,13 @@ class VerificationViewModel @Inject constructor(
     }
 }
 
+const val ISSUING_COUNTRY_X509_CERTIFICATE_KEY = "C"
+
 fun X509Certificate.getIssuerCountry(): String {
     val keys = issuerX500Principal.name.split(",")
     keys.forEach {
         val (key, value) = it.split("=")
-        if (key.equals("C", ignoreCase = true)) {
+        if (key.equals(ISSUING_COUNTRY_X509_CERTIFICATE_KEY, ignoreCase = true)) {
             return value.toLowerCase(Locale.ROOT)
         }
     }
