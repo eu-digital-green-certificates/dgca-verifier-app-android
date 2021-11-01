@@ -27,12 +27,13 @@ import dgca.verifier.app.decoder.cbor.GreenCertificateData
 import kotlinx.parcelize.Parcelize
 
 data class InnerVerificationResult(
-    val noPublicKeysFound: Boolean = true,
-    val certificateExpired: Boolean = false,
-    val greenCertificateData: GreenCertificateData? = null,
-    val isApplicableCode: Boolean = false,
-    val base64EncodedKid: String? = null,
-    val debugData: DebugData? = null
+        val noPublicKeysFound: Boolean = true,
+        val certificateExpired: Boolean = false,
+        val certificateIssuingCountryIsoCode: String? = null,
+        val greenCertificateData: GreenCertificateData? = null,
+        val isApplicableCode: Boolean = false,
+        val base64EncodedKid: String? = null,
+        val debugData: DebugData? = null
 ) {
     fun isValid() =
         !noPublicKeysFound && !certificateExpired && greenCertificateData != null && isApplicableCode && base64EncodedKid?.isNotBlank() == true
