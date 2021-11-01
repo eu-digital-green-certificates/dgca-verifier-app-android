@@ -73,6 +73,8 @@ class VerificationFragment : DialogFragment() {
                         DEBUG_DATA to qrCodeVerificationResult.debugData
                     )
                 )
+            } else {
+                dismiss()
             }
         }
     }
