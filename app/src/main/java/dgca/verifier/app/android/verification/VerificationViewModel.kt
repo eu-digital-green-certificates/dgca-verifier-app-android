@@ -86,7 +86,7 @@ class VerificationViewModel @Inject constructor(
         decode(qrCodeText, countryIsoCode)
     }
 
-    private fun decode(code: String, countryIsoCode: String) {
+    private fun decode(code: String, countryOfArrivalIsoCode: String) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 val verificationResult = VerificationResult()
@@ -96,7 +96,8 @@ class VerificationViewModel @Inject constructor(
                     if (verificationResult.isValid() && innerVerificationResult.base64EncodedKid?.isNotBlank() == true) {
                         innerVerificationResult.greenCertificateData?.validateRules(
                             verificationResult,
-                            countryIsoCode,
+                            innerVerificationResult.certificateIssuingCountryIsoCode.orEmpty(),
+                            countryOfArrivalIsoCode,
                             innerVerificationResult.base64EncodedKid
                         )
                     } else {
@@ -147,8 +148,15 @@ class VerificationViewModel @Inject constructor(
 
         val plainInput = prefixValidationService.decode(code, verificationResult)
         val compressedCose = base45Service.decode(plainInput, verificationResult)
-        val cose: ByteArray? = compressorService.decode(compressedCose, verificationResult)
+        if (verificationResult.base45Decoded.not()) {
+            Timber.d("Verification failed: base45 not decoded")
+            return InnerVerificationResult(
+                greenCertificateData = greenCertificateData,
+                isApplicableCode = isApplicableCode
+            )
+        }
 
+        val cose: ByteArray? = compressorService.decode(compressedCose, verificationResult)
         if (cose == null) {
             Timber.d("Verification failed: Too many bytes read")
             return InnerVerificationResult(
@@ -193,6 +201,7 @@ class VerificationViewModel @Inject constructor(
         }
         val noPublicKeysFound = false
         var certificateExpired = false
+        var issuingCountry = ""
         certificates.forEach { innerCertificate ->
             cryptoService.validate(
                 cose,
@@ -203,10 +212,10 @@ class VerificationViewModel @Inject constructor(
             )
 
             if (verificationResult.coseVerified) {
-                val expirationTime: ZonedDateTime? = if (innerCertificate is X509Certificate) {
-                    innerCertificate.notAfter.toInstant().atZone(UTC_ZONE_ID)
-                } else {
-                    null
+                var expirationTime: ZonedDateTime? = null
+                if (innerCertificate is X509Certificate) {
+                    expirationTime = innerCertificate.notAfter.toInstant().atZone(UTC_ZONE_ID)
+                    issuingCountry = innerCertificate.getIssuerCountry()
                 }
 
                 val currentTime: ZonedDateTime = ZonedDateTime.now().withZoneSameInstant(UTC_ZONE_ID)
@@ -222,6 +231,7 @@ class VerificationViewModel @Inject constructor(
         return InnerVerificationResult(
             noPublicKeysFound = noPublicKeysFound,
             certificateExpired = certificateExpired,
+            certificateIssuingCountryIsoCode = issuingCountry,
             greenCertificateData = greenCertificateData,
             isApplicableCode = isApplicableCode,
             base64EncodedKid = base64EncodedKid,
@@ -229,18 +239,25 @@ class VerificationViewModel @Inject constructor(
         )
     }
 
+
     private suspend fun GreenCertificateData.validateRules(
         verificationResult: VerificationResult,
-        countryIsoCode: String,
+        certificateIssuingCountryIsoCode: String,
+        countryOfArrivalIsoCode: String,
         base64EncodedKid: String
     ): List<ValidationResult>? {
         this.apply {
             val engineCertificateType = this.greenCertificate.getEngineCertificateType()
-            return if (countryIsoCode.isNotBlank()) {
-                val issuingCountry: String = this.getNormalizedIssuingCountry()
+
+            return if (countryOfArrivalIsoCode.isNotBlank()) {
+                val issuingCountry: String = if (certificateIssuingCountryIsoCode.isNotBlank()) {
+                    certificateIssuingCountryIsoCode
+                } else {
+                    this.getNormalizedIssuingCountry()
+                }
                 val rules = getRulesUseCase.invoke(
                     ZonedDateTime.now().withZoneSameInstant(UTC_ZONE_ID),
-                    countryIsoCode,
+                    countryOfArrivalIsoCode,
                     issuingCountry,
                     engineCertificateType
                 )
@@ -256,7 +273,7 @@ class VerificationViewModel @Inject constructor(
                 val externalParameter = ExternalParameter(
                     validationClock = ZonedDateTime.now(ZoneId.of(ZoneOffset.UTC.id)),
                     valueSets = valueSetsMap,
-                    countryCode = countryIsoCode,
+                    countryCode = countryOfArrivalIsoCode,
                     exp = this.expirationTime,
                     iat = this.issuedAt,
                     issuerCountryCode = issuingCountry,
@@ -325,4 +342,17 @@ class VerificationViewModel @Inject constructor(
             }
         }
     }
+}
+
+const val ISSUING_COUNTRY_X509_CERTIFICATE_KEY = "C"
+
+fun X509Certificate.getIssuerCountry(): String {
+    val keys = issuerX500Principal.name.split(",")
+    keys.forEach {
+        val (key, value) = it.split("=")
+        if (key.equals(ISSUING_COUNTRY_X509_CERTIFICATE_KEY, ignoreCase = true)) {
+            return value.toLowerCase(Locale.ROOT)
+        }
+    }
+    return ""
 }
