@@ -276,10 +276,12 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         binding.initDownload.visibility = View.VISIBLE
         hideRevokesDownloadViews()
         binding.dateLastSyncText.text = when (viewModel.getTotalSizeInByte()) {
-            0L -> getString(
-                R.string.label_download_alert_simple
-            )
-
+            0L -> {
+                hideRevokesDownloadViews()
+                getString(
+                    R.string.label_download_alert_simple
+                )
+            }
             else ->
                 getString(
                     R.string.titleDownloadAlert,
