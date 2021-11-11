@@ -34,6 +34,7 @@
     <string name="expirationText">Data scadenza certificato</string>
     <string name="certificateValid">Certificazione valida in Italia e in Europa</string>
     <string name="certificateNonValid">Certificazione non valida</string>
+    <string name="certificateRevoked">Certificazione revocata</string>
     <string name="certificateNonValidYet">Certificazione non ancora valida</string>
     <string name="certificateNotDCC">Errore di lettura del QR Code, oppure non è il Certificato verde COVID-19</string>
     <string name="certificateTechnicalError">Errore tecnico, non è stato possibile effettuare la verifica</string>
@@ -58,6 +59,7 @@
     <string name="updateLabel">Aggiorna</string>
     <string name="noKeyAlertTitle">Impossibile scansionare</string>
     <string name="noKeyAlertMessage">L\'applicazione deve connettersi alla rete almeno una volta per essere utilizzata</string>
+    <string name="noKeyAlertMessageForDrl">L\'applicazione deve scaricare nuovamente la lista dei certificati revocati per essere utilizzata</string>
     <string name="ok">OK</string>
     <string name="next">Avanti</string>
     <string name="back">Indietro</string>
@@ -86,4 +88,19 @@
     <string name="faq_card_title">Domande frequenti</string>
     <string name="privacy_card_title">Rispetto della privacy</string>
     <string name="label_totem_mode">Modalità automatica</string>
+    <string name="label_download">Scarica Ora</string>
+    <string name="exit_download">Esci</string>
+    <string name="after_download">Più tardi</string>
+    <string name="resume_download">Riprendi</string>
+    <string name="updatingRevokedPass">Aggiornamento lista dei certificati revocati in corso...</string>
+    <string name="incompleteDownload">L\'aggiornamento della lista dei certificati non è terminato. Assicurati di essere connesso a internet e clicca per continuare.</string>
+    <string name="titleDownloadAlert">L\'applicazione VerificaC19 necessita di aggiornare la lista dei certificati revocati, scaricando ed elaborando pacchetti dati per un totale di %1$.2fMb.</string>
+    <string name="label_download_alert_simple">L\'applicazione VerificaC19 necessita di aggiornare la lista dei certificati revocati.</string>
+    <string name="messageDownloadAlert">Controlla il piano dati della tua connessione oppure connetti una rete wi-fi prima di procedere. Il tempo di aggiornamento dipende dalla velocità di connessione e dal tipo di device in uso. La lista verrà aggiornata ogni 24 ore con pacchetti di aggiornamento dati che di solito non supereranno i pochi Kb. In caso un prossimo aggiornamento supererà i 5Mb si visualizzerà un nuovo messaggio come il presente.</string>
+    <string name="messageDownloadStarted">L\'aggiornamento della lista dei certificati è in corso. Attendere la fine del download per poter utilizzare l\'app.</string>
+    <string name="chunk_count">Pacchetto %1$d su %2$d</string>
+    <string name="chunk_size">%1$.2f Mb su %2$.2f Mb</string>
+    <string name="no_internet_title">Connessione internet assente</string>
+    <string name="no_internet_message">Connessione internet assente. Assicurati di essere connesso alla rete e riprova.</string>
+    <string name="ok_label">OK</string>
 </resources>
