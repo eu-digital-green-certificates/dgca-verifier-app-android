@@ -58,7 +58,6 @@ object Deps {
 
     const val zxing = "com.journeyapps:zxing-android-embedded:${Versions.zxing}"
     const val zxing_core = "com.google.zxing:core:${Versions.zxing_core}"
-    const val guava_conflict_resolver = "com.google.guava:listenablefuture:${Versions.guave_conflict_resolver_version}"
     const val kotlin_reflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin_reflect}"
     const val java_cose = "com.augustcellars.cose:cose-java:${Versions.java_cose}"
     const val json_validation = "com.github.java-json-tools:json-schema-validator:${Versions.json_validation}"

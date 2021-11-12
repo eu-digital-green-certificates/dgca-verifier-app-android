@@ -117,7 +117,6 @@ dependencies {
     implementation Deps.kotlinx_coroutines
     implementation(Deps.zxing) { transitive = false }
     implementation Deps.zxing_core
-    implementation Deps.guava_conflict_resolver
 
     implementation Deps.hilt
     kapt Deps.hilt_compiler

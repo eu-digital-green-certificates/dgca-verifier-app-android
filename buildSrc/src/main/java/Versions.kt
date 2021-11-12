@@ -45,7 +45,7 @@ object Versions {
     const val hilt_version = "2.33-beta"
     const val google_licenses_version = "0.10.4"
     const val retrofit = "2.9.0"
-    const val logging_interceptor = "4.0.1"
+    const val logging_interceptor = "4.9.2"
     const val gson_converter = "2.1.0"
     const val timber = "4.7.1"
 
@@ -55,7 +55,6 @@ object Versions {
     // QR
     const val zxing = "4.2.0"
     const val zxing_core = "3.3.0"
-    const val guave_conflict_resolver_version = "9999.0-empty-to-avoid-conflict-with-guava"
 
     // Decoder
     const val kotlin_reflect = "1.4.32"
