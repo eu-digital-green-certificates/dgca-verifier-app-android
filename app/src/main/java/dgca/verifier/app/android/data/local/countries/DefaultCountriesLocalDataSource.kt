@@ -23,12 +23,15 @@
 package dgca.verifier.app.android.data.local.countries
 
 import dgca.verifier.app.android.data.local.model.CountryLocal
+import dgca.verifier.app.engine.data.source.local.EnginePreferences
 import dgca.verifier.app.engine.data.source.local.countries.CountriesLocalDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.*
 
-class DefaultCountriesLocalDataSource(private val countriesDao: CountriesDao) : CountriesLocalDataSource {
+class DefaultCountriesLocalDataSource(
+    private val countriesDao: CountriesDao, private val enginePreferences: EnginePreferences
+) : CountriesLocalDataSource {
 
     override suspend fun updateCountries(countriesIsoCodes: List<String>) {
         countriesDao.apply {
@@ -39,6 +42,10 @@ class DefaultCountriesLocalDataSource(private val countriesDao: CountriesDao) : 
 
     override fun getCountries(): Flow<List<String>> =
         countriesDao.getAll().map { it.map { countryLocal -> countryLocal.toCountry() } }
+
+    override fun getLastCountriesSync(): Long = enginePreferences.getLastCountriesSync()
+
+    override fun getSelectedCountryIsoCode(): String? = enginePreferences.getSelectedCountryIsoCode()
 }
 
 fun String.toCountryLocal(): CountryLocal = CountryLocal(isoCode = toLowerCase(Locale.ROOT))
