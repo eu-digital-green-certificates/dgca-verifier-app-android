@@ -30,6 +30,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dgca.verifier.app.android.data.local.DefaultEnginePreferences
+import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.data.local.countries.CountriesDao
 import dgca.verifier.app.android.data.local.countries.DefaultCountriesLocalDataSource
 import dgca.verifier.app.android.data.local.rules.DefaultRulesLocalDataSource
@@ -47,6 +49,7 @@ import dgca.verifier.app.decoder.JSON_SCHEMA_V1
 import dgca.verifier.app.engine.*
 import dgca.verifier.app.engine.data.source.countries.CountriesRepository
 import dgca.verifier.app.engine.data.source.countries.DefaultCountriesRepository
+import dgca.verifier.app.engine.data.source.local.EnginePreferences
 import dgca.verifier.app.engine.data.source.local.countries.CountriesLocalDataSource
 import dgca.verifier.app.engine.data.source.local.rules.RulesLocalDataSource
 import dgca.verifier.app.engine.data.source.local.valuesets.ValueSetsLocalDataSource
@@ -132,8 +135,16 @@ object EngineModule {
 
     @Singleton
     @Provides
-    fun provideCountriesLocalDataSource(countriesDao: CountriesDao): CountriesLocalDataSource =
-        DefaultCountriesLocalDataSource(countriesDao)
+    fun provideEnginePreferences(preferences: Preferences): EnginePreferences =
+        DefaultEnginePreferences(preferences)
+
+    @Singleton
+    @Provides
+    fun provideCountriesLocalDataSource(
+        countriesDao: CountriesDao,
+        enginePreferences: EnginePreferences
+    ): CountriesLocalDataSource =
+        DefaultCountriesLocalDataSource(countriesDao, enginePreferences)
 
     @Singleton
     @Provides
