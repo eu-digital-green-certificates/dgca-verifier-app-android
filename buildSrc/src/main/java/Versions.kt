@@ -55,7 +55,6 @@ object Versions {
     // QR
     const val zxing = "4.2.0"
     const val zxing_core = "3.3.2"
-    const val guave_conflict_resolver_version = "9999.0-empty-to-avoid-conflict-with-guava"
 
     // Decoder
     const val kotlin_reflect = "1.4.32"
