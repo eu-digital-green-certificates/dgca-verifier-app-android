@@ -44,11 +44,11 @@ import it.ministerodellasalute.verificaC19sdk.model.CertificateSimple
 import it.ministerodellasalute.verificaC19sdk.model.CertificateStatus
 import it.ministerodellasalute.verificaC19sdk.model.SimplePersonModel
 import it.ministerodellasalute.verificaC19sdk.model.VerificationViewModel
+import it.ministerodellasalute.verificaC19sdk.util.*
 import it.ministerodellasalute.verificaC19sdk.util.FORMATTED_BIRTHDAY_DATE
-import it.ministerodellasalute.verificaC19sdk.util.FORMATTED_VALIDATION_DATE
+import it.ministerodellasalute.verificaC19sdk.util.TimeUtility.formatDateOfBirth
 import it.ministerodellasalute.verificaC19sdk.util.TimeUtility.parseFromTo
 import it.ministerodellasalute.verificaC19sdk.util.TimeUtility.parseTo
-import it.ministerodellasalute.verificaC19sdk.util.YEAR_MONTH_DAY
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
@@ -210,8 +210,8 @@ class VerificationFragment : Fragment(), View.OnClickListener {
 
     private fun setPersonData(person: SimplePersonModel?, dateOfBirth: String?) {
         binding.nameStandardisedText.text = person?.familyName.plus(" ").plus(person?.givenName)
-        binding.birthdateText.text =
-            dateOfBirth?.parseFromTo(YEAR_MONTH_DAY, FORMATTED_BIRTHDAY_DATE) ?: ""
+
+        binding.birthdateText.text = dateOfBirth?.formatDateOfBirth() ?: ""
     }
 
     override fun onClick(v: View?) {
@@ -228,12 +228,13 @@ class VerificationFragment : Fragment(), View.OnClickListener {
     private fun createForceUpdateDialog(message: String) {
         val builder = this.activity?.let { AlertDialog.Builder(requireContext()) }
         builder!!.setTitle(getString(R.string.updateTitle))
-        builder!!.setMessage(message)
-        builder.setPositiveButton(getString(R.string.ok)) { dialog, which ->
+        builder.setMessage(message)
+        builder.setPositiveButton(getString(R.string.ok)) { _, _ ->
             findNavController().popBackStack()
         }
         val dialog = builder.create()
-        dialog.setCancelable(true)
+        dialog.setCanceledOnTouchOutside(false)
+        dialog.setCancelable(false)
         dialog.show()
     }
 
