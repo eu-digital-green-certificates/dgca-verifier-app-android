@@ -17,20 +17,19 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:49 AM
+ *  Created by osarapulov on 11/15/21, 4:01 PM
  */
 
-import org.gradle.api.JavaVersion
+package dgca.verifier.app.android.data.local
 
-object Config {
-    const val minSdk = 23
-    const val compileSdk = 29
-    const val targetSdk = 30
-    val javaVersion = JavaVersion.VERSION_1_8
+import dgca.verifier.app.engine.data.source.local.EnginePreferences
 
-    const val versionCode = 30
-    const val versionName = "1.2.4"
+class DefaultEnginePreferences(private val preferences: Preferences): EnginePreferences {
+    override fun setLastCountriesSync(millis: Long) {
+        preferences.lastCountriesSyncTimeMillis = millis
+    }
 
-    const val androidTestInstrumentation = "androidx.test.runner.AndroidJUnitRunner"
-    const val proguardConsumerRules = "consumer-rules.pro"
+    override fun getLastCountriesSync(): Long = preferences.lastCountriesSyncTimeMillis
+
+    override fun getSelectedCountryIsoCode(): String? = preferences.selectedCountryIsoCode
 }

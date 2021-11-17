@@ -35,6 +35,8 @@ interface Preferences {
 
     var lastKeysSyncTimeMillis: Long
 
+    var lastCountriesSyncTimeMillis: Long
+
     var selectedCountryIsoCode: String?
 
     var debugModeState: String?
@@ -59,6 +61,13 @@ class PreferencesImpl(context: Context) : Preferences {
         KEY_LAST_KEYS_SYNC_TIME_MILLIS,
         -1
     )
+
+    override var lastCountriesSyncTimeMillis by LongPreference(
+        preferences,
+        KEY_COUNTRIES_KEYS_SYNC_TIME_MILLIS,
+        -1
+    )
+
     override var selectedCountryIsoCode: String? by StringPreference(
         preferences,
         KEY_SELECTED_COUNTRY_ISO_CODE
@@ -80,6 +89,7 @@ class PreferencesImpl(context: Context) : Preferences {
         private const val USER_PREF = "dgca.verifier.app.pref"
         private const val KEY_RESUME_TOKEN = "resume_token"
         private const val KEY_LAST_KEYS_SYNC_TIME_MILLIS = "last_keys_sync_time_millis"
+        private const val KEY_COUNTRIES_KEYS_SYNC_TIME_MILLIS = "last_countries_sync_time_millis"
         private const val KEY_SELECTED_COUNTRY_ISO_CODE = "selected_country_iso_code"
         private const val KEY_DEBUG_MODE_STATE = "debug_mode_state"
         private const val KEY_DEBUG_MODE_SELECTED_COUNTRIES_CODES =
