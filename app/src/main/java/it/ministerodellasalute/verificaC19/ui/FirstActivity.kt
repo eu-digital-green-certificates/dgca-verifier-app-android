@@ -41,6 +41,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.observe
 import dagger.hilt.android.AndroidEntryPoint
 import it.ministerodellasalute.verificaC19.BuildConfig
@@ -354,11 +355,14 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
                 return
             }
         }
+
         viewModel.getDrlDateLastSync().let {
-            if (viewModel.getIsDrlSyncActive() && it == -1L) {
-                createNoSyncAlertDialog(getString(R.string.messageDownloadStarted))
+            if (binding.resumeDownload.isVisible) {
+                createNoSyncAlertDialog(getString(R.string.label_drl_download_in_progress))
                 return
-            } else if (viewModel.getIsDrlSyncActive() && System.currentTimeMillis() >= it + 24 * 60 * 60 * 1000) {
+            }
+            if ((viewModel.getIsDrlSyncActive() && System.currentTimeMillis() >= it + 24 * 60 * 60 * 1000) ||
+                (viewModel.getIsDrlSyncActive() && it == -1L)) {
                 createNoSyncAlertDialog(getString(R.string.noKeyAlertMessageForDrl))
                 return
             }
