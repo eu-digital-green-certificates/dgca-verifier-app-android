@@ -467,6 +467,10 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         binding.chunkSize.show()
     }
 
+    override fun onBackPressed() {
+        moveTaskToBack(false)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         shared.unregisterOnSharedPreferenceChangeListener(this)
