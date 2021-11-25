@@ -118,10 +118,15 @@ class VerificationFragment : Fragment(), View.OnClickListener {
             setPersonDetailsVisibility(certStatus)
             setValidationIcon(certStatus)
             setValidationMainText(certStatus)
+            setScanModeText()
             setValidationSubTextVisibility(certStatus)
             setValidationSubText(certStatus)
             setLinkViews(certStatus)
         }
+    }
+
+    private fun setScanModeText() {
+        binding.scanModeText.text = getString(R.string.label_chosen_scan_mode, viewModel.getScanMode())
     }
 
     private fun setupTimeStamp(cert: CertificateSimple) {

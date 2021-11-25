@@ -99,23 +99,6 @@
                             app:layout_constraintTop_toBottomOf="@+id/checkmark"
                             tools:text="Certificazione valida per l'Italia" />
 
-                        <TextView
-                            android:id="@+id/subtitle_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="@dimen/margin_24dp"
-                            android:layout_marginStart="24dp"
-                            android:layout_marginTop="12dp"
-                            android:layout_marginEnd="24dp"
-                            android:fontFamily="@font/titiliumfont"
-                            android:textColor="@color/blue_dark"
-                            android:textSize="@dimen/text_size_12sp"
-                            android:textStyle="bold"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/question_container"
-                            tools:text="@string/subtitle_text" />
-
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:id="@+id/question_container"
                             android:layout_width="0dp"
@@ -128,19 +111,52 @@
                             app:layout_constraintTop_toBottomOf="@id/certificate_valid"
                             app:showDividers="middle" />
 
+                        <TextView
+                            android:id="@+id/scan_mode_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/margin_24dp"
+                            android:layout_marginStart="24dp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginEnd="24dp"
+                            android:fontFamily="@font/titiliumfont"
+                            android:textColor="@color/blue_dark"
+                            android:textSize="@dimen/text_size_12sp"
+                            android:textStyle="bold"
+                            tools:text="Modalità Scansione"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/question_container" />
+
+                        <TextView
+                            android:id="@+id/subtitle_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/margin_24dp"
+                            android:layout_marginTop="32dp"
+                            android:layout_marginBottom="8dp"
+                            android:fontFamily="@font/titiliumfont"
+                            android:textColor="@color/blue_dark"
+                            android:textSize="@dimen/text_size_12sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toTopOf="@+id/container_person_details"
+                            app:layout_constraintEnd_toEndOf="@+id/container_person_details"
+                            app:layout_constraintStart_toStartOf="@+id/container_person_details"
+                            app:layout_constraintTop_toBottomOf="@+id/scan_mode_text"
+                            tools:text="@string/subtitle_text" />
+
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/container_person_details"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/margin_24dp"
                             android:layout_marginStart="24dp"
-                            android:layout_marginTop="16dp"
                             android:layout_marginEnd="24dp"
+                            android:layout_marginBottom="32dp"
                             android:visibility="gone"
                             app:layout_constraintBottom_toTopOf="@+id/close_button"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/subtitle_text"
                             tools:visibility="visible">
 
                             <TextView

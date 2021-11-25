@@ -181,6 +181,32 @@
 
             </androidx.cardview.widget.CardView>
 
+            <androidx.cardview.widget.CardView
+                android:id="@+id/scan_mode_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_16dp"
+                android:layout_marginTop="@dimen/margin_16dp"
+                android:background="@color/white"
+                app:cardCornerRadius="4dp"
+                app:cardElevation="@dimen/size_8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/privacy_policy_card">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/scan_mode_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/titiliumfont"
+                    android:paddingHorizontal="@dimen/margin_24dp"
+                    android:paddingVertical="@dimen/margin_16dp"
+                    tools:text="Modalità Scansione 3G"
+                    android:textColor="@color/blue_dark"
+                    android:textStyle="bold" />
+
+            </androidx.cardview.widget.CardView>
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/verify_cert_title"
                 style="@style/H1.Regular"
