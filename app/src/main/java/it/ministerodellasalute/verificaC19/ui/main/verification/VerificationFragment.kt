@@ -127,7 +127,7 @@ class VerificationFragment : Fragment(), View.OnClickListener {
 
     private fun setScanModeText() {
         val chosenScanMode = if (viewModel.getScanMode() == "3G") "Vaccinazione/Guarigione/Test" else "Vaccinazione/Guarigione/"
-        binding.scanModeText.text = getString(R.string.label_chosen_scan_mode, chosenScanMode)
+        binding.scanModeText.text = chosenScanMode
     }
 
     private fun setupTimeStamp(cert: CertificateSimple) {

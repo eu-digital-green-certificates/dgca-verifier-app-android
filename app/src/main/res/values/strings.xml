@@ -87,6 +87,5 @@
     <string name="privacy_card_title">Rispetto della privacy</string>
     <string name="label_totem_mode">Modalità automatica</string>
     <string name="label_scan_mode">Tipologia verifica</string>
-    <string name="label_chosen_scan_mode">Tipologia Verifica %1$s</string>
     <string name="scan_mode_choice">Scan mode choice</string>
 </resources>
