@@ -158,7 +158,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-        binding.scanModeText.text = getString(R.string.label_chosen_scan_mode, sharedPreference.getString("scan_mode", "3G"))
+        val chosenScanMode = if (sharedPreference.getString("scan_mode", "3G") == "3G") "Vaccinazione/Guarigione/Test" else "Vaccinazione/Guarigione/"
+        binding.scanModeText.text = getString(R.string.label_chosen_scan_mode, chosenScanMode)
         viewModel.getAppMinVersion().let {
             if (Utility.versionCompare(it, BuildConfig.VERSION_NAME) > 0 || viewModel.isSDKVersionObsoleted()) {
                 createForceUpdateDialog()

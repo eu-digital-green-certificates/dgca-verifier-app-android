@@ -78,7 +78,7 @@ class SettingsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun showScanModeChoiceAlertDialog() {
-        val scanModeChoices = arrayOf("2G", "3G")
+        val scanModeChoices = arrayOf("Vaccinazione/Guarigione", "Vaccinazione/Guarigione/Test")
         val mBuilder = AlertDialog.Builder(this)
         val chosenScanMode = if (viewModel.getScanMode() == "3G") 1 else 0
 
