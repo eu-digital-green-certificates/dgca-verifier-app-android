@@ -46,6 +46,8 @@ class SettingsActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(binding.root)
 
         setSwitchesValue()
+        setTextViewsValue()
+        setLiveDataObservers()
 
         binding.backImage.setOnClickListener(this)
         binding.backText.setOnClickListener(this)
@@ -57,6 +59,18 @@ class SettingsActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setSwitchesValue() {
         binding.totemSwitch.isChecked = viewModel.getTotemMode()
+    }
+
+    private fun setTextViewsValue() {
+        val chosenScanMode = if (viewModel.getScanMode() == "3G") "V/G/T" else "V/G"
+        binding.chosenScanText.text = chosenScanMode
+    }
+
+    private fun setLiveDataObservers() {
+        viewModel.scanMode.observe(this, {
+            val chosenScanMode = if (it == "3G") "V/G/T" else "V/G"
+            binding.chosenScanText.text = chosenScanMode
+        })
     }
 
     override fun onClick(v: View?) {
