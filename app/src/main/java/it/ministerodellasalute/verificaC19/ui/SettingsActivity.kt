@@ -62,13 +62,13 @@ class SettingsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setTextViewsValue() {
-        val chosenScanMode = if (viewModel.getScanMode() == "3G") "V/G/T" else "V/G"
+        val chosenScanMode = if (viewModel.getScanMode() == "3G") getString(R.string.scan_mode_3G_short) else getString(R.string.scan_mode_2G_short)
         binding.chosenScanText.text = chosenScanMode
     }
 
     private fun setLiveDataObservers() {
         viewModel.scanMode.observe(this, {
-            val chosenScanMode = if (it == "3G") "V/G/T" else "V/G"
+            val chosenScanMode = if (it == "3G") getString(R.string.scan_mode_3G_short) else getString(R.string.scan_mode_2G_short)
             binding.chosenScanText.text = chosenScanMode
         })
     }
@@ -92,7 +92,7 @@ class SettingsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun showScanModeChoiceAlertDialog() {
-        val scanModeChoices = arrayOf("Vaccinazione/Guarigione", "Vaccinazione/Guarigione/Test")
+        val scanModeChoices = arrayOf(getString(R.string.scan_mode_2G), getString(R.string.scan_mode_3G))
         val mBuilder = AlertDialog.Builder(this)
         val chosenScanMode = if (viewModel.getScanMode() == "3G") 1 else 0
 

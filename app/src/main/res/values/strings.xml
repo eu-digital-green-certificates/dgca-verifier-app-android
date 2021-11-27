@@ -87,5 +87,9 @@
     <string name="privacy_card_title">Rispetto della privacy</string>
     <string name="label_totem_mode">Modalità automatica</string>
     <string name="label_scan_mode">Tipologia verifica</string>
-    <string name="scan_mode_choice">Scan mode choice</string>
+    <string name="scan_mode_choice">Tipologia verifica</string>
+    <string name="scan_mode_3G">Vaccinazione/Guarigione/Test</string>
+    <string name="scan_mode_2G">Vaccinazione/Guarigione</string>
+    <string name="scan_mode_3G_short">V/G/T</string>
+    <string name="scan_mode_2G_short">V/G</string>
 </resources>

@@ -221,7 +221,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/scan_button"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:text="V/G/T" />
+                        tools:text="@string/scan_mode_3G_short" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
