@@ -79,6 +79,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
 
         binding.qrButton.setOnClickListener(this)
         binding.settings.setOnClickListener(this)
+        binding.scanModeButton.setOnClickListener(this)
 
         val string = getString(R.string.version, BuildConfig.VERSION_NAME)
         val spannableString = SpannableString(string).also {
@@ -172,8 +173,9 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
         startActivity(intent)
     }
 
-    private fun openSettings() {
+    private fun openSettings(showScanModeChoiceAlertDialog: Boolean) {
         val intent = Intent(this, SettingsActivity::class.java)
+        intent.putExtra("showScanModeChoiceAlertDialog", showScanModeChoiceAlertDialog);
         startActivity(intent)
     }
 
@@ -186,7 +188,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
         }
         when (v?.id) {
             R.id.qrButton -> checkCameraPermission()
-            R.id.settings -> openSettings()
+            R.id.settings -> openSettings(false)
+            R.id.scan_mode_button -> openSettings(true)
         }
     }
 

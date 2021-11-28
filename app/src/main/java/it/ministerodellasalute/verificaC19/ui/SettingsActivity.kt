@@ -55,6 +55,9 @@ class SettingsActivity : AppCompatActivity(), View.OnClickListener {
         binding.scanButton.setOnClickListener(this)
         binding.faqCard.setOnClickListener(this)
         binding.privacyPolicyCard.setOnClickListener(this)
+
+        val showScanModeChoiceAlertDialog = this.intent.getBooleanExtra("showScanModeChoiceAlertDialog", false)
+        if (showScanModeChoiceAlertDialog) showScanModeChoiceAlertDialog()
     }
 
     private fun setSwitchesValue() {
