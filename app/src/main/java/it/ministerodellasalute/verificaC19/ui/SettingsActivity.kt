@@ -48,16 +48,17 @@ class SettingsActivity : AppCompatActivity(), View.OnClickListener {
         setSwitchesValue()
         setTextViewsValue()
         setLiveDataObservers()
+        setButtonsListener()
+        checkIfScanModeChoiceDialogShouldStart()
+    }
 
+    private fun setButtonsListener() {
         binding.backImage.setOnClickListener(this)
         binding.backText.setOnClickListener(this)
         binding.totemSwitch.setOnClickListener(this)
         binding.scanButton.setOnClickListener(this)
         binding.faqCard.setOnClickListener(this)
         binding.privacyPolicyCard.setOnClickListener(this)
-
-        val showScanModeChoiceAlertDialog = this.intent.getBooleanExtra("showScanModeChoiceAlertDialog", false)
-        if (showScanModeChoiceAlertDialog) showScanModeChoiceAlertDialog()
     }
 
     private fun setSwitchesValue() {
@@ -76,22 +77,10 @@ class SettingsActivity : AppCompatActivity(), View.OnClickListener {
         })
     }
 
-    override fun onClick(v: View?) {
-        if (v?.id == R.id.back_image || v?.id == R.id.back_text) {
-            finish()
-        } else if (v?.id == R.id.totem_switch) {
-            viewModel.setTotemMode(binding.totemSwitch.isChecked)
-        }  else if (v?.id == R.id.scan_button) {
-            showScanModeChoiceAlertDialog()
-        } else if (v?.id == R.id.faq_card) {
-            val browserIntent =
-                Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dgc.gov.it/web/pn.html"))
-            startActivity(browserIntent)
-        } else if (v?.id == R.id.privacy_policy_card) {
-            val browserIntent =
-                Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dgc.gov.it/web/faq.html"))
-            startActivity(browserIntent)
-        }
+    private fun checkIfScanModeChoiceDialogShouldStart() {
+        val shouldScanModeChoiceAlertDialogStart =
+            this.intent.getBooleanExtra("showScanModeChoiceAlertDialog", false)
+        if (shouldScanModeChoiceAlertDialogStart) showScanModeChoiceAlertDialog()
     }
 
     private fun showScanModeChoiceAlertDialog() {
@@ -110,5 +99,23 @@ class SettingsActivity : AppCompatActivity(), View.OnClickListener {
         }
         val mDialog = mBuilder.create()
         mDialog.show()
+    }
+
+    override fun onClick(v: View?) {
+        if (v?.id == R.id.back_image || v?.id == R.id.back_text) {
+            finish()
+        } else if (v?.id == R.id.totem_switch) {
+            viewModel.setTotemMode(binding.totemSwitch.isChecked)
+        }  else if (v?.id == R.id.scan_button) {
+            showScanModeChoiceAlertDialog()
+        } else if (v?.id == R.id.faq_card) {
+            val browserIntent =
+                Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dgc.gov.it/web/pn.html"))
+            startActivity(browserIntent)
+        } else if (v?.id == R.id.privacy_policy_card) {
+            val browserIntent =
+                Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dgc.gov.it/web/faq.html"))
+            startActivity(browserIntent)
+        }
     }
 }
