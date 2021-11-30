@@ -54,7 +54,7 @@ class SettingsActivity : AppCompatActivity(), View.OnClickListener {
         binding.backImage.setOnClickListener(this)
         binding.backText.setOnClickListener(this)
         binding.totemSwitch.setOnClickListener(this)
-        binding.scanButton.setOnClickListener(this)
+        binding.scanCard.setOnClickListener(this)
         binding.faqCard.setOnClickListener(this)
         binding.privacyPolicyCard.setOnClickListener(this)
     }
@@ -84,7 +84,7 @@ class SettingsActivity : AppCompatActivity(), View.OnClickListener {
             finish()
         } else if (v?.id == R.id.totem_switch) {
             viewModel.setTotemMode(binding.totemSwitch.isChecked)
-        } else if (v?.id == R.id.scan_button) {
+        } else if (v?.id == R.id.scan_card) {
             AlertDialogCaller.showScanModeChoiceAlertDialog(
                 this,
                 getString(R.string.label_scan_mode),
