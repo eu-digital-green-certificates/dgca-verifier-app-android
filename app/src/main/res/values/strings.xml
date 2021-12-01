@@ -86,8 +86,8 @@
     <string name="faq_card_title">Domande frequenti</string>
     <string name="privacy_card_title">Rispetto della privacy</string>
     <string name="label_totem_mode">Modalità automatica</string>
-    <string name="label_scan_mode">Tipologia Verifica</string>
-    <string name="label_scan_mode_ver">Tipologia di Verifica</string>
+    <string name="label_scan_mode">Tipologia verifica</string>
+    <string name="label_scan_mode_ver">Tipologia di verifica</string>
     <string name="scan_mode_3G_header">Verifica Base</string>
     <string name="scan_mode_2G_header">Verifica Rafforzata</string>
     <string name="scan_mode_3G">Vaccinazione/Guarigione/Tampone</string>

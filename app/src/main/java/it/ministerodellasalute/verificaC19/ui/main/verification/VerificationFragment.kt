@@ -127,18 +127,12 @@ class VerificationFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setScanModeText() {
-        val lowerCaseString: String
-        val upperCaseString: String
         val chosenScanMode = if (viewModel.getScanMode() == "3G") {
-            lowerCaseString = getString(R.string.scan_mode_3G_header).substringAfter(' ')
-            upperCaseString = lowerCaseString.toUpperCase(Locale.ROOT)
-            getString(R.string.scan_mode_3G_header).replace(lowerCaseString, upperCaseString)
+            getString(R.string.scan_mode_3G_header).substringAfter(' ').toUpperCase(Locale.ROOT)
         } else {
-            lowerCaseString = getString(R.string.scan_mode_2G_header).substringAfter(' ')
-            upperCaseString = lowerCaseString.toUpperCase(Locale.ROOT)
-            getString(R.string.scan_mode_2G_header).replace(lowerCaseString, upperCaseString)
+           getString(R.string.scan_mode_2G_header).substringAfter(' ').toUpperCase(Locale.ROOT)
         }
-        val scanModeLabel = getString(R.string.label_scan_mode)
+        val scanModeLabel = getString(R.string.label_scan_mode_ver)
         binding.scanModeText.text = getString(R.string.label_verification_scan_mode, scanModeLabel, chosenScanMode)
     }
 
