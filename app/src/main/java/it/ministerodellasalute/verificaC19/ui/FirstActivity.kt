@@ -106,10 +106,10 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
 
         viewModel.fetchStatus.observe(this) {
             if (it) {
-                binding.qrButton.isEnabled = false
+                //binding.qrButton.isEnabled = false
                 binding.dateLastSyncText.text = getString(R.string.loading)
             } else {
-                binding.qrButton.isEnabled = true
+                //binding.qrButton.isEnabled = true
                 viewModel.getDateLastSync().let { date ->
                     binding.dateLastSyncText.text = getString(
                         R.string.lastSyncDate,
@@ -224,13 +224,15 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-        viewModel.getDateLastSync().let {
-            if (it == -1L) {
-                createNoKeyAlert()
-                return
-            } else if (!verificationViewModel.getScanModeFlag() && v?.id != R.id.scan_mode_button) {
-                createNoScanModeChosenAlert()
-                return
+        if (v?.id == R.id.qrButton) {
+            viewModel.getDateLastSync().let {
+                if (it == -1L) {
+                    createNoKeyAlert()
+                    return
+                } else if (!verificationViewModel.getScanModeFlag() && v.id != R.id.scan_mode_button) {
+                    createNoScanModeChosenAlert()
+                    return
+                }
             }
         }
         when (v?.id) {
