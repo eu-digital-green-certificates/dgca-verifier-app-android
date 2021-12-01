@@ -171,67 +171,6 @@
 
             </androidx.cardview.widget.CardView>
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/scan_card"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin_16dp"
-                android:layout_marginTop="@dimen/margin_16dp"
-                android:background="@color/white"
-                app:cardCornerRadius="4dp"
-                app:cardElevation="@dimen/size_8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/totem_card">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/scan_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/titiliumfont"
-                    android:paddingHorizontal="@dimen/margin_24dp"
-                    android:paddingVertical="@dimen/margin_16dp"
-                    android:text="@string/label_scan_mode"
-                    android:textAllCaps="true"
-                    android:textColor="@color/blue_dark"
-                    android:textStyle="bold" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <ImageView
-                        android:id="@+id/scan_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
-                        android:padding="@dimen/padding_12dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_baseline_create"
-                        app:tint="@color/blue_dark"
-                        android:contentDescription="@string/scan_mode_choice" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/chosen_scan_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="16dp"
-                        android:fontFamily="@font/titiliumfont"
-                        android:textAllCaps="true"
-                        android:textColor="@color/blue_dark"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/scan_button"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="@string/scan_mode_3G_short" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </androidx.cardview.widget.CardView>
-
             <TextView
                 android:id="@+id/information_text"
                 android:layout_width="match_parent"
@@ -246,7 +185,7 @@
                 android:layout_marginTop="@dimen/padding_30dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/scan_card" />
+                app:layout_constraintTop_toBottomOf="@id/totem_card" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/faq_card"

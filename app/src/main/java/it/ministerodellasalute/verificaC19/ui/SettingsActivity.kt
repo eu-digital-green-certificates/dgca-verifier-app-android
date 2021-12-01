@@ -45,8 +45,6 @@ class SettingsActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(binding.root)
 
         setSwitchesValue()
-        setTextViewsValue()
-        setLiveDataObservers()
         setButtonsListener()
     }
 
@@ -54,7 +52,6 @@ class SettingsActivity : AppCompatActivity(), View.OnClickListener {
         binding.backImage.setOnClickListener(this)
         binding.backText.setOnClickListener(this)
         binding.totemSwitch.setOnClickListener(this)
-        binding.scanCard.setOnClickListener(this)
         binding.faqCard.setOnClickListener(this)
         binding.privacyPolicyCard.setOnClickListener(this)
     }
@@ -63,37 +60,11 @@ class SettingsActivity : AppCompatActivity(), View.OnClickListener {
         binding.totemSwitch.isChecked = viewModel.getTotemMode()
     }
 
-    private fun setTextViewsValue() {
-        val chosenScanMode =
-            if (viewModel.getScanMode() == "3G") getString(R.string.scan_mode_3G_short) else getString(
-                R.string.scan_mode_2G_short
-            )
-        binding.chosenScanText.text = chosenScanMode
-    }
-
-    private fun setLiveDataObservers() {
-        viewModel.scanMode.observe(this, {
-            val chosenScanMode =
-                if (it == "3G") getString(R.string.scan_mode_3G_short) else getString(R.string.scan_mode_2G_short)
-            binding.chosenScanText.text = chosenScanMode
-        })
-    }
-
     override fun onClick(v: View?) {
         if (v?.id == R.id.back_image || v?.id == R.id.back_text) {
             finish()
         } else if (v?.id == R.id.totem_switch) {
             viewModel.setTotemMode(binding.totemSwitch.isChecked)
-        } else if (v?.id == R.id.scan_card) {
-            AlertDialogCaller.showScanModeChoiceAlertDialog(
-                this,
-                getString(R.string.label_scan_mode),
-                arrayOf(
-                    getString(R.string.scan_mode_2G),
-                    getString(R.string.scan_mode_3G)
-                ),
-                viewModel
-            )
         } else if (v?.id == R.id.faq_card) {
             val browserIntent =
                 Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dgc.gov.it/web/pn.html"))

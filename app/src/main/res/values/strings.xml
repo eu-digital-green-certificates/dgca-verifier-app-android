@@ -86,10 +86,14 @@
     <string name="faq_card_title">Domande frequenti</string>
     <string name="privacy_card_title">Rispetto della privacy</string>
     <string name="label_totem_mode">Modalità automatica</string>
-    <string name="label_scan_mode">Tipologia verifica</string>
-    <string name="scan_mode_choice">Tipologia verifica</string>
-    <string name="scan_mode_3G">Vaccinazione/Guarigione/Test</string>
+    <string name="label_scan_mode">Tipologia Verifica</string>
+    <string name="label_scan_mode_ver">Tipologia di Verifica</string>
+    <string name="scan_mode_3G_header">Verifica Base</string>
+    <string name="scan_mode_2G_header">Verifica Rafforzata</string>
+    <string name="scan_mode_3G">Vaccinazione/Guarigione/Tampone</string>
     <string name="scan_mode_2G">Vaccinazione/Guarigione</string>
-    <string name="scan_mode_3G_short">V/G/T</string>
-    <string name="scan_mode_2G_short">V/G</string>
+    <string name="label_choose_scan_mode">Scegli tipologia di verifica</string>
+    <string name="label_no_scan_mode_chosen">Per procedere alla scansione è necessario selezionare una delle due tipologie di verifica della Certificazione verde Covid-19: BASE o RAFFORZATA. Se si sceglie la tipologia BASE la app considera valide le certificazioni verdi generate sia da vaccinazione, sia da guarigione, sia da tampone molecolare o antigenico rapido. Se si sceglie la modalità RAFFORZATA la app considera valide solo le certificazioni verdi generate da vaccinazione o da guarigione. La verifica BASE viene utilizzata per l’accesso ai luoghi di lavoro, quella RAFFORZATA - dal 6 dicembre 2021 - per accedere a spettacoli, eventi sportivi, ristorazione al chiuso, feste e discoteche, cerimonie pubbliche, ecc. Per approfondimenti consultare https://www.dgc.gov.it/web/faq.html#verifica19</string>
+    <string name="label_alert_dialog_option">%1$s %2$s</string>
+    <string name="label_verification_scan_mode">%1$s: %2$s</string>
 </resources>

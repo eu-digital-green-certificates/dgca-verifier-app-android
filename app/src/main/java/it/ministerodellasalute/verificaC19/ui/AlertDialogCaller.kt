@@ -40,6 +40,7 @@ class AlertDialogCaller {
 
             mBuilder.setTitle(title)
             mBuilder.setSingleChoiceItems(scanModeChoices, chosenScanMode) { dialog, which ->
+                if (!viewModel.getScanModeFlag()) viewModel.setScanModeFlag(true)
                 if (which == 0) {
                     viewModel.setScanMode("2G")
                 } else if (which == 1) {

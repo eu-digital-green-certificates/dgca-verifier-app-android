@@ -54,6 +54,7 @@ import it.ministerodellasalute.verificaC19sdk.util.FORMATTED_VALIDATION_DATE
 import it.ministerodellasalute.verificaC19sdk.util.TimeUtility.parseFromTo
 import it.ministerodellasalute.verificaC19sdk.util.TimeUtility.parseTo
 import it.ministerodellasalute.verificaC19sdk.util.YEAR_MONTH_DAY
+import java.util.*
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
@@ -126,8 +127,19 @@ class VerificationFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setScanModeText() {
-        val chosenScanMode = if (viewModel.getScanMode() == "3G") getString(R.string.scan_mode_3G) else getString(R.string.scan_mode_2G)
-        binding.scanModeText.text = chosenScanMode
+        val lowerCaseString: String
+        val upperCaseString: String
+        val chosenScanMode = if (viewModel.getScanMode() == "3G") {
+            lowerCaseString = getString(R.string.scan_mode_3G_header).substringAfter(' ')
+            upperCaseString = lowerCaseString.toUpperCase(Locale.ROOT)
+            getString(R.string.scan_mode_3G_header).replace(lowerCaseString, upperCaseString)
+        } else {
+            lowerCaseString = getString(R.string.scan_mode_2G_header).substringAfter(' ')
+            upperCaseString = lowerCaseString.toUpperCase(Locale.ROOT)
+            getString(R.string.scan_mode_2G_header).replace(lowerCaseString, upperCaseString)
+        }
+        val scanModeLabel = getString(R.string.label_scan_mode)
+        binding.scanModeText.text = getString(R.string.label_verification_scan_mode, scanModeLabel, chosenScanMode)
     }
 
     private fun setupTimeStamp(cert: CertificateSimple) {
