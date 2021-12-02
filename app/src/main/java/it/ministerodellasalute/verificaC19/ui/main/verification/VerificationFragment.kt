@@ -125,10 +125,11 @@ class VerificationFragment : Fragment(), View.OnClickListener {
         val chosenScanMode = if (viewModel.getScanMode() == "3G") {
             getString(R.string.scan_mode_3G_header).substringAfter(' ').toUpperCase(Locale.ROOT)
         } else {
-           getString(R.string.scan_mode_2G_header).substringAfter(' ').toUpperCase(Locale.ROOT)
+            getString(R.string.scan_mode_2G_header).substringAfter(' ').toUpperCase(Locale.ROOT)
         }
         val scanModeLabel = getString(R.string.label_scan_mode_ver)
-        binding.scanModeText.text = getString(R.string.label_verification_scan_mode, scanModeLabel, chosenScanMode)
+        binding.scanModeText.text =
+            getString(R.string.label_verification_scan_mode, scanModeLabel, chosenScanMode)
     }
 
     private fun setupTimeStamp(cert: CertificateSimple) {

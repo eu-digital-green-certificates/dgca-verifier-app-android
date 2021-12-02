@@ -366,10 +366,18 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
             binding.scanModeButton.text = s
         } else {
             var chosenScanMode =
-                if (shared.getString("scan_mode", "3G") == "3G") getString(R.string.scan_mode_3G_header) else getString(R.string.scan_mode_2G_header)
+                if (shared.getString(
+                        "scan_mode",
+                        "3G"
+                    ) == "3G"
+                ) getString(R.string.scan_mode_3G_header) else getString(R.string.scan_mode_2G_header)
             chosenScanMode += "\n"
             val chosenScanModeText =
-                if (shared.getString("scan_mode", "3G") == "3G") getString(R.string.scan_mode_3G) else getString(R.string.scan_mode_2G)
+                if (shared.getString(
+                        "scan_mode",
+                        "3G"
+                    ) == "3G"
+                ) getString(R.string.scan_mode_3G) else getString(R.string.scan_mode_2G)
             val s = SpannableStringBuilder()
                 .bold { append(chosenScanMode) }
                 .append(chosenScanModeText)
@@ -397,27 +405,30 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     }
 
     override fun onClick(v: View?) {
-                if (v?.id == R.id.qrButton) {
-                    viewModel.getDateLastSync().let {
-                        if (it == -1L) {
-                            createNoSyncAlertDialog(getString(R.string.noKeyAlertMessage))
-                            return
-                        } else if (!verificationViewModel.getScanModeFlag() && v.id != R.id.scan_mode_button) {
-                            createNoScanModeChosenAlert()
-                            return
-                        }
-                    }
+        if (v?.id == R.id.qrButton) {
+            viewModel.getDateLastSync().let {
+                if (it == -1L) {
+                    createNoSyncAlertDialog(getString(R.string.noKeyAlertMessage))
+                    return
+                } else if (!verificationViewModel.getScanModeFlag() && v.id != R.id.scan_mode_button) {
+                    createNoScanModeChosenAlert()
+                    return
                 }
-
-        viewModel.getDrlDateLastSync().let {
-            if (binding.resumeDownload.isVisible) {
-                createNoSyncAlertDialog(getString(R.string.label_drl_download_in_progress))
-                return
             }
-            if ((viewModel.getIsDrlSyncActive() && System.currentTimeMillis() >= it + 24 * 60 * 60 * 1000) ||
-                (viewModel.getIsDrlSyncActive() && it == -1L)) {
-                createNoSyncAlertDialog(getString(R.string.noKeyAlertMessageForDrl))
-                return
+        }
+
+        if (v?.id == R.id.qrButton) {
+            viewModel.getDrlDateLastSync().let {
+                if (binding.resumeDownload.isVisible) {
+                    createNoSyncAlertDialog(getString(R.string.label_drl_download_in_progress))
+                    return
+                }
+                if ((viewModel.getIsDrlSyncActive() && System.currentTimeMillis() >= it + 24 * 60 * 60 * 1000) ||
+                    (viewModel.getIsDrlSyncActive() && it == -1L)
+                ) {
+                    createNoSyncAlertDialog(getString(R.string.noKeyAlertMessageForDrl))
+                    return
+                }
             }
         }
         when (v?.id) {
@@ -426,12 +437,20 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
             R.id.scan_mode_button -> AlertDialogCaller.showScanModeChoiceAlertDialog(
                 this,
                 getString(R.string.label_scan_mode),
-                arrayOf(getString(R.string.label_alert_dialog_option, getString(R.string.label_scan_mode), getString(R.string.scan_mode_2G_header).substringAfter(
-                    ' '
-                ).toUpperCase(Locale.ROOT)),
-                    getString(R.string.label_alert_dialog_option, getString(R.string.label_scan_mode), getString(R.string.scan_mode_3G_header).substringAfter(' ').toUpperCase(
-                        Locale.ROOT
-                    )
+                arrayOf(
+                    getString(
+                        R.string.label_alert_dialog_option,
+                        getString(R.string.label_scan_mode),
+                        getString(R.string.scan_mode_2G_header).substringAfter(
+                            ' '
+                        ).toUpperCase(Locale.ROOT)
+                    ),
+                    getString(
+                        R.string.label_alert_dialog_option,
+                        getString(R.string.label_scan_mode),
+                        getString(R.string.scan_mode_3G_header).substringAfter(' ').toUpperCase(
+                            Locale.ROOT
+                        )
                     )
                 ),
                 ViewModelProvider(this)[VerificationViewModel::class.java]
