@@ -67,11 +67,11 @@ class SettingsActivity : AppCompatActivity(), View.OnClickListener {
             viewModel.setTotemMode(binding.totemSwitch.isChecked)
         } else if (v?.id == R.id.faq_card) {
             val browserIntent =
-                Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dgc.gov.it/web/pn.html"))
+                Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dgc.gov.it/web/faq.html"))
             startActivity(browserIntent)
         } else if (v?.id == R.id.privacy_policy_card) {
             val browserIntent =
-                Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dgc.gov.it/web/faq.html"))
+                Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dgc.gov.it/web/pn.html"))
             startActivity(browserIntent)
         }
     }

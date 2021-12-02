@@ -34,6 +34,7 @@
     <string name="expirationText">Data scadenza certificato</string>
     <string name="certificateValid">Certificazione valida in Italia e in Europa</string>
     <string name="certificateNonValid">Certificazione non valida</string>
+    <string name="certificateRevoked">Certificazione revocata</string>
     <string name="certificateNonValidYet">Certificazione non ancora valida</string>
     <string name="certificateNotDCC">Errore di lettura del QR Code, oppure non è il Certificato verde COVID-19</string>
     <string name="certificateTechnicalError">Errore tecnico, non è stato possibile effettuare la verifica</string>
@@ -54,10 +55,11 @@
     <string name="loading">Ultimo aggiornamento dati e regole:\nAggiornamento in corso...</string>
     <string name="notAvailable">N/A</string>
     <string name="updateTitle">Aggiornamento richiesto</string>
-    <string name="updateMessage">Per continuare ad utilizzare l\'applicazione, scarica la nuova versione dallo store</string>
+    <string name="updateMessage">Per continuare ad utilizzare l\'applicazione, scarica la nuova versione dallo store.</string>
     <string name="updateLabel">Aggiorna</string>
     <string name="noKeyAlertTitle">Impossibile scansionare</string>
-    <string name="noKeyAlertMessage">L\'applicazione deve connettersi alla rete almeno una volta per essere utilizzata</string>
+    <string name="noKeyAlertMessage">L\'applicazione deve connettersi alla rete almeno una volta per essere utilizzata.</string>
+    <string name="noKeyAlertMessageForDrl">L\'applicazione deve aggiornare la lista dei certificati revocati per essere utilizzata.</string>
     <string name="ok">OK</string>
     <string name="next">Avanti</string>
     <string name="back">Indietro</string>
@@ -96,4 +98,21 @@
     <string name="label_no_scan_mode_chosen">Per procedere alla scansione è necessario selezionare una delle due tipologie di verifica della Certificazione verde Covid-19: BASE o RAFFORZATA.\nTipologia BASE: la app considera valide le certificazioni verdi generate da vaccinazione, da guarigione, da tampone. Viene utilizzata per l’accesso ai luoghi di lavoro.\nTipologia RAFFORZATA: la app considera valide solo le certificazioni verdi generate da vaccinazione o da guarigione. Viene utilizzata - dal 6 dicembre 2021 - per accedere a spettacoli, eventi sportivi, ristorazione al chiuso, feste e discoteche, cerimonie pubbliche, ecc.</string>
     <string name="label_alert_dialog_option">%1$s %2$s</string>
     <string name="label_verification_scan_mode">%1$s: %2$s</string>
+    <string name="label_download">Scarica Ora</string>
+    <string name="exit_download">Esci</string>
+    <string name="after_download">Più tardi</string>
+    <string name="resume_download">Riprendi</string>
+    <string name="updatingRevokedPass">Aggiornamento lista dei certificati revocati in corso...</string>
+    <string name="incompleteDownload">L\'aggiornamento della lista dei certificati revocati non è terminato. Assicurati di essere connesso a internet e clicca per continuare.</string>
+    <string name="titleDownloadAlert">Aggiornamento lista certificati revocati da %1$.2fMb.</string>
+    <string name="label_download_alert_complete">L\'applicazione VerificaC19 necessita di aggiornare la lista dei certificati revocati, scaricando ed elaborando pacchetti dati per un totale di %1$.2fMb.</string>
+    <string name="label_download_alert_simple">L\'applicazione VerificaC19 necessita di aggiornare la lista dei certificati revocati.</string>
+    <string name="label_drl_download_in_progress">L\'aggiornamento della lista dei certificati revocati non è terminato, completa l\'aggiornamento per continuare a scansionare</string>
+    <string name="messageDownloadAlert">L\'applicazione VerificaC19 necessita di aggiornare la lista dei certificati revocati, scaricando ed elaborando pacchetti dati per un totale di %1$.2fMb. Controlla il piano dati della tua connessione oppure connetti una rete wi-fi prima di procedere. Il tempo di aggiornamento dipende dalla velocità di connessione e dal tipo di device in uso. La lista verrà aggiornata ogni 24 ore con pacchetti di aggiornamento dati che di solito non supereranno i pochi Kb. In caso un prossimo aggiornamento supererà i 5Mb si visualizzerà un nuovo messaggio come il presente.</string>
+    <string name="messageDownloadStarted">L\'aggiornamento della lista dei certificati revocati è in corso. Attendere la fine del download per procedere con le scansioni.</string>
+    <string name="chunk_count">Pacchetto %1$d su %2$d</string>
+    <string name="chunk_size">%1$.2f Mb su %2$.2f Mb</string>
+    <string name="no_internet_title">Connessione internet assente</string>
+    <string name="no_internet_message">Connessione internet assente. Assicurati di essere connesso alla rete e riprova.</string>
+    <string name="ok_label">OK</string>
 </resources>

@@ -23,6 +23,7 @@
 package it.ministerodellasalute.verificaC19
 
 import android.app.Application
+import android.content.SharedPreferences
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.*
 import dagger.hilt.android.HiltAndroidApp
@@ -48,7 +49,7 @@ class VerificaApplication : Application(), Configuration.Provider {
         setWorkManager()
     }
 
-    private fun setWorkManager(){
+    fun setWorkManager(){
         val uploadWorkRequest: WorkRequest =
             PeriodicWorkRequestBuilder<LoadKeysWorker>(1, TimeUnit.DAYS)
                 .setConstraints(Constraints.Builder()
