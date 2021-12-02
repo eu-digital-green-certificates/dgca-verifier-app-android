@@ -49,6 +49,8 @@ import it.ministerodellasalute.verificaC19sdk.util.FORMATTED_BIRTHDAY_DATE
 import it.ministerodellasalute.verificaC19sdk.util.TimeUtility.formatDateOfBirth
 import it.ministerodellasalute.verificaC19sdk.util.TimeUtility.parseFromTo
 import it.ministerodellasalute.verificaC19sdk.util.TimeUtility.parseTo
+import it.ministerodellasalute.verificaC19sdk.util.YEAR_MONTH_DAY
+import java.util.*
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
@@ -112,10 +114,22 @@ class VerificationFragment : Fragment(), View.OnClickListener {
             setPersonDetailsVisibility(certStatus)
             setValidationIcon(certStatus)
             setValidationMainText(certStatus)
+            setScanModeText()
             setValidationSubTextVisibility(certStatus)
             setValidationSubText(certStatus)
             setLinkViews(certStatus)
         }
+    }
+
+    private fun setScanModeText() {
+        val chosenScanMode = if (viewModel.getScanMode() == "3G") {
+            getString(R.string.scan_mode_3G_header).substringAfter(' ').toUpperCase(Locale.ROOT)
+        } else {
+            getString(R.string.scan_mode_2G_header).substringAfter(' ').toUpperCase(Locale.ROOT)
+        }
+        val scanModeLabel = getString(R.string.label_scan_mode_ver)
+        binding.scanModeText.text =
+            getString(R.string.label_verification_scan_mode, scanModeLabel, chosenScanMode)
     }
 
     private fun setupTimeStamp(cert: CertificateSimple) {

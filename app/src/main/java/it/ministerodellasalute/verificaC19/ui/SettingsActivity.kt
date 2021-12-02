@@ -36,7 +36,7 @@ import it.ministerodellasalute.verificaC19sdk.model.VerificationViewModel
 @AndroidEntryPoint
 class SettingsActivity : AppCompatActivity(), View.OnClickListener {
 
-    lateinit var binding: ActivitySettingsBinding
+    private lateinit var binding: ActivitySettingsBinding
     private val viewModel by viewModels<VerificationViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +45,10 @@ class SettingsActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(binding.root)
 
         setSwitchesValue()
+        setButtonsListener()
+    }
 
+    private fun setButtonsListener() {
         binding.backImage.setOnClickListener(this)
         binding.backText.setOnClickListener(this)
         binding.totemSwitch.setOnClickListener(this)
