@@ -169,6 +169,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         viewModel.getResumeAvailable().let {
             if (it != -1L) {
                 if (it == 0.toLong() || viewModel.getIsPendingDownload()) {
+                    binding.qrButton.background.alpha = 128
                     binding.resumeDownload.show()
                     binding.dateLastSyncText.text = getString(R.string.incompleteDownload)
                     binding.chunkCount.show()
@@ -342,6 +343,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     private fun enableInitDownload() {
         binding.resumeDownload.hide()
         binding.initDownload.show()
+        binding.qrButton.background.alpha = 128
         hideDownloadProgressViews()
         binding.dateLastSyncText.text = when (viewModel.getTotalSizeInByte()) {
             0L -> {
@@ -407,11 +409,11 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     override fun onClick(v: View?) {
         if (v?.id == R.id.qrButton) {
             viewModel.getDateLastSync().let {
-                if (it == -1L) {
-                    createNoSyncAlertDialog(getString(R.string.noKeyAlertMessage))
-                    return
-                } else if (!verificationViewModel.getScanModeFlag() && v.id != R.id.scan_mode_button) {
+                if (!verificationViewModel.getScanModeFlag() && v.id != R.id.scan_mode_button) {
                     createNoScanModeChosenAlert()
+                    return
+                } else if (it == -1L) {
+                    createNoSyncAlertDialog(getString(R.string.noKeyAlertMessage))
                     return
                 }
             }
@@ -530,6 +532,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
                     Log.i(PrefKeys.AUTH_TO_RESUME, authToResume.toString())
                     if (viewModel.getResumeAvailable() == 0L) {
                         binding.resumeDownload.show()
+                        binding.qrButton.background.alpha = 128
                     }
                 }
                 PrefKeys.KEY_DRL_DATE_LAST_FETCH -> {
