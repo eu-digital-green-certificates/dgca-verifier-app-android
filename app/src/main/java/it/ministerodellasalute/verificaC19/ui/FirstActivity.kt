@@ -457,7 +457,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
             )
         )
 
-        mBuilder.setTitle(title)
+        mBuilder.setTitle(getString(R.string.label_scan_mode))
         mBuilder.setSingleChoiceItems(scanModeChoices, chosenScanMode) { dialog, which ->
             if (!viewModel.getScanModeFlag()) viewModel.setScanModeFlag(true)
             if (which == 0) {
@@ -468,6 +468,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
             dialog.dismiss()
         }
         val mDialog = mBuilder.create()
+        mDialog.setCancelable(false)
         mDialog.show()
     }
 
