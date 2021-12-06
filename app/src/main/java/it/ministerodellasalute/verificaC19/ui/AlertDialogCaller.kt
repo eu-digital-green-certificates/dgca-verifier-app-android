@@ -24,6 +24,8 @@ package it.ministerodellasalute.verificaC19.ui
 
 import android.app.AlertDialog
 import android.content.Context
+import android.provider.Settings.Global.getString
+import it.ministerodellasalute.verificaC19.R
 import it.ministerodellasalute.verificaC19sdk.model.VerificationViewModel
 
 class AlertDialogCaller {
@@ -32,22 +34,11 @@ class AlertDialogCaller {
         fun showScanModeChoiceAlertDialog(
             context: Context,
             title: String,
-            scanModeChoices: Array<String>,
-            viewModel: VerificationViewModel
+            message: String,
         ) {
             val mBuilder = AlertDialog.Builder(context)
-            val chosenScanMode = if (viewModel.getScanMode() == "3G") 1 else 0
-
             mBuilder.setTitle(title)
-            mBuilder.setSingleChoiceItems(scanModeChoices, chosenScanMode) { dialog, which ->
-                if (!viewModel.getScanModeFlag()) viewModel.setScanModeFlag(true)
-                if (which == 0) {
-                    viewModel.setScanMode("2G")
-                } else if (which == 1) {
-                    viewModel.setScanMode("3G")
-                }
-                dialog.dismiss()
-            }
+            mBuilder.setMessage(message)
             val mDialog = mBuilder.create()
             mDialog.show()
         }
