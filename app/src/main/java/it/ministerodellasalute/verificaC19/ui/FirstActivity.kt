@@ -443,17 +443,19 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         val scanModeChoices =  arrayOf(
             getString(
                 R.string.label_alert_dialog_option,
-                getString(R.string.label_scan_mode),
                 getString(R.string.scan_mode_2G_header).substringAfter(
                     ' '
-                ).toUpperCase(Locale.ROOT)
+                ).toUpperCase(Locale.ROOT),
+                getString(R.string.scan_mode_2G)
+
             ),
             getString(
                 R.string.label_alert_dialog_option,
-                getString(R.string.label_scan_mode),
                 getString(R.string.scan_mode_3G_header).substringAfter(' ').toUpperCase(
                     Locale.ROOT
-                )
+                ),
+                getString(R.string.scan_mode_3G)
+
             )
         )
 
