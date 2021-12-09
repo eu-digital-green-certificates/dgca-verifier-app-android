@@ -98,7 +98,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         observeSizeOverThreshold()
         observeInitDownload()
         observeScanMode()
-        if (BuildConfig.DEBUG) {
+        if (BuildConfig.BUILD_TYPE == "debug") {
             observeDebugInfo();
         }
     }
