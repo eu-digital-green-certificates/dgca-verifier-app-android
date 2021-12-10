@@ -180,6 +180,7 @@ class VerificationFragment : Fragment(), View.OnClickListener {
             CertificateStatus.NOT_EU_DCC -> getString(R.string.certificateNotDCC)
             CertificateStatus.NOT_VALID -> {
                 if (VerificaApplication.isCertificateRevoked && BuildConfig.BUILD_TYPE == "debug") {
+                    VerificaApplication.isCertificateRevoked = false
                     getString(R.string.certificateRevoked)
                 } else {
                     getString(R.string.certificateNonValid)
