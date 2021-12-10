@@ -57,6 +57,29 @@
                 android:textColor="@color/white"
                 android:textSize="15sp"
                 android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/debugButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <Button
+                android:id="@+id/debugButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_24dp"
+                android:layout_marginBottom="@dimen/margin_16dp"
+                android:background="@drawable/background_slightly_rounded_blue"
+                android:drawablePadding="@dimen/padding_10dp"
+                android:drawableTint="@color/white"
+                android:fontFamily="@font/titiliumfont"
+                android:padding="@dimen/padding_16dp"
+                android:paddingStart="@dimen/padding_20dp"
+                android:paddingEnd="@dimen/padding_20dp"
+                android:text="SHOW DEBUG INFO"
+                android:textAlignment="textStart"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -136,7 +159,7 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/date_last_sync_text"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/titiliumfont"
                         android:paddingHorizontal="@dimen/margin_24dp"
@@ -206,8 +229,7 @@
                         android:visibility="gone"
                         app:layout_constraintBottom_toTopOf="@+id/update_progress_bar"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/date_last_sync_text"
-                        />
+                        app:layout_constraintTop_toBottomOf="@+id/date_last_sync_text" />
 
                     <Button
                         android:id="@+id/resumeDownload"
