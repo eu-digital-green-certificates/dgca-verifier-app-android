@@ -72,8 +72,6 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
 
     private val viewModel by viewModels<FirstViewModel>()
 
-    private lateinit var verificationViewModel: VerificationViewModel
-
     private val verificaApplication = VerificaApplication()
 
     private val requestPermissionLauncher =
@@ -87,7 +85,6 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         super.onCreate(savedInstanceState)
         binding = ActivityFirstBinding.inflate(layoutInflater)
         shared = this.getSharedPreferences(PrefKeys.USER_PREF, Context.MODE_PRIVATE)
-        verificationViewModel = ViewModelProvider(this)[VerificationViewModel::class.java]
         setContentView(binding.root)
         setSecureWindowFlags()
         setOnClickListeners()
@@ -128,7 +125,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     }
 
     private fun observeScanMode() {
-        verificationViewModel.scanMode.observe(this, {
+        viewModel.scanMode.observe(this, {
             setScanModeTexts(it)
         })
     }
@@ -224,7 +221,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     }
 
     private fun setScanModeTexts(currentScanMode: String) {
-        if (!verificationViewModel.getScanModeFlag()) {
+        if (!viewModel.getScanModeFlag()) {
             val s = SpannableStringBuilder()
                 .bold { append(getString(R.string.label_choose_scan_mode)) }
             binding.scanModeButton.text = s
@@ -409,7 +406,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     override fun onClick(v: View?) {
         if (v?.id == R.id.qrButton) {
             viewModel.getDateLastSync().let {
-                if (!verificationViewModel.getScanModeFlag() && v.id != R.id.scan_mode_button) {
+                if (!viewModel.getScanModeFlag() && v.id != R.id.scan_mode_button) {
                     createNoScanModeChosenAlert()
                     return
                 } else if (it == -1L) {
@@ -436,28 +433,45 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         when (v?.id) {
             R.id.qrButton -> checkCameraPermission()
             R.id.settings -> openSettings()
-            R.id.scan_mode_button -> AlertDialogCaller.showScanModeChoiceAlertDialog(
-                this,
-                getString(R.string.label_scan_mode),
-                arrayOf(
-                    getString(
-                        R.string.label_alert_dialog_option,
-                        getString(R.string.label_scan_mode),
-                        getString(R.string.scan_mode_2G_header).substringAfter(
-                            ' '
-                        ).toUpperCase(Locale.ROOT)
-                    ),
-                    getString(
-                        R.string.label_alert_dialog_option,
-                        getString(R.string.label_scan_mode),
-                        getString(R.string.scan_mode_3G_header).substringAfter(' ').toUpperCase(
-                            Locale.ROOT
-                        )
-                    )
-                ),
-                ViewModelProvider(this)[VerificationViewModel::class.java]
-            )
+            R.id.scan_mode_button -> showScanModeChoiceAlertDialog()
         }
+    }
+
+    private fun showScanModeChoiceAlertDialog() {
+        val mBuilder = AlertDialog.Builder(this)
+        val chosenScanMode = if (viewModel.getScanMode() == "3G") 1 else 0
+        val scanModeChoices =  arrayOf(
+            getString(
+                R.string.label_alert_dialog_option,
+                getString(R.string.scan_mode_2G_header).substringAfter(
+                    ' '
+                ).toUpperCase(Locale.ROOT),
+                getString(R.string.scan_mode_2G)
+
+            ),
+            getString(
+                R.string.label_alert_dialog_option,
+                getString(R.string.scan_mode_3G_header).substringAfter(' ').toUpperCase(
+                    Locale.ROOT
+                ),
+                getString(R.string.scan_mode_3G)
+
+            )
+        )
+
+        mBuilder.setTitle(getString(R.string.label_scan_mode))
+        mBuilder.setSingleChoiceItems(scanModeChoices, chosenScanMode) { dialog, which ->
+            if (!viewModel.getScanModeFlag()) viewModel.setScanModeFlag(true)
+            if (which == 0) {
+                viewModel.setScanMode("2G")
+            } else if (which == 1) {
+                viewModel.setScanMode("3G")
+            }
+            dialog.dismiss()
+        }
+        val mDialog = mBuilder.create()
+        mDialog.setCancelable(false)
+        mDialog.show()
     }
 
     private fun createNoScanModeChosenAlert() {
