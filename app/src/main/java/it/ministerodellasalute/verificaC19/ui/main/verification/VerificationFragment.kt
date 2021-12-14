@@ -35,21 +35,18 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
-import it.ministerodellasalute.verificaC19.BuildConfig
 import it.ministerodellasalute.verificaC19.R
 import it.ministerodellasalute.verificaC19.databinding.FragmentVerificationBinding
 import it.ministerodellasalute.verificaC19.ui.compounds.QuestionCompound
+import it.ministerodellasalute.verificaC19.ui.base.doOnDebug
 import it.ministerodellasalute.verificaC19sdk.*
 import it.ministerodellasalute.verificaC19sdk.model.CertificateSimple
 import it.ministerodellasalute.verificaC19sdk.model.CertificateStatus
 import it.ministerodellasalute.verificaC19sdk.model.SimplePersonModel
 import it.ministerodellasalute.verificaC19sdk.model.VerificationViewModel
 import it.ministerodellasalute.verificaC19sdk.util.*
-import it.ministerodellasalute.verificaC19sdk.util.FORMATTED_BIRTHDAY_DATE
 import it.ministerodellasalute.verificaC19sdk.util.TimeUtility.formatDateOfBirth
-import it.ministerodellasalute.verificaC19sdk.util.TimeUtility.parseFromTo
 import it.ministerodellasalute.verificaC19sdk.util.TimeUtility.parseTo
-import it.ministerodellasalute.verificaC19sdk.util.YEAR_MONTH_DAY
 import java.util.*
 
 @ExperimentalUnsignedTypes
@@ -179,12 +176,13 @@ class VerificationFragment : Fragment(), View.OnClickListener {
             CertificateStatus.PARTIALLY_VALID -> getString(R.string.certificatePartiallyValid)
             CertificateStatus.NOT_EU_DCC -> getString(R.string.certificateNotDCC)
             CertificateStatus.NOT_VALID -> {
-                if (VerificaApplication.isCertificateRevoked && BuildConfig.BUILD_TYPE == "debug") {
-                    VerificaApplication.isCertificateRevoked = false
-                    getString(R.string.certificateRevoked)
-                } else {
-                    getString(R.string.certificateNonValid)
+                doOnDebug {
+                    if (VerificaSDKApplication.isCertificateRevoked) {
+                        VerificaSDKApplication.isCertificateRevoked = false
+                        getString(R.string.certificateRevoked)
+                    }
                 }
+                getString(R.string.certificateNonValid)
             }
             CertificateStatus.NOT_VALID_YET -> getString(R.string.certificateNonValidYet)
         }

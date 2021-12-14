@@ -17,10 +17,14 @@
  *  limitations under the License.
  *  ---license-end
  *
+ *  Created by Mykhailo Nester on 4/23/21 9:48 AM
  */
 
-package it.ministerodellasalute.verificaC19.ui.main
+package it.ministerodellasalute.verificaC19
 
-object Extras {
-    const val DEBUG_INFO = "DebugInfoWrapper"
-}
+import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
+
+
+@HiltAndroidApp
+class WhiteLabelApplication : Application()

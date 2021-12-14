@@ -19,8 +19,16 @@
  *
  */
 
-package it.ministerodellasalute.verificaC19.ui.main
+package it.ministerodellasalute.verificaC19.ui.base
 
-object Extras {
-    const val DEBUG_INFO = "DebugInfoWrapper"
+import it.ministerodellasalute.verificaC19.BuildConfig
+
+inline fun doOnDebug(block: () -> Unit) {
+    if (BuildConfig.BUILD_TYPE == "debug") block()
 }
+
+inline fun doOnRelease(block: () -> Unit) {
+    if (BuildConfig.BUILD_TYPE == "release") block()
+}
+
+
