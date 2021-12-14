@@ -49,6 +49,7 @@ import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import it.ministerodellasalute.verificaC19.BuildConfig
 import it.ministerodellasalute.verificaC19.R
+import it.ministerodellasalute.verificaC19.WhiteLabelApplication
 import it.ministerodellasalute.verificaC19.databinding.ActivityFirstBinding
 import it.ministerodellasalute.verificaC19.ui.base.doOnDebug
 import it.ministerodellasalute.verificaC19.ui.extensions.hide
@@ -73,7 +74,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
 
     private val viewModel by viewModels<FirstViewModel>()
 
-    private val verificaApplication = VerificaSDKApplication()
+    private val whiteLabelApplication = WhiteLabelApplication()
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -354,7 +355,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     }
 
     private fun startSyncData() {
-        verificaApplication.setWorkManager()
+        whiteLabelApplication.setWorkManager()
     }
 
     private fun enableInitDownload() {
