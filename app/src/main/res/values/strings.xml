@@ -32,7 +32,7 @@
     <string name="privacyPolicy"><u>Leggi la Privacy policy</u></string>
     <string name="codiceFiscale">Codice fiscale</string>
     <string name="expirationText">Data scadenza certificato</string>
-    <string name="certificateValid">Certificazione valida in Italia e in Europa</string>
+    <string name="certificateValid">Certificazione valida</string>
     <string name="certificateNonValid">Certificazione non valida</string>
     <string name="certificateRevoked">Certificazione revocata</string>
     <string name="certificateNonValidYet">Certificazione non ancora valida</string>
@@ -74,7 +74,6 @@
     <string name="label_name">Nome/Name</string>
     <string name="label_close">Chiudi</string>
     <string name="label_return_home">Torna all\'inizio</string>
-    <string name="certificatePartiallyValid">Certificazione valida solo in Italia</string>
     <string name="label_what_can_be_done">Cosa si può fare con la certificazione verde COVID-19</string>
     <string name="label_why_qr_not_valid">Quali sono i motivi di non validità?</string>
     <string name="label_when_qr_valid">Quali sono i tempi di inizio validità?</string>
