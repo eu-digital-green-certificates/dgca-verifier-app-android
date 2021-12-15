@@ -77,8 +77,9 @@ class VerificationFragment : Fragment(), View.OnClickListener {
                 setPersonData(it.person, it.dateOfBirth)
                 setupCertStatusView(it)
                 setupTimeStamp(it)
-                if (viewModel.getTotemMode() && (certificate.certificateStatus == CertificateStatus.VALID
-                            || certificate.certificateStatus == CertificateStatus.PARTIALLY_VALID)
+                if (
+                    viewModel.getTotemMode() &&
+                    (certificate.certificateStatus == CertificateStatus.VALID)
                 ) {
                     Handler().postDelayed({
                         activity?.onBackPressed()
@@ -141,7 +142,7 @@ class VerificationFragment : Fragment(), View.OnClickListener {
     private fun setLinkViews(certStatus: CertificateStatus) {
         binding.questionContainer.removeAllViews()
         val questionMap: Map<String, String> = when (certStatus) {
-            CertificateStatus.VALID, CertificateStatus.PARTIALLY_VALID -> mapOf(getString(R.string.label_what_can_be_done) to "https://www.dgc.gov.it/web/faq.html#verifica19")
+            CertificateStatus.VALID -> mapOf(getString(R.string.label_what_can_be_done) to "https://www.dgc.gov.it/web/faq.html#verifica19")
             CertificateStatus.NOT_VALID_YET -> mapOf(getString(R.string.label_when_qr_valid) to "https://www.dgc.gov.it/web/faq.html#verifica19")
             CertificateStatus.NOT_VALID -> mapOf(getString(R.string.label_why_qr_not_valid) to "https://www.dgc.gov.it/web/faq.html#verifica19")
             CertificateStatus.NOT_EU_DCC -> mapOf(getString(R.string.label_which_qr_scan) to "https://www.dgc.gov.it/web/faq.html#verifica19")
@@ -164,7 +165,7 @@ class VerificationFragment : Fragment(), View.OnClickListener {
     private fun setValidationSubText(certStatus: CertificateStatus) {
         binding.subtitleText.text =
             when (certStatus) {
-                CertificateStatus.VALID, CertificateStatus.PARTIALLY_VALID -> getString(R.string.subtitle_text)
+                CertificateStatus.VALID -> getString(R.string.subtitle_text)
                 CertificateStatus.NOT_VALID, CertificateStatus.NOT_VALID_YET -> getString(R.string.subtitle_text_notvalid)
                 else -> getString(R.string.subtitle_text_technicalError)
             }
@@ -173,7 +174,6 @@ class VerificationFragment : Fragment(), View.OnClickListener {
     private fun setValidationMainText(certStatus: CertificateStatus) {
         binding.certificateValid.text = when (certStatus) {
             CertificateStatus.VALID -> getString(R.string.certificateValid)
-            CertificateStatus.PARTIALLY_VALID -> getString(R.string.certificatePartiallyValid)
             CertificateStatus.NOT_EU_DCC -> getString(R.string.certificateNotDCC)
             CertificateStatus.NOT_VALID -> {
                 doOnDebug {
@@ -194,7 +194,6 @@ class VerificationFragment : Fragment(), View.OnClickListener {
                 requireContext(), when (certStatus) {
                     CertificateStatus.VALID -> R.drawable.ic_valid_cert
                     CertificateStatus.NOT_VALID_YET -> R.drawable.ic_not_valid_yet
-                    CertificateStatus.PARTIALLY_VALID -> R.drawable.ic_valid_cert
                     CertificateStatus.NOT_EU_DCC -> R.drawable.ic_technical_error
                     else -> R.drawable.ic_invalid
                 }
@@ -203,7 +202,7 @@ class VerificationFragment : Fragment(), View.OnClickListener {
 
     private fun setPersonDetailsVisibility(certStatus: CertificateStatus) {
         binding.containerPersonDetails.visibility = when (certStatus) {
-            CertificateStatus.VALID, CertificateStatus.NOT_VALID, CertificateStatus.NOT_VALID_YET, CertificateStatus.PARTIALLY_VALID -> View.VISIBLE
+            CertificateStatus.VALID, CertificateStatus.NOT_VALID, CertificateStatus.NOT_VALID_YET -> View.VISIBLE
             else -> View.GONE
         }
     }
@@ -214,7 +213,6 @@ class VerificationFragment : Fragment(), View.OnClickListener {
                 requireContext(),
                 when (certStatus) {
                     CertificateStatus.VALID -> R.color.green
-                    CertificateStatus.PARTIALLY_VALID -> R.color.green
                     else -> R.color.red_bg
                 }
             )
