@@ -37,14 +37,16 @@ import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import it.ministerodellasalute.verificaC19.R
 import it.ministerodellasalute.verificaC19.databinding.FragmentVerificationBinding
+import it.ministerodellasalute.verificaC19.ui.base.isDebug
 import it.ministerodellasalute.verificaC19.ui.compounds.QuestionCompound
-import it.ministerodellasalute.verificaC19.ui.base.doOnDebug
-import it.ministerodellasalute.verificaC19sdk.*
-import it.ministerodellasalute.verificaC19sdk.model.CertificateSimple
+import it.ministerodellasalute.verificaC19sdk.VerificaDownloadInProgressException
+import it.ministerodellasalute.verificaC19sdk.VerificaMinSDKVersionException
+import it.ministerodellasalute.verificaC19sdk.VerificaMinVersionException
 import it.ministerodellasalute.verificaC19sdk.model.CertificateStatus
-import it.ministerodellasalute.verificaC19sdk.model.SimplePersonModel
+import it.ministerodellasalute.verificaC19sdk.model.CertificateViewBean
+import it.ministerodellasalute.verificaC19sdk.model.PersonModel
 import it.ministerodellasalute.verificaC19sdk.model.VerificationViewModel
-import it.ministerodellasalute.verificaC19sdk.util.*
+import it.ministerodellasalute.verificaC19sdk.util.FORMATTED_VALIDATION_DATE
 import it.ministerodellasalute.verificaC19sdk.util.TimeUtility.formatDateOfBirth
 import it.ministerodellasalute.verificaC19sdk.util.TimeUtility.parseTo
 import java.util.*
@@ -58,7 +60,7 @@ class VerificationFragment : Fragment(), View.OnClickListener {
 
     private var _binding: FragmentVerificationBinding? = null
     private val binding get() = _binding!!
-    private lateinit var certificateModel: CertificateSimple
+    private lateinit var certificateModel: CertificateViewBean
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -105,17 +107,16 @@ class VerificationFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun setupCertStatusView(cert: CertificateSimple) {
-        val certStatus = cert.certificateStatus
-        if (certStatus != null) {
-            setBackgroundColor(certStatus)
-            setPersonDetailsVisibility(certStatus)
-            setValidationIcon(certStatus)
-            setValidationMainText(certStatus)
+    private fun setupCertStatusView(cert: CertificateViewBean) {
+        cert.certificateStatus?.let {
+            setBackgroundColor(it)
+            setPersonDetailsVisibility(it)
+            setValidationIcon(it)
+            setValidationMainText(it)
+            setValidationSubTextVisibility(it)
+            setValidationSubText(it)
+            setLinkViews(it)
             setScanModeText()
-            setValidationSubTextVisibility(certStatus)
-            setValidationSubText(certStatus)
-            setLinkViews(certStatus)
         }
     }
 
@@ -130,7 +131,7 @@ class VerificationFragment : Fragment(), View.OnClickListener {
             getString(R.string.label_verification_scan_mode, scanModeLabel, chosenScanMode)
     }
 
-    private fun setupTimeStamp(cert: CertificateSimple) {
+    private fun setupTimeStamp(cert: CertificateViewBean) {
         binding.validationDate.text = getString(
             R.string.label_validation_timestamp, cert.timeStamp?.parseTo(
                 FORMATTED_VALIDATION_DATE
@@ -144,7 +145,7 @@ class VerificationFragment : Fragment(), View.OnClickListener {
         val questionMap: Map<String, String> = when (certStatus) {
             CertificateStatus.VALID -> mapOf(getString(R.string.label_what_can_be_done) to "https://www.dgc.gov.it/web/faq.html#verifica19")
             CertificateStatus.NOT_VALID_YET -> mapOf(getString(R.string.label_when_qr_valid) to "https://www.dgc.gov.it/web/faq.html#verifica19")
-            CertificateStatus.NOT_VALID -> mapOf(getString(R.string.label_why_qr_not_valid) to "https://www.dgc.gov.it/web/faq.html#verifica19")
+            CertificateStatus.NOT_VALID, CertificateStatus.REVOKED -> mapOf(getString(R.string.label_why_qr_not_valid) to "https://www.dgc.gov.it/web/faq.html#verifica19")
             CertificateStatus.NOT_EU_DCC -> mapOf(getString(R.string.label_which_qr_scan) to "https://www.dgc.gov.it/web/faq.html#verifica19")
         }
         questionMap.map {
@@ -175,13 +176,10 @@ class VerificationFragment : Fragment(), View.OnClickListener {
         binding.certificateValid.text = when (certStatus) {
             CertificateStatus.VALID -> getString(R.string.certificateValid)
             CertificateStatus.NOT_EU_DCC -> getString(R.string.certificateNotDCC)
+            CertificateStatus.REVOKED -> {
+                if (isDebug()) getString(R.string.certificateRevoked) else getString(R.string.certificateNonValid)
+            }
             CertificateStatus.NOT_VALID -> {
-                doOnDebug {
-                    if (VerificaSDKApplication.isCertificateRevoked) {
-                        VerificaSDKApplication.isCertificateRevoked = false
-                        getString(R.string.certificateRevoked)
-                    }
-                }
                 getString(R.string.certificateNonValid)
             }
             CertificateStatus.NOT_VALID_YET -> getString(R.string.certificateNonValidYet)
@@ -219,10 +217,9 @@ class VerificationFragment : Fragment(), View.OnClickListener {
         )
     }
 
-    private fun setPersonData(person: SimplePersonModel?, dateOfBirth: String?) {
+    private fun setPersonData(person: PersonModel?, dateOfBirth: String?) {
         binding.nameStandardisedText.text = person?.familyName.plus(" ").plus(person?.givenName)
-
-        binding.birthdateText.text = dateOfBirth?.formatDateOfBirth() ?: ""
+        binding.birthdateText.text = dateOfBirth?.formatDateOfBirth().orEmpty()
     }
 
     override fun onClick(v: View?) {

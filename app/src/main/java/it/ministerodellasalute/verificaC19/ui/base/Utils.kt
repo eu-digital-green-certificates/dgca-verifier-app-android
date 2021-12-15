@@ -31,4 +31,12 @@ inline fun doOnRelease(block: () -> Unit) {
     if (BuildConfig.BUILD_TYPE == "release") block()
 }
 
+fun isDebug(): Boolean {
+    return BuildConfig.BUILD_TYPE == "debug"
+}
+
+fun isRelease(): Boolean {
+    return BuildConfig.BUILD_TYPE == "release"
+}
+
 
