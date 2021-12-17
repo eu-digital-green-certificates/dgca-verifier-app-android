@@ -92,8 +92,8 @@ android {
         applicationId "it.ministerodellasalute.verificaC19"
         minSdkVersion Config.minSdk
         targetSdkVersion Config.targetSdk
-        versionCode 611
-        versionName "1.1.8"
+        versionCode 625
+        versionName "1.2.0"
         testInstrumentationRunner Config.androidTestInstrumentation
     }
 
