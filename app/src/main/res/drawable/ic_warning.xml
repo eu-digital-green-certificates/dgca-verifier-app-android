@@ -1,32 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-   ~ license-start
-   ~ 
-   ~ Copyright (C) 2021 Ministero della Salute and all other contributors
-   ~ 
-   ~ Licensed under the Apache License, Version 2.0 (the "License");
-   ~ you may not use this file except in compliance with the License.
-   ~ You may obtain a copy of the License at
-   ~ 
-   ~     http://www.apache.org/licenses/LICENSE-2.0
-   ~ 
-   ~ Unless required by applicable law or agreed to in writing, software
-   ~ distributed under the License is distributed on an "AS IS" BASIS,
-   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   ~ See the License for the specific language governing permissions and
-   ~ limitations under the License.
--->
-
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="32dp"
-    android:height="32dp"
-    android:viewportWidth="32"
-    android:viewportHeight="32">
+    android:width="@dimen/size_200dp"
+    android:height="@dimen/size_200dp"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
   <path
-      android:pathData="m16,2c-7.7,0 -14,6.3 -14,14s6.3,14 14,14s14,-6.3 14,-14c0,-7.7 -6.3,-14 -14,-14zM14.9,8l2.2,0l0,11l-2.2,0l0,-11zM16,25c-0.8,0 -1.5,-0.7 -1.5,-1.5s0.7,-1.5 1.5,-1.5c0.8,0 1.5,0.7 1.5,1.5s-0.7,1.5 -1.5,1.5z"
-      android:fillColor="#f45656"/>
+      android:pathData="M0,0L0,1024L1024,1024L1024,0L0,0z"
+      android:fillColor="#ffffff"
+      android:strokeColor="#00000000"/>
   <path
-      android:fillColor="#FF000000"
-      android:pathData="m17.5,23.5c0,0.8 -0.7,1.5 -1.5,1.5c-0.8,0 -1.5,-0.7 -1.5,-1.5s0.7,-1.5 1.5,-1.5c0.8,0 1.5,0.7 1.5,1.5zM17.1,8l-2.2,0l0,11l2.2,0l0,-11z"
-      android:strokeAlpha="0"
-      android:fillAlpha="0"/>
+      android:pathData="M505,149.42C485.31,152.01 467.3,154.9 449,163.31C393.16,188.96 366.18,246.03 336.2,296L188.6,542L140.6,622C129.16,641.07 117.23,659.84 107.78,680C83.21,732.42 87.26,795.23 123.67,841C150.99,875.35 194.47,891.78 237,895.83C260.24,898.04 284.64,896 308,896L633,896L737,896C757.5,896 778.7,897.58 799,894.41C825.8,890.22 851.79,881.51 874,865.57C924.89,829.04 943.19,762.86 924.97,704C916.45,676.46 901.74,652.56 887,628L839.6,549L675.2,275C663.13,254.89 651.98,233.56 637.58,215C613.36,183.81 580.12,159.98 541,152.2C529.55,149.92 516.65,147.9 505,149.42z"
+      android:fillColor="#ffa500"
+      android:strokeColor="#00000000"/>
+  <path
+      android:pathData="M505,331.42C494.39,332.87 484.31,335.57 475,341.01C467.69,345.28 461.01,350.44 455.62,357C442.59,372.86 435.22,394.39 438.44,415C440.94,431.03 448.35,446.15 454.58,461C461.8,478.23 468.66,495.65 475.6,513C483.21,532.03 490.99,550.97 498.6,570C501.17,576.42 504.21,586.58 513,585.74C521.15,584.96 523.27,575.31 525.8,569C532.62,551.99 539.33,534.9 546.42,518C553.24,501.76 559.61,485.34 566.2,469C572,454.61 579.65,440.05 583.52,425C588.76,404.67 585.77,382.75 574.3,365C570.62,359.3 566.24,353.8 561,349.46C554.65,344.21 547.65,339.7 540,336.6C529.22,332.24 516.61,329.84 505,331.42M504,617.43C493.94,618.87 484.56,622.15 476,627.7C469.14,632.15 462.92,638.32 458.21,645C440.08,670.72 443.36,707.83 466.09,729.83C480.48,743.75 501.2,750.29 521,747.71C529.78,746.57 538.46,743.38 546,738.8C586.37,714.28 588,653.61 548,627.7C541.6,623.55 534.46,620.34 527,618.66C519.54,616.99 511.6,616.34 504,617.43z"
+      android:fillColor="#ffffff"
+      android:strokeColor="#00000000"/>
 </vector>

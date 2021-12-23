@@ -91,8 +91,10 @@
     <string name="label_scan_mode_ver">Tipologia di verifica</string>
     <string name="scan_mode_3G_header">Verifica Base</string>
     <string name="scan_mode_2G_header">Verifica Rafforzata</string>
+    <string name="title_scan_mode_booster">Verifica Booster</string>
     <string name="scan_mode_3G">Vaccinazione/Guarigione/Tampone</string>
     <string name="scan_mode_2G">Vaccinazione/Guarigione</string>
+    <string name="label_scan_mode_boost">Richiamo/ciclo completo+tampone</string>
     <string name="label_choose_scan_mode">Scegli tipologia di verifica</string>
     <string name="label_no_scan_mode_chosen">Per procedere alla scansione è necessario selezionare una delle due tipologie di verifica della Certificazione verde Covid-19: BASE o RAFFORZATA.\nTipologia BASE: la app considera valide le certificazioni verdi generate da vaccinazione, da guarigione, da tampone. Viene utilizzata per l\'accesso ai luoghi di lavoro.\nTipologia RAFFORZATA: la app considera valide solo le certificazioni verdi generate da vaccinazione o da guarigione. Viene utilizzata - dal 6 dicembre 2021 - per accedere a spettacoli, eventi sportivi, ristorazione al chiuso, feste e discoteche, cerimonie pubbliche, ecc.</string>
     <string name="label_alert_dialog_option">%1$s (%2$s)</string>
@@ -114,4 +116,5 @@
     <string name="no_internet_title">Connessione internet assente</string>
     <string name="no_internet_message">Connessione internet assente. Assicurati di essere connesso alla rete e riprova.</string>
     <string name="ok_label">OK</string>
+    <string name="certificateValidTestNeeded">Cartificazione valida richiesto tampone</string>
 </resources>
