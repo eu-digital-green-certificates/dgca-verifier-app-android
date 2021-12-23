@@ -514,8 +514,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         }
         val dialog = builder.create()
         dialog.show()
-        dialog.findViewById<TextView>(android.R.id.message)?.movementMethod =
-            LinkMovementMethod.getInstance()
+        val alertMessage = dialog.findViewById<TextView>(android.R.id.message) as TextView
+        alertMessage.movementMethod = LinkMovementMethod.getInstance()
     }
 
     private fun createNoSyncAlertDialog(alertMessage: String) {
