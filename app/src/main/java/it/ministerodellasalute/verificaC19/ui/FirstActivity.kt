@@ -529,7 +529,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     }
 
     private fun createForceUpdateDialog() {
-/*        val builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.updateTitle))
         builder.setMessage(getString(R.string.updateMessage))
 
@@ -538,7 +538,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         }
         val dialog = builder.create()
         dialog.setCancelable(false)
-        dialog.show()*/
+        dialog.show()
     }
 
     private fun openGooglePlay() {
