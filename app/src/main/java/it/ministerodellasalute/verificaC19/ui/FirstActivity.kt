@@ -456,26 +456,26 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     private fun showScanModeChoiceAlertDialog() {
         val mBuilder = AlertDialog.Builder(this)
         val chosenScanMode = when (viewModel.getScanMode()) {
-            ScanMode.STRENGTHENED -> 0
-            ScanMode.STANDARD -> 1
+            ScanMode.STANDARD -> 0
+            ScanMode.STRENGTHENED -> 1
             ScanMode.BOOSTER -> 2
-            else -> 1
+            else -> 0
         }
         val scanModeChoices = arrayOf(
-            getString(
-                R.string.label_alert_dialog_option,
-                getString(R.string.scan_mode_2G_header).substringAfter(
-                    ' '
-                ).toUpperCase(Locale.ROOT),
-                getString(R.string.scan_mode_2G)
-
-            ),
             getString(
                 R.string.label_alert_dialog_option,
                 getString(R.string.scan_mode_3G_header).substringAfter(' ').toUpperCase(
                     Locale.ROOT
                 ),
                 getString(R.string.scan_mode_3G)
+
+            ),
+            getString(
+                R.string.label_alert_dialog_option,
+                getString(R.string.scan_mode_2G_header).substringAfter(
+                    ' '
+                ).toUpperCase(Locale.ROOT),
+                getString(R.string.scan_mode_2G)
 
             ),
             getString(
@@ -492,8 +492,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         mBuilder.setSingleChoiceItems(scanModeChoices, chosenScanMode) { dialog, which ->
             if (!viewModel.getScanModeFlag()) viewModel.setScanModeFlag(true)
             when (which) {
-                0 -> viewModel.setScanMode(ScanMode.STRENGTHENED)
-                1 -> viewModel.setScanMode(ScanMode.STANDARD)
+                0 -> viewModel.setScanMode(ScanMode.STANDARD)
+                1 -> viewModel.setScanMode(ScanMode.STRENGTHENED)
                 2 -> viewModel.setScanMode(ScanMode.BOOSTER)
             }
             dialog.dismiss()

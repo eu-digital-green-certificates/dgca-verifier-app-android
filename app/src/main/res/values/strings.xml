@@ -96,11 +96,11 @@
     <string name="scan_mode_2G">Vaccinazione/Guarigione</string>
     <string name="label_scan_mode_boost">Richiamo/ciclo completo+tampone</string>
     <string name="label_choose_scan_mode">Scegli tipologia di verifica</string>
-    <string name="label_no_scan_mode_chosen">Per procedere alla scansione selezionare una delle due tipologie di verifica della Certificazione verde Covid-19: BASE o RAFFORZATA.
-\nTipologia BASE: la app considera valide le certificazioni verdi generate da vaccinazione, da guarigione, da tampone. Viene utilizzata per l\'accesso ai luoghi di lavoro, mezzi di trasporto pubblico o privato di linea, impianti sciistici chiusi, strutture ricettive, strutture sanitarie, attività sportive e culturali al chiuso, sagre e fiere, ecc .
-\nTipologia RAFFORZATA: la app considera valide solo le certificazioni verdi generate da vaccinazione o da guarigione. Viene utilizzata per accedere a spettacoli, eventi sportivi, ristorazione al chiuso, feste e discoteche, cerimonie pubbliche, ecc. \n
-
-\nIndicazioni di dettaglio sulle attività consentite senza/con green pass BASE e RAFFORZATO (link https://www.governo.it/sites/governo.it/files/documenti/documenti/Notizie-allegati/tabella_attivita_consentite.pdf)</string>
+    <string name="label_no_scan_mode_chosen">Per procedere alla scansione selezionare una delle tipologie di verifica della Certificazione verde Covid-19: BASE, RAFFORZATA, BOOSTER. \n
+\nTipologia BASE: la app considera valide le certificazioni verdi generate da vaccinazione, da guarigione, da tampone. \n
+\nTipologia RAFFORZATA: la app considera valide solo le certificazioni verdi generate da vaccinazione o da guarigione. \n
+\nTipologia BOOSTER: la app considera valide le certificazioni verdi generate dopo dose di richiamo vaccinale. Considera valide, inoltre, le certificazioni verdi generate dopo ciclo vaccinale primario con la contestuale presentazione di un documento, cartaceo o digitale, che attesti l’esito negativo di un test al SARS-CoV-2. \n
+\nIndicazioni di dettaglio sulle attività consentite senza/con green pass BASE, RAFFORZATO, BOOSTER (link https://www.governo.it/sites/governo.it/files/documenti/documenti/Notizie-allegati/tabella_attivita_consentite.pdf)</string>
     <string name="label_alert_dialog_option">%1$s (%2$s)</string>
     <string name="label_verification_scan_mode">%1$s: %2$s</string>
     <string name="label_download">Scarica Ora</string>
