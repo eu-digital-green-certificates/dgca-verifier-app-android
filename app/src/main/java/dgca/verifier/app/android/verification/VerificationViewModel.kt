@@ -61,6 +61,8 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.*
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -347,12 +349,10 @@ class VerificationViewModel @Inject constructor(
 const val ISSUING_COUNTRY_X509_CERTIFICATE_KEY = "C"
 
 fun X509Certificate.getIssuerCountry(): String {
-    val keys = issuerX500Principal.name.split(",")
-    keys.forEach {
-        val (key, value) = it.split("=")
-        if (key.equals(ISSUING_COUNTRY_X509_CERTIFICATE_KEY, ignoreCase = true)) {
-            return value.toLowerCase(Locale.ROOT)
-        }
+    val fieldPattern = Pattern.compile("$ISSUING_COUNTRY_X509_CERTIFICATE_KEY=((?:[^,]|\\\\,)+)");
+    val matcher = fieldPattern.matcher(issuerX500Principal.name);
+    if (matcher.find()) {
+        return matcher.group(1);
     }
     return ""
 }
