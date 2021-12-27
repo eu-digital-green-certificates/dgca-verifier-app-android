@@ -29,7 +29,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dcc.app.revocation.data.source.local.RevokedDccLocalDataSource
 import dgca.verifier.app.android.data.local.AppDatabase
+import dgca.verifier.app.android.data.local.dcc.revoked.RevokedDccDao
+import dgca.verifier.app.android.data.local.dcc.revoked.RevokedDccLocalDataSourceImpl
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -41,4 +44,14 @@ object LocalDataSourceModule {
     fun provideDb(@ApplicationContext context: Context): AppDatabase =
         Room.databaseBuilder(context, AppDatabase::class.java, "key-db")
             .fallbackToDestructiveMigration().build()
+
+    @Singleton
+    @Provides
+    fun provideRevokedDccDao(appDatabase: AppDatabase): RevokedDccDao = appDatabase.revokedDccDao()
+
+    @Singleton
+    @Provides
+    fun provideRevokedLocalDataSource(revokedDccDao: RevokedDccDao): RevokedDccLocalDataSource =
+        RevokedDccLocalDataSourceImpl(revokedDccDao)
+
 }
