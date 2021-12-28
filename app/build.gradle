@@ -101,6 +101,7 @@ android {
 dependencies {
     implementation project(':decoder')
     implementation project(':engine')
+    implementation project(':revocation')
 
     implementation Deps.kotlin_stdlib
     implementation Deps.androidx_core
