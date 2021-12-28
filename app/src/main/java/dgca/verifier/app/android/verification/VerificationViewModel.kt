@@ -27,11 +27,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dcc.app.revocation.data.source.RevokedDccRepository
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.model.rules.toRuleValidationResultModels
 import dgca.verifier.app.android.model.toCertificateModel
 import dgca.verifier.app.android.settings.debug.mode.DebugModeState
+import dgca.verifier.app.android.utils.sha256
 import dgca.verifier.app.android.verification.*
 import dgca.verifier.app.android.verification.model.*
 import dgca.verifier.app.decoder.base45.Base45Service
@@ -76,7 +78,8 @@ class VerificationViewModel @Inject constructor(
     private val engine: CertLogicEngine,
     private val getRulesUseCase: GetRulesUseCase,
     private val valueSetsRepository: ValueSetsRepository,
-    private val preferences: Preferences
+    private val preferences: Preferences,
+    private val revokedDccRepository: RevokedDccRepository
 ) : ViewModel() {
 
     private val _qrCodeVerificationResult = MutableLiveData<QrCodeVerificationResult>()
@@ -201,6 +204,7 @@ class VerificationViewModel @Inject constructor(
         }
         val noPublicKeysFound = false
         var certificateExpired = false
+        var certificateRevoked = false
         var issuingCountry = ""
         certificates.forEach { innerCertificate ->
             cryptoService.validate(
@@ -224,6 +228,11 @@ class VerificationViewModel @Inject constructor(
                     certificateExpired = true
                 }
 
+                val dccHash = code.sha256()
+                if (revokedDccRepository.contains(kid = base64EncodedKid, dccHash = dccHash)) {
+                    certificateRevoked = true
+                }
+
                 return@forEach
             }
         }
@@ -235,7 +244,8 @@ class VerificationViewModel @Inject constructor(
             greenCertificateData = greenCertificateData,
             isApplicableCode = isApplicableCode,
             base64EncodedKid = base64EncodedKid,
-            debugData = DebugData(code, cose, coseData.cbor)
+            debugData = DebugData(code, cose, coseData.cbor),
+            certificateRevoked = certificateRevoked
         )
     }
 

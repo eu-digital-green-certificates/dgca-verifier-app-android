@@ -1,6 +1,6 @@
 /*
  *  ---license-start
- *  eu-digital-green-certificates / dgca-verifier-app-android
+ *  eu-digital-green-certificates / dcc-revocation-app-android
  *  ---
  *  Copyright (C) 2021 T-Systems International GmbH and all other contributors
  *  ---
@@ -17,21 +17,24 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 4/30/21 12:07 AM
+ *  Created by osarapulov on 12/27/21, 10:13 PM
  */
 
-package dgca.verifier.app.android.data.local
+package dgca.verifier.app.android.data.local.dcc.revoked
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import dgca.verifier.app.android.data.local.dcc.revoked.RevokedDccDao
-import dgca.verifier.app.android.data.local.dcc.revoked.RevokedDccLocal
-import dgca.verifier.app.android.data.local.model.Key
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
 
-@Database(entities = [Key::class, RevokedDccLocal::class], version = 1)
-abstract class AppDatabase : RoomDatabase() {
+@Dao
+interface RevokedDccDao {
+    @Insert
+    fun insert(revokedDccLocal: RevokedDccLocal)
 
-    abstract fun keyDao(): KeyDao
+    @Query("SELECT * FROM revoked_dcc WHERE kid LIKE :kid AND firstDccHashByte LIKE :firstDccHashByte AND secondDccHashByte LIKE :secondDccHashByte")
+    fun get(kid: String, firstDccHashByte: Char, secondDccHashByte: Char): RevokedDccLocal?
 
-    abstract fun revokedDccDao(): RevokedDccDao
+    @Delete
+    fun delete(revokedDccLocal: RevokedDccLocal)
 }

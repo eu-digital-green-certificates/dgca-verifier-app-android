@@ -1,6 +1,6 @@
 /*
  *  ---license-start
- *  eu-digital-green-certificates / dgca-verifier-app-android
+ *  eu-digital-green-certificates / dcc-revocation-app-android
  *  ---
  *  Copyright (C) 2021 T-Systems International GmbH and all other contributors
  *  ---
@@ -17,21 +17,15 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 4/30/21 12:07 AM
+ *  Created by osarapulov on 12/27/21, 9:59 PM
  */
 
-package dgca.verifier.app.android.data.local
+package dcc.app.revocation.data.source.local
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import dgca.verifier.app.android.data.local.dcc.revoked.RevokedDccDao
-import dgca.verifier.app.android.data.local.dcc.revoked.RevokedDccLocal
-import dgca.verifier.app.android.data.local.model.Key
+interface RevokedDccLocalDataSource {
+    fun add(kid: String, firstDccHashByte: Char, secondDccHashByte: Char)
 
-@Database(entities = [Key::class, RevokedDccLocal::class], version = 1)
-abstract class AppDatabase : RoomDatabase() {
+    fun contains(kid: String, firstDccHashByte: Char, secondDccHashByte: Char): Boolean
 
-    abstract fun keyDao(): KeyDao
-
-    abstract fun revokedDccDao(): RevokedDccDao
+    fun remove(kid: String, firstDccHashByte: Char, secondDccHashByte: Char)
 }
