@@ -24,17 +24,30 @@ package dgca.verifier.app.android.reader
 
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dcc.app.revocation.domain.request.ChunkRequest
+import dcc.app.revocation.domain.request.ListChunksRequest
+import dcc.app.revocation.domain.usacase.GetRevocationChunkUseCase
+import dcc.app.revocation.domain.usacase.GetRevocationListChunksUseCase
+import dcc.app.revocation.domain.usacase.GetRevocationListPartitionsUseCase
+import dcc.app.revocation.domain.usacase.GetRevocationListsUseCase
 import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.settings.debug.mode.DebugModeState
 import dgca.verifier.app.engine.data.source.countries.CountriesRepository
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class CodeReaderViewModel @Inject constructor(
     countriesRepository: CountriesRepository,
-    private val preferences: Preferences
+    private val preferences: Preferences,
+
+//    TODO: test purpose only
+    private val getRevocationListsUseCase: GetRevocationListsUseCase,
+    private val getRevocationListPartitionsUseCase: GetRevocationListPartitionsUseCase,
+    private val getRevocationListChunksUseCase: GetRevocationListChunksUseCase,
+    private val getRevocationChunkUseCase: GetRevocationChunkUseCase,
 ) : ViewModel() {
 
     private val _countries = MediatorLiveData<List<String>>()
@@ -54,10 +67,55 @@ class CodeReaderViewModel @Inject constructor(
                 _selectedCountry.value = preferences.selectedCountryIsoCode
             }
         }
+
+        getRevocationData()
     }
 
     fun selectCountry(countryIsoCode: String) {
         preferences.selectedCountryIsoCode = countryIsoCode
         _selectedCountry.value = countryIsoCode
+    }
+
+    private fun getRevocationData() {
+        getRevocationListsUseCase.execute(viewModelScope,
+            onSuccess = {
+                Timber.d("List loaded $it")
+                getListPartitions(it.first())
+            },
+            onFailure = { Timber.d("List loading failed $it") },
+            onComplete = { Timber.d("List loading completed") }
+        )
+    }
+
+    private fun getListPartitions(kid: String) {
+        getRevocationListPartitionsUseCase.execute(viewModelScope, kid,
+            onSuccess = {
+                Timber.d("Partition loaded $it")
+                getListChunks("kid", "id")
+            },
+            onFailure = { Timber.d("Partition loading failed $it") },
+            onComplete = { Timber.d("Partition loading completed") }
+        )
+    }
+
+    private fun getListChunks(kid: String, id: String) {
+        getRevocationListChunksUseCase.execute(viewModelScope, ListChunksRequest(kid, id),
+            onSuccess = {
+                Timber.d("List chunks loaded $it")
+                getChunk("kid", "id", "chunkId")
+            },
+            onFailure = { Timber.d("List chunks loading failed $it") },
+            onComplete = { Timber.d("List chunks loading completed") }
+        )
+    }
+
+    private fun getChunk(kid: String, id: String, chunkId: String) {
+        getRevocationChunkUseCase.execute(viewModelScope, ChunkRequest(kid, id, chunkId),
+            onSuccess = {
+                Timber.d("Chunk loaded $it")
+            },
+            onFailure = { Timber.d("Chunk loading failed $it") },
+            onComplete = { Timber.d("Chunk loading completed") }
+        )
     }
 }
