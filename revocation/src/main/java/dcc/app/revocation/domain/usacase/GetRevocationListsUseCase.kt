@@ -24,6 +24,7 @@ package dcc.app.revocation.domain.usacase
 
 import dcc.app.revocation.domain.ErrorHandler
 import dcc.app.revocation.domain.RevocationRepository
+import dcc.app.revocation.network.model.RevocationKIDData
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
@@ -31,8 +32,7 @@ class GetRevocationListsUseCase @Inject constructor(
     private val repository: RevocationRepository,
     dispatcher: CoroutineDispatcher,
     errorHandler: ErrorHandler,
-) : BaseUseCase<List<String>, Any>(dispatcher, errorHandler) {
+) : BaseUseCase<List<RevocationKIDData>, Any>(dispatcher, errorHandler) {
 
-    override suspend fun invoke(params: Any): List<String> =
-        repository.getRevocationLists() // TODO: update
+    override suspend fun invoke(params: Any): List<RevocationKIDData> = repository.getRevocationLists()
 }

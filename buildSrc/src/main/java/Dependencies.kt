@@ -37,7 +37,8 @@ object Deps {
     const val androidx_navigation = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.androidx_navigation}"
     const val androidx_fragment_ktx = "androidx.fragment:fragment-ktx:${Versions.androidx_fragment_ktx}"
     const val androidx_hilt_compiler = "androidx.hilt:hilt-compiler:${Versions.androidx_hilt_compiler}"
-    const val androidx_lifecycle_livedata_ktx = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.androidx_lifecycle_livedata_ktx}"
+    const val androidx_lifecycle_livedata_ktx =
+        "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.androidx_lifecycle_livedata_ktx}"
     const val room_runtime = "androidx.room:room-runtime:${Versions.androidx_room}"
     const val room_compiler = "androidx.room:room-compiler:${Versions.androidx_room}"
     const val room_ktx = "androidx.room:room-ktx:${Versions.room_ktx}"
@@ -45,8 +46,10 @@ object Deps {
     const val retrofit2 = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
     const val log_interceptor = "com.squareup.okhttp3:logging-interceptor:${Versions.logging_interceptor}"
     const val gson_converter = "com.squareup.retrofit2:converter-jackson:${Versions.gson_converter}"
+    const val gson = "com.google.code.gson:gson:${Versions.gson}"
 
-    const val android_tools_desugar_jdk_libs = "com.android.tools:desugar_jdk_libs:${Versions.android_tools_desugar_jdk_libs_version}"
+    const val android_tools_desugar_jdk_libs =
+        "com.android.tools:desugar_jdk_libs:${Versions.android_tools_desugar_jdk_libs_version}"
 
     const val hilt_plugin = "com.google.dagger:hilt-android-gradle-plugin:${Versions.hilt_version}"
     const val hilt = "com.google.dagger:hilt-android:${Versions.hilt_version}"

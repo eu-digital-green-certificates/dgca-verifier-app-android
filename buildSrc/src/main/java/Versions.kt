@@ -48,6 +48,7 @@ object Versions {
     const val logging_interceptor = "4.9.2"
     const val gson_converter = "2.1.0"
     const val timber = "4.7.1"
+    const val gson = "2.8.9"
 
     const val google_licenses = "17.0.0"
     const val android_tools_desugar_jdk_libs_version = "1.1.5"

@@ -22,8 +22,11 @@
 
 package dcc.app.revocation.repository
 
+import dcc.app.revocation.data.containsServerError
 import dcc.app.revocation.domain.RevocationRepository
 import dcc.app.revocation.network.RevocationService
+import dcc.app.revocation.network.model.RevocationKIDData
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class RevocationRepositoryImpl @Inject constructor(
@@ -31,26 +34,25 @@ class RevocationRepositoryImpl @Inject constructor(
 ) : RevocationRepository {
 
     @Throws(Exception::class)
-    override suspend fun getRevocationLists(): List<String> {
-//        val response = revocationService.getRevocationLists() TODO: update api
-//
-//        if (response.containsServerError()) {
-//            throw HttpException(response)
-//        }
-//        return response.body()?.toRevocationList() ?: ...
+    override suspend fun getRevocationLists(): List<RevocationKIDData> {
+        // TODO: add eTag in preferences
+        val eTag = ""
+        val response = revocationService.getRevocationLists(eTag)
 
-        return listOf("revocation lists")
+        if (response.containsServerError()) {
+            throw HttpException(response)
+        }
+        return response.body() ?: emptyList()
     }
 
     @Throws(Exception::class)
-    override suspend fun getRevocationListPartitions(kid: String): List<String> {
-//        val response = revocationService.getRevocationListPartitions(kid) TODO: update api
-//
-//        if (response.containsServerError()) {
-//            throw HttpException(response)
-//        }
-//        return response.body()?.toRevocationList() ?: ...
-        return listOf("list partitions")
+    override suspend fun getRevocationListPartitions(kid: String): ByteArray {
+        val response = revocationService.getRevocationListPartitions(kid)
+
+        if (response.containsServerError()) {
+            throw HttpException(response)
+        }
+        return response.body()?.bytes() ?: byteArrayOf()
     }
 
     @Throws(Exception::class)
