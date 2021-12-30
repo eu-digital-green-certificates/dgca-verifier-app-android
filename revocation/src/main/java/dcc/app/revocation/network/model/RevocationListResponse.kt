@@ -17,24 +17,32 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 24/12/2021, 15:51
+ *  Created by mykhailo.nester on 28/12/2021, 21:05
  */
 
-package dcc.app.revocation.domain
+package dcc.app.revocation.network.model
 
-import dcc.app.revocation.network.model.RevocationKIDData
+import com.google.gson.annotations.SerializedName
 
-interface RevocationRepository {
+data class RevocationKIDData(
 
-    @Throws(Exception::class)
-    suspend fun getRevocationLists(): List<RevocationKIDData>
+    @SerializedName("kid")
+    val kid: String,
 
-    @Throws(Exception::class)
-    suspend fun getRevocationListPartitions(kid: String): ByteArray
+    @SerializedName("settings")
+    val settings: List<RevocationSettings>
+)
 
-    @Throws(Exception::class)
-    suspend fun getRevocationListChunks(kid: String, id: String): List<String>
+data class RevocationSettings(
+    @SerializedName("mode")
+    val mode: RevocationMode,
 
-    @Throws(Exception::class)
-    suspend fun getRevocationChunk(kid: String, id: String, chunkId: String): List<String>
+    @SerializedName("tag")
+    val tag: String
+)
+
+enum class RevocationMode {
+    coordinate,
+    vector,
+    point
 }

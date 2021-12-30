@@ -74,6 +74,17 @@ dependencies {
     implementation Deps.retrofit2
     implementation Deps.log_interceptor
     implementation Deps.gson_converter
+    implementation Deps.gson
+
+
+    implementation Deps.kotlin_reflect
+    implementation Deps.java_cose
+    implementation(Deps.json_validation) {
+        exclude group: "org.mozilla", module: "rhino"
+    }
+
+    implementation Deps.jackson_cbor
+    implementation Deps.bouncy_castle
 
     implementation Deps.timber
 
