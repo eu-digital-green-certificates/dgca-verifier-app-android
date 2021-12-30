@@ -22,19 +22,27 @@
 
 package dcc.app.revocation.network
 
+import dcc.app.revocation.network.model.RevocationKIDData
 import okhttp3.ResponseBody
+import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Headers
 import retrofit2.http.Path
 
 interface RevocationService {
 
+    @Headers("mock:true")
     @GET("/lists")
-    suspend fun getRevocationLists(): ResponseBody // TODO: update response model
+    suspend fun getRevocationLists(
+        @Header("If-None-Match") eTag: String
+    ): Response<List<RevocationKIDData>>
 
+    @Headers("mock:true")
     @GET("/{kid}/partitions")
     suspend fun getRevocationListPartitions(
         @Path("kid") kid: String
-    ): ResponseBody // TODO: update response model
+    ): Response<ResponseBody>
 
     @GET("/{kid}/partitions/{id}/chunks")
     suspend fun getRevocationListChunks(
