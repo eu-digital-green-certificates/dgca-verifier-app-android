@@ -25,6 +25,7 @@ package dcc.app.revocation.domain.usacase
 import com.upokecenter.cbor.CBORObject
 import dcc.app.revocation.domain.ErrorHandler
 import dcc.app.revocation.domain.RevocationRepository
+import dcc.app.revocation.domain.model.PartitionData
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
@@ -32,9 +33,9 @@ class GetRevocationListPartitionsUseCase @Inject constructor(
     private val repository: RevocationRepository,
     dispatcher: CoroutineDispatcher,
     errorHandler: ErrorHandler,
-) : BaseUseCase<List<String>, String>(dispatcher, errorHandler) {
+) : BaseUseCase<PartitionData, String>(dispatcher, errorHandler) {
 
-    override suspend fun invoke(params: String): List<String> {
+    override suspend fun invoke(params: String): PartitionData {
         val result = repository.getRevocationListPartitions(params)
 
         if (result.isNotEmpty()) {
@@ -42,10 +43,12 @@ class GetRevocationListPartitionsUseCase @Inject constructor(
             val cbor = CBORObject.DecodeFromBytes(result)
             val kid = CBORObject.DecodeFromBytes(cbor.get("kid").GetByteString()).AsString()
 
-            return listOf(kid)
+
+
+            return PartitionData(params)
 
         }
 
-        return emptyList()
+        return PartitionData(params)
     }
 }

@@ -22,6 +22,7 @@
 
 package dcc.app.revocation.repository
 
+import dcc.app.revocation.data.RevocationPreferences
 import dcc.app.revocation.data.containsServerError
 import dcc.app.revocation.domain.RevocationRepository
 import dcc.app.revocation.network.RevocationService
@@ -29,19 +30,22 @@ import dcc.app.revocation.network.model.RevocationKIDData
 import retrofit2.HttpException
 import javax.inject.Inject
 
+@Suppress("BlockingMethodInNonBlockingContext")
 class RevocationRepositoryImpl @Inject constructor(
-    private val revocationService: RevocationService
+    private val revocationService: RevocationService,
+    private val revocationPreferences: RevocationPreferences
 ) : RevocationRepository {
 
     @Throws(Exception::class)
     override suspend fun getRevocationLists(): List<RevocationKIDData> {
-        // TODO: add eTag in preferences
-        val eTag = ""
+        val eTag = revocationPreferences.eTag ?: ""
         val response = revocationService.getRevocationLists(eTag)
 
         if (response.containsServerError()) {
             throw HttpException(response)
         }
+        revocationPreferences.eTag = response.headers()["If-None-Match"]
+
         return response.body() ?: emptyList()
     }
 
