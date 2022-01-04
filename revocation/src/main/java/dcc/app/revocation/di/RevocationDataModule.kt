@@ -22,11 +22,15 @@
 
 package dcc.app.revocation.di
 
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dcc.app.revocation.data.GeneralErrorHandlerImpl
+import dcc.app.revocation.data.RevocationPreferences
+import dcc.app.revocation.data.RevocationPreferencesImpl
 import dcc.app.revocation.domain.ErrorHandler
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
@@ -42,4 +46,8 @@ object RevocationDataModule {
     @Singleton
     @Provides
     fun provideErrorHandler(): ErrorHandler = GeneralErrorHandlerImpl()
+
+    @Singleton
+    @Provides
+    fun providePreferences(@ApplicationContext context: Context): RevocationPreferences = RevocationPreferencesImpl(context)
 }
