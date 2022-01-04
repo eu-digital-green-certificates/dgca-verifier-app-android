@@ -26,6 +26,7 @@ import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.*
 import dagger.hilt.android.HiltAndroidApp
+import dcc.app.revocation.worker.RevocationWorker
 import dgca.verifier.app.android.data.ConfigRepository
 import dgca.verifier.app.android.worker.*
 import kotlinx.coroutines.GlobalScope
@@ -34,7 +35,6 @@ import timber.log.Timber
 import java.io.FileNotFoundException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.reflect.KClass
 
 @HiltAndroidApp
 class DgcaApplication : Application(), Configuration.Provider {
@@ -71,13 +71,15 @@ class DgcaApplication : Application(), Configuration.Provider {
             schedulePeriodicWorker<LoadKeysWorker>(WORKER_KEYS)
             schedulePeriodicWorker<CountriesLoadWorker>(WORKER_COUNTRIES)
             schedulePeriodicWorker<ValueSetsLoadWorker>(WORKER_VALUESETS)
+            schedulePeriodicWorker<RevocationWorker>(WORKER_REVOCATION)
         }
 
         Timber.i("DGCA version ${BuildConfig.VERSION_NAME} is starting")
     }
 
     private inline fun <reified T : ListenableWorker> WorkManager.schedulePeriodicWorker(workerId: String) =
-        this.enqueueUniquePeriodicWork(workerId, ExistingPeriodicWorkPolicy.KEEP,
+        this.enqueueUniquePeriodicWork(
+            workerId, ExistingPeriodicWorkPolicy.KEEP,
             PeriodicWorkRequestBuilder<T>(1, TimeUnit.DAYS)
                 .setConstraints(
                     Constraints.Builder()
@@ -94,6 +96,7 @@ class DgcaApplication : Application(), Configuration.Provider {
 
     companion object {
         const val WORKER_CONFIGS = "workerConfigs"
+        const val WORKER_REVOCATION = "workerRevocation"
         const val WORKER_RULES = "workerRules"
         const val WORKER_KEYS = "workerKeys"
         const val WORKER_COUNTRIES = "workerCountries"
