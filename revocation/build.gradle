@@ -89,4 +89,6 @@ dependencies {
     implementation Deps.timber
 
     testImplementation Deps.test_junit
+    testImplementation Deps.mockito_core
+    testImplementation Deps.mockito_kotlin
 }

@@ -27,7 +27,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dcc.app.revocation.data.source.RevokedDccRepository
+import dcc.app.revocation.data.source.DccRevocationRepository
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.model.rules.toRuleValidationResultModels
@@ -63,7 +63,6 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.*
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -81,7 +80,7 @@ class VerificationViewModel @Inject constructor(
     private val getRulesUseCase: GetRulesUseCase,
     private val valueSetsRepository: ValueSetsRepository,
     private val preferences: Preferences,
-    private val revokedDccRepository: RevokedDccRepository
+    private val dccRevocationRepository: DccRevocationRepository
 ) : ViewModel() {
 
     private val _qrCodeVerificationResult = MutableLiveData<QrCodeVerificationResult>()
@@ -231,7 +230,7 @@ class VerificationViewModel @Inject constructor(
                 }
 
                 val dccHash = code.sha256()
-                if (revokedDccRepository.contains(kid = base64EncodedKid, dccHash = dccHash)) {
+                if (dccRevocationRepository.contains(kid = base64EncodedKid, dccHash = dccHash)) {
                     certificateRevoked = true
                 }
 
