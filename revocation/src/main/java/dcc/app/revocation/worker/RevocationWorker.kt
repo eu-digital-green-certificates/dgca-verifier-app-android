@@ -35,18 +35,25 @@ import timber.log.Timber
 class RevocationWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workParams: WorkerParameters,
-    private val revocationRepository: RevocationRepository
+    private val revocationRepository: RevocationRepository,
 ) : CoroutineWorker(context, workParams) {
 
     override suspend fun doWork(): Result {
         Timber.d("Revocation list loading start")
         return try {
-//            revocationRepository.loadList("") // TODO: update
+            val listData = revocationRepository.getRevocationLists()
+            listData.forEach { getPartition(it.kid) }
+
             Timber.d("Revocation loading succeeded")
             Result.success()
         } catch (error: Throwable) {
             Timber.d("Revocation loading retry")
             Result.retry()
         }
+    }
+
+    private suspend fun getPartition(kid: String) {
+        Timber.d("Get partition for kid: $kid")
+        revocationRepository.getRevocationListPartitions(kid)
     }
 }
