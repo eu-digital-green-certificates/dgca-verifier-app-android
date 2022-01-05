@@ -26,7 +26,9 @@ import dcc.app.revocation.data.RevocationPreferences
 import dcc.app.revocation.data.containsServerError
 import dcc.app.revocation.domain.RevocationRepository
 import dcc.app.revocation.network.RevocationService
+import dcc.app.revocation.network.model.RevocationChunkResponse
 import dcc.app.revocation.network.model.RevocationKIDData
+import dcc.app.revocation.network.model.RevocationPartitionResponse
 import retrofit2.HttpException
 import javax.inject.Inject
 
@@ -50,34 +52,28 @@ class RevocationRepositoryImpl @Inject constructor(
     }
 
     @Throws(Exception::class)
-    override suspend fun getRevocationListPartitions(kid: String): ByteArray {
+    override suspend fun getRevocationPartition(kid: String): RevocationPartitionResponse? {
         val response = revocationService.getRevocationListPartitions(kid)
 
         if (response.containsServerError()) {
             throw HttpException(response)
         }
-        return response.body()?.bytes() ?: byteArrayOf()
+
+//        TODO: store partition to db
+
+        return response.body()
     }
 
     @Throws(Exception::class)
-    override suspend fun getRevocationListChunks(kid: String, id: String): List<String> {
-//        val response = revocationService.getRevocationListChunks(kid, id) TODO: update api
-//
-//        if (response.containsServerError()) {
-//            throw HttpException(response)
-//        }
-//        return response.body()?.toRevocationList() ?: ...
-        return listOf("list chunk")
-    }
+    override suspend fun getRevocationChunk(kid: String, id: String, chunkId: Int): RevocationChunkResponse? {
+        val response = revocationService.getRevocationChunk(kid, id, chunkId)
 
-    @Throws(Exception::class)
-    override suspend fun getRevocationChunk(kid: String, id: String, chunkId: String): List<String> {
-//        val response = revocationService.getRevocationChunk(kid, id, chunkId) TODO: update api
-//
-//        if (response.containsServerError()) {
-//            throw HttpException(response)
-//        }
-//        return response.body()?.toRevocationList() ?: ...
-        return listOf("chunk")
+        if (response.containsServerError()) {
+            throw HttpException(response)
+        }
+
+//        TODO: store chunk to db
+
+        return response.body()
     }
 }

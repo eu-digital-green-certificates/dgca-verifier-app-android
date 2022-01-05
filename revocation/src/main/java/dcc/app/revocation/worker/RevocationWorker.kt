@@ -28,32 +28,25 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import dcc.app.revocation.domain.RevocationRepository
+import dcc.app.revocation.domain.usacase.GetRevocationDataUseCase
 import timber.log.Timber
 
 @HiltWorker
 class RevocationWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workParams: WorkerParameters,
-    private val revocationRepository: RevocationRepository,
+    private val getRevocationDataUseCase: GetRevocationDataUseCase
 ) : CoroutineWorker(context, workParams) {
 
     override suspend fun doWork(): Result {
         Timber.d("Revocation list loading start")
         return try {
-            val listData = revocationRepository.getRevocationLists()
-            listData.forEach { getPartition(it.kid) }
-
+            getRevocationDataUseCase.execute()
             Timber.d("Revocation loading succeeded")
             Result.success()
         } catch (error: Throwable) {
             Timber.d("Revocation loading retry")
             Result.retry()
         }
-    }
-
-    private suspend fun getPartition(kid: String) {
-        Timber.d("Get partition for kid: $kid")
-        revocationRepository.getRevocationListPartitions(kid)
     }
 }

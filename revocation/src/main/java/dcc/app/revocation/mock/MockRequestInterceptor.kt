@@ -42,16 +42,19 @@ class MockRequestInterceptor(private val context: Context) : Interceptor {
         val header = request.header(MOCK)
 
         if (header != null) {
-            val filename = request.url.pathSegments.last()
             val builder = Response.Builder()
                 .request(request)
                 .protocol(Protocol.HTTP_1_1)
                 .message("")
                 .code(200)
-            if (filename == "lists") {
-                builder.body(context.readFileFromAssets("mocks/$filename.json").toResponseBody(JSON_MEDIA_TYPE))
-            } else if (filename == "partitions") {
-                builder.body(getPartition().toResponseBody())
+            val urlStr =  request.url.toString()
+            when {
+                urlStr.contains("chunks") ->
+                    builder.body(context.readFileFromAssets("mocks/chunks.json").toResponseBody(JSON_MEDIA_TYPE))
+                urlStr.contains("lists") ->
+                    builder.body(context.readFileFromAssets("mocks/lists.json").toResponseBody(JSON_MEDIA_TYPE))
+                urlStr.contains("partitions") ->
+                    builder.body(context.readFileFromAssets("mocks/partitions.json").toResponseBody(JSON_MEDIA_TYPE))
             }
 
             return builder.build()
