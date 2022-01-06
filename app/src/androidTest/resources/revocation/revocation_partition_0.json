@@ -1,0 +1,6 @@
+{
+  "kid": "a1b2c3",
+  "firstDccHashByte": "a",
+  "secondDccHashByte": "1",
+  "revokedDccsBlob": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8550000001641274471681"
+}

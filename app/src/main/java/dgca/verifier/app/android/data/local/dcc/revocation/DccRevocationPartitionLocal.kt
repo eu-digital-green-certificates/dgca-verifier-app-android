@@ -17,26 +17,19 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 12/27/21, 9:58 PM
+ *  Created by osarapulov on 12/27/21, 10:11 PM
  */
 
-package dcc.app.revocation.data.source
+package dgca.verifier.app.android.data.local.dcc.revocation
 
-import dcc.app.revocation.data.source.local.RevokedDccLocalDataSource
-import javax.inject.Inject
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-class RevokedDccRepositoryImpl @Inject constructor(
-    private val revokedDccLocalDataSource: RevokedDccLocalDataSource
-) : RevokedDccRepository {
-    override fun add(kid: String, dccHash: String) {
-        revokedDccLocalDataSource.add(kid, dccHash[0], dccHash[1])
-    }
-
-    override fun contains(kid: String, dccHash: String): Boolean {
-        return revokedDccLocalDataSource.contains(kid, dccHash[0], dccHash[1])
-    }
-
-    override fun remove(kid: String, dccHash: String) {
-        revokedDccLocalDataSource.remove(kid, dccHash[0], dccHash[1])
-    }
-}
+@Entity(tableName = "revocation_partition")
+data class DccRevocationPartitionLocal(
+    @PrimaryKey
+    val kid: String,
+    val firstDccHashByte: Char,
+    val secondDccHashByte: Char,
+    val revokedDccsBlob: String
+)
