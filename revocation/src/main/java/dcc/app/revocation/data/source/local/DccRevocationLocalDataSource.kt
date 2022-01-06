@@ -22,10 +22,12 @@
 
 package dcc.app.revocation.data.source.local
 
-interface RevokedDccLocalDataSource {
-    fun add(kid: String, firstDccHashByte: Char, secondDccHashByte: Char)
+import dcc.app.revocation.data.source.DccRevocationPartition
 
-    fun contains(kid: String, firstDccHashByte: Char, secondDccHashByte: Char): Boolean
+interface DccRevocationLocalDataSource {
+    fun addOrUpdate(dccRevocationPartition: DccRevocationPartition)
 
-    fun remove(kid: String, firstDccHashByte: Char, secondDccHashByte: Char)
+    fun getBy(kid: String, firstDccHashByte: Char, secondDccHashByte: Char): DccRevocationPartition?
+
+    fun remove(dccRevocationPartition: DccRevocationPartition)
 }

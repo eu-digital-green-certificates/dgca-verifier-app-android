@@ -26,16 +26,14 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dcc.app.revocation.data.source.RevokedDccRepository
-import dcc.app.revocation.data.source.RevokedDccRepositoryImpl
-import dcc.app.revocation.data.source.local.RevokedDccLocalDataSource
+import dcc.app.revocation.data.source.DccRevocationRepository
+import dcc.app.revocation.data.source.DccRevocationRepositoryImpl
 import dgca.verifier.app.android.data.ConfigRepository
 import dgca.verifier.app.android.data.ConfigRepositoryImpl
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.android.data.VerifierRepositoryImpl
 import dgca.verifier.app.android.data.local.LocalConfigDataSource
 import dgca.verifier.app.android.data.local.MutableConfigDataSource
-import dgca.verifier.app.android.data.local.dcc.revoked.RevokedDccLocalDataSourceImpl
 import dgca.verifier.app.android.data.remote.DefaultRemoteConfigDataSource
 import dgca.verifier.app.android.data.remote.RemoteConfigDataSource
 import javax.inject.Singleton
@@ -62,5 +60,5 @@ abstract class RepositoryModule {
 
     @Singleton
     @Binds
-    abstract fun bindRevokedDccRepository(revokedDccRepository: RevokedDccRepositoryImpl): RevokedDccRepository
+    abstract fun bindRevokedDccRepository(revokedDccRepository: DccRevocationRepositoryImpl): DccRevocationRepository
 }
