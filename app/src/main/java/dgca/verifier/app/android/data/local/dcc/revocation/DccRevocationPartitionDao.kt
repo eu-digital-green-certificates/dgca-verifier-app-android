@@ -17,19 +17,21 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 12/27/21, 10:11 PM
+ *  Created by osarapulov on 12/27/21, 10:13 PM
  */
 
-package dgca.verifier.app.android.data.local.dcc.revoked
+package dgca.verifier.app.android.data.local.dcc.revocation
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
 
-@Entity(tableName = "revoked_dcc")
-class RevokedDccLocal(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-    val kid: String,
-    val firstDccHashByte: Char,
-    val secondDccHashByte: Char
-)
+@Dao
+interface DccRevocationPartitionDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(dccRevocationPartitionLocal: DccRevocationPartitionLocal)
+
+    @Query("SELECT * FROM revocation_partition WHERE kid LIKE :kid AND firstDccHashByte LIKE :firstDccHashByte AND secondDccHashByte LIKE :secondDccHashByte")
+    fun get(kid: String, firstDccHashByte: Char, secondDccHashByte: Char): DccRevocationPartitionLocal?
+
+    @Delete
+    fun delete(dccRevocationPartitionLocal: DccRevocationPartitionLocal)
+}
