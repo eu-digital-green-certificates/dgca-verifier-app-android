@@ -2,7 +2,7 @@
  *  ---license-start
  *  eu-digital-green-certificates / dcc-revocation-app-android
  *  ---
- *  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
  *  ---
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,24 +17,14 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 12/27/21, 10:13 PM
+ *  Created by osarapulov on 1/3/22, 4:30 PM
  */
 
-package dgca.verifier.app.android.data.local.dcc.revoked
+package dcc.app.revocation.data.source
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
-
-@Dao
-interface RevokedDccDao {
-    @Insert
-    fun insert(revokedDccLocal: RevokedDccLocal)
-
-    @Query("SELECT * FROM revoked_dcc WHERE kid LIKE :kid AND firstDccHashByte LIKE :firstDccHashByte AND secondDccHashByte LIKE :secondDccHashByte")
-    fun get(kid: String, firstDccHashByte: Char, secondDccHashByte: Char): RevokedDccLocal?
-
-    @Delete
-    fun delete(revokedDccLocal: RevokedDccLocal)
-}
+data class DccRevocationPartition(
+    val kid: String,
+    val firstDccHashByte: Char,
+    val secondDccHashByte: Char,
+    val revocationDataBlob: String
+)
