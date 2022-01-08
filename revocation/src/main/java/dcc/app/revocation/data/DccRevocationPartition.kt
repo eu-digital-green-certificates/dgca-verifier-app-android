@@ -20,7 +20,7 @@
  *  Created by osarapulov on 1/3/22, 4:30 PM
  */
 
-package dcc.app.revocation.data.source
+package dcc.app.revocation.data
 
 data class DccRevocationPartition(
     val kid: String,

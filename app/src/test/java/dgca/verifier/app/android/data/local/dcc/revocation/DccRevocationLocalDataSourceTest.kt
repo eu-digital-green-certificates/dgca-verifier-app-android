@@ -22,8 +22,11 @@
 
 package dgca.verifier.app.android.data.local.dcc.revocation
 
-import dcc.app.revocation.data.source.DccRevocationPartition
+import dcc.app.revocation.data.DccRevocationHashType
+import dcc.app.revocation.data.DccRevocationKidMetadata
+import dcc.app.revocation.data.DccRevocationPartition
 import dcc.app.revocation.data.source.local.DccRevocationLocalDataSource
+import dgca.verifier.app.android.data.local.dcc.revocation.data.toLocal
 import dgca.verifier.app.android.utils.sha256
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -39,6 +42,13 @@ import org.mockito.kotlin.verify
 class DccRevocationLocalDataSourceTest {
     private lateinit var dccRevocationLocalDataSource: DccRevocationLocalDataSource
 
+    private val testDccRevocationKidMetadata = DccRevocationKidMetadata(
+        kid = "a1b2c3",
+        hashType = DccRevocationHashType.SIGNATURE,
+        mode = "mode",
+        tag = "tag"
+    )
+
     private val testDccRevocationPartition = DccRevocationPartition(
         kid = "a1b2c3",
         firstDccHashByte = 'a',
@@ -47,23 +57,37 @@ class DccRevocationLocalDataSourceTest {
     )
 
     @Mock
-    lateinit var dccRevocationPartitionDao: DccRevocationPartitionDao
+    lateinit var dccRevocationDao: DccRevocationDao
 
     @Before
     fun setUp() {
-        dccRevocationLocalDataSource = DccRevocationLocalDataSourceImpl(dccRevocationPartitionDao)
+        dccRevocationLocalDataSource = DccRevocationLocalDataSourceImpl(dccRevocationDao)
+    }
+
+    @Test
+    fun testAddOrUpdateDccRevocationKidMetadata() {
+        dccRevocationLocalDataSource.addOrUpdate(testDccRevocationKidMetadata)
+
+        verify(dccRevocationDao).insert(testDccRevocationKidMetadata.toLocal())
+    }
+
+    @Test
+    fun testRemoveDccRevocationKidMetadata() {
+        dccRevocationLocalDataSource.removeDccRevocationKidMetadataBy(testDccRevocationKidMetadata.kid)
+
+        verify(dccRevocationDao).deleteDccRevocationKidMetadataListBy(eq(testDccRevocationKidMetadata.kid))
     }
 
     @Test
     fun testAddOrUpdate() {
         dccRevocationLocalDataSource.addOrUpdate(testDccRevocationPartition)
 
-        verify(dccRevocationPartitionDao).insert(testDccRevocationPartition.toLocal())
+        verify(dccRevocationDao).insert(testDccRevocationPartition.toLocal())
     }
 
     @Test
     fun testGetBy() {
-        doReturn(testDccRevocationPartition.toLocal()).`when`(dccRevocationPartitionDao).get(
+        doReturn(testDccRevocationPartition.toLocal()).`when`(dccRevocationDao).get(
             eq(testDccRevocationPartition.kid),
             eq(testDccRevocationPartition.firstDccHashByte),
             eq(testDccRevocationPartition.secondDccHashByte)
@@ -75,7 +99,7 @@ class DccRevocationLocalDataSourceTest {
             testDccRevocationPartition.secondDccHashByte
         )
 
-        verify(dccRevocationPartitionDao).get(
+        verify(dccRevocationDao).get(
             eq(testDccRevocationPartition.kid),
             eq(testDccRevocationPartition.firstDccHashByte),
             eq(testDccRevocationPartition.secondDccHashByte)
@@ -87,6 +111,6 @@ class DccRevocationLocalDataSourceTest {
     fun testRemove() {
         dccRevocationLocalDataSource.remove(testDccRevocationPartition)
 
-        verify(dccRevocationPartitionDao).delete(testDccRevocationPartition.toLocal())
+        verify(dccRevocationDao).delete(testDccRevocationPartition.toLocal())
     }
 }

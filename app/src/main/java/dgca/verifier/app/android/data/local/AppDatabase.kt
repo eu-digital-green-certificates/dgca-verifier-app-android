@@ -24,14 +24,15 @@ package dgca.verifier.app.android.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import dgca.verifier.app.android.data.local.dcc.revocation.DccRevocationPartitionDao
-import dgca.verifier.app.android.data.local.dcc.revocation.DccRevocationPartitionLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.DccRevocationDao
+import dgca.verifier.app.android.data.local.dcc.revocation.data.DccRevocationKidMetadataLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.data.DccRevocationPartitionLocal
 import dgca.verifier.app.android.data.local.model.Key
 
-@Database(entities = [Key::class, DccRevocationPartitionLocal::class], version = 1)
+@Database(entities = [Key::class, DccRevocationKidMetadataLocal::class, DccRevocationPartitionLocal::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun keyDao(): KeyDao
 
-    abstract fun dccRevocationPartitionDao(): DccRevocationPartitionDao
+    abstract fun dccRevocationPartitionDao(): DccRevocationDao
 }

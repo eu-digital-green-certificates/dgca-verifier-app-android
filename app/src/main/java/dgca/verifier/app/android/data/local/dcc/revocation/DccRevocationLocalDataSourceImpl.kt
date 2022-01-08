@@ -22,14 +22,24 @@
 
 package dgca.verifier.app.android.data.local.dcc.revocation
 
-import dcc.app.revocation.data.source.DccRevocationPartition
+import dcc.app.revocation.data.DccRevocationKidMetadata
+import dcc.app.revocation.data.DccRevocationPartition
 import dcc.app.revocation.data.source.local.DccRevocationLocalDataSource
+import dgca.verifier.app.android.data.local.dcc.revocation.data.fromLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.data.toLocal
 
-class DccRevocationLocalDataSourceImpl(private val dccRevocationPartitionDao: DccRevocationPartitionDao) :
+class DccRevocationLocalDataSourceImpl(private val dccRevocationDao: DccRevocationDao) :
     DccRevocationLocalDataSource {
+    override fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata) {
+        dccRevocationDao.insert(dccRevocationKidMetadata.toLocal())
+    }
+
+    override fun removeDccRevocationKidMetadataBy(kid: String) {
+        dccRevocationDao.deleteDccRevocationKidMetadataListBy(kid = kid)
+    }
 
     override fun addOrUpdate(dccRevocationPartition: DccRevocationPartition) {
-        dccRevocationPartitionDao.insert(dccRevocationPartition.toLocal())
+        dccRevocationDao.insert(dccRevocationPartition.toLocal())
     }
 
     override fun getBy(
@@ -37,10 +47,10 @@ class DccRevocationLocalDataSourceImpl(private val dccRevocationPartitionDao: Dc
         firstDccHashByte: Char,
         secondDccHashByte: Char
     ): DccRevocationPartition? {
-        return dccRevocationPartitionDao.get(kid, firstDccHashByte, secondDccHashByte)?.fromLocal()
+        return dccRevocationDao.get(kid, firstDccHashByte, secondDccHashByte)?.fromLocal()
     }
 
     override fun remove(dccRevocationPartition: DccRevocationPartition) {
-        dccRevocationPartitionDao.delete(dccRevocationPartition.toLocal())
+        dccRevocationDao.delete(dccRevocationPartition.toLocal())
     }
 }

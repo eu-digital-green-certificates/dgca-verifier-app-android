@@ -22,6 +22,9 @@
 
 package dcc.app.revocation.data.source
 
+import dcc.app.revocation.data.DccRevocationEntry
+import dcc.app.revocation.data.DccRevocationKidMetadata
+import dcc.app.revocation.data.DccRevocationPartition
 import dcc.app.revocation.data.source.local.DccRevocationLocalDataSource
 import java.time.Instant
 import java.time.ZoneId
@@ -35,6 +38,14 @@ class DccRevocationRepositoryImpl @Inject constructor(
     companion object {
         private const val LONG_STRING_LENGTH = 19
         private const val SHA_256_STRING_LENGTH = 64
+    }
+
+    override fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata) {
+        dccRevocationLocalDataSource.addOrUpdate(dccRevocationKidMetadata)
+    }
+
+    override fun removeDccRevocationKidMetadataBy(kid: String) {
+        dccRevocationLocalDataSource.removeDccRevocationKidMetadataBy(kid)
     }
 
     override fun add(

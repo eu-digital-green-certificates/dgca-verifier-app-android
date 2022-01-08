@@ -2,7 +2,7 @@
  *  ---license-start
  *  eu-digital-green-certificates / dcc-revocation-app-android
  *  ---
- *  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
  *  ---
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,22 +17,14 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 12/27/21, 9:59 PM
+ *  Created by osarapulov on 1/8/22, 10:45 AM
  */
 
-package dcc.app.revocation.data.source.local
+package dcc.app.revocation.data
 
-import dcc.app.revocation.data.DccRevocationKidMetadata
-import dcc.app.revocation.data.DccRevocationPartition
-
-interface DccRevocationLocalDataSource {
-    fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata)
-
-    fun removeDccRevocationKidMetadataBy(kid: String)
-
-    fun addOrUpdate(dccRevocationPartition: DccRevocationPartition)
-
-    fun getBy(kid: String, firstDccHashByte: Char, secondDccHashByte: Char): DccRevocationPartition?
-
-    fun remove(dccRevocationPartition: DccRevocationPartition)
-}
+data class DccRevocationKidMetadata(
+    val kid: String,
+    val hashType: DccRevocationHashType,
+    val mode: String,
+    val tag: String
+)

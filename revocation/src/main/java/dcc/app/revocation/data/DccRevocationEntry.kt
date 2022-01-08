@@ -2,7 +2,7 @@
  *  ---license-start
  *  eu-digital-green-certificates / dcc-revocation-app-android
  *  ---
- *  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
  *  ---
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,25 +17,14 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 12/27/21, 9:55 PM
+ *  Created by osarapulov on 1/4/22, 8:17 AM
  */
 
-package dcc.app.revocation.data.source
+package dcc.app.revocation.data
 
-import dcc.app.revocation.data.DccRevocationEntry
-import dcc.app.revocation.data.DccRevocationKidMetadata
 import java.time.ZonedDateTime
 
-interface DccRevocationRepository {
-    fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata)
-
-    fun removeDccRevocationKidMetadataBy(kid: String)
-
-    fun add(kid: String, dccRevocationHash: String, dccRevocationExpirationDate: ZonedDateTime)
-
-    fun add(kid: String, dccRevocationEntry: DccRevocationEntry)
-
-    fun contains(kid: String, dccHash: String): Boolean
-
-    fun remove(kid: String, dccHash: String)
-}
+data class DccRevocationEntry(
+    val dccRevocationHash: String,
+    val dccRevocationExpirationDate: ZonedDateTime
+)

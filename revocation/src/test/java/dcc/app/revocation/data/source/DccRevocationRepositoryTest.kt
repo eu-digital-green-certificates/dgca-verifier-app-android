@@ -22,6 +22,8 @@
 
 package dcc.app.revocation.data.source
 
+import dcc.app.revocation.data.DccRevocationEntry
+import dcc.app.revocation.data.DccRevocationPartition
 import dcc.app.revocation.data.source.local.DccRevocationLocalDataSource
 import org.junit.Assert.*
 import org.junit.Before

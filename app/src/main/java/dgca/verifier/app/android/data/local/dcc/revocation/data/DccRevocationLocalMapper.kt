@@ -2,7 +2,7 @@
  *  ---license-start
  *  eu-digital-green-certificates / dcc-revocation-app-android
  *  ---
- *  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
  *  ---
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,19 +17,27 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 12/27/21, 10:11 PM
+ *  Created by osarapulov on 1/8/22, 10:52 AM
  */
 
-package dgca.verifier.app.android.data.local.dcc.revocation
+package dgca.verifier.app.android.data.local.dcc.revocation.data
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import dcc.app.revocation.data.DccRevocationKidMetadata
 
-@Entity(tableName = "revocation_partition")
-data class DccRevocationPartitionLocal(
-    @PrimaryKey
-    val kid: String,
-    val firstDccHashByte: Char,
-    val secondDccHashByte: Char,
-    val revokedDccsBlob: String
-)
+fun DccRevocationKidMetadata.toLocal(): DccRevocationKidMetadataLocal {
+    return DccRevocationKidMetadataLocal(
+        kid = kid,
+        hashType = hashType,
+        mode = mode,
+        tag = tag
+    )
+}
+
+fun DccRevocationKidMetadataLocal.fromLocal(): DccRevocationKidMetadata {
+    return DccRevocationKidMetadata(
+        kid = kid,
+        hashType = hashType,
+        mode = mode,
+        tag = tag
+    )
+}
