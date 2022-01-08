@@ -24,6 +24,7 @@ package dgca.verifier.app.android.data.local.dcc.revocation
 
 import dcc.app.revocation.data.DccRevocationHashType
 import dcc.app.revocation.data.DccRevocationKidMetadata
+import dcc.app.revocation.data.DccRevocationMode
 import dcc.app.revocation.data.DccRevocationPartition
 import dcc.app.revocation.data.source.local.DccRevocationLocalDataSource
 import dgca.verifier.app.android.data.local.dcc.revocation.data.toLocal
@@ -45,7 +46,7 @@ class DccRevocationLocalDataSourceTest {
     private val testDccRevocationKidMetadata = DccRevocationKidMetadata(
         kid = "a1b2c3",
         hashType = DccRevocationHashType.SIGNATURE,
-        mode = "mode",
+        mode = DccRevocationMode.POINT,
         tag = "tag"
     )
 
@@ -91,7 +92,7 @@ class DccRevocationLocalDataSourceTest {
 
     @Test
     fun testGetBy() {
-        doReturn(testDccRevocationPartition.toLocal()).`when`(dccRevocationDao).getDccRevocationPartitionListBy(
+        doReturn(listOf(testDccRevocationPartition.toLocal())).`when`(dccRevocationDao).getDccRevocationPartitionListBy(
             eq(testDccRevocationPartition.kid)
         )
 
@@ -102,7 +103,7 @@ class DccRevocationLocalDataSourceTest {
         verify(dccRevocationDao).getDccRevocationPartitionListBy(
             eq(testDccRevocationPartition.kid)
         )
-        assertEquals(testDccRevocationPartition, actual)
+        assertEquals(listOf(testDccRevocationPartition), actual)
     }
 
     @Test
