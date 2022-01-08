@@ -26,6 +26,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import dcc.app.revocation.data.DccRevocationHashType
+import dcc.app.revocation.data.DccRevocationMode
 
 @Entity(
     tableName = "dcc_revocation_kid_metadata",
@@ -41,6 +42,6 @@ data class DccRevocationKidMetadataLocal(
     val kidMetadataId: Long = 0,
     val kid: String,
     val hashType: DccRevocationHashType,
-    val mode: String,
+    val mode: DccRevocationMode,
     val tag: String
 )

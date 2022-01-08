@@ -22,7 +22,9 @@
 
 package dgca.verifier.app.android.data.local.dcc.revocation.data
 
+import dcc.app.revocation.data.DccRevocationChunk
 import dcc.app.revocation.data.DccRevocationKidMetadata
+import dcc.app.revocation.data.DccRevocationPartition
 
 fun DccRevocationKidMetadata.toLocal(): DccRevocationKidMetadataLocal {
     return DccRevocationKidMetadataLocal(
@@ -39,5 +41,61 @@ fun DccRevocationKidMetadataLocal.fromLocal(): DccRevocationKidMetadata {
         hashType = hashType,
         mode = mode,
         tag = tag
+    )
+}
+
+fun DccRevocationPartitionLocal.fromLocal(): DccRevocationPartition {
+    return DccRevocationPartition(
+        kid = kid,
+        x = x,
+        y = y,
+        pid = pid,
+        hashType = hashType,
+        version = version,
+        expiration = expiration,
+        chunks = chunks
+    )
+}
+
+fun DccRevocationPartition.toLocal(): DccRevocationPartitionLocal {
+    return DccRevocationPartitionLocal(
+        kid = kid,
+        x = x,
+        y = y,
+        pid = pid,
+        hashType = hashType,
+        version = version,
+        expiration = expiration,
+        chunks = chunks
+    )
+}
+
+fun DccRevocationChunkLocal.fromLocal(): DccRevocationChunk {
+    return DccRevocationChunk(
+        kid = kid,
+        x = x,
+        y = y,
+        pid = pid,
+        cid = cid,
+        type = type,
+        version = version,
+        expiration = expiration,
+        section = section,
+        content = content
+    )
+}
+
+fun DccRevocationChunk.toLocal(): DccRevocationChunkLocal {
+    return DccRevocationChunkLocal(
+        kid = kid,
+        x = x,
+        y = y,
+        pid = pid,
+        cid = cid,
+        type = type,
+        version = version,
+        expiration = expiration,
+        section = section,
+        content = content
     )
 }

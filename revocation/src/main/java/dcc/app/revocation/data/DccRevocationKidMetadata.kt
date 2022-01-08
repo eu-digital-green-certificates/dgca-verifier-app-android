@@ -25,6 +25,6 @@ package dcc.app.revocation.data
 data class DccRevocationKidMetadata(
     val kid: String,
     val hashType: DccRevocationHashType,
-    val mode: String,
+    val mode: DccRevocationMode,
     val tag: String
 )

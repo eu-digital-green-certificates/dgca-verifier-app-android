@@ -23,16 +23,17 @@
 package dgca.verifier.app.android.data.local.dcc.revocation
 
 import android.content.Context
+import android.database.sqlite.SQLiteConstraintException
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.fasterxml.jackson.databind.ObjectMapper
-import dcc.app.revocation.data.DccRevocationHashType
-import dcc.app.revocation.data.DccRevocationKidMetadata
+import dcc.app.revocation.data.*
 import dgca.verifier.app.android.data.local.AppDatabase
 import dgca.verifier.app.android.data.local.dcc.revocation.data.DccRevocationPartitionLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.data.toLocal
 import dgca.verifier.app.android.utils.sha256
+import dgca.verifier.app.engine.UTC_ZONE_ID
 import org.apache.commons.io.IOUtils
 import org.junit.After
 import org.junit.Assert.*
@@ -42,6 +43,7 @@ import org.junit.runner.RunWith
 import java.io.IOException
 import java.io.InputStream
 import java.nio.charset.Charset
+import java.time.ZonedDateTime
 
 @RunWith(AndroidJUnit4::class)
 internal class DccRevocationDaoTest {
@@ -85,7 +87,7 @@ internal class DccRevocationDaoTest {
         val dccRevocationKidSignatureMetadata = DccRevocationKidMetadata(
             kid = kid,
             hashType = DccRevocationHashType.SIGNATURE,
-            mode = "mode",
+            mode = DccRevocationMode.POINT,
             tag = "tag"
         )
 
@@ -100,18 +102,29 @@ internal class DccRevocationDaoTest {
 
 
         // Test inserting the same element twice
-        dccRevocationDao.insert(dccRevocationKidSignatureMetadata.toLocal())
+        val dccRevocationKidSignatureMetadataNew = DccRevocationKidMetadata(
+            kid = kid,
+            hashType = DccRevocationHashType.SIGNATURE,
+            mode = DccRevocationMode.POINT,
+            tag = "newTag"
+        )
+
+        dccRevocationDao.insert(dccRevocationKidSignatureMetadataNew.toLocal())
 
         list = dccRevocationDao.getDccRevocationKidMetadataList(kid = kid)
 
         assertEquals(1, list.size)
-        assertEquals(dccRevocationKidSignatureMetadata.toLocal().copy(kidMetadataId = 2), list[0])
+        assertEquals(
+            dccRevocationKidSignatureMetadataNew.toLocal().copy(kidMetadataId = 2),
+            list[0]
+        )
+
 
         // Test inserting item with other hashType = Country Code UCI
         val dccRevocationKidCountryCodeUciMetadata = DccRevocationKidMetadata(
             kid = kid,
             hashType = DccRevocationHashType.COUNTRYCODEUCI,
-            mode = "mode",
+            mode = DccRevocationMode.POINT,
             tag = "tag"
         )
 
@@ -120,14 +133,18 @@ internal class DccRevocationDaoTest {
         list = dccRevocationDao.getDccRevocationKidMetadataList(kid = kid)
 
         assertEquals(2, list.size)
-        assertTrue(list.contains(dccRevocationKidCountryCodeUciMetadata.toLocal().copy(kidMetadataId = 3)))
+        assertTrue(
+            list.contains(
+                dccRevocationKidCountryCodeUciMetadata.toLocal().copy(kidMetadataId = 3)
+            )
+        )
 
 
         // Test inserting item with other hashType = UCI
         val dccRevocationKidUciMetadata = DccRevocationKidMetadata(
             kid = kid,
             hashType = DccRevocationHashType.UCI,
-            mode = "mode",
+            mode = DccRevocationMode.POINT,
             tag = "tag"
         )
 
@@ -146,43 +163,264 @@ internal class DccRevocationDaoTest {
         assertTrue(list.isEmpty())
     }
 
+    @Test(expected = SQLiteConstraintException::class)
+    fun dccRevocationPartitionCantInsertTest() {
+        val kid = "a0a0a0"
+
+        val dccRevocationPartition = DccRevocationPartition(
+            kid = kid,
+            x = null,
+            y = null,
+            pid = "pid",
+            hashType = DccRevocationHashType.SIGNATURE,
+            version = "version",
+            expiration = ZonedDateTime.now(),
+            chunks = "chunks"
+        )
+
+        dccRevocationDao.insert(dccRevocationPartition.toLocal())
+    }
+
     @Test
     @Throws(Exception::class)
-    fun test() {
-        val revocationPartition0: DccRevocationPartitionLocal =
-            fetchPartition(REVOCATION_PARTITION_0)
-        dccRevocationDao.insert(revocationPartition0)
+    fun dccRevocationPartitionTest() {
+        val kid = "a0a0a0"
 
-        val actualRevocationPartition0 = dccRevocationDao.get(
-            kid = revocationPartition0.kid,
-            firstDccHashByte = revocationPartition0.firstDccHashByte,
-            secondDccHashByte = revocationPartition0.secondDccHashByte
+
+        // Insert kid metadata
+        val dccRevocationKidSignatureMetadata = DccRevocationKidMetadata(
+            kid = kid,
+            hashType = DccRevocationHashType.SIGNATURE,
+            mode = DccRevocationMode.POINT,
+            tag = "tag"
         )
 
-        assertEquals(revocationPartition0, actualRevocationPartition0)
+        dccRevocationDao.insert(dccRevocationKidSignatureMetadata.toLocal())
 
-        val revokedDccBlob = revocationPartition0.revokedDccsBlob
-        val newSha256 = "new".sha256()
-        val newRevokedDccBlob = revokedDccBlob + newSha256 + String.format("%019d", System.currentTimeMillis())
+        val hash = "".sha256()
+        val hashBytes = hash.toByteArray()
+        val x = hashBytes[0]
+        val y = hashBytes[1]
 
-        dccRevocationDao.insert(revocationPartition0.copy(revokedDccsBlob = newRevokedDccBlob))
 
-        val actualNewRevocationPartition0 = dccRevocationDao.get(
-            kid = revocationPartition0.kid,
-            firstDccHashByte = revocationPartition0.firstDccHashByte,
-            secondDccHashByte = revocationPartition0.secondDccHashByte
+        // Insert partition with empty x and y
+        val dccRevocationPartition = DccRevocationPartition(
+            kid = kid,
+            x = null,
+            y = null,
+            pid = "pid",
+            hashType = DccRevocationHashType.SIGNATURE,
+            version = "version",
+            expiration = ZonedDateTime.now(UTC_ZONE_ID),
+            chunks = "chunks"
         )
 
-        assertEquals(newRevokedDccBlob, actualNewRevocationPartition0?.revokedDccsBlob)
+        dccRevocationDao.insert(dccRevocationPartition.toLocal())
 
-        dccRevocationDao.delete(revocationPartition0)
-
-        val actualEmptyRevocationPartitionLocal = dccRevocationDao.get(
-            kid = revocationPartition0.kid,
-            firstDccHashByte = revocationPartition0.firstDccHashByte,
-            secondDccHashByte = revocationPartition0.secondDccHashByte
+        var list = dccRevocationDao.getDccRevocationPartitionListBy(
+            kid = dccRevocationPartition.kid
         )
 
-        assertNull(actualEmptyRevocationPartitionLocal)
+        assertEquals(1, list.size)
+        assertEquals(dccRevocationPartition.toLocal().copy(partitionId = 1), list[0])
+
+
+        // Insert partition with empty y
+        val dccRevocationPartitionX = dccRevocationPartition.copy(x = x, pid = "pidX")
+
+        dccRevocationDao.insert(dccRevocationPartitionX.toLocal())
+
+        list = dccRevocationDao.getDccRevocationPartitionListBy(
+            kid = dccRevocationPartition.kid
+        )
+
+        assertEquals(2, list.size)
+        assertTrue(list.contains(dccRevocationPartitionX.toLocal().copy(partitionId = 2)))
+
+
+        // Insert partition with x and y filled
+        val dccRevocationPartitionXY = dccRevocationPartitionX.copy(y = y, pid = "pidXY")
+
+        dccRevocationDao.insert(dccRevocationPartitionXY.toLocal())
+
+        list = dccRevocationDao.getDccRevocationPartitionListBy(
+            kid = dccRevocationPartition.kid
+        )
+
+        assertEquals(3, list.size)
+        assertTrue(list.contains(dccRevocationPartitionXY.toLocal().copy(partitionId = 3)))
+
+        val dccRevocationPartitionXYNew = dccRevocationPartitionXY.copy(version = "newVersion")
+
+
+        // Insert the same partition twice
+        dccRevocationDao.insert(dccRevocationPartitionXYNew.toLocal())
+
+        list = dccRevocationDao.getDccRevocationPartitionListBy(
+            kid = dccRevocationPartition.kid
+        )
+
+        assertEquals(3, list.size)
+        assertTrue(list.contains(dccRevocationPartitionXYNew.toLocal().copy(partitionId = 4)))
+
+
+        // Remove partition by pid (remote partition id)
+        dccRevocationDao.deleteDccRevocationPartitionBy("pidXY")
+
+        list = dccRevocationDao.getDccRevocationPartitionListBy(
+            kid = dccRevocationPartition.kid
+        )
+
+        assertEquals(2, list.size)
+        assertFalse(list.contains(dccRevocationPartitionXYNew.toLocal().copy(partitionId = 4)))
+
+
+        // Remove kid, all partitions are expected to be removed
+        dccRevocationDao.deleteDccRevocationKidMetadataListBy(kid = kid)
+
+        list = dccRevocationDao.getDccRevocationPartitionListBy(
+            kid = dccRevocationPartition.kid
+        )
+
+        assertTrue(list.isEmpty())
+    }
+
+    @Test(expected = SQLiteConstraintException::class)
+    fun dccRevocationChunkCantInsertTest() {
+        val kid = "a0a0a0"
+
+        val dccRevocationChunk = DccRevocationChunk(
+            kid = kid,
+            x = null,
+            y = null,
+            pid = "pid",
+            version = "version",
+            expiration = ZonedDateTime.now(),
+            cid = "cid",
+            type = DccChunkType.HASH,
+            section = "section",
+            content = "content"
+        )
+
+        dccRevocationDao.insert(dccRevocationChunk.toLocal())
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun dccRevocationChunkTest() {
+        val kid = "a0a0a0"
+
+
+        // Insert kid metadata
+        val dccRevocationKidSignatureMetadata = DccRevocationKidMetadata(
+            kid = kid,
+            hashType = DccRevocationHashType.SIGNATURE,
+            mode = DccRevocationMode.POINT,
+            tag = "tag"
+        )
+
+        dccRevocationDao.insert(dccRevocationKidSignatureMetadata.toLocal())
+
+        val hash = "".sha256()
+        val hashBytes = hash.toByteArray()
+        val x = hashBytes[0]
+        val y = hashBytes[1]
+        val pid = "pid"
+        val version = "version"
+        val expiration = ZonedDateTime.now(UTC_ZONE_ID)
+
+
+        // Insert partition
+        val dccRevocationPartition = DccRevocationPartition(
+            kid = kid,
+            x = x,
+            y = y,
+            pid = pid,
+            hashType = DccRevocationHashType.SIGNATURE,
+            version = version,
+            expiration = expiration,
+            chunks = "chunks"
+        )
+
+        dccRevocationDao.insert(dccRevocationPartition.toLocal())
+
+
+        // Insert chunk
+        val dccRevocationChunk = DccRevocationChunk(
+            kid = kid,
+            x = x,
+            y = y,
+            cid = "cid",
+            pid = pid,
+            type = DccChunkType.HASH,
+            version = version,
+            expiration = expiration,
+            section = "",
+            content = ""
+        )
+
+        dccRevocationDao.insert(dccRevocationChunk.toLocal())
+
+        var list = dccRevocationDao.getDccRevocationChunkList(
+            kid = dccRevocationChunk.kid
+        )
+
+        assertEquals(1, list.size)
+        assertTrue(list.contains(dccRevocationChunk.toLocal().copy(chunkId = 1)))
+
+        // Insert the same chunk
+        val dccRevocationNewChunk = DccRevocationChunk(
+            kid = kid,
+            x = x,
+            y = y,
+            cid = "cid",
+            pid = pid,
+            type = DccChunkType.HASH,
+            version = version,
+            expiration = expiration,
+            section = "new",
+            content = "new"
+        )
+
+        dccRevocationDao.insert(dccRevocationNewChunk.toLocal())
+
+        list = dccRevocationDao.getDccRevocationChunkList(
+            kid = dccRevocationChunk.kid
+        )
+
+        assertEquals(1, list.size)
+        assertEquals(dccRevocationNewChunk.toLocal().copy(chunkId = 2), list.first())
+
+        // Insert another chunk
+        val dccRevocationAnotherChunk = DccRevocationChunk(
+            kid = kid,
+            x = x,
+            y = y,
+            cid = "another_cid",
+            pid = pid,
+            type = DccChunkType.HASH,
+            version = version,
+            expiration = expiration,
+            section = "new",
+            content = "new"
+        )
+
+        dccRevocationDao.insert(dccRevocationAnotherChunk.toLocal())
+
+        list = dccRevocationDao.getDccRevocationChunkList(
+            kid = dccRevocationChunk.kid
+        )
+
+        assertEquals(2, list.size)
+        assertTrue(list.contains(dccRevocationAnotherChunk.toLocal().copy(chunkId = 3)))
+
+        // Remove kid
+        dccRevocationDao.deleteDccRevocationKidMetadataListBy(kid = kid)
+
+        list = dccRevocationDao.getDccRevocationChunkList(
+            kid = dccRevocationChunk.kid
+        )
+
+        assertTrue(list.isEmpty())
     }
 }

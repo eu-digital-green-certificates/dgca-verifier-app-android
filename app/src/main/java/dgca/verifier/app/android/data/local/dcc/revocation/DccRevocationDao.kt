@@ -23,6 +23,7 @@
 package dgca.verifier.app.android.data.local.dcc.revocation
 
 import androidx.room.*
+import dgca.verifier.app.android.data.local.dcc.revocation.data.DccRevocationChunkLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.data.DccRevocationKidMetadataLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.data.DccRevocationPartitionLocal
 
@@ -40,13 +41,22 @@ interface DccRevocationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(dccRevocationPartitionLocal: DccRevocationPartitionLocal)
 
-    @Query("SELECT * FROM revocation_partition WHERE kid LIKE :kid AND firstDccHashByte LIKE :firstDccHashByte AND secondDccHashByte LIKE :secondDccHashByte")
-    fun get(
-        kid: String,
-        firstDccHashByte: Char,
-        secondDccHashByte: Char
-    ): DccRevocationPartitionLocal?
+    @Query("SELECT * FROM dcc_revocation_partition WHERE kid LIKE :kid")
+    fun getDccRevocationPartitionListBy(
+        kid: String
+    ): List<DccRevocationPartitionLocal>
 
-    @Delete
-    fun delete(dccRevocationPartitionLocal: DccRevocationPartitionLocal)
+    @Query("DELETE FROM dcc_revocation_partition WHERE pid = :partitionId")
+    fun deleteDccRevocationPartitionBy(partitionId: String)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(dccRevocationChunkLocal: DccRevocationChunkLocal)
+
+    @Query("SELECT * FROM dcc_revocation_chunk WHERE kid LIKE :kid")
+    fun getDccRevocationChunkList(
+        kid: String
+    ): List<DccRevocationChunkLocal>
+
+    @Query("DELETE FROM dcc_revocation_chunk WHERE cid = :chunkId")
+    fun deleteDccRevocationChunkBy(chunkId: String)
 }

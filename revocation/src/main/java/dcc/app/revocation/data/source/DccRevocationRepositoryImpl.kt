@@ -23,6 +23,7 @@
 package dcc.app.revocation.data.source
 
 import dcc.app.revocation.data.DccRevocationEntry
+import dcc.app.revocation.data.DccRevocationHashType
 import dcc.app.revocation.data.DccRevocationKidMetadata
 import dcc.app.revocation.data.DccRevocationPartition
 import dcc.app.revocation.data.source.local.DccRevocationLocalDataSource
@@ -54,7 +55,7 @@ class DccRevocationRepositoryImpl @Inject constructor(
         dccRevocationExpirationDate: ZonedDateTime
     ) {
         val currentRevocationPartition: DccRevocationPartition? =
-            dccRevocationLocalDataSource.getBy(kid, dccRevocationHash[0], dccRevocationHash[1])
+            dccRevocationLocalDataSource.getBy(kid).firstOrNull()
 
         val dccRevocationExpirationTimestamp = String.format(
             "%0${LONG_STRING_LENGTH}d",
@@ -62,25 +63,29 @@ class DccRevocationRepositoryImpl @Inject constructor(
         )
 
         val dccHashIndex: Int =
-            currentRevocationPartition?.revocationDataBlob?.indexOf(dccRevocationHash) ?: -1
+            currentRevocationPartition?.chunks?.indexOf(dccRevocationHash) ?: -1
         val newHashSubString = if (dccHashIndex >= 0) {
-            currentRevocationPartition?.revocationDataBlob!!.replaceRange(
+            currentRevocationPartition?.chunks!!.replaceRange(
                 dccHashIndex + SHA_256_STRING_LENGTH,
                 dccHashIndex + SHA_256_STRING_LENGTH + LONG_STRING_LENGTH,
                 dccRevocationExpirationTimestamp
             )
         } else {
-            (currentRevocationPartition?.revocationDataBlob
+            (currentRevocationPartition?.chunks
                 ?: "") + dccRevocationHash + dccRevocationExpirationTimestamp
         }
 
         val newRevocationPartition: DccRevocationPartition =
-            currentRevocationPartition?.copy(revocationDataBlob = newHashSubString)
+            currentRevocationPartition?.copy(chunks = newHashSubString)
                 ?: DccRevocationPartition(
                     kid,
-                    dccRevocationHash[0],
-                    dccRevocationHash[1],
-                    newHashSubString
+                    dccRevocationHash.toByteArray()[0],
+                    dccRevocationHash.toByteArray()[1],
+                    newHashSubString,
+                    DccRevocationHashType.SIGNATURE,
+                    "",
+                    ZonedDateTime.now(),
+                    ""
                 )
 
         dccRevocationLocalDataSource.addOrUpdate(newRevocationPartition)
@@ -96,14 +101,14 @@ class DccRevocationRepositoryImpl @Inject constructor(
 
     override fun contains(kid: String, dccHash: String): Boolean {
         val currentRevocationPartition: DccRevocationPartition? =
-            dccRevocationLocalDataSource.getBy(kid, dccHash[0], dccHash[1])
+            dccRevocationLocalDataSource.getBy(kid).firstOrNull()
 
         val dccHashIndex: Int =
-            currentRevocationPartition?.revocationDataBlob?.indexOf(dccHash) ?: -1
+            currentRevocationPartition?.chunks?.indexOf(dccHash) ?: -1
         if (dccHashIndex >= 0) {
             val dccRevocationExpirationTimestampStartIndex = dccHashIndex + SHA_256_STRING_LENGTH
             val dccRevocationExpirationTimestamp =
-                currentRevocationPartition!!.revocationDataBlob.subSequence(
+                currentRevocationPartition!!.chunks.subSequence(
                     dccRevocationExpirationTimestampStartIndex,
                     dccRevocationExpirationTimestampStartIndex + LONG_STRING_LENGTH
                 ).toString().toLong()
@@ -120,12 +125,12 @@ class DccRevocationRepositoryImpl @Inject constructor(
 
     override fun remove(kid: String, dccHash: String) {
         val currentRevocationPartition: DccRevocationPartition? =
-            dccRevocationLocalDataSource.getBy(kid, dccHash[0], dccHash[1])
+            dccRevocationLocalDataSource.getBy(kid).firstOrNull()
 
         val dccHashIndex: Int =
-            currentRevocationPartition?.revocationDataBlob?.indexOf(dccHash) ?: -1
+            currentRevocationPartition?.chunks?.indexOf(dccHash) ?: -1
         if (dccHashIndex >= 0) {
-            val newRevocationBlob = currentRevocationPartition!!.revocationDataBlob.removeRange(
+            val newRevocationBlob = currentRevocationPartition!!.chunks.removeRange(
                 dccHashIndex,
                 dccHashIndex + SHA_256_STRING_LENGTH + LONG_STRING_LENGTH
             )
@@ -135,7 +140,7 @@ class DccRevocationRepositoryImpl @Inject constructor(
             } else {
                 dccRevocationLocalDataSource.addOrUpdate(
                     currentRevocationPartition.copy(
-                        revocationDataBlob = newRevocationBlob
+                        chunks = newRevocationBlob
                     )
                 )
             }

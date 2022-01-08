@@ -43,14 +43,14 @@ class DccRevocationLocalDataSourceImpl(private val dccRevocationDao: DccRevocati
     }
 
     override fun getBy(
-        kid: String,
-        firstDccHashByte: Char,
-        secondDccHashByte: Char
-    ): DccRevocationPartition? {
-        return dccRevocationDao.get(kid, firstDccHashByte, secondDccHashByte)?.fromLocal()
+        kid: String
+    ): List<DccRevocationPartition> {
+        return dccRevocationDao.getDccRevocationPartitionListBy(kid).map {
+            return@map it.fromLocal()
+        }
     }
 
     override fun remove(dccRevocationPartition: DccRevocationPartition) {
-        dccRevocationDao.delete(dccRevocationPartition.toLocal())
+        dccRevocationDao.deleteDccRevocationPartitionBy(partitionId = dccRevocationPartition.pid)
     }
 }

@@ -27,7 +27,6 @@ import dcc.app.revocation.data.DccRevocationKidMetadata
 import dcc.app.revocation.data.DccRevocationPartition
 import dcc.app.revocation.data.source.local.DccRevocationLocalDataSource
 import dgca.verifier.app.android.data.local.dcc.revocation.data.toLocal
-import dgca.verifier.app.android.utils.sha256
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -37,6 +36,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
+import java.time.ZonedDateTime
 
 @RunWith(MockitoJUnitRunner::class)
 class DccRevocationLocalDataSourceTest {
@@ -51,9 +51,13 @@ class DccRevocationLocalDataSourceTest {
 
     private val testDccRevocationPartition = DccRevocationPartition(
         kid = "a1b2c3",
-        firstDccHashByte = 'a',
-        secondDccHashByte = '1',
-        revocationDataBlob = "".sha256()
+        x = 'a'.toByte(),
+        y = '1'.toByte(),
+        pid = "pid",
+        hashType = DccRevocationHashType.SIGNATURE,
+        version = "version",
+        expiration = ZonedDateTime.now(),
+        chunks = ""
     )
 
     @Mock
@@ -87,22 +91,16 @@ class DccRevocationLocalDataSourceTest {
 
     @Test
     fun testGetBy() {
-        doReturn(testDccRevocationPartition.toLocal()).`when`(dccRevocationDao).get(
-            eq(testDccRevocationPartition.kid),
-            eq(testDccRevocationPartition.firstDccHashByte),
-            eq(testDccRevocationPartition.secondDccHashByte)
+        doReturn(testDccRevocationPartition.toLocal()).`when`(dccRevocationDao).getDccRevocationPartitionListBy(
+            eq(testDccRevocationPartition.kid)
         )
 
         val actual = dccRevocationLocalDataSource.getBy(
-            testDccRevocationPartition.kid,
-            testDccRevocationPartition.firstDccHashByte,
-            testDccRevocationPartition.secondDccHashByte
+            testDccRevocationPartition.kid
         )
 
-        verify(dccRevocationDao).get(
-            eq(testDccRevocationPartition.kid),
-            eq(testDccRevocationPartition.firstDccHashByte),
-            eq(testDccRevocationPartition.secondDccHashByte)
+        verify(dccRevocationDao).getDccRevocationPartitionListBy(
+            eq(testDccRevocationPartition.kid)
         )
         assertEquals(testDccRevocationPartition, actual)
     }
@@ -111,6 +109,6 @@ class DccRevocationLocalDataSourceTest {
     fun testRemove() {
         dccRevocationLocalDataSource.remove(testDccRevocationPartition)
 
-        verify(dccRevocationDao).delete(testDccRevocationPartition.toLocal())
+        verify(dccRevocationDao).deleteDccRevocationPartitionBy(partitionId = testDccRevocationPartition.pid)
     }
 }

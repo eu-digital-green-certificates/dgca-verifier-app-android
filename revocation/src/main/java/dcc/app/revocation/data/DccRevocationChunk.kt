@@ -17,21 +17,24 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 1/8/22, 11:57 AM
+ *  Created by osarapulov on 1/8/22, 2:03 PM
  */
 
 package dcc.app.revocation.data
 
 import java.time.ZonedDateTime
 
-data class DccRevocationPartition(
+data class DccRevocationChunk (
     val kid: String,
     val x: Byte?,
     val y: Byte?,
     // Partition id
     val pid: String,
-    val hashType: DccRevocationHashType,
+    // Chunk id
+    val cid: String,
+    val type: DccChunkType,
     val version: String,
     val expiration: ZonedDateTime,
-    val chunks: String
+    val section: String,
+    val content: String
 )

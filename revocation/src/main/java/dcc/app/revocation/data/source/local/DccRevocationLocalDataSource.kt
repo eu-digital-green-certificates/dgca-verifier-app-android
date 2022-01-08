@@ -32,7 +32,7 @@ interface DccRevocationLocalDataSource {
 
     fun addOrUpdate(dccRevocationPartition: DccRevocationPartition)
 
-    fun getBy(kid: String, firstDccHashByte: Char, secondDccHashByte: Char): DccRevocationPartition?
+    fun getBy(kid: String): List<DccRevocationPartition>
 
     fun remove(dccRevocationPartition: DccRevocationPartition)
 }
