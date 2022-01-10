@@ -96,7 +96,7 @@ class DccRevocationLocalDataSourceTest {
             eq(testDccRevocationPartition.kid)
         )
 
-        val actual = dccRevocationLocalDataSource.getBy(
+        val actual = dccRevocationLocalDataSource.getDccRevocationPartitionListBy(
             testDccRevocationPartition.kid
         )
 
@@ -108,7 +108,7 @@ class DccRevocationLocalDataSourceTest {
 
     @Test
     fun testRemove() {
-        dccRevocationLocalDataSource.remove(testDccRevocationPartition)
+        dccRevocationLocalDataSource.removeDccRevocationPartitionBy(testDccRevocationPartition.pid)
 
         verify(dccRevocationDao).deleteDccRevocationPartitionBy(partitionId = testDccRevocationPartition.pid)
     }
