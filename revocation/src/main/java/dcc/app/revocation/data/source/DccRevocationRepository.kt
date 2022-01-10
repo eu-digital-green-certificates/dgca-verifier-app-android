@@ -22,20 +22,12 @@
 
 package dcc.app.revocation.data.source
 
-import dcc.app.revocation.data.DccRevocationEntry
 import dcc.app.revocation.data.DccRevocationKidMetadata
-import java.time.ZonedDateTime
 
 interface DccRevocationRepository {
     fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata)
 
     fun removeDccRevocationKidMetadataBy(kid: String)
 
-    fun add(kid: String, dccRevocationHash: String, dccRevocationExpirationDate: ZonedDateTime)
-
-    fun add(kid: String, dccRevocationEntry: DccRevocationEntry)
-
     fun contains(kid: String, dccHash: String): Boolean
-
-    fun remove(kid: String, dccHash: String)
 }

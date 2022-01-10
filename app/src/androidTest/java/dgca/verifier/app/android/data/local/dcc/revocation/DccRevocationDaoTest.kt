@@ -82,7 +82,7 @@ internal class DccRevocationDaoTest {
     fun dccRevocationKidMetadataTest() {
         val kid = "a0a0a0"
 
-        assertTrue(dccRevocationDao.getDccRevocationKidMetadataList(kid).isEmpty())
+        assertTrue(dccRevocationDao.getDccRevocationKidMetadataListBy(kid).isEmpty())
 
         val dccRevocationKidSignatureMetadata = DccRevocationKidMetadata(
             kid = kid,
@@ -95,7 +95,7 @@ internal class DccRevocationDaoTest {
 
 
         // Test inserting item with hashType = Signature
-        var list = dccRevocationDao.getDccRevocationKidMetadataList(kid = kid)
+        var list = dccRevocationDao.getDccRevocationKidMetadataListBy(kid = kid)
 
         assertEquals(1, list.size)
         assertEquals(dccRevocationKidSignatureMetadata.toLocal().copy(kidMetadataId = 1), list[0])
@@ -111,7 +111,7 @@ internal class DccRevocationDaoTest {
 
         dccRevocationDao.insert(dccRevocationKidSignatureMetadataNew.toLocal())
 
-        list = dccRevocationDao.getDccRevocationKidMetadataList(kid = kid)
+        list = dccRevocationDao.getDccRevocationKidMetadataListBy(kid = kid)
 
         assertEquals(1, list.size)
         assertEquals(
@@ -130,7 +130,7 @@ internal class DccRevocationDaoTest {
 
         dccRevocationDao.insert(dccRevocationKidCountryCodeUciMetadata.toLocal())
 
-        list = dccRevocationDao.getDccRevocationKidMetadataList(kid = kid)
+        list = dccRevocationDao.getDccRevocationKidMetadataListBy(kid = kid)
 
         assertEquals(2, list.size)
         assertTrue(
@@ -150,7 +150,7 @@ internal class DccRevocationDaoTest {
 
         dccRevocationDao.insert(dccRevocationKidUciMetadata.toLocal())
 
-        list = dccRevocationDao.getDccRevocationKidMetadataList(kid = kid)
+        list = dccRevocationDao.getDccRevocationKidMetadataListBy(kid = kid)
 
         assertEquals(3, list.size)
         assertTrue(list.contains(dccRevocationKidUciMetadata.toLocal().copy(kidMetadataId = 4)))
@@ -159,7 +159,7 @@ internal class DccRevocationDaoTest {
         // Test deleting items by kid
         dccRevocationDao.deleteDccRevocationKidMetadataListBy(kid = kid)
 
-        list = dccRevocationDao.getDccRevocationKidMetadataList(kid = kid)
+        list = dccRevocationDao.getDccRevocationKidMetadataListBy(kid = kid)
         assertTrue(list.isEmpty())
     }
 

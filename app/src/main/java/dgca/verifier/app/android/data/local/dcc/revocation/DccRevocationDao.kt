@@ -33,7 +33,7 @@ interface DccRevocationDao {
     fun insert(dccRevocationKidMetadataLocal: DccRevocationKidMetadataLocal)
 
     @Query("SELECT * FROM dcc_revocation_kid_metadata WHERE kid LIKE :kid")
-    fun getDccRevocationKidMetadataList(kid: String): List<DccRevocationKidMetadataLocal>
+    fun getDccRevocationKidMetadataListBy(kid: String): List<DccRevocationKidMetadataLocal>
 
     @Query("DELETE FROM dcc_revocation_kid_metadata WHERE kid = :kid")
     fun deleteDccRevocationKidMetadataListBy(kid: String)

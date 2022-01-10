@@ -22,17 +22,26 @@
 
 package dcc.app.revocation.data.source.local
 
+import dcc.app.revocation.data.DccRevocationChunk
 import dcc.app.revocation.data.DccRevocationKidMetadata
 import dcc.app.revocation.data.DccRevocationPartition
 
 interface DccRevocationLocalDataSource {
     fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata)
 
+    fun getDccRevocationKidMetadataListBy(kid: String)
+
     fun removeDccRevocationKidMetadataBy(kid: String)
 
     fun addOrUpdate(dccRevocationPartition: DccRevocationPartition)
 
-    fun getBy(kid: String): List<DccRevocationPartition>
+    fun getDccRevocationPartitionListBy(kid: String): List<DccRevocationPartition>
 
-    fun remove(dccRevocationPartition: DccRevocationPartition)
+    fun removeDccRevocationPartitionBy(pid: String)
+
+    fun addOrUpdate(dccRevocationChunk: DccRevocationChunk)
+
+    fun getDccRevocationChunkListBy(kid: String): List<DccRevocationChunk>
+
+    fun removeDccRevocationChunkListBy(cid: String)
 }
