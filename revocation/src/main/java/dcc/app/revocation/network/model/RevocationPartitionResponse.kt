@@ -2,7 +2,7 @@
  *  ---license-start
  *  eu-digital-green-certificates / dcc-revocation-app-android
  *  ---
- *  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
  *  ---
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,36 +17,46 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 28/12/2021, 21:05
+ *  Created by mykhailo.nester on 05/01/2022, 13:30
  */
 
 package dcc.app.revocation.network.model
 
-import com.google.gson.annotations.SerializedName
-
-data class RevocationKIDData(
-
-    @SerializedName("kid")
+data class RevocationPartitionResponse(
+    val id: String,
     val kid: String,
-
-    @SerializedName("settings")
-    val settings: List<RevocationSettings>
+    val x: String,
+    val y: String,
+    val version: String,
+    val expires: String,
+    val meta: ContentMeta
 )
 
-data class RevocationSettings(
-    @SerializedName("mode")
-    val mode: RevocationMode,
-
-    @SerializedName("hashType")
-    val hashType: HashType,
-
-    @SerializedName("tag")
+data class ContentMeta(
     val tag: String,
-
-    @SerializedName("lastUpdated")
-    val lastUpdated: String
+    val content: Content
 )
 
-enum class RevocationMode {
-    COORDINATE, VECTOR, POINT
+data class Content(
+    val hashType: HashType,
+    val chunks: List<Chunks>
+)
+
+enum class HashType {
+    SIGNATURE, UCI, COUNTRYCODEUCI
+}
+
+data class Chunks(
+    val section: String,
+    val chunk: Chunk
+)
+
+data class Chunk(
+    val type: String,
+    val cid: Int,
+    val version: String
+)
+
+enum class ChunkType {
+    HASH, BLOOM
 }
