@@ -22,12 +22,16 @@
 
 package dcc.app.revocation.data.source
 
+import dcc.app.revocation.data.DccRevocationHashType
+import dcc.app.revocation.data.DccRevocationKidMetadata
+import dcc.app.revocation.data.DccRevocationMode
 import dcc.app.revocation.data.source.local.DccRevocationLocalDataSource
 import org.junit.Before
+import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-
+import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
 class DccRevocationRepositoryTest {
@@ -39,5 +43,28 @@ class DccRevocationRepositoryTest {
     @Before
     fun setUp() {
         dccRevocationRepository = DccRevocationRepositoryImpl(dccRevocationLocalDataSource)
+    }
+
+    @Test
+    fun addOrUpdateTest() {
+        val dccRevocationKidMetadata = DccRevocationKidMetadata(
+            kid = "kid",
+            hashType = DccRevocationHashType.SIGNATURE,
+            mode = DccRevocationMode.POINT,
+            tag = "tag"
+        )
+
+        dccRevocationRepository.addOrUpdate(dccRevocationKidMetadata)
+
+        verify(dccRevocationLocalDataSource).addOrUpdate(dccRevocationKidMetadata)
+    }
+
+    @Test
+    fun removeDccRevocationKidMetadataByTest() {
+        val kid = "kid"
+
+        dccRevocationRepository.removeDccRevocationKidMetadataBy(kid)
+
+        verify(dccRevocationLocalDataSource).removeDccRevocationKidMetadataBy(kid)
     }
 }
