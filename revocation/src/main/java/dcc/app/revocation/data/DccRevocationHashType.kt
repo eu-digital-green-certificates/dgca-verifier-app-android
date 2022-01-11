@@ -17,27 +17,11 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 1/3/22, 4:35 PM
+ *  Created by osarapulov on 1/8/22, 10:44 AM
  */
 
-package dgca.verifier.app.android.data.local.dcc.revocation
+package dcc.app.revocation.data
 
-import dcc.app.revocation.data.source.DccRevocationPartition
-
-fun DccRevocationPartitionLocal.fromLocal(): DccRevocationPartition {
-    return DccRevocationPartition(
-        kid = kid,
-        firstDccHashByte = firstDccHashByte,
-        secondDccHashByte = secondDccHashByte,
-        revocationDataBlob = revokedDccsBlob
-    )
-}
-
-fun DccRevocationPartition.toLocal(): DccRevocationPartitionLocal {
-    return DccRevocationPartitionLocal(
-        kid = kid,
-        firstDccHashByte = firstDccHashByte,
-        secondDccHashByte = secondDccHashByte,
-        revokedDccsBlob = revocationDataBlob
-    )
+enum class DccRevocationHashType {
+    SIGNATURE, UCI, COUNTRYCODEUCI
 }

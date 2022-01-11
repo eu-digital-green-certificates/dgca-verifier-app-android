@@ -17,14 +17,14 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 1/3/22, 4:30 PM
+ *  Created by osarapulov on 1/8/22, 10:45 AM
  */
 
-package dcc.app.revocation.data.source
+package dcc.app.revocation.data
 
-data class DccRevocationPartition(
+data class DccRevocationKidMetadata(
     val kid: String,
-    val firstDccHashByte: Char,
-    val secondDccHashByte: Char,
-    val revocationDataBlob: String
+    val hashType: DccRevocationHashType,
+    val mode: DccRevocationMode,
+    val tag: String
 )
