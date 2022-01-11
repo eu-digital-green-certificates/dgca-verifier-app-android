@@ -2,7 +2,7 @@
  *  ---license-start
  *  eu-digital-green-certificates / dcc-revocation-app-android
  *  ---
- *  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
  *  ---
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,12 +17,18 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 24/12/2021, 16:50
+ *  Created by mykhailo.nester on 05/01/2022, 14:02
  */
 
-package dcc.app.revocation.domain.request
+package dcc.app.revocation.network.model
 
-data class ListChunksRequest(
-    val kid:String,
-    val id: String
+data class RevocationChunkResponse(
+    val kid: String,
+    val x: String,
+    val y: String,
+    val cid: String,
+    val type: ChunkType,
+    val version: String,
+    val expires: String,
+    val content: String
 )
