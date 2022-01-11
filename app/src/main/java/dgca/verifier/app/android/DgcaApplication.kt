@@ -65,13 +65,15 @@ class DgcaApplication : Application(), Configuration.Provider {
             }
         }
 
+//        TODO: for test purpose uncomment when finish.
         WorkManager.getInstance(this).apply {
-            schedulePeriodicWorker<ConfigsLoadingWorker>(WORKER_CONFIGS)
-            schedulePeriodicWorker<RulesLoadWorker>(WORKER_RULES)
-            schedulePeriodicWorker<LoadKeysWorker>(WORKER_KEYS)
-            schedulePeriodicWorker<CountriesLoadWorker>(WORKER_COUNTRIES)
-            schedulePeriodicWorker<ValueSetsLoadWorker>(WORKER_VALUESETS)
-            schedulePeriodicWorker<RevocationWorker>(WORKER_REVOCATION)
+//            schedulePeriodicWorker<ConfigsLoadingWorker>(WORKER_CONFIGS)
+//            schedulePeriodicWorker<RulesLoadWorker>(WORKER_RULES)
+//            schedulePeriodicWorker<LoadKeysWorker>(WORKER_KEYS)
+//            schedulePeriodicWorker<CountriesLoadWorker>(WORKER_COUNTRIES)
+//            schedulePeriodicWorker<ValueSetsLoadWorker>(WORKER_VALUESETS)
+//            schedulePeriodicWorker<RevocationWorker>(WORKER_REVOCATION)
+            scheduleOneTimeWorker<RevocationWorker>(WORKER_REVOCATION)
         }
 
         Timber.i("DGCA version ${BuildConfig.VERSION_NAME} is starting")
@@ -81,6 +83,23 @@ class DgcaApplication : Application(), Configuration.Provider {
         this.enqueueUniquePeriodicWork(
             workerId, ExistingPeriodicWorkPolicy.KEEP,
             PeriodicWorkRequestBuilder<T>(1, TimeUnit.DAYS)
+                .setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build()
+                )
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    OneTimeWorkRequest.MAX_BACKOFF_MILLIS,
+                    TimeUnit.MILLISECONDS
+                )
+                .build()
+        )
+
+    private inline fun <reified T : ListenableWorker> WorkManager.scheduleOneTimeWorker(workerId: String) =
+        this.enqueueUniqueWork(
+            workerId, ExistingWorkPolicy.REPLACE,
+            OneTimeWorkRequestBuilder<T>()
                 .setConstraints(
                     Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED)

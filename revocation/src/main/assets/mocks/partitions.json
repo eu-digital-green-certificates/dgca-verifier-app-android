@@ -1,0 +1,32 @@
+{
+  "id": "partitionId1",
+  "kid": "31oKdd=",
+  "x": "a",
+  "y": "2",
+  "version": "1.0",
+  "expires": "2022-02-20 12:20:10.0123",
+  "meta": {
+    "tag": "1.0",
+    "content": {
+      "hashType": "SIGNATURE",
+      "chunks": [
+        {
+          "section": "b",
+          "chunk": {
+            "type": "HASH",
+            "cid": 2999,
+            "version": "1.0"
+          }
+        },
+        {
+          "section": 9,
+          "chunk": {
+            "type": "HASH",
+            "cid": 111,
+            "version": "3.0"
+          }
+        }
+      ]
+    }
+  }
+}

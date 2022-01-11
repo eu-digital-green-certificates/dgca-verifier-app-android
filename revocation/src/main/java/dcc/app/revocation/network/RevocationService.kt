@@ -22,8 +22,9 @@
 
 package dcc.app.revocation.network
 
+import dcc.app.revocation.network.model.RevocationChunkResponse
 import dcc.app.revocation.network.model.RevocationKIDData
-import okhttp3.ResponseBody
+import dcc.app.revocation.network.model.RevocationPartitionResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -42,18 +43,13 @@ interface RevocationService {
     @GET("/{kid}/partitions")
     suspend fun getRevocationListPartitions(
         @Path("kid") kid: String
-    ): Response<ResponseBody>
+    ): Response<RevocationPartitionResponse>
 
-    @GET("/{kid}/partitions/{id}/chunks")
-    suspend fun getRevocationListChunks(
-        @Path("kid") kid: String,
-        @Path("id") id: String
-    ): ResponseBody // TODO: update response model
-
+    @Headers("mock:true")
     @GET("/{kid}/partitions/{id}/chunks/{chunkId}")
     suspend fun getRevocationChunk(
         @Path("kid") kid: String,
         @Path("id") id: String,
-        @Path("chunkId") chunkId: String
-    ): ResponseBody // TODO: update response model
+        @Path("chunkId") chunkId: Int
+    ): Response<RevocationChunkResponse>
 }
