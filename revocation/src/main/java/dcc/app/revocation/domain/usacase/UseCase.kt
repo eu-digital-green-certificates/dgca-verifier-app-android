@@ -65,6 +65,23 @@ abstract class BaseUseCase<Type, Params> constructor(
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
+    open suspend fun execute(
+        params: Params = Any() as Params,
+        onSuccess: (Type) -> Unit = {},
+        onFailure: (ErrorType) -> Unit = {},
+        onComplete: () -> Unit = {},
+    ) {
+        try {
+            onSuccess(invoke(params))
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to execute ${this@BaseUseCase}")
+            onFailure(errorHandler.getError(e))
+        } finally {
+            onComplete()
+        }
+    }
+
     open fun cancel() {
         if (backgroundDeferredJob.isActive) {
             backgroundDeferredJob.cancel()

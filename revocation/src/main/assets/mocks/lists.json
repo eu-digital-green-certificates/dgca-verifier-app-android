@@ -1,10 +1,12 @@
 [
   {
-    "kid": "31oKdd=",
+    "kid": "9cWXDDA52FQ=",
     "settings": [
       {
-        "mode": "coordinate",
-        "tag": "tag0"
+        "mode": "COORDINATE",
+        "hashType": "SIGNATURE",
+        "tag": "",
+        "lastUpdated": "2009-01-01T12:00:00+01:00"
       }
     ]
   }
