@@ -28,12 +28,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dcc.app.revocation.data.source.DccRevocationRepository
+import dcc.app.revocation.domain.getDccSignatureSha256
+import dcc.app.revocation.domain.toSha256HexString
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.model.rules.toRuleValidationResultModels
 import dgca.verifier.app.android.model.toCertificateModel
 import dgca.verifier.app.android.settings.debug.mode.DebugModeState
-import dgca.verifier.app.android.utils.sha256
 import dgca.verifier.app.android.verification.*
 import dgca.verifier.app.android.verification.model.*
 import dgca.verifier.app.decoder.base45.Base45Service
@@ -229,10 +230,7 @@ class VerificationViewModel @Inject constructor(
                     certificateExpired = true
                 }
 
-                val dccHash = code.sha256()
-                if (dccRevocationRepository.contains(kid = base64EncodedKid, dccHash = dccHash)) {
-                    certificateRevoked = true
-                }
+                certificateRevoked = isDCCRevoked(greenCertificateData?.greenCertificate, cose)
 
                 return@forEach
             }
@@ -250,6 +248,19 @@ class VerificationViewModel @Inject constructor(
         )
     }
 
+    private fun isDCCRevoked(greenCertificate: GreenCertificate?, cose: ByteArray): Boolean {
+        greenCertificate ?: return false
+
+        greenCertificate.vaccinations?.firstOrNull()?.let {
+            val uvciSha256 = it.certificateIdentifier.toByteArray().toSha256HexString()
+            val coUvciSha256 = (it.countryOfVaccination + it.certificateIdentifier).toByteArray().toSha256HexString()
+            val signatureSha256 = cose.getDccSignatureSha256()
+
+//            TODO: check lookup mode
+        }
+
+        return true
+    }
 
     private suspend fun GreenCertificateData.validateRules(
         verificationResult: VerificationResult,
