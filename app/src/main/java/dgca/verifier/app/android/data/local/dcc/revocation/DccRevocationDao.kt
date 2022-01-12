@@ -59,4 +59,26 @@ interface DccRevocationDao {
 
     @Query("DELETE FROM dcc_revocation_chunk WHERE cid = :chunkId")
     fun deleteDccRevocationChunkBy(chunkId: String)
+
+    @Query("DELETE FROM dcc_revocation_kid_metadata WHERE kid NOT IN (:kidList)")
+    suspend fun removeOutdatedKidMetadata(kidList: List<String>)
+
+    @Query("DELETE FROM dcc_revocation_partition WHERE kid NOT IN (:kidList)")
+    suspend fun removeOutdatedPartition(kidList: List<String>)
+
+    @Query("DELETE FROM dcc_revocation_chunk WHERE kid NOT IN (:kidList)")
+    suspend fun removeOutdatedChunks(kidList: List<String>)
+
+    @Transaction
+    suspend fun removeOutdatedKidItems(kidList: List<String>) {
+        removeOutdatedKidMetadata(kidList)
+        removeOutdatedPartition(kidList)
+        removeOutdatedChunks(kidList)
+    }
+
+    @Query("SELECT * FROM dcc_revocation_kid_metadata WHERE kid LIKE :kid")
+    suspend fun getDccRevocationKidMetadataBy(kid: String): DccRevocationKidMetadataLocal?
+
+    @Query("DELETE FROM dcc_revocation_chunk WHERE pid = :partitionId AND cid NOT IN (:partitionChunkIds)")
+    suspend fun removeOutdatedPartitionChunks(partitionId: String, partitionChunkIds: List<Int>)
 }

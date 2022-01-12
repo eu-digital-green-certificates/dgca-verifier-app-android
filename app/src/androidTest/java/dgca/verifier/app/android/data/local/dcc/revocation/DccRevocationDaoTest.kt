@@ -28,7 +28,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.fasterxml.jackson.databind.ObjectMapper
-import dcc.app.revocation.data.*
+import dcc.app.revocation.domain.model.*
 import dgca.verifier.app.android.data.local.AppDatabase
 import dgca.verifier.app.android.data.local.dcc.revocation.data.DccRevocationPartitionLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.data.toLocal

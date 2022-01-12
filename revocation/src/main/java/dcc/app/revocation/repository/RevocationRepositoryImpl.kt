@@ -24,10 +24,14 @@ package dcc.app.revocation.repository
 
 import dcc.app.revocation.data.RevocationPreferences
 import dcc.app.revocation.data.containsServerError
+import dcc.app.revocation.data.source.local.DccRevocationLocalDataSource
 import dcc.app.revocation.domain.RevocationRepository
+import dcc.app.revocation.domain.model.DccRevocationKidMetadata
+import dcc.app.revocation.domain.model.DccRevocationPartition
+import dcc.app.revocation.domain.model.RevocationKidData
 import dcc.app.revocation.network.RevocationService
+import dcc.app.revocation.network.mapper.toRevocationKidData
 import dcc.app.revocation.network.model.RevocationChunkResponse
-import dcc.app.revocation.network.model.RevocationKIDData
 import dcc.app.revocation.network.model.RevocationPartitionResponse
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -35,11 +39,12 @@ import javax.inject.Inject
 @Suppress("BlockingMethodInNonBlockingContext")
 class RevocationRepositoryImpl @Inject constructor(
     private val revocationService: RevocationService,
-    private val revocationPreferences: RevocationPreferences
+    private val revocationPreferences: RevocationPreferences,
+    private val dccRevocationLocalDataSource: DccRevocationLocalDataSource
 ) : RevocationRepository {
 
     @Throws(Exception::class)
-    override suspend fun getRevocationLists(): List<RevocationKIDData> {
+    override suspend fun getRevocationLists(): List<RevocationKidData> {
         val eTag = revocationPreferences.eTag ?: ""
         val response = revocationService.getRevocationLists(eTag)
 
@@ -48,7 +53,7 @@ class RevocationRepositoryImpl @Inject constructor(
         }
         revocationPreferences.eTag = response.headers()["If-None-Match"]
 
-        return response.body() ?: emptyList()
+        return response.body()?.map { it.toRevocationKidData() } ?: emptyList()
     }
 
     @Throws(Exception::class)
@@ -59,7 +64,9 @@ class RevocationRepositoryImpl @Inject constructor(
             throw HttpException(response)
         }
 
-//        TODO: store partition to db
+        response.headers()["Last-Modified"]?.let {
+            revocationPreferences.putLastModifiedForKid(kid, it)
+        }
 
         return response.body()
     }
@@ -72,8 +79,28 @@ class RevocationRepositoryImpl @Inject constructor(
             throw HttpException(response)
         }
 
-//        TODO: store chunk to db
-
         return response.body()
+    }
+
+
+    override suspend fun removeOutdatedKidItems(kidList: List<String>) {
+        dccRevocationLocalDataSource.removeOutdatedKidItems(kidList)
+    }
+
+    override suspend fun getMetadataByKid(kid: String): DccRevocationKidMetadata? =
+        dccRevocationLocalDataSource.getDccRevocationKidMetadataBy(kid)
+
+    override suspend fun getLastModifiedForKid(kid: String): String = revocationPreferences.getLastModifiedForKid(kid)
+
+    override suspend fun saveKidMetadata(dccRevocationKidMetadata: DccRevocationKidMetadata) {
+        dccRevocationLocalDataSource.addOrUpdate(dccRevocationKidMetadata)
+    }
+
+    override suspend fun savePartition(partitionData: DccRevocationPartition) {
+        dccRevocationLocalDataSource.addOrUpdate(partitionData)
+    }
+
+    override suspend fun removeOutdatedChunksForPartitionId(partitionId: String, partitionChunkIds: List<Int>) {
+        dccRevocationLocalDataSource.removeOutdatedPartitionChunks(partitionId, partitionChunkIds)
     }
 }

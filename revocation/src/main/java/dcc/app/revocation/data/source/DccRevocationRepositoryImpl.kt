@@ -22,7 +22,7 @@
 
 package dcc.app.revocation.data.source
 
-import dcc.app.revocation.data.DccRevocationKidMetadata
+import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.data.source.local.DccRevocationLocalDataSource
 import javax.inject.Inject
 

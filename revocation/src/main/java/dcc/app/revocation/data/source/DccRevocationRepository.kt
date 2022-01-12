@@ -22,7 +22,7 @@
 
 package dcc.app.revocation.data.source
 
-import dcc.app.revocation.data.DccRevocationKidMetadata
+import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 
 interface DccRevocationRepository {
     fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata)

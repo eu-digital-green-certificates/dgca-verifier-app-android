@@ -20,7 +20,7 @@
  *  Created by osarapulov on 1/8/22, 3:01 PM
  */
 
-package dcc.app.revocation.data
+package dcc.app.revocation.domain.model
 
 enum class DccChunkType {
     HASH,

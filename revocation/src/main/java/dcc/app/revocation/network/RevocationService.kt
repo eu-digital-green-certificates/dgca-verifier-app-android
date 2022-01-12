@@ -23,7 +23,7 @@
 package dcc.app.revocation.network
 
 import dcc.app.revocation.network.model.RevocationChunkResponse
-import dcc.app.revocation.network.model.RevocationKIDData
+import dcc.app.revocation.network.model.RevocationKIDResponse
 import dcc.app.revocation.network.model.RevocationPartitionResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -37,7 +37,7 @@ interface RevocationService {
     @GET("/lists")
     suspend fun getRevocationLists(
         @Header("If-None-Match") eTag: String
-    ): Response<List<RevocationKIDData>>
+    ): Response<List<RevocationKIDResponse>>
 
     @Headers("mock:true")
     @GET("/{kid}/partitions")

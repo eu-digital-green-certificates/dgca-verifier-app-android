@@ -17,11 +17,26 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 1/8/22, 10:44 AM
+ *  Created by mykhailo.nester on 12/01/2022, 12:24
  */
 
-package dcc.app.revocation.data
+package dcc.app.revocation
 
-enum class DccRevocationHashType {
-    SIGNATURE, UCI, COUNTRYCODEUCI
+import timber.log.Timber
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+
+private val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+
+fun String?.parseDate(): OffsetDateTime? {
+    if (isNullOrEmpty()) {
+        return null
+    }
+
+    return try {
+        formatter.parse(this, OffsetDateTime::from)
+    } catch (ex: Exception) {
+        Timber.e("Can't parse date to OffsetDateTime")
+        null
+    }
 }

@@ -17,31 +17,21 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 1/8/22, 10:52 AM
+ *  Created by osarapulov on 1/8/22, 11:57 AM
  */
 
-package dgca.verifier.app.android.data.local.dcc.revocation.data
+package dcc.app.revocation.domain.model
 
-import androidx.room.Entity
-import androidx.room.Index
-import androidx.room.PrimaryKey
-import dcc.app.revocation.domain.model.DccRevocationHashType
-import dcc.app.revocation.domain.model.DccRevocationMode
+import java.time.ZonedDateTime
 
-@Entity(
-    tableName = "dcc_revocation_kid_metadata",
-    indices =[
-        Index(
-            value = ["kid", "hashType"],
-            unique = true
-        )
-    ]
-)
-data class DccRevocationKidMetadataLocal(
-    @PrimaryKey(autoGenerate = true)
-    val kidMetadataId: Long = 0,
+data class DccRevocationPartition(
     val kid: String,
+    val x: Byte?,
+    val y: Byte?,
+    // Partition id
+    val pid: String,
     val hashType: DccRevocationHashType,
-    val mode: DccRevocationMode,
-    val tag: String
+    val version: String,
+    val expiration: ZonedDateTime,
+    val chunks: String
 )

@@ -22,18 +22,34 @@
 
 package dcc.app.revocation.domain
 
+import dcc.app.revocation.domain.model.DccRevocationKidMetadata
+import dcc.app.revocation.domain.model.DccRevocationPartition
+import dcc.app.revocation.domain.model.RevocationKidData
 import dcc.app.revocation.network.model.RevocationChunkResponse
-import dcc.app.revocation.network.model.RevocationKIDData
 import dcc.app.revocation.network.model.RevocationPartitionResponse
 
 interface RevocationRepository {
 
     @Throws(Exception::class)
-    suspend fun getRevocationLists(): List<RevocationKIDData>
+    suspend fun getRevocationLists(): List<RevocationKidData>
 
     @Throws(Exception::class)
     suspend fun getRevocationPartition(kid: String): RevocationPartitionResponse?
 
     @Throws(Exception::class)
     suspend fun getRevocationChunk(kid: String, id: String, chunkId: Int): RevocationChunkResponse?
+
+    @Throws(Exception::class)
+    suspend fun removeOutdatedKidItems(kidList: List<String>)
+
+    @Throws(Exception::class)
+    suspend fun getMetadataByKid(kid: String): DccRevocationKidMetadata?
+
+    suspend fun getLastModifiedForKid(kid: String): String
+
+    suspend fun saveKidMetadata(dccRevocationKidMetadata: DccRevocationKidMetadata)
+
+    suspend fun savePartition(partitionData: DccRevocationPartition)
+
+    suspend fun removeOutdatedChunksForPartitionId(partitionId: String, partitionChunkIds: List<Int>)
 }

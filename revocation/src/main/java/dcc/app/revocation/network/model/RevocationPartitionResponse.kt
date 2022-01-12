@@ -29,7 +29,7 @@ data class RevocationPartitionResponse(
     val y: String,
     val version: String,
     val expires: String,
-    val meta: ContentMeta
+    val meta: List<ContentMeta>
 )
 
 data class ContentMeta(

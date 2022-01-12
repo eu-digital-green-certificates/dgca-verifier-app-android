@@ -22,10 +22,10 @@
 
 package dgca.verifier.app.android.data.local.dcc.revocation
 
-import dcc.app.revocation.data.DccRevocationHashType
-import dcc.app.revocation.data.DccRevocationKidMetadata
-import dcc.app.revocation.data.DccRevocationMode
-import dcc.app.revocation.data.DccRevocationPartition
+import dcc.app.revocation.domain.model.DccRevocationHashType
+import dcc.app.revocation.domain.model.DccRevocationKidMetadata
+import dcc.app.revocation.domain.model.DccRevocationMode
+import dcc.app.revocation.domain.model.DccRevocationPartition
 import dcc.app.revocation.data.source.local.DccRevocationLocalDataSource
 import dgca.verifier.app.android.data.local.dcc.revocation.data.toLocal
 import org.junit.Assert.assertEquals

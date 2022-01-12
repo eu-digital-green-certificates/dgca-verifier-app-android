@@ -20,7 +20,7 @@
  *  Created by osarapulov on 1/8/22, 10:45 AM
  */
 
-package dcc.app.revocation.data
+package dcc.app.revocation.domain.model
 
 data class DccRevocationKidMetadata(
     val kid: String,

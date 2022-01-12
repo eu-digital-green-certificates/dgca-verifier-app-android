@@ -26,7 +26,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import dcc.app.revocation.data.DccRevocationHashType
+import dcc.app.revocation.domain.model.DccRevocationHashType
 import java.time.ZonedDateTime
 
 @Entity(

@@ -24,7 +24,7 @@ package dcc.app.revocation.network.model
 
 import com.google.gson.annotations.SerializedName
 
-data class RevocationKIDData(
+data class RevocationKIDResponse(
 
     @SerializedName("kid")
     val kid: String,

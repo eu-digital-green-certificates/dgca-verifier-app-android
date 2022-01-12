@@ -39,6 +39,8 @@ android {
 
         testInstrumentationRunner Config.androidTestInstrumentation
         consumerProguardFiles Config.proguardConsumerRules
+
+        buildConfigField "String", "REVOCATION_APP_VERSION", "\"1.0.0\""
     }
 
     buildTypes {

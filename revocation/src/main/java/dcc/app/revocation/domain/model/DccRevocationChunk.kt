@@ -17,11 +17,24 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 1/8/22, 2:06 PM
+ *  Created by osarapulov on 1/8/22, 2:03 PM
  */
 
-package dcc.app.revocation.data
+package dcc.app.revocation.domain.model
 
-enum class DccRevocationMode {
-    VECTOR, POINT, COORDINATE
-}
+import java.time.ZonedDateTime
+
+data class DccRevocationChunk (
+    val kid: String,
+    val x: Byte?,
+    val y: Byte?,
+    // Partition id
+    val pid: String,
+    // Chunk id
+    val cid: String,
+    val type: DccChunkType,
+    val version: String,
+    val expiration: ZonedDateTime,
+    val section: String,
+    val content: String
+)

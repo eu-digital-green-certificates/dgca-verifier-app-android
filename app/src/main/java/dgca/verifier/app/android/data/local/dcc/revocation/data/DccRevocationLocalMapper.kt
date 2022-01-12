@@ -22,9 +22,9 @@
 
 package dgca.verifier.app.android.data.local.dcc.revocation.data
 
-import dcc.app.revocation.data.DccRevocationChunk
-import dcc.app.revocation.data.DccRevocationKidMetadata
-import dcc.app.revocation.data.DccRevocationPartition
+import dcc.app.revocation.domain.model.DccRevocationChunk
+import dcc.app.revocation.domain.model.DccRevocationKidMetadata
+import dcc.app.revocation.domain.model.DccRevocationPartition
 
 fun DccRevocationKidMetadata.toLocal(): DccRevocationKidMetadataLocal {
     return DccRevocationKidMetadataLocal(
