@@ -37,4 +37,28 @@ data class DccRevocationChunk (
     val expiration: ZonedDateTime,
     val section: String,
     val content: String
-)
+) {
+    fun contains(hash: String): Boolean {
+        if (content.isBlank()) return false
+
+        var leftIndex = 0
+        var rightIndex = content.length - SHA_256_STRING_LENGTH
+        while (leftIndex <= rightIndex) {
+            val middleIndex = (leftIndex + rightIndex) / 2
+            val middleHash = content.substring(middleIndex, middleIndex + SHA_256_STRING_LENGTH)
+            val diff = middleHash.compareTo(hash)
+            if (diff < 0) {
+                leftIndex = middleIndex + SHA_256_STRING_LENGTH
+            } else if (diff > 0) {
+                rightIndex = middleIndex - SHA_256_STRING_LENGTH
+            } else {
+                return true
+            }
+        }
+        return false
+    }
+
+    companion object {
+        private const val SHA_256_STRING_LENGTH = 64
+    }
+}
