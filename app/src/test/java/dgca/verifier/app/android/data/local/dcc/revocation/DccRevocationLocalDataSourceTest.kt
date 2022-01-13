@@ -26,8 +26,8 @@ import dcc.app.revocation.domain.model.DccRevocationHashType
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.domain.model.DccRevocationMode
 import dcc.app.revocation.domain.model.DccRevocationPartition
-import dcc.app.revocation.data.source.local.DccRevocationLocalDataSource
-import dgca.verifier.app.android.data.local.dcc.revocation.data.toLocal
+import dcc.app.revocation.data.local.DccRevocationLocalDataSource
+import dgca.verifier.app.android.data.local.dcc.revocation.mapper.toLocal
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -47,7 +47,8 @@ class DccRevocationLocalDataSourceTest {
         kid = "a1b2c3",
         hashType = DccRevocationHashType.SIGNATURE,
         mode = DccRevocationMode.POINT,
-        tag = "tag"
+        tag = "tag",
+        lastUpdated = "2009-01-01T12:00:00+01:00"
     )
 
     private val testDccRevocationPartition = DccRevocationPartition(

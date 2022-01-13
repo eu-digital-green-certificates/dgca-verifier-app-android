@@ -17,53 +17,53 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 1/8/22, 12:03 PM
+ *  Created by osarapulov on 1/8/22, 3:04 PM
  */
 
-package dgca.verifier.app.android.data.local.dcc.revocation.data
+package dgca.verifier.app.android.data.local.dcc.revocation.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import dcc.app.revocation.domain.model.DccRevocationHashType
+import dcc.app.revocation.domain.model.DccChunkType
 import java.time.ZonedDateTime
 
 @Entity(
-    tableName = "dcc_revocation_partition",
+    tableName = "dcc_revocation_chunk",
     foreignKeys = [
         ForeignKey(
-            entity = DccRevocationKidMetadataLocal::class,
-            parentColumns = arrayOf("kid", "hashType"),
-            childColumns = arrayOf("kid", "hashType"),
+            entity = DccRevocationPartitionLocal::class,
+            parentColumns = arrayOf("pid", "version"),
+            childColumns = arrayOf("pid", "version"),
             onDelete = ForeignKey.CASCADE
         )
     ],
     indices = [
         Index(
-            value = ["kid", "x", "y", "pid"],
+            value = ["kid", "x", "y", "cid"],
             unique = true
         ),
         Index(
-            value = ["pid"],
+            value = ["cid"],
             unique = true
         ),
-        Index(
-            value = ["pid", "version"],
-            unique = true
-        )
     ]
 )
-data class DccRevocationPartitionLocal(
+data class DccRevocationChunkLocal(
     @PrimaryKey(autoGenerate = true)
-    val partitionId: Long = 0,
+    val chunkId: Long = 0,
     val kid: String,
     val x: Byte?,
     val y: Byte?,
     // Partition id
     val pid: String,
-    val hashType: DccRevocationHashType,
+    // Chunk id
+    val cid: String,
+    val type: DccChunkType,
     val version: String,
     val expiration: ZonedDateTime,
-    val chunks: String
+    val section: String,
+    val content: String
+
 )

@@ -26,5 +26,6 @@ data class DccRevocationKidMetadata(
     val kid: String,
     val hashType: DccRevocationHashType,
     val mode: DccRevocationMode,
-    val tag: String
+    val tag: String,
+    val lastUpdated: String
 )

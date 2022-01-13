@@ -26,8 +26,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dcc.app.revocation.data.source.DccRevocationRepository
-import dcc.app.revocation.data.source.DccRevocationRepositoryImpl
+import dcc.app.revocation.data.local.DccRevocationRepository
+import dcc.app.revocation.data.local.DccRevocationRepositoryImpl
 import dgca.verifier.app.android.data.ConfigRepository
 import dgca.verifier.app.android.data.ConfigRepositoryImpl
 import dgca.verifier.app.android.data.VerifierRepository

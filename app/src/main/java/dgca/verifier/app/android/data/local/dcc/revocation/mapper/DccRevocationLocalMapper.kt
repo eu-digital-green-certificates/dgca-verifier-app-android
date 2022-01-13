@@ -20,8 +20,11 @@
  *  Created by osarapulov on 1/8/22, 10:52 AM
  */
 
-package dgca.verifier.app.android.data.local.dcc.revocation.data
+package dgca.verifier.app.android.data.local.dcc.revocation.mapper
 
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationChunkLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationKidMetadataLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
 import dcc.app.revocation.domain.model.DccRevocationChunk
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.domain.model.DccRevocationPartition
@@ -31,7 +34,8 @@ fun DccRevocationKidMetadata.toLocal(): DccRevocationKidMetadataLocal {
         kid = kid,
         hashType = hashType,
         mode = mode,
-        tag = tag
+        tag = tag,
+        lastUpdated = lastUpdated
     )
 }
 
@@ -40,7 +44,8 @@ fun DccRevocationKidMetadataLocal.fromLocal(): DccRevocationKidMetadata {
         kid = kid,
         hashType = hashType,
         mode = mode,
-        tag = tag
+        tag = tag,
+        lastUpdated = lastUpdated
     )
 }
 

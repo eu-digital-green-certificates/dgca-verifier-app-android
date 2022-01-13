@@ -30,8 +30,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.fasterxml.jackson.databind.ObjectMapper
 import dcc.app.revocation.domain.model.*
 import dgca.verifier.app.android.data.local.AppDatabase
-import dgca.verifier.app.android.data.local.dcc.revocation.data.DccRevocationPartitionLocal
-import dgca.verifier.app.android.data.local.dcc.revocation.data.toLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.mapper.toLocal
 import dgca.verifier.app.android.utils.sha256
 import dgca.verifier.app.engine.UTC_ZONE_ID
 import org.apache.commons.io.IOUtils

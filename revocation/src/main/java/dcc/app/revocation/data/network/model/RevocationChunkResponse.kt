@@ -2,7 +2,7 @@
  *  ---license-start
  *  eu-digital-green-certificates / dcc-revocation-app-android
  *  ---
- *  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
  *  ---
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,36 +17,18 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 28/12/2021, 21:05
+ *  Created by mykhailo.nester on 05/01/2022, 14:02
  */
 
-package dcc.app.revocation.network.model
+package dcc.app.revocation.data.network.model
 
-import com.google.gson.annotations.SerializedName
-
-data class RevocationKIDResponse(
-
-    @SerializedName("kid")
+data class RevocationChunkResponse(
     val kid: String,
-
-    @SerializedName("settings")
-    val settings: List<RevocationSettings>
+    val x: String,
+    val y: String,
+    val cid: String,
+    val type: ChunkType,
+    val version: String,
+    val expires: String,
+    val content: String
 )
-
-data class RevocationSettings(
-    @SerializedName("mode")
-    val mode: RevocationMode,
-
-    @SerializedName("hashType")
-    val hashType: HashType,
-
-    @SerializedName("tag")
-    val tag: String,
-
-    @SerializedName("lastUpdated")
-    val lastUpdated: String
-)
-
-enum class RevocationMode {
-    COORDINATE, VECTOR, POINT
-}

@@ -24,15 +24,15 @@ package dcc.app.revocation.repository
 
 import dcc.app.revocation.data.RevocationPreferences
 import dcc.app.revocation.data.containsServerError
-import dcc.app.revocation.data.source.local.DccRevocationLocalDataSource
+import dcc.app.revocation.data.local.DccRevocationLocalDataSource
+import dcc.app.revocation.data.network.RevocationService
+import dcc.app.revocation.data.network.mapper.toRevocationKidData
+import dcc.app.revocation.data.network.model.RevocationChunkResponse
+import dcc.app.revocation.data.network.model.RevocationPartitionResponse
 import dcc.app.revocation.domain.RevocationRepository
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.domain.model.DccRevocationPartition
 import dcc.app.revocation.domain.model.RevocationKidData
-import dcc.app.revocation.network.RevocationService
-import dcc.app.revocation.network.mapper.toRevocationKidData
-import dcc.app.revocation.network.model.RevocationChunkResponse
-import dcc.app.revocation.network.model.RevocationPartitionResponse
 import retrofit2.HttpException
 import javax.inject.Inject
 
@@ -57,15 +57,11 @@ class RevocationRepositoryImpl @Inject constructor(
     }
 
     @Throws(Exception::class)
-    override suspend fun getRevocationPartition(kid: String): RevocationPartitionResponse? {
-        val response = revocationService.getRevocationListPartitions(kid)
+    override suspend fun getRevocationPartition(tag: String, kid: String): RevocationPartitionResponse? {
+        val response = revocationService.getRevocationListPartitions(tag, kid)
 
         if (response.containsServerError()) {
             throw HttpException(response)
-        }
-
-        response.headers()["Last-Modified"]?.let {
-            revocationPreferences.putLastModifiedForKid(kid, it)
         }
 
         return response.body()
@@ -82,15 +78,12 @@ class RevocationRepositoryImpl @Inject constructor(
         return response.body()
     }
 
-
     override suspend fun removeOutdatedKidItems(kidList: List<String>) {
         dccRevocationLocalDataSource.removeOutdatedKidItems(kidList)
     }
 
     override suspend fun getMetadataByKid(kid: String): DccRevocationKidMetadata? =
         dccRevocationLocalDataSource.getDccRevocationKidMetadataBy(kid)
-
-    override suspend fun getLastModifiedForKid(kid: String): String = revocationPreferences.getLastModifiedForKid(kid)
 
     override suspend fun saveKidMetadata(dccRevocationKidMetadata: DccRevocationKidMetadata) {
         dccRevocationLocalDataSource.addOrUpdate(dccRevocationKidMetadata)

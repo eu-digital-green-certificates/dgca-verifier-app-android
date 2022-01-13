@@ -2,7 +2,7 @@
  *  ---license-start
  *  eu-digital-green-certificates / dcc-revocation-app-android
  *  ---
- *  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
  *  ---
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
  *  Created by osarapulov on 12/27/21, 9:59 PM
  */
 
-package dcc.app.revocation.data.source.local
+package dcc.app.revocation.data.local
 
 import dcc.app.revocation.domain.model.DccRevocationChunk
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata

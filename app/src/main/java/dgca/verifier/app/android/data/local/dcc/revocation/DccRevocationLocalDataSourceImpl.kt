@@ -2,7 +2,7 @@
  *  ---license-start
  *  eu-digital-green-certificates / dcc-revocation-app-android
  *  ---
- *  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
  *  ---
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@
 
 package dgca.verifier.app.android.data.local.dcc.revocation
 
-import dcc.app.revocation.data.source.local.DccRevocationLocalDataSource
+import dcc.app.revocation.data.local.DccRevocationLocalDataSource
 import dcc.app.revocation.domain.model.DccRevocationChunk
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.domain.model.DccRevocationPartition
-import dgca.verifier.app.android.data.local.dcc.revocation.data.fromLocal
-import dgca.verifier.app.android.data.local.dcc.revocation.data.toLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.mapper.fromLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.mapper.toLocal
 
 class DccRevocationLocalDataSourceImpl(private val dccRevocationDao: DccRevocationDao) :
     DccRevocationLocalDataSource {

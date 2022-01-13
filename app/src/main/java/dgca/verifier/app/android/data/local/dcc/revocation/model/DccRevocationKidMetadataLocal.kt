@@ -20,7 +20,7 @@
  *  Created by osarapulov on 1/8/22, 10:52 AM
  */
 
-package dgca.verifier.app.android.data.local.dcc.revocation.data
+package dgca.verifier.app.android.data.local.dcc.revocation.model
 
 import androidx.room.Entity
 import androidx.room.Index
@@ -30,7 +30,7 @@ import dcc.app.revocation.domain.model.DccRevocationMode
 
 @Entity(
     tableName = "dcc_revocation_kid_metadata",
-    indices =[
+    indices = [
         Index(
             value = ["kid", "hashType"],
             unique = true
@@ -38,10 +38,10 @@ import dcc.app.revocation.domain.model.DccRevocationMode
     ]
 )
 data class DccRevocationKidMetadataLocal(
-    @PrimaryKey(autoGenerate = true)
-    val kidMetadataId: Long = 0,
+    @PrimaryKey
     val kid: String,
     val hashType: DccRevocationHashType,
     val mode: DccRevocationMode,
-    val tag: String
+    val tag: String,
+    val lastUpdated: String
 )

@@ -34,8 +34,6 @@ interface RevocationPreferences {
     var eTag: String?
 
     fun clear()
-    fun putLastModifiedForKid(kid: String, lastModified: String)
-    fun getLastModifiedForKid(kid: String): String
 }
 
 /**
@@ -55,12 +53,6 @@ class RevocationPreferencesImpl(context: Context) : RevocationPreferences {
     override fun clear() {
         preferences.value.edit().clear().apply()
     }
-
-    override fun putLastModifiedForKid(kid: String, lastModified: String) {
-        preferences.value.edit { putString(kid, lastModified) }
-    }
-
-    override fun getLastModifiedForKid(kid: String): String = preferences.value.getString(kid, "") ?: ""
 
     companion object {
         private const val USER_PREF = "dcc.revocation.app.pref"

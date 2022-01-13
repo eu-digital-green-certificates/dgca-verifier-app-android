@@ -20,16 +20,16 @@
  *  Created by mykhailo.nester on 11/01/2022, 20:55
  */
 
-package dcc.app.revocation.network.mapper
+package dcc.app.revocation.data.network.mapper
 
 import dcc.app.revocation.domain.model.DccRevocationHashType
 import dcc.app.revocation.domain.model.DccRevocationMode
 import dcc.app.revocation.domain.model.RevocationKidData
 import dcc.app.revocation.domain.model.RevocationSettingsData
-import dcc.app.revocation.network.model.HashType
-import dcc.app.revocation.network.model.RevocationKIDResponse
-import dcc.app.revocation.network.model.RevocationMode
-import dcc.app.revocation.network.model.RevocationSettings
+import dcc.app.revocation.data.network.model.HashType
+import dcc.app.revocation.data.network.model.RevocationKIDResponse
+import dcc.app.revocation.data.network.model.RevocationMode
+import dcc.app.revocation.data.network.model.RevocationSettings
 
 fun RevocationKIDResponse.toRevocationKidData(): RevocationKidData =
     RevocationKidData(

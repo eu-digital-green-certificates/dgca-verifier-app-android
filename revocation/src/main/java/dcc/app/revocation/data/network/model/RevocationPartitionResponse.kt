@@ -20,7 +20,7 @@
  *  Created by mykhailo.nester on 05/01/2022, 13:30
  */
 
-package dcc.app.revocation.network.model
+package dcc.app.revocation.data.network.model
 
 data class RevocationPartitionResponse(
     val id: String,
