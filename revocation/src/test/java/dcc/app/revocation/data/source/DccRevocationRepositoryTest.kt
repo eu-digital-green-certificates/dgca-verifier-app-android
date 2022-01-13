@@ -53,7 +53,7 @@ class DccRevocationRepositoryTest {
             kid = "kid",
             hashType = DccRevocationHashType.SIGNATURE,
             mode = DccRevocationMode.POINT,
-            tag = "tag",
+            expires = "2020",
             lastUpdated = "lastUpdate"
         )
 

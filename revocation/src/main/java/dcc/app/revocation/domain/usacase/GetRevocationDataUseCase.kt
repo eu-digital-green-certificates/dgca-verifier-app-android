@@ -43,6 +43,8 @@ class GetRevocationDataUseCase @Inject constructor(
 ) : BaseUseCase<Unit, Any>(dispatcher, errorHandler) {
 
     override suspend fun invoke(params: Any) {
+        // TODO: remove all from DB that not match SUPPORTED_TAG version
+
         // Load list of KIDs
         val newKidItems = repository.getRevocationLists()
 
