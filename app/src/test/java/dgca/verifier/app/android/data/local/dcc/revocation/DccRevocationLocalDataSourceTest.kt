@@ -47,7 +47,7 @@ class DccRevocationLocalDataSourceTest {
         kid = "a1b2c3",
         hashType = DccRevocationHashType.SIGNATURE,
         mode = DccRevocationMode.POINT,
-        tag = "tag",
+        expires = "2009-01-01T12:00:00+01:00",
         lastUpdated = "2009-01-01T12:00:00+01:00"
     )
 
@@ -55,10 +55,9 @@ class DccRevocationLocalDataSourceTest {
         kid = "a1b2c3",
         x = 'a'.toByte(),
         y = '1'.toByte(),
-        pid = "pid",
-        hashType = DccRevocationHashType.SIGNATURE,
-        version = "version",
-        expiration = ZonedDateTime.now(),
+        z = '2'.toByte(),
+        id = "id",
+        expires = ZonedDateTime.now(),
         chunks = ""
     )
 
@@ -109,8 +108,8 @@ class DccRevocationLocalDataSourceTest {
 
     @Test
     fun testRemove() {
-        dccRevocationLocalDataSource.removeDccRevocationPartitionBy(testDccRevocationPartition.pid)
+        dccRevocationLocalDataSource.removeDccRevocationPartitionBy(testDccRevocationPartition.id)
 
-        verify(dccRevocationDao).deleteDccRevocationPartitionBy(partitionId = testDccRevocationPartition.pid)
+        verify(dccRevocationDao).deleteDccRevocationPartitionBy(partitionId = testDccRevocationPartition.id)
     }
 }
