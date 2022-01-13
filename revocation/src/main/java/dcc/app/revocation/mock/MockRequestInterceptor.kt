@@ -49,12 +49,12 @@ class MockRequestInterceptor(private val context: Context) : Interceptor {
                 .code(200)
             val urlStr =  request.url.toString()
             when {
-                urlStr.contains("chunks") ->
+                urlStr.contains("/chunks/") ->
                     builder.body(context.readFileFromAssets("mocks/chunks.json").toResponseBody(JSON_MEDIA_TYPE))
-                urlStr.contains("lists") ->
-                    builder.body(context.readFileFromAssets("mocks/lists.json").toResponseBody(JSON_MEDIA_TYPE))
-                urlStr.contains("partitions") ->
+                urlStr.contains("/partitions") ->
                     builder.body(context.readFileFromAssets("mocks/partitions.json").toResponseBody(JSON_MEDIA_TYPE))
+                urlStr.contains("/lists") ->
+                    builder.body(context.readFileFromAssets("mocks/lists.json").toResponseBody(JSON_MEDIA_TYPE))
             }
 
             return builder.build()

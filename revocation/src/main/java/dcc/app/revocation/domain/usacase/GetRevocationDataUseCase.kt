@@ -23,8 +23,7 @@
 package dcc.app.revocation.domain.usacase
 
 import com.google.gson.Gson
-import dcc.app.revocation.BuildConfig
-import dcc.app.revocation.data.network.mapper.toDccRevocationHashType
+import dcc.app.revocation.data.network.model.RevocationPartitionResponse
 import dcc.app.revocation.domain.ErrorHandler
 import dcc.app.revocation.domain.RevocationRepository
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata
@@ -33,7 +32,6 @@ import dcc.app.revocation.domain.model.RevocationKidData
 import dcc.app.revocation.domain.model.RevocationSettingsData
 import dcc.app.revocation.parseDate
 import kotlinx.coroutines.CoroutineDispatcher
-import timber.log.Timber
 import javax.inject.Inject
 
 private const val SUPPORTED_TAG = "1.0"
@@ -59,31 +57,27 @@ class GetRevocationDataUseCase @Inject constructor(
     private suspend fun checkKidMetadata(revocationKidData: RevocationKidData) {
         val kid = revocationKidData.kid
         val metadataLocal = repository.getMetadataByKid(kid)
-        val settings = revocationKidData.settings.find { it.tag == SUPPORTED_TAG }
+        val settings = revocationKidData.settings
 
         //  Initial sync. no KID metadata in DB
         if (metadataLocal == null) {
-            settings?.let {
-                saveKidMetadata(kid, it)
-                getPartition(kid)
-            }
+            saveKidMetadata(kid, settings)
+            getPartition(kid)
             return
         }
 
-        settings?.let {
-            // If mode has changed remove all data related to this kid
-            if (it.mode != metadataLocal.mode) {
-                repository.removeOutdatedKidItems(listOf(kid))
-            }
+        // If mode has changed remove all data related to this kid
+        if (settings.mode != metadataLocal.mode) {
+            repository.removeOutdatedKidItems(listOf(kid))
+        }
 
-            // Insert/Update new KID metadata
-            saveKidMetadata(kid, it)
+        // Insert/Update new KID metadata
+        saveKidMetadata(kid, settings)
 
-            // Check the last modified date for each kid. If the last date per kid != received date,
-            // call for the kid /{kid}/partitions to receive the metadata objects. If last date ==  received date, do nothing.
-            if (metadataLocal.lastUpdated != it.lastUpdated) {
-                getPartition(kid)
-            }
+        // Check the last modified date for each kid. If the last date per kid != received date,
+        // call for the kid /{kid}/partitions to receive the metadata objects. If last date ==  received date, do nothing.
+        if (metadataLocal.lastUpdated != settings.lastUpdated) {
+            getPartition(kid)
         }
     }
 
@@ -93,56 +87,59 @@ class GetRevocationDataUseCase @Inject constructor(
                 kid,
                 revocationSettingsData.hashType,
                 revocationSettingsData.mode,
-                revocationSettingsData.tag,
+                revocationSettingsData.expires,
                 revocationSettingsData.lastUpdated
             )
         )
     }
 
     private suspend fun getPartition(kid: String) {
-        Timber.d("Get partition for kid: $kid")
-
-        repository.getRevocationPartition(SUPPORTED_TAG, kid)?.let { partition ->
-            val partitionChunkIds = mutableListOf<Int>()
-
-//            Store the received metadata objects to the Revocation Partition Table. For this purpose filter by the received tag.
-//            If tag == appversion, store the chunks object as binary content. Override existing entries. If tag!=appversion, ignore the object
-//            TODO: update with new partition model
-//            partition.meta.forEach { meta ->
-//                if (meta.tag == BuildConfig.REVOCATION_APP_VERSION) {
-//                    repository.savePartition(
-//                        DccRevocationPartition(
-//                            kid = partition.kid,
-//                            x = partition.x.toByte(),
-//                            y = partition.y.toByte(),
-//                            pid = partition.id,
-//                            hashType = meta.content.hashType.toDccRevocationHashType(),
-//                            version = partition.version,
-//                            expiration = partition.expires.parseDate()?.toZonedDateTime()!!,
-//                            chunks = Gson().toJson(meta.content.chunks) // TODO: or BINARY
-//                        )
-//                    )
-//
-////                  TODO: delete expired partitions/chunks
-//
-//                    partitionChunkIds.addAll(meta.content.chunks.map { it.chunk.cid })
-//                }
-//            }
-
-            // Remove all Chunks which are not more available (delete from .. not in .. ).
-            repository.removeOutdatedChunksForPartitionId(partition.id, partitionChunkIds)
-
-            // Download from /{kid}/partitions/{id}/chunks/{chunkId} the missing chunks
-            partitionChunkIds.forEach {
-                getChunk(kid, partition.id, it)
+        repository.getRevocationPartition(SUPPORTED_TAG, kid)?.let { partitions ->
+            partitions.forEach { partition ->
+                handlePartition(kid, partition)
             }
         }
     }
 
-    private suspend fun getChunk(kid: String, id: String, cid: Int) {
-        Timber.d("Get chunk for kid: $kid, partitionID: $id, cid: $cid")
-        val chunk = repository.getRevocationChunk(kid, id, cid)
+    private suspend fun handlePartition(kid: String, partition: RevocationPartitionResponse) {
+        savePartition(kid, partition)
 
+        // TODO: Optimization - section/chunk validation what changed
+        // it.chunks.section.forEach { key, value ->
+        //      val chunkId = key
+        //      val chunkMap = value.chunks
+        // }
+
+        val partitionChunkIds = mutableListOf<String>()
+
+        // Collect all chunk IDs
+        partition.chunks.keys.forEach { partitionChunkIds.add(it) }
+
+        // Remove all Chunks which are not more available (delete from .. not in .. ).
+        repository.removeOutdatedChunksForPartitionId(partition.id, partitionChunkIds)
+
+        // Download from /{kid}/partitions/{id}/chunks/{chunkId} the missing chunks
+        partitionChunkIds.forEach {
+            getChunk(kid, partition.id, it)
+        }
+    }
+
+    private suspend fun savePartition(kid: String, partition: RevocationPartitionResponse) {
+        repository.savePartition(
+            DccRevocationPartition(
+                id = partition.id,
+                kid = kid,
+                x = partition.x?.toByte(),
+                y = partition.y?.toByte(),
+                z = partition.z?.toByte(),
+                expires = partition.expires.parseDate()?.toZonedDateTime()!!,
+                chunks = Gson().toJson(partition.chunks) // TODO: or BINARY
+            )
+        )
+    }
+
+    private suspend fun getChunk(kid: String, id: String, cid: String) {
+        val chunk = repository.getRevocationChunk(kid, id, cid)
 //        TODO: update chunk in DB
     }
 }

@@ -30,23 +30,19 @@ data class RevocationKIDResponse(
     val kid: String,
 
     @SerializedName("settings")
-    val settings: List<RevocationSettings>
+    val settings: RevocationSettings
 )
 
 data class RevocationSettings(
     @SerializedName("mode")
-    val mode: RevocationMode,
+    val mode: Int,
 
     @SerializedName("hashType")
-    val hashType: HashType,
+    val hashType: Int,
 
-    @SerializedName("tag")
-    val tag: String,
+    @SerializedName("expires")
+    val expires: String,
 
     @SerializedName("lastUpdated")
     val lastUpdated: String
 )
-
-enum class RevocationMode {
-    COORDINATE, VECTOR, POINT
-}

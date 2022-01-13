@@ -24,39 +24,19 @@ package dcc.app.revocation.data.network.model
 
 data class RevocationPartitionResponse(
     val id: String,
-    val kid: String,
-    val x: String,
-    val y: String,
-    val version: String,
+    val x: String?,
+    val y: String?,
+    val z: String?,
     val expires: String,
-    val meta: List<ContentMeta>
-)
-
-data class ContentMeta(
-    val tag: String,
-    val content: Content
-)
-
-data class Content(
-    val hashType: HashType,
-    val chunks: List<Chunks>
-)
-
-enum class HashType {
-    SIGNATURE, UCI, COUNTRYCODEUCI
-}
-
-data class Chunks(
-    val section: String,
-    val chunk: Chunk
+    val chunks: Map<String, Map<String, Chunk>>
 )
 
 data class Chunk(
-    val type: String,
-    val cid: Int,
-    val version: String
+    val type: ChunkType,
+    val version: String,
+    val hash: String
 )
 
 enum class ChunkType {
-    HASH, BLOOM
+    Hash, Bloom
 }

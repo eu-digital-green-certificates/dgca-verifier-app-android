@@ -22,19 +22,19 @@
 
 package dgca.verifier.app.android.data.local.dcc.revocation.mapper
 
-import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationChunkLocal
-import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationKidMetadataLocal
-import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
 import dcc.app.revocation.domain.model.DccRevocationChunk
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.domain.model.DccRevocationPartition
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationChunkLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationKidMetadataLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
 
 fun DccRevocationKidMetadata.toLocal(): DccRevocationKidMetadataLocal {
     return DccRevocationKidMetadataLocal(
         kid = kid,
         hashType = hashType,
         mode = mode,
-        tag = tag,
+        expires = expires,
         lastUpdated = lastUpdated
     )
 }
@@ -44,33 +44,31 @@ fun DccRevocationKidMetadataLocal.fromLocal(): DccRevocationKidMetadata {
         kid = kid,
         hashType = hashType,
         mode = mode,
-        tag = tag,
+        expires = expires,
         lastUpdated = lastUpdated
     )
 }
 
 fun DccRevocationPartitionLocal.fromLocal(): DccRevocationPartition {
     return DccRevocationPartition(
+        id = id,
         kid = kid,
         x = x,
         y = y,
-        pid = pid,
-        hashType = hashType,
-        version = version,
-        expiration = expiration,
+        z = z,
+        expires = expires,
         chunks = chunks
     )
 }
 
 fun DccRevocationPartition.toLocal(): DccRevocationPartitionLocal {
     return DccRevocationPartitionLocal(
+        id = id,
         kid = kid,
         x = x,
         y = y,
-        pid = pid,
-        hashType = hashType,
-        version = version,
-        expiration = expiration,
+        z = z,
+        expires = expires,
         chunks = chunks
     )
 }
@@ -80,7 +78,7 @@ fun DccRevocationChunkLocal.fromLocal(): DccRevocationChunk {
         kid = kid,
         x = x,
         y = y,
-        pid = pid,
+        id = id,
         cid = cid,
         type = type,
         version = version,
@@ -95,7 +93,7 @@ fun DccRevocationChunk.toLocal(): DccRevocationChunkLocal {
         kid = kid,
         x = x,
         y = y,
-        pid = pid,
+        id = id,
         cid = cid,
         type = type,
         version = version,

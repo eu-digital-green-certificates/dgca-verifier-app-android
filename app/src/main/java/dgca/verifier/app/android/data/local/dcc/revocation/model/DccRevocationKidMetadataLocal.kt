@@ -42,6 +42,6 @@ data class DccRevocationKidMetadataLocal(
     val kid: String,
     val hashType: DccRevocationHashType,
     val mode: DccRevocationMode,
-    val tag: String,
+    val expires: String,
     val lastUpdated: String
 )

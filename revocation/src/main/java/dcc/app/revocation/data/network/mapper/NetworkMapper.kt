@@ -22,39 +22,41 @@
 
 package dcc.app.revocation.data.network.mapper
 
+import dcc.app.revocation.data.network.model.RevocationKIDResponse
+import dcc.app.revocation.data.network.model.RevocationSettings
 import dcc.app.revocation.domain.model.DccRevocationHashType
 import dcc.app.revocation.domain.model.DccRevocationMode
 import dcc.app.revocation.domain.model.RevocationKidData
 import dcc.app.revocation.domain.model.RevocationSettingsData
-import dcc.app.revocation.data.network.model.HashType
-import dcc.app.revocation.data.network.model.RevocationKIDResponse
-import dcc.app.revocation.data.network.model.RevocationMode
-import dcc.app.revocation.data.network.model.RevocationSettings
 
 fun RevocationKIDResponse.toRevocationKidData(): RevocationKidData =
     RevocationKidData(
         kid = kid,
-        settings = this.settings.map { it.toSettingsData() }
+        settings = settings.toSettingsData()
     )
 
 fun RevocationSettings.toSettingsData(): RevocationSettingsData =
     RevocationSettingsData(
         mode = mode.toDccRevocationMode(),
         hashType = hashType.toDccRevocationHashType(),
-        tag = tag,
+        expires = expires,
         lastUpdated = lastUpdated
     )
 
-fun RevocationMode.toDccRevocationMode(): DccRevocationMode =
+fun Int.toDccRevocationMode(): DccRevocationMode =
     when (this) {
-        RevocationMode.COORDINATE -> DccRevocationMode.COORDINATE
-        RevocationMode.VECTOR -> DccRevocationMode.VECTOR
-        RevocationMode.POINT -> DccRevocationMode.POINT
+        0 -> DccRevocationMode.COORDINATE
+        1 -> DccRevocationMode.VECTOR
+        2 -> DccRevocationMode.POINT
+        else -> DccRevocationMode.UNKNOWN
     }
 
-fun HashType.toDccRevocationHashType(): DccRevocationHashType =
+fun Int.toDccRevocationHashType(): DccRevocationHashType =
     when (this) {
-        HashType.SIGNATURE -> DccRevocationHashType.SIGNATURE
-        HashType.UCI -> DccRevocationHashType.UCI
-        HashType.COUNTRYCODEUCI -> DccRevocationHashType.COUNTRYCODEUCI
+        0 -> DccRevocationHashType.SIGNATURE
+        1 -> DccRevocationHashType.UCI
+        2 -> DccRevocationHashType.COUNTRYCODEUCI
+        else -> DccRevocationHashType.UNKNOWN
     }
+
+// TODO: review constants later

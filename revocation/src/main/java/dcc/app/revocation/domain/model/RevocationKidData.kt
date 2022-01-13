@@ -24,12 +24,12 @@ package dcc.app.revocation.domain.model
 
 data class RevocationKidData(
     val kid: String,
-    val settings: List<RevocationSettingsData>
+    val settings: RevocationSettingsData
 )
 
 data class RevocationSettingsData(
     val mode: DccRevocationMode,
     val hashType: DccRevocationHashType,
-    val tag: String,
+    val expires: String,
     val lastUpdated: String
 )

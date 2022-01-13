@@ -39,18 +39,20 @@ interface RevocationService {
         @Header("If-None-Match") eTag: String
     ): Response<List<RevocationKIDResponse>>
 
+    //    TODO: If-Match required
     @Headers("mock:true")
     @GET("/{tag}/{kid}/partitions")
     suspend fun getRevocationListPartitions(
         @Path("tag") tag: String,
         @Path("kid") kid: String
-    ): Response<RevocationPartitionResponse>
+    ): Response<List<RevocationPartitionResponse>>
 
+    //    TODO: If-Match required
     @Headers("mock:true")
     @GET("/{kid}/partitions/{id}/chunks/{chunkId}")
     suspend fun getRevocationChunk(
         @Path("kid") kid: String,
         @Path("id") id: String,
-        @Path("chunkId") chunkId: Int
+        @Path("chunkId") chunkId: String
     ): Response<RevocationChunkResponse>
 }

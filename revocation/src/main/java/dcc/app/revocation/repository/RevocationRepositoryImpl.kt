@@ -57,7 +57,7 @@ class RevocationRepositoryImpl @Inject constructor(
     }
 
     @Throws(Exception::class)
-    override suspend fun getRevocationPartition(tag: String, kid: String): RevocationPartitionResponse? {
+    override suspend fun getRevocationPartition(tag: String, kid: String): List<RevocationPartitionResponse>? {
         val response = revocationService.getRevocationListPartitions(tag, kid)
 
         if (response.containsServerError()) {
@@ -68,7 +68,7 @@ class RevocationRepositoryImpl @Inject constructor(
     }
 
     @Throws(Exception::class)
-    override suspend fun getRevocationChunk(kid: String, id: String, chunkId: Int): RevocationChunkResponse? {
+    override suspend fun getRevocationChunk(kid: String, id: String, chunkId: String): RevocationChunkResponse? {
         val response = revocationService.getRevocationChunk(kid, id, chunkId)
 
         if (response.containsServerError()) {
@@ -93,7 +93,7 @@ class RevocationRepositoryImpl @Inject constructor(
         dccRevocationLocalDataSource.addOrUpdate(partitionData)
     }
 
-    override suspend fun removeOutdatedChunksForPartitionId(partitionId: String, partitionChunkIds: List<Int>) {
+    override suspend fun removeOutdatedChunksForPartitionId(partitionId: String, partitionChunkIds: List<String>) {
         dccRevocationLocalDataSource.removeOutdatedPartitionChunks(partitionId, partitionChunkIds)
     }
 }

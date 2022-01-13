@@ -34,8 +34,8 @@ import java.time.ZonedDateTime
     foreignKeys = [
         ForeignKey(
             entity = DccRevocationPartitionLocal::class,
-            parentColumns = arrayOf("pid", "version"),
-            childColumns = arrayOf("pid", "version"),
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("id"),
             onDelete = ForeignKey.CASCADE
         )
     ],
@@ -57,7 +57,7 @@ data class DccRevocationChunkLocal(
     val x: Byte?,
     val y: Byte?,
     // Partition id
-    val pid: String,
+    val id: String,
     // Chunk id
     val cid: String,
     val type: DccChunkType,
@@ -65,5 +65,4 @@ data class DccRevocationChunkLocal(
     val expiration: ZonedDateTime,
     val section: String,
     val content: String
-
 )

@@ -23,5 +23,5 @@
 package dcc.app.revocation.domain.model
 
 enum class DccRevocationHashType {
-    SIGNATURE, UCI, COUNTRYCODEUCI
+    UNKNOWN, SIGNATURE, UCI, COUNTRYCODEUCI
 }

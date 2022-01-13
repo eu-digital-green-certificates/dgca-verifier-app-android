@@ -25,13 +25,11 @@ package dcc.app.revocation.domain.model
 import java.time.ZonedDateTime
 
 data class DccRevocationPartition(
+    val id: String,
     val kid: String,
     val x: Byte?,
     val y: Byte?,
-    // Partition id
-    val pid: String,
-    val hashType: DccRevocationHashType,
-    val version: String,
-    val expiration: ZonedDateTime,
+    val z: Byte?,
+    val expires: ZonedDateTime,
     val chunks: String
 )

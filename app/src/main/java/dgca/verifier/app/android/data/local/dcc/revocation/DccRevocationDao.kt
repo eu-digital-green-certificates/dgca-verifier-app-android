@@ -17,7 +17,7 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 12/27/21, 10:13 PM
+ *  Created by mykhailo.nester on 13/01/2022, 16:49
  */
 
 package dgca.verifier.app.android.data.local.dcc.revocation
@@ -46,7 +46,7 @@ interface DccRevocationDao {
         kid: String
     ): List<DccRevocationPartitionLocal>
 
-    @Query("DELETE FROM dcc_revocation_partition WHERE pid = :partitionId")
+    @Query("DELETE FROM dcc_revocation_partition WHERE id = :partitionId")
     fun deleteDccRevocationPartitionBy(partitionId: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -79,6 +79,6 @@ interface DccRevocationDao {
     @Query("SELECT * FROM dcc_revocation_kid_metadata WHERE kid LIKE :kid")
     suspend fun getDccRevocationKidMetadataBy(kid: String): DccRevocationKidMetadataLocal?
 
-    @Query("DELETE FROM dcc_revocation_chunk WHERE pid = :partitionId AND cid NOT IN (:partitionChunkIds)")
-    suspend fun removeOutdatedPartitionChunks(partitionId: String, partitionChunkIds: List<Int>)
+    @Query("DELETE FROM dcc_revocation_chunk WHERE id = :partitionId AND cid NOT IN (:partitionChunkIds)")
+    suspend fun removeOutdatedPartitionChunks(partitionId: String, partitionChunkIds: List<String>)
 }

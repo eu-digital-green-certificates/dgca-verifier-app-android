@@ -29,7 +29,7 @@ data class DccRevocationChunk (
     val x: Byte?,
     val y: Byte?,
     // Partition id
-    val pid: String,
+    val id: String,
     // Chunk id
     val cid: String,
     val type: DccChunkType,
