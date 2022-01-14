@@ -22,10 +22,12 @@
 
 package dcc.app.revocation.data.source
 
-import dcc.app.revocation.data.DccRevocationHashType
-import dcc.app.revocation.data.DccRevocationKidMetadata
-import dcc.app.revocation.data.DccRevocationMode
-import dcc.app.revocation.data.source.local.DccRevocationLocalDataSource
+import dcc.app.revocation.data.local.DccRevocationLocalDataSource
+import dcc.app.revocation.data.local.DccRevocationRepository
+import dcc.app.revocation.data.local.DccRevocationRepositoryImpl
+import dcc.app.revocation.domain.model.DccRevocationHashType
+import dcc.app.revocation.domain.model.DccRevocationKidMetadata
+import dcc.app.revocation.domain.model.DccRevocationMode
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -51,7 +53,8 @@ class DccRevocationRepositoryTest {
             kid = "kid",
             hashType = DccRevocationHashType.SIGNATURE,
             mode = DccRevocationMode.POINT,
-            tag = "tag"
+            expires = "2020",
+            lastUpdated = "lastUpdate"
         )
 
         dccRevocationRepository.addOrUpdate(dccRevocationKidMetadata)

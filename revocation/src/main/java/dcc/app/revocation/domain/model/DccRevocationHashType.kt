@@ -17,11 +17,11 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 1/8/22, 2:06 PM
+ *  Created by osarapulov on 1/8/22, 10:44 AM
  */
 
-package dcc.app.revocation.data
+package dcc.app.revocation.domain.model
 
-enum class DccRevocationMode {
-    VECTOR, POINT, COORDINATE
+enum class DccRevocationHashType {
+    UNKNOWN, SIGNATURE, UCI, COUNTRYCODEUCI
 }
