@@ -2,7 +2,7 @@
  *  ---license-start
  *  eu-digital-green-certificates / dcc-revocation-app-android
  *  ---
- *  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
  *  ---
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,14 +17,14 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 24/12/2021, 15:23
+ *  Created by mykhailo.nester on 13/01/2022, 12:06
  */
 
-package dcc.app.revocation.network
+package dcc.app.revocation.data.network
 
-import dcc.app.revocation.network.model.RevocationChunkResponse
-import dcc.app.revocation.network.model.RevocationKIDData
-import dcc.app.revocation.network.model.RevocationPartitionResponse
+import dcc.app.revocation.data.network.model.RevocationChunkResponse
+import dcc.app.revocation.data.network.model.RevocationKIDResponse
+import dcc.app.revocation.data.network.model.RevocationPartitionResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -37,19 +37,22 @@ interface RevocationService {
     @GET("/lists")
     suspend fun getRevocationLists(
         @Header("If-None-Match") eTag: String
-    ): Response<List<RevocationKIDData>>
+    ): Response<List<RevocationKIDResponse>>
 
+    //    TODO: If-Match required
     @Headers("mock:true")
-    @GET("/{kid}/partitions")
+    @GET("/{tag}/{kid}/partitions")
     suspend fun getRevocationListPartitions(
+        @Path("tag") tag: String,
         @Path("kid") kid: String
-    ): Response<RevocationPartitionResponse>
+    ): Response<List<RevocationPartitionResponse>>
 
+    //    TODO: If-Match required
     @Headers("mock:true")
     @GET("/{kid}/partitions/{id}/chunks/{chunkId}")
     suspend fun getRevocationChunk(
         @Path("kid") kid: String,
         @Path("id") id: String,
-        @Path("chunkId") chunkId: Int
+        @Path("chunkId") chunkId: String
     ): Response<RevocationChunkResponse>
 }

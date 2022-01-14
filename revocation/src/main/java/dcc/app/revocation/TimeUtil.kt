@@ -2,7 +2,7 @@
  *  ---license-start
  *  eu-digital-green-certificates / dcc-revocation-app-android
  *  ---
- *  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
  *  ---
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,19 +17,26 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 30/12/2021, 17:19
+ *  Created by mykhailo.nester on 12/01/2022, 12:24
  */
 
-package dcc.app.revocation.domain.model
+package dcc.app.revocation
 
-data class PartitionData(
-    val kid: String = "",
-    val x: Byte = 0,
-    val y: Byte = 0,
-    val hashes: List<HashData> = emptyList()
-)
+import timber.log.Timber
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
-data class HashData(
-    val hash: String,
-    val expires: String
-)
+private val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+
+fun String?.parseDate(): OffsetDateTime? {
+    if (isNullOrEmpty()) {
+        return null
+    }
+
+    return try {
+        formatter.parse(this, OffsetDateTime::from)
+    } catch (ex: Exception) {
+        Timber.e("Can't parse date to OffsetDateTime")
+        null
+    }
+}

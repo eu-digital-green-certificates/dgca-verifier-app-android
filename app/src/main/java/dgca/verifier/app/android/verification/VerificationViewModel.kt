@@ -27,7 +27,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dcc.app.revocation.data.source.DccRevocationRepository
+import dcc.app.revocation.data.local.DccRevocationRepository
 import dcc.app.revocation.domain.getDccSignatureSha256
 import dcc.app.revocation.domain.toSha256HexString
 import dgca.verifier.app.android.data.VerifierRepository

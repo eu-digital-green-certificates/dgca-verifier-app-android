@@ -1,13 +1,11 @@
 [
   {
     "kid": "9cWXDDA52FQ=",
-    "settings": [
-      {
-        "mode": "COORDINATE",
-        "hashType": "SIGNATURE",
-        "tag": "",
-        "lastUpdated": "2009-01-01T12:00:00+01:00"
-      }
-    ]
+    "settings": {
+      "mode": 0,
+      "hashType": 0,
+      "expires": "2010-01-01T12:00:00+01:00",
+      "lastUpdated": "2009-01-01T12:00:00+01:00"
+    }
   }
 ]

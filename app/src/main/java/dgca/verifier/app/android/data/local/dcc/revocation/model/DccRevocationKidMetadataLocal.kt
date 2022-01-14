@@ -17,18 +17,31 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 05/01/2022, 14:02
+ *  Created by osarapulov on 1/8/22, 10:52 AM
  */
 
-package dcc.app.revocation.network.model
+package dgca.verifier.app.android.data.local.dcc.revocation.model
 
-data class RevocationChunkResponse(
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import dcc.app.revocation.domain.model.DccRevocationHashType
+import dcc.app.revocation.domain.model.DccRevocationMode
+
+@Entity(
+    tableName = "dcc_revocation_kid_metadata",
+    indices = [
+        Index(
+            value = ["kid", "hashType"],
+            unique = true
+        )
+    ]
+)
+data class DccRevocationKidMetadataLocal(
+    @PrimaryKey
     val kid: String,
-    val x: String,
-    val y: String,
-    val cid: String,
-    val type: ChunkType,
-    val version: String,
+    val hashType: DccRevocationHashType,
+    val mode: DccRevocationMode,
     val expires: String,
-    val content: String
+    val lastUpdated: String
 )

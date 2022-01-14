@@ -1,32 +1,37 @@
-{
-  "id": "partitionId1",
-  "kid": "31oKdd=",
-  "x": "a",
-  "y": "2",
-  "version": "1.0",
-  "expires": "2022-02-20 12:20:10.0123",
-  "meta": {
-    "tag": "1.0",
-    "content": {
-      "hashType": "SIGNATURE",
-      "chunks": [
-        {
-          "section": "b",
-          "chunk": {
-            "type": "HASH",
-            "cid": 2999,
-            "version": "1.0"
-          }
+[
+  {
+    "id": "partitionID",
+    "x": null,
+    "y": null,
+    "z": null,
+    "expires": "2011-01-01T12:00:00+01:00",
+    "chunks": {
+      "0": {
+        "2011-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "34343ffff3333"
         },
-        {
-          "section": 9,
-          "chunk": {
-            "type": "HASH",
-            "cid": 111,
-            "version": "3.0"
-          }
+        "2010-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "40559ffffff"
         }
-      ]
+      },
+      "1": {
+        "20010-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "ff34434444"
+        }
+      },
+      "f": {
+        "2009-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "ff33344eeee"
+        }
+      }
     }
   }
-}
+]

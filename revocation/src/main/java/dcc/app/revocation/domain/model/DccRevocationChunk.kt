@@ -20,7 +20,7 @@
  *  Created by osarapulov on 1/8/22, 2:03 PM
  */
 
-package dcc.app.revocation.data
+package dcc.app.revocation.domain.model
 
 import java.time.ZonedDateTime
 
@@ -29,7 +29,7 @@ data class DccRevocationChunk (
     val x: Byte?,
     val y: Byte?,
     // Partition id
-    val pid: String,
+    val id: String,
     // Chunk id
     val cid: String,
     val type: DccChunkType,

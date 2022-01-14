@@ -39,6 +39,8 @@ android {
 
         testInstrumentationRunner Config.androidTestInstrumentation
         consumerProguardFiles Config.proguardConsumerRules
+
+        buildConfigField "String", "REVOCATION_APP_VERSION", "\"1.0.0\""
     }
 
     buildTypes {
@@ -64,12 +66,15 @@ dependencies {
     implementation Deps.androidx_constraint
     implementation Deps.androidx_worker_ktx
     implementation Deps.kotlinx_coroutines
+    implementation Deps.room_runtime
+    implementation Deps.room_ktx
 
     implementation Deps.hilt
     kapt Deps.hilt_compiler
     implementation Deps.hilt_viewmodel
     implementation Deps.hilt_work
     kapt Deps.androidx_hilt_compiler
+    kapt Deps.room_compiler
 
     implementation Deps.retrofit2
     implementation Deps.log_interceptor
