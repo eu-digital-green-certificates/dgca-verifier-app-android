@@ -2,7 +2,7 @@
  *  ---license-start
  *  eu-digital-green-certificates / dcc-revocation-app-android
  *  ---
- *  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
  *  ---
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,15 +17,15 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 12/27/21, 10:13 PM
+ *  Created by mykhailo.nester on 13/01/2022, 16:49
  */
 
 package dgca.verifier.app.android.data.local.dcc.revocation
 
 import androidx.room.*
-import dgca.verifier.app.android.data.local.dcc.revocation.data.DccRevocationChunkLocal
-import dgca.verifier.app.android.data.local.dcc.revocation.data.DccRevocationKidMetadataLocal
-import dgca.verifier.app.android.data.local.dcc.revocation.data.DccRevocationPartitionLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationChunkLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationKidMetadataLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
 
 @Dao
 interface DccRevocationDao {
@@ -46,7 +46,7 @@ interface DccRevocationDao {
         kid: String
     ): List<DccRevocationPartitionLocal>
 
-    @Query("DELETE FROM dcc_revocation_partition WHERE pid = :partitionId")
+    @Query("DELETE FROM dcc_revocation_partition WHERE id = :partitionId")
     fun deleteDccRevocationPartitionBy(partitionId: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -59,4 +59,26 @@ interface DccRevocationDao {
 
     @Query("DELETE FROM dcc_revocation_chunk WHERE cid = :chunkId")
     fun deleteDccRevocationChunkBy(chunkId: String)
+
+    @Query("DELETE FROM dcc_revocation_kid_metadata WHERE kid NOT IN (:kidList)")
+    suspend fun removeOutdatedKidMetadata(kidList: List<String>)
+
+    @Query("DELETE FROM dcc_revocation_partition WHERE kid NOT IN (:kidList)")
+    suspend fun removeOutdatedPartition(kidList: List<String>)
+
+    @Query("DELETE FROM dcc_revocation_chunk WHERE kid NOT IN (:kidList)")
+    suspend fun removeOutdatedChunks(kidList: List<String>)
+
+    @Transaction
+    suspend fun removeOutdatedKidItems(kidList: List<String>) {
+        removeOutdatedKidMetadata(kidList)
+        removeOutdatedPartition(kidList)
+        removeOutdatedChunks(kidList)
+    }
+
+    @Query("SELECT * FROM dcc_revocation_kid_metadata WHERE kid LIKE :kid")
+    suspend fun getDccRevocationKidMetadataBy(kid: String): DccRevocationKidMetadataLocal?
+
+    @Query("DELETE FROM dcc_revocation_chunk WHERE id = :partitionId AND cid NOT IN (:partitionChunkIds)")
+    suspend fun removeOutdatedPartitionChunks(partitionId: String, partitionChunkIds: List<String>)
 }

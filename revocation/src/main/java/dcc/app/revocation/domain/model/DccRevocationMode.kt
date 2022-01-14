@@ -17,14 +17,11 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 1/8/22, 10:45 AM
+ *  Created by osarapulov on 1/8/22, 2:06 PM
  */
 
-package dcc.app.revocation.data
+package dcc.app.revocation.domain.model
 
-data class DccRevocationKidMetadata(
-    val kid: String,
-    val hashType: DccRevocationHashType,
-    val mode: DccRevocationMode,
-    val tag: String
-)
+enum class DccRevocationMode {
+    UNKNOWN, VECTOR, POINT, COORDINATE
+}

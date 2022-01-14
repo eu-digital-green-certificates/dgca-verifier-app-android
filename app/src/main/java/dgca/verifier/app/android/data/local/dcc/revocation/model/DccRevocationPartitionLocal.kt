@@ -20,13 +20,12 @@
  *  Created by osarapulov on 1/8/22, 12:03 PM
  */
 
-package dgca.verifier.app.android.data.local.dcc.revocation.data
+package dgca.verifier.app.android.data.local.dcc.revocation.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import dcc.app.revocation.data.DccRevocationHashType
 import java.time.ZonedDateTime
 
 @Entity(
@@ -34,36 +33,29 @@ import java.time.ZonedDateTime
     foreignKeys = [
         ForeignKey(
             entity = DccRevocationKidMetadataLocal::class,
-            parentColumns = arrayOf("kid", "hashType"),
-            childColumns = arrayOf("kid", "hashType"),
+            parentColumns = arrayOf("kid"),
+            childColumns = arrayOf("kid"),
             onDelete = ForeignKey.CASCADE
         )
     ],
     indices = [
         Index(
-            value = ["kid", "x", "y", "pid"],
+            value = ["kid", "x", "y", "z", "id"],
             unique = true
         ),
         Index(
-            value = ["pid"],
-            unique = true
-        ),
-        Index(
-            value = ["pid", "version"],
+            value = ["id"],
             unique = true
         )
     ]
 )
 data class DccRevocationPartitionLocal(
-    @PrimaryKey(autoGenerate = true)
-    val partitionId: Long = 0,
+    @PrimaryKey
+    val id: String,
     val kid: String,
     val x: Byte?,
     val y: Byte?,
-    // Partition id
-    val pid: String,
-    val hashType: DccRevocationHashType,
-    val version: String,
-    val expiration: ZonedDateTime,
+    val z: Byte?,
+    val expires: ZonedDateTime,
     val chunks: String
 )

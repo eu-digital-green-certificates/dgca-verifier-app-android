@@ -26,9 +26,9 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import dgca.verifier.app.android.data.local.dcc.revocation.DccRevocationDao
-import dgca.verifier.app.android.data.local.dcc.revocation.data.DccRevocationChunkLocal
-import dgca.verifier.app.android.data.local.dcc.revocation.data.DccRevocationKidMetadataLocal
-import dgca.verifier.app.android.data.local.dcc.revocation.data.DccRevocationPartitionLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationChunkLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationKidMetadataLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
 import dgca.verifier.app.android.data.local.model.Key
 import dgca.verifier.app.android.data.local.rules.Converters
 
