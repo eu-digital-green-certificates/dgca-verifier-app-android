@@ -17,46 +17,18 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 05/01/2022, 13:30
+ *  Created by mykhailo.nester on 05/01/2022, 14:02
  */
 
-package dcc.app.revocation.network.model
+package dcc.app.revocation.data.network.model
 
-data class RevocationPartitionResponse(
-    val id: String,
+data class RevocationChunkResponse(
     val kid: String,
     val x: String,
     val y: String,
+    val cid: String,
+    val type: ChunkType,
     val version: String,
     val expires: String,
-    val meta: ContentMeta
+    val content: String
 )
-
-data class ContentMeta(
-    val tag: String,
-    val content: Content
-)
-
-data class Content(
-    val hashType: HashType,
-    val chunks: List<Chunks>
-)
-
-enum class HashType {
-    SIGNATURE, UCI, COUNTRYCODEUCI
-}
-
-data class Chunks(
-    val section: String,
-    val chunk: Chunk
-)
-
-data class Chunk(
-    val type: String,
-    val cid: Int,
-    val version: String
-)
-
-enum class ChunkType {
-    HASH, BLOOM
-}

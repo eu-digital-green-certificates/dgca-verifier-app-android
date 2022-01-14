@@ -17,13 +17,26 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 1/8/22, 3:01 PM
+ *  Created by mykhailo.nester on 05/01/2022, 13:30
  */
 
-package dcc.app.revocation.data
+package dcc.app.revocation.data.network.model
 
-enum class DccChunkType {
-    HASH,
-    // Bloom Filter
-    BF
+data class RevocationPartitionResponse(
+    val id: String,
+    val x: String?,
+    val y: String?,
+    val z: String?,
+    val expires: String,
+    val chunks: Map<String, Map<String, Chunk>>
+)
+
+data class Chunk(
+    val type: ChunkType,
+    val version: String,
+    val hash: String
+)
+
+enum class ChunkType {
+    Hash, Bloom
 }

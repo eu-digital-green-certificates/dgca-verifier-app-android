@@ -22,7 +22,8 @@
 
 package dcc.app.revocation.data
 
-import junit.framework.TestCase
+import dcc.app.revocation.domain.model.DccChunkType
+import dcc.app.revocation.domain.model.DccRevocationChunk
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -43,9 +44,9 @@ class DccRevocationChunkTest {
 
         val chunk = DccRevocationChunk(
             kid = "kid",
-            x= null,
+            x = null,
             y = null,
-            pid = "pid",
+            id = "id",
             cid = "cid",
             type = DccChunkType.HASH,
             version = "version",

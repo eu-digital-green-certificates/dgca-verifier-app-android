@@ -17,11 +17,28 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 1/8/22, 10:44 AM
+ *  Created by osarapulov on 12/27/21, 9:58 PM
  */
 
-package dcc.app.revocation.data
+package dcc.app.revocation.data.local
 
-enum class DccRevocationHashType {
-    SIGNATURE, UCI, COUNTRYCODEUCI
+import dcc.app.revocation.domain.model.DccRevocationKidMetadata
+import javax.inject.Inject
+
+class DccRevocationRepositoryImpl @Inject constructor(
+    private val dccRevocationLocalDataSource: DccRevocationLocalDataSource
+) : DccRevocationRepository {
+
+    override fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata) {
+        dccRevocationLocalDataSource.addOrUpdate(dccRevocationKidMetadata)
+    }
+
+    override fun removeDccRevocationKidMetadataBy(kid: String) {
+        dccRevocationLocalDataSource.removeDccRevocationKidMetadataBy(kid)
+    }
+
+    override fun contains(kid: String, dccHash: String): Boolean {
+        // TODO
+        return false
+    }
 }

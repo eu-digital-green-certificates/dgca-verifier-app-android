@@ -2,7 +2,7 @@
  *  ---license-start
  *  eu-digital-green-certificates / dcc-revocation-app-android
  *  ---
- *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
+ *  Copyright (C) 2021 T-Systems International GmbH and all other contributors
  *  ---
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,21 +17,32 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 1/8/22, 11:57 AM
+ *  Created by mykhailo.nester on 28/12/2021, 21:05
  */
 
-package dcc.app.revocation.data
+package dcc.app.revocation.data.network.model
 
-import java.time.ZonedDateTime
+import com.google.gson.annotations.SerializedName
 
-data class DccRevocationPartition(
+data class RevocationKIDResponse(
+
+    @SerializedName("kid")
     val kid: String,
-    val x: Byte?,
-    val y: Byte?,
-    // Partition id
-    val pid: String,
-    val hashType: DccRevocationHashType,
-    val version: String,
-    val expiration: ZonedDateTime,
-    val chunks: String
+
+    @SerializedName("settings")
+    val settings: RevocationSettings
+)
+
+data class RevocationSettings(
+    @SerializedName("mode")
+    val mode: Int,
+
+    @SerializedName("hashType")
+    val hashType: Int,
+
+    @SerializedName("expires")
+    val expires: String,
+
+    @SerializedName("lastUpdated")
+    val lastUpdated: String
 )

@@ -30,7 +30,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dcc.app.revocation.BuildConfig
 import dcc.app.revocation.mock.MockRequestInterceptor
-import dcc.app.revocation.network.RevocationService
+import dcc.app.revocation.data.network.RevocationService
 import okhttp3.Cache
 import okhttp3.Call
 import okhttp3.OkHttpClient
@@ -44,7 +44,7 @@ import javax.inject.Qualifier
 import javax.inject.Singleton
 
 private const val CONNECT_TIMEOUT = 30L
-private const val BASE_URL = "https://revocation/"
+private const val BASE_URL = "https://lists.bd8f9a8.kyma.shoot.live.k8s-hana.ondemand.com/"
 
 @InstallIn(SingletonComponent::class)
 @Module
