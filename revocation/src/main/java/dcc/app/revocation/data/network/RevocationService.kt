@@ -25,6 +25,7 @@ package dcc.app.revocation.data.network
 import dcc.app.revocation.data.network.model.RevocationChunkResponse
 import dcc.app.revocation.data.network.model.RevocationKIDResponse
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
+import dcc.app.revocation.data.network.model.RevocationSliceResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -39,20 +40,30 @@ interface RevocationService {
         @Header("If-None-Match") eTag: String
     ): Response<List<RevocationKIDResponse>>
 
-    //    TODO: If-Match required
     @Headers("mock:true")
     @GET("/{tag}/{kid}/partitions")
     suspend fun getRevocationListPartitions(
+        @Header("If-Match") eTag: String,
         @Path("tag") tag: String,
         @Path("kid") kid: String
     ): Response<List<RevocationPartitionResponse>>
 
-    //    TODO: If-Match required
     @Headers("mock:true")
-    @GET("/{kid}/partitions/{id}/chunks/{chunkId}")
+    @GET("/{kid}/partitions/{id}/chunks/{cid}")
     suspend fun getRevocationChunk(
+        @Header("If-Match") eTag: String,
         @Path("kid") kid: String,
         @Path("id") id: String,
-        @Path("chunkId") chunkId: String
+        @Path("cid") chunkId: String
     ): Response<RevocationChunkResponse>
+
+    @Headers("mock:true")
+    @GET("/{kid}/partitions/{id}/chunks/{cid}/slice/{sid}")
+    suspend fun getRevocationChunkSlice(
+        @Header("If-Match") eTag: String,
+        @Path("kid") kid: String,
+        @Path("id") id: String,
+        @Path("cid") chunkId: String,
+        @Path("sid") sliceId: String
+    ): Response<RevocationSliceResponse>
 }

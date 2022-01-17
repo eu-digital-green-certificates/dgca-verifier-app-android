@@ -28,6 +28,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import dcc.app.revocation.domain.ErrorType
 import dcc.app.revocation.domain.usacase.GetRevocationDataUseCase
 import timber.log.Timber
 
@@ -41,7 +42,17 @@ class RevocationWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         Timber.d("Revocation list loading start")
         return try {
-            getRevocationDataUseCase.execute()
+            getRevocationDataUseCase.execute(
+                onFailure = {
+                    when (it) {
+                        ErrorType.PreconditionFailedException -> {
+//                            TODO: remove partition or whole data from DB
+                        }
+                        else -> {}
+                    }
+                }
+            )
+
             Timber.d("Revocation loading succeeded")
             Result.success()
         } catch (error: Throwable) {

@@ -23,6 +23,8 @@
 package dcc.app.revocation.domain.usacase
 
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import dcc.app.revocation.data.network.model.Chunk
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
 import dcc.app.revocation.domain.ErrorHandler
 import dcc.app.revocation.domain.RevocationRepository
@@ -30,8 +32,10 @@ import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.domain.model.DccRevocationPartition
 import dcc.app.revocation.domain.model.RevocationKidData
 import dcc.app.revocation.domain.model.RevocationSettingsData
+import dcc.app.revocation.isEqualTo
 import dcc.app.revocation.parseDate
 import kotlinx.coroutines.CoroutineDispatcher
+import java.lang.reflect.Type
 import javax.inject.Inject
 
 private const val SUPPORTED_TAG = "1.0"
@@ -43,8 +47,6 @@ class GetRevocationDataUseCase @Inject constructor(
 ) : BaseUseCase<Unit, Any>(dispatcher, errorHandler) {
 
     override suspend fun invoke(params: Any) {
-        // TODO: remove all from DB that not match SUPPORTED_TAG version
-
         // Load list of KIDs
         val newKidItems = repository.getRevocationLists()
 
@@ -103,26 +105,60 @@ class GetRevocationDataUseCase @Inject constructor(
         }
     }
 
-    private suspend fun handlePartition(kid: String, partition: RevocationPartitionResponse) {
-        savePartition(kid, partition)
+    private suspend fun handlePartition(kid: String, remotePartition: RevocationPartitionResponse) {
+        val localPartition = repository.getLocalRevocationPartition(remotePartition.id, kid)
 
-        // TODO: Optimization - section/chunk validation what changed
-        // it.chunks.section.forEach { key, value ->
-        //      val chunkId = key
-        //      val chunkMap = value.chunks
-        // }
+        if (localPartition != null) {
+            // Optimization - section/chunk validation what changed
+            compareChunksWithLocal(kid, localPartition, remotePartition)
+        } else {
+            // Initial sync. load all chunks
+            remotePartition.chunks.keys.forEach {
+                // Download from /{kid}/partitions/{id}/chunks/{chunkId} the missing chunks
+                getChunk(kid, remotePartition.id, it)
+            }
+        }
 
-        val partitionChunkIds = mutableListOf<String>()
+        savePartition(kid, remotePartition)
 
-        // Collect all chunk IDs
-        partition.chunks.keys.forEach { partitionChunkIds.add(it) }
-
+        val chunksIds = mutableListOf<String>()
+        remotePartition.chunks.keys.forEach { chunksIds.add(it) }
         // Remove all Chunks which are not more available (delete from .. not in .. ).
-        repository.removeOutdatedChunksForPartitionId(partition.id, partitionChunkIds)
+        repository.removeOutdatedChunksForPartitionId(remotePartition.id, chunksIds)
+    }
 
-        // Download from /{kid}/partitions/{id}/chunks/{chunkId} the missing chunks
-        partitionChunkIds.forEach {
-            getChunk(kid, partition.id, it)
+    private suspend fun compareChunksWithLocal(
+        kid: String,
+        localPartition: DccRevocationPartition,
+        remotePartition: RevocationPartitionResponse
+    ) {
+        val type: Type = object : TypeToken<Map<String, Map<String, Chunk>>>() {}.type
+        val localChunks = Gson().fromJson<Map<String, Map<String, Chunk>>>(localPartition.chunks, type)
+
+        remotePartition.chunks.forEach { (remoteChunkKey, remoteChunkValue) ->
+            val localSlices = localChunks[remoteChunkKey]
+            if (localSlices == null) {
+                // When chunk not found load from api
+                getChunk(kid, remotePartition.id, remoteChunkKey)
+
+            } else {
+                val slicesIds = mutableListOf<String>()
+
+                // Compare slices with local chunk slices
+                remoteChunkValue.forEach { (remoteSliceKey, remoteSliceValue) ->
+                    val localSlice = localSlices[remoteSliceKey]
+                    if (localSlice == null || !localSlice.isEqualTo(remoteSliceValue)) {
+                        slicesIds.add(remoteSliceValue.hash)
+                    }
+                }
+
+                // If less than 50% slices has changed load slices by CIDs otherwise load whole chunk
+                if (slicesIds.size < remoteChunkValue.size / 2) {
+                    getSlices(kid, remotePartition.id, remoteChunkKey, slicesIds)
+                } else {
+                    getChunk(kid, remotePartition.id, remoteChunkKey)
+                }
+            }
         }
     }
 
@@ -135,13 +171,23 @@ class GetRevocationDataUseCase @Inject constructor(
                 y = partition.y?.toByte(),
                 z = partition.z?.toByte(),
                 expires = partition.expires.parseDate()?.toZonedDateTime()!!,
-                chunks = Gson().toJson(partition.chunks) // TODO: or BINARY
+                chunks = Gson().toJson(partition.chunks)
             )
         )
     }
 
     private suspend fun getChunk(kid: String, id: String, cid: String) {
         val chunk = repository.getRevocationChunk(kid, id, cid)
+
+
 //        TODO: update chunk in DB
+    }
+
+    private suspend fun getSlices(kid: String, partitionId: String, cid: String, slicesIds: MutableList<String>) {
+        slicesIds.forEach { sid ->
+            val slice = repository.getSlice(kid, partitionId, cid, sid)
+
+//        TODO: update slice in DB
+        }
     }
 }
