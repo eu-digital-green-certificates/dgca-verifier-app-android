@@ -73,7 +73,7 @@ class DccRevocationLocalDataSourceTest {
     fun testAddOrUpdateDccRevocationKidMetadata() {
         dccRevocationLocalDataSource.addOrUpdate(testDccRevocationKidMetadata)
 
-        verify(dccRevocationDao).insert(testDccRevocationKidMetadata.toLocal())
+        verify(dccRevocationDao).upsert(testDccRevocationKidMetadata.toLocal())
     }
 
     @Test
