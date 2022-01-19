@@ -22,11 +22,11 @@
 
 package dgca.verifier.app.android.data.local.dcc.revocation
 
+import dcc.app.revocation.data.local.DccRevocationLocalDataSource
 import dcc.app.revocation.domain.model.DccRevocationHashType
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.domain.model.DccRevocationMode
 import dcc.app.revocation.domain.model.DccRevocationPartition
-import dcc.app.revocation.data.local.DccRevocationLocalDataSource
 import dgca.verifier.app.android.data.local.dcc.revocation.mapper.toLocal
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -37,7 +37,6 @@ import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
-import java.time.ZonedDateTime
 
 @RunWith(MockitoJUnitRunner::class)
 class DccRevocationLocalDataSourceTest {
@@ -47,7 +46,7 @@ class DccRevocationLocalDataSourceTest {
         kid = "a1b2c3",
         hashType = DccRevocationHashType.SIGNATURE,
         mode = DccRevocationMode.POINT,
-        expires = "2009-01-01T12:00:00+01:00",
+        expires = System.currentTimeMillis(),
         lastUpdated = "2009-01-01T12:00:00+01:00"
     )
 
@@ -57,7 +56,7 @@ class DccRevocationLocalDataSourceTest {
         y = '1'.toByte(),
         z = '2'.toByte(),
         id = "id",
-        expires = ZonedDateTime.now(),
+        expires = System.currentTimeMillis(),
         chunks = ""
     )
 

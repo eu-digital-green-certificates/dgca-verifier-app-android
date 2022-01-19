@@ -47,8 +47,10 @@ class MockRequestInterceptor(private val context: Context) : Interceptor {
                 .protocol(Protocol.HTTP_1_1)
                 .message("")
                 .code(200)
-            val urlStr =  request.url.toString()
+            val urlStr = request.url.toString()
             when {
+                urlStr.contains("/slice/") ->
+                    builder.body(context.readFileFromAssets("mocks/slice.json").toResponseBody(JSON_MEDIA_TYPE))
                 urlStr.contains("/chunks/") ->
                     builder.body(context.readFileFromAssets("mocks/chunks.json").toResponseBody(JSON_MEDIA_TYPE))
                 urlStr.contains("/partitions") ->

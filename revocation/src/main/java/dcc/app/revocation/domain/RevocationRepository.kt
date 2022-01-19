@@ -27,6 +27,7 @@ import dcc.app.revocation.data.network.model.RevocationPartitionResponse
 import dcc.app.revocation.data.network.model.RevocationSliceResponse
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.domain.model.DccRevocationPartition
+import dcc.app.revocation.domain.model.DccRevocationSlice
 import dcc.app.revocation.domain.model.RevocationKidData
 
 interface RevocationRepository {
@@ -35,7 +36,7 @@ interface RevocationRepository {
     suspend fun getRevocationLists(): List<RevocationKidData>
 
     @Throws(Exception::class)
-    suspend fun getRevocationPartition(tag: String, kid: String): List<RevocationPartitionResponse>?
+    suspend fun getRevocationPartitions(tag: String, kid: String): List<RevocationPartitionResponse>?
 
     @Throws(Exception::class)
     suspend fun getRevocationChunk(kid: String, id: String, chunkId: String): RevocationChunkResponse?
@@ -43,18 +44,19 @@ interface RevocationRepository {
     @Throws(Exception::class)
     suspend fun getSlice(kid: String, partitionId: String, cid: String, sid: String): RevocationSliceResponse?
 
-    @Throws(Exception::class)
-    suspend fun removeOutdatedKidItems(kidList: List<String>)
-
-    @Throws(Exception::class)
     suspend fun getMetadataByKid(kid: String): DccRevocationKidMetadata?
+
+    suspend fun getLocalRevocationPartition(partitionId: String, kid: String): DccRevocationPartition?
 
     suspend fun saveKidMetadata(dccRevocationKidMetadata: DccRevocationKidMetadata)
 
     suspend fun savePartition(partitionData: DccRevocationPartition)
 
-    suspend fun removeOutdatedChunksForPartitionId(partitionId: String, partitionChunkIds: List<String>)
+    suspend fun saveSlice(dccRevocationSlice: DccRevocationSlice)
 
-    suspend fun getLocalRevocationPartition(partitionId: String, kid: String): DccRevocationPartition?
+    suspend fun deleteOutdatedKidItems(notInKidList: List<String>)
 
+    suspend fun deleteOutdatedChunksForPartitionId(partitionId: String, partitionChunkIds: List<String>)
+
+    suspend fun deleteExpiredData(currentTime: Long)
 }

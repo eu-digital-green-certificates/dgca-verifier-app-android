@@ -22,7 +22,7 @@
 
 package dcc.app.revocation.domain.model
 
-enum class DccChunkType {
+enum class DccSliceType {
     HASH,
     // Bloom Filter
     BF
