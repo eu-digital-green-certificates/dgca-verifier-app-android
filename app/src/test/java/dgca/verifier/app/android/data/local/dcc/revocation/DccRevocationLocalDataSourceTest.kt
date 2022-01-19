@@ -86,7 +86,7 @@ class DccRevocationLocalDataSourceTest {
     fun testAddOrUpdate() {
         dccRevocationLocalDataSource.addOrUpdate(testDccRevocationPartition)
 
-        verify(dccRevocationDao).insert(testDccRevocationPartition.toLocal())
+        verify(dccRevocationDao).upsert(testDccRevocationPartition.toLocal())
     }
 
     @Test
