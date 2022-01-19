@@ -29,6 +29,7 @@ import dcc.app.revocation.data.network.RevocationService
 import dcc.app.revocation.data.network.mapper.toRevocationKidData
 import dcc.app.revocation.data.network.model.RevocationChunkResponse
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
+import dcc.app.revocation.data.network.model.RevocationSliceResponse
 import dcc.app.revocation.domain.RevocationRepository
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.domain.model.DccRevocationPartition
@@ -51,14 +52,16 @@ class RevocationRepositoryImpl @Inject constructor(
         if (response.containsServerError()) {
             throw HttpException(response)
         }
-        revocationPreferences.eTag = response.headers()["If-None-Match"]
+        revocationPreferences.eTag = response.headers()["eTag"]
 
         return response.body()?.map { it.toRevocationKidData() } ?: emptyList()
     }
 
     @Throws(Exception::class)
     override suspend fun getRevocationPartition(tag: String, kid: String): List<RevocationPartitionResponse>? {
-        val response = revocationService.getRevocationListPartitions(tag, kid)
+        val eTag = revocationPreferences.eTag ?: ""
+        val response = revocationService.getRevocationListPartitions(eTag, tag, kid)
+
 
         if (response.containsServerError()) {
             throw HttpException(response)
@@ -69,7 +72,19 @@ class RevocationRepositoryImpl @Inject constructor(
 
     @Throws(Exception::class)
     override suspend fun getRevocationChunk(kid: String, id: String, chunkId: String): RevocationChunkResponse? {
-        val response = revocationService.getRevocationChunk(kid, id, chunkId)
+        val eTag = revocationPreferences.eTag ?: ""
+        val response = revocationService.getRevocationChunk(eTag, kid, id, chunkId)
+
+        if (response.containsServerError()) {
+            throw HttpException(response)
+        }
+
+        return response.body()
+    }
+
+    override suspend fun getSlice(kid: String, partitionId: String, cid: String, sid: String): RevocationSliceResponse? {
+        val eTag = revocationPreferences.eTag ?: ""
+        val response = revocationService.getRevocationChunkSlice(eTag, kid, partitionId, cid, sid)
 
         if (response.containsServerError()) {
             throw HttpException(response)
@@ -96,4 +111,7 @@ class RevocationRepositoryImpl @Inject constructor(
     override suspend fun removeOutdatedChunksForPartitionId(partitionId: String, partitionChunkIds: List<String>) {
         dccRevocationLocalDataSource.removeOutdatedPartitionChunks(partitionId, partitionChunkIds)
     }
+
+    override suspend fun getLocalRevocationPartition(partitionId: String, kid: String): DccRevocationPartition? =
+        dccRevocationLocalDataSource.getPartitionById(partitionId, kid)
 }

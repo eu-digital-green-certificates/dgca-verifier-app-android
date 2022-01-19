@@ -29,13 +29,12 @@ import dcc.app.revocation.domain.model.DccRevocationPartition
 import dgca.verifier.app.android.data.local.dcc.revocation.mapper.fromLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.mapper.toLocal
 
-class DccRevocationLocalDataSourceImpl(private val dccRevocationDao: DccRevocationDao) :
-    DccRevocationLocalDataSource {
+class DccRevocationLocalDataSourceImpl(private val dccRevocationDao: DccRevocationDao) : DccRevocationLocalDataSource {
+
     override fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata) {
-        dccRevocationDao.insert(dccRevocationKidMetadata.toLocal())
+        dccRevocationDao.upsert(dccRevocationKidMetadata.toLocal())
     }
 
-    // TODO: List not possible
     override fun getDccRevocationKidMetadataListBy(kid: String) {
         dccRevocationDao.getDccRevocationKidMetadataListBy(kid = kid)
     }
@@ -48,12 +47,8 @@ class DccRevocationLocalDataSourceImpl(private val dccRevocationDao: DccRevocati
         dccRevocationDao.insert(dccRevocationPartition.toLocal())
     }
 
-    override fun getDccRevocationPartitionListBy(kid: String): List<DccRevocationPartition> {
-        return dccRevocationDao.getDccRevocationPartitionListBy(kid = kid)
-            .map {
-                it.fromLocal()
-            }
-    }
+    override fun getDccRevocationPartitionListBy(kid: String): List<DccRevocationPartition> =
+        dccRevocationDao.getDccRevocationPartitionListBy(kid = kid).map { it.fromLocal() }
 
     override fun removeDccRevocationPartitionBy(pid: String) {
         dccRevocationDao.deleteDccRevocationPartitionBy(partitionId = pid)
@@ -63,12 +58,8 @@ class DccRevocationLocalDataSourceImpl(private val dccRevocationDao: DccRevocati
         dccRevocationDao.insert(dccRevocationChunk.toLocal())
     }
 
-    override fun getDccRevocationChunkListBy(kid: String): List<DccRevocationChunk> {
-        return dccRevocationDao.getDccRevocationChunkList(kid = kid)
-            .map {
-                it.fromLocal()
-            }
-    }
+    override fun getDccRevocationChunkListBy(kid: String): List<DccRevocationChunk> =
+        dccRevocationDao.getDccRevocationChunkList(kid = kid).map { it.fromLocal() }
 
     override fun removeDccRevocationChunkListBy(cid: String) {
         dccRevocationDao.deleteDccRevocationChunkBy(chunkId = cid)
@@ -84,4 +75,8 @@ class DccRevocationLocalDataSourceImpl(private val dccRevocationDao: DccRevocati
     override suspend fun removeOutdatedPartitionChunks(partitionId: String, partitionChunkIds: List<String>) {
         dccRevocationDao.removeOutdatedPartitionChunks(partitionId, partitionChunkIds)
     }
+
+    override suspend fun getPartitionById(partitionId: String, kid: String): DccRevocationPartition? =
+        dccRevocationDao.getDccRevocationPartitionBy(partitionId, kid)?.fromLocal()
+
 }

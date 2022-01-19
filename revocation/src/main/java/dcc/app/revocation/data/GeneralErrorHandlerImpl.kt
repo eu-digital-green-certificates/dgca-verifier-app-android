@@ -44,6 +44,7 @@ class GeneralErrorHandlerImpl @Inject constructor() : ErrorHandler {
                     HttpURLConnection.HTTP_FORBIDDEN -> ErrorType.AccessDenied
                     HttpURLConnection.HTTP_INTERNAL_ERROR -> ErrorType.InternalServer
                     HttpURLConnection.HTTP_UNAVAILABLE -> ErrorType.ServiceUnavailable
+                    HttpURLConnection.HTTP_PRECON_FAILED -> ErrorType.PreconditionFailedException
                     else -> ErrorType.Unknown
                 }
             }
@@ -54,4 +55,4 @@ class GeneralErrorHandlerImpl @Inject constructor() : ErrorHandler {
     }
 }
 
-fun Response<*>.containsServerError(): Boolean = code() in 500..599
+fun Response<*>.containsServerError(): Boolean = code() in 500..599 || code() == 412
