@@ -50,4 +50,6 @@ interface DccRevocationLocalDataSource {
     suspend fun getDccRevocationKidMetadataBy(kid: String): DccRevocationKidMetadata?
 
     suspend fun removeOutdatedPartitionChunks(partitionId: String, partitionChunkIds: List<String>)
+
+    suspend fun getPartitionById(partitionId: String, kid: String): DccRevocationPartition?
 }
