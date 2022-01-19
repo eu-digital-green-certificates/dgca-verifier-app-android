@@ -24,6 +24,7 @@ package dcc.app.revocation.domain
 
 import dcc.app.revocation.data.network.model.RevocationChunkResponse
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
+import dcc.app.revocation.data.network.model.RevocationSliceResponse
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.domain.model.DccRevocationPartition
 import dcc.app.revocation.domain.model.RevocationKidData
@@ -40,6 +41,9 @@ interface RevocationRepository {
     suspend fun getRevocationChunk(kid: String, id: String, chunkId: String): RevocationChunkResponse?
 
     @Throws(Exception::class)
+    suspend fun getSlice(kid: String, partitionId: String, cid: String, sid: String): RevocationSliceResponse?
+
+    @Throws(Exception::class)
     suspend fun removeOutdatedKidItems(kidList: List<String>)
 
     @Throws(Exception::class)
@@ -50,4 +54,7 @@ interface RevocationRepository {
     suspend fun savePartition(partitionData: DccRevocationPartition)
 
     suspend fun removeOutdatedChunksForPartitionId(partitionId: String, partitionChunkIds: List<String>)
+
+    suspend fun getLocalRevocationPartition(partitionId: String, kid: String): DccRevocationPartition?
+
 }
