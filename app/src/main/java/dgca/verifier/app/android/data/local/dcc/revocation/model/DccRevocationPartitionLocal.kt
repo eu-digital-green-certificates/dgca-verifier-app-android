@@ -26,7 +26,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import java.time.ZonedDateTime
 
 @Entity(
     tableName = "dcc_revocation_partition",
@@ -56,6 +55,6 @@ data class DccRevocationPartitionLocal(
     val x: Byte?,
     val y: Byte?,
     val z: Byte?,
-    val expires: ZonedDateTime,
+    val expires: Long,
     val chunks: String
 )

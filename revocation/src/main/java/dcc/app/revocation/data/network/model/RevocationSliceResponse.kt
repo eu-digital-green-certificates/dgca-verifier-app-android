@@ -22,7 +22,7 @@
 
 package dcc.app.revocation.data.network.model
 
-// TODO: update
+// TODO: update. Gzip binary
 data class RevocationSliceResponse(
-    val test: String
+    val content: String
 )

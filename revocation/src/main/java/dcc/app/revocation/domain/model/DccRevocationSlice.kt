@@ -17,26 +17,21 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 05/01/2022, 13:30
+ *  Created by osarapulov on 1/8/22, 11:57 AM
  */
 
-package dcc.app.revocation.data.network.model
+package dcc.app.revocation.domain.model
 
-data class RevocationPartitionResponse(
-    val id: String,
-    val x: String?,
-    val y: String?,
-    val z: String?,
-    val expires: String,
-    val chunks: Map<String, Map<String, Chunk>>
-)
+import dcc.app.revocation.data.network.model.SliceType
 
-data class Chunk(
+data class DccRevocationSlice(
+    val sid: String,
+    val kid: String,
+    val x: Byte?,
+    val y: Byte?,
+    val cid: String,
     val type: SliceType,
     val version: String,
-    val hash: String
+    val expires: Long,
+    val content: String
 )
-
-enum class SliceType {
-    Hash, Bloom
-}

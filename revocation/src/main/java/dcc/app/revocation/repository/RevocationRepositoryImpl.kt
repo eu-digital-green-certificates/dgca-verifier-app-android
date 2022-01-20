@@ -33,6 +33,7 @@ import dcc.app.revocation.data.network.model.RevocationSliceResponse
 import dcc.app.revocation.domain.RevocationRepository
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.domain.model.DccRevocationPartition
+import dcc.app.revocation.domain.model.DccRevocationSlice
 import dcc.app.revocation.domain.model.RevocationKidData
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -58,7 +59,7 @@ class RevocationRepositoryImpl @Inject constructor(
     }
 
     @Throws(Exception::class)
-    override suspend fun getRevocationPartition(tag: String, kid: String): List<RevocationPartitionResponse>? {
+    override suspend fun getRevocationPartitions(tag: String, kid: String): List<RevocationPartitionResponse>? {
         val eTag = revocationPreferences.eTag ?: ""
         val response = revocationService.getRevocationListPartitions(eTag, tag, kid)
 
@@ -93,12 +94,11 @@ class RevocationRepositoryImpl @Inject constructor(
         return response.body()
     }
 
-    override suspend fun removeOutdatedKidItems(kidList: List<String>) {
-        dccRevocationLocalDataSource.removeOutdatedKidItems(kidList)
-    }
-
     override suspend fun getMetadataByKid(kid: String): DccRevocationKidMetadata? =
         dccRevocationLocalDataSource.getDccRevocationKidMetadataBy(kid)
+
+    override suspend fun getLocalRevocationPartition(partitionId: String, kid: String): DccRevocationPartition? =
+        dccRevocationLocalDataSource.getPartitionById(partitionId, kid)
 
     override suspend fun saveKidMetadata(dccRevocationKidMetadata: DccRevocationKidMetadata) {
         dccRevocationLocalDataSource.addOrUpdate(dccRevocationKidMetadata)
@@ -108,10 +108,21 @@ class RevocationRepositoryImpl @Inject constructor(
         dccRevocationLocalDataSource.addOrUpdate(partitionData)
     }
 
-    override suspend fun removeOutdatedChunksForPartitionId(partitionId: String, partitionChunkIds: List<String>) {
+    override suspend fun saveSlice(dccRevocationSlice: DccRevocationSlice) {
+        dccRevocationLocalDataSource.addOrUpdate(dccRevocationSlice)
+    }
+
+    override suspend fun deleteOutdatedKidItems(notInKidList: List<String>) {
+        dccRevocationLocalDataSource.removeOutdatedKidItems(notInKidList)
+    }
+
+    override suspend fun deleteOutdatedChunksForPartitionId(partitionId: String, partitionChunkIds: List<String>) {
         dccRevocationLocalDataSource.removeOutdatedPartitionChunks(partitionId, partitionChunkIds)
     }
 
-    override suspend fun getLocalRevocationPartition(partitionId: String, kid: String): DccRevocationPartition? =
-        dccRevocationLocalDataSource.getPartitionById(partitionId, kid)
+    override suspend fun deleteExpiredData(currentTime: Long) {
+        dccRevocationLocalDataSource.deleteExpiredKIDs(currentTime)
+        dccRevocationLocalDataSource.deleteExpiredPartitions(currentTime)
+        dccRevocationLocalDataSource.deleteExpireSlices(currentTime)
+    }
 }

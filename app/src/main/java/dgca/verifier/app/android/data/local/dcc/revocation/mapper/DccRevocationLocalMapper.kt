@@ -22,12 +22,12 @@
 
 package dgca.verifier.app.android.data.local.dcc.revocation.mapper
 
-import dcc.app.revocation.domain.model.DccRevocationChunk
-import dcc.app.revocation.domain.model.DccRevocationKidMetadata
-import dcc.app.revocation.domain.model.DccRevocationPartition
+import dcc.app.revocation.data.network.model.SliceType
+import dcc.app.revocation.domain.model.*
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationChunkLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationKidMetadataLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationSliceLocal
 
 fun DccRevocationKidMetadata.toLocal(): DccRevocationKidMetadataLocal {
     return DccRevocationKidMetadataLocal(
@@ -102,3 +102,43 @@ fun DccRevocationChunk.toLocal(): DccRevocationChunkLocal {
         content = content
     )
 }
+
+fun DccRevocationSliceLocal.fromLocal(): DccRevocationSlice {
+    return DccRevocationSlice(
+        sid = sid,
+        kid = kid,
+        x = x,
+        y = y,
+        cid = cid,
+        type = type.toSliceType(),
+        version = version,
+        expires = expires,
+        content = content
+    )
+}
+
+fun DccSliceType.toSliceType(): SliceType =
+    when (this) {
+        DccSliceType.HASH -> SliceType.Hash
+        DccSliceType.BF -> SliceType.Bloom
+    }
+
+fun DccRevocationSlice.toLocal(): DccRevocationSliceLocal {
+    return DccRevocationSliceLocal(
+        sid = sid,
+        kid = kid,
+        x = x,
+        y = y,
+        cid = cid,
+        type = type.toDccSliceType(),
+        version = version,
+        expires = expires,
+        content = content
+    )
+}
+
+fun SliceType.toDccSliceType(): DccSliceType =
+    when (this) {
+        SliceType.Hash -> DccSliceType.HASH
+        SliceType.Bloom -> DccSliceType.BF
+    }
