@@ -22,7 +22,7 @@
 
 package dcc.app.revocation.data
 
-import dcc.app.revocation.domain.model.DccChunkType
+import dcc.app.revocation.domain.model.DccSliceType
 import dcc.app.revocation.domain.model.DccRevocationChunk
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -48,7 +48,7 @@ class DccRevocationChunkTest {
             y = null,
             id = "id",
             cid = "cid",
-            type = DccChunkType.HASH,
+            type = DccSliceType.HASH,
             version = "version",
             expiration = ZonedDateTime.now(),
             section = "section",

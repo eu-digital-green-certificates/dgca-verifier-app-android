@@ -28,10 +28,7 @@ import dcc.app.revocation.data.network.model.Chunk
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
 import dcc.app.revocation.domain.ErrorHandler
 import dcc.app.revocation.domain.RevocationRepository
-import dcc.app.revocation.domain.model.DccRevocationKidMetadata
-import dcc.app.revocation.domain.model.DccRevocationPartition
-import dcc.app.revocation.domain.model.RevocationKidData
-import dcc.app.revocation.domain.model.RevocationSettingsData
+import dcc.app.revocation.domain.model.*
 import dcc.app.revocation.isEqualTo
 import dcc.app.revocation.parseDate
 import kotlinx.coroutines.CoroutineDispatcher
@@ -47,11 +44,14 @@ class GetRevocationDataUseCase @Inject constructor(
 ) : BaseUseCase<Unit, Any>(dispatcher, errorHandler) {
 
     override suspend fun invoke(params: Any) {
+        // Delete expired data
+        repository.deleteExpiredData(System.currentTimeMillis())
+
         // Load list of KIDs
         val newKidItems = repository.getRevocationLists()
 
         // Remove all entities not matching KIDs from list
-        repository.removeOutdatedKidItems(newKidItems.map { it.kid })
+        repository.deleteOutdatedKidItems(newKidItems.map { it.kid })
 
         newKidItems.forEach { revocationKidData ->
             checkKidMetadata(revocationKidData)
@@ -66,13 +66,13 @@ class GetRevocationDataUseCase @Inject constructor(
         //  Initial sync. no KID metadata in DB
         if (metadataLocal == null) {
             saveKidMetadata(kid, settings)
-            getPartition(kid)
+            getPartitions(kid)
             return
         }
 
         // If mode has changed remove all data related to this kid
         if (settings.mode != metadataLocal.mode) {
-            repository.removeOutdatedKidItems(listOf(kid))
+            repository.deleteOutdatedKidItems(listOf(kid))
         }
 
         // Insert/Update new KID metadata
@@ -81,7 +81,7 @@ class GetRevocationDataUseCase @Inject constructor(
         // Check the last modified date for each kid. If the last date per kid != received date,
         // call for the kid /{kid}/partitions to receive the metadata objects. If last date ==  received date, do nothing.
         if (metadataLocal.lastUpdated != settings.lastUpdated) {
-            getPartition(kid)
+            getPartitions(kid)
         }
     }
 
@@ -91,17 +91,15 @@ class GetRevocationDataUseCase @Inject constructor(
                 kid,
                 revocationSettingsData.hashType,
                 revocationSettingsData.mode,
-                revocationSettingsData.expires,
+                revocationSettingsData.expires.parseDate()?.toInstant()?.toEpochMilli() ?: 0,
                 revocationSettingsData.lastUpdated
             )
         )
     }
 
-    private suspend fun getPartition(kid: String) {
-        repository.getRevocationPartition(SUPPORTED_TAG, kid)?.let { partitions ->
-            partitions.forEach { partition ->
-                handlePartition(kid, partition)
-            }
+    private suspend fun getPartitions(kid: String) {
+        repository.getRevocationPartitions(SUPPORTED_TAG, kid)?.forEach { partition ->
+            handlePartition(kid, partition)
         }
     }
 
@@ -113,9 +111,15 @@ class GetRevocationDataUseCase @Inject constructor(
             compareChunksWithLocal(kid, localPartition, remotePartition)
         } else {
             // Initial sync. load all chunks
-            remotePartition.chunks.keys.forEach {
-                // Download from /{kid}/partitions/{id}/chunks/{chunkId} the missing chunks
-                getChunk(kid, remotePartition.id, it)
+
+            // TODO: Use slices for now. Clarify response for chunks
+//            remotePartition.chunks.keys.forEach {
+//                 Download from /{kid}/partitions/{id}/chunks/{chunkId} the missing chunks
+//                getChunk(kid, remotePartition.id, it)
+//            }
+
+            remotePartition.chunks.forEach { (remoteChunkKey, remoteChunkValue) ->
+                getSlices(kid, remotePartition, remoteChunkKey, remoteChunkValue)
             }
         }
 
@@ -124,7 +128,7 @@ class GetRevocationDataUseCase @Inject constructor(
         val chunksIds = mutableListOf<String>()
         remotePartition.chunks.keys.forEach { chunksIds.add(it) }
         // Remove all Chunks which are not more available (delete from .. not in .. ).
-        repository.removeOutdatedChunksForPartitionId(remotePartition.id, chunksIds)
+        repository.deleteOutdatedChunksForPartitionId(remotePartition.id, chunksIds)
     }
 
     private suspend fun compareChunksWithLocal(
@@ -139,24 +143,32 @@ class GetRevocationDataUseCase @Inject constructor(
             val localSlices = localChunks[remoteChunkKey]
             if (localSlices == null) {
                 // When chunk not found load from api
-                getChunk(kid, remotePartition.id, remoteChunkKey)
+
+                // TODO: Use slices for now. Clarify response for chunks
+//                getChunk(kid, remotePartition.id, remoteChunkKey)
+
+                remotePartition.chunks.forEach { (remoteChunkKey, remoteChunkValue) ->
+                    getSlices(kid, remotePartition, remoteChunkKey, remoteChunkValue)
+                }
 
             } else {
-                val slicesIds = mutableListOf<String>()
+                val slices = mutableMapOf<String, Chunk>()
 
                 // Compare slices with local chunk slices
                 remoteChunkValue.forEach { (remoteSliceKey, remoteSliceValue) ->
                     val localSlice = localSlices[remoteSliceKey]
                     if (localSlice == null || !localSlice.isEqualTo(remoteSliceValue)) {
-                        slicesIds.add(remoteSliceValue.hash)
+                        slices[remoteSliceKey] = remoteSliceValue
                     }
                 }
 
                 // If less than 50% slices has changed load slices by CIDs otherwise load whole chunk
-                if (slicesIds.size < remoteChunkValue.size / 2) {
-                    getSlices(kid, remotePartition.id, remoteChunkKey, slicesIds)
+                if (slices.size < remoteChunkValue.size / 2) {
+                    getSlices(kid, remotePartition, remoteChunkKey, slices)
                 } else {
-                    getChunk(kid, remotePartition.id, remoteChunkKey)
+                    // TODO: Use slices for now. Clarify response for chunks
+//                    getChunk(kid, remotePartition.id, remoteChunkKey)
+                    getSlices(kid, remotePartition, remoteChunkKey, slices)
                 }
             }
         }
@@ -170,7 +182,7 @@ class GetRevocationDataUseCase @Inject constructor(
                 x = partition.x?.toByte(),
                 y = partition.y?.toByte(),
                 z = partition.z?.toByte(),
-                expires = partition.expires.parseDate()?.toZonedDateTime()!!,
+                expires = partition.expires.parseDate()?.toInstant()?.toEpochMilli() ?: 0,
                 chunks = Gson().toJson(partition.chunks)
             )
         )
@@ -183,11 +195,28 @@ class GetRevocationDataUseCase @Inject constructor(
 //        TODO: update chunk in DB
     }
 
-    private suspend fun getSlices(kid: String, partitionId: String, cid: String, slicesIds: MutableList<String>) {
-        slicesIds.forEach { sid ->
-            val slice = repository.getSlice(kid, partitionId, cid, sid)
-
-//        TODO: update slice in DB
+    private suspend fun getSlices(
+        kid: String,
+        partition: RevocationPartitionResponse,
+        cid: String,
+        slices: Map<String, Chunk>
+    ) {
+        slices.forEach { (key, value) ->
+            val sid = value.hash
+            val response = repository.getSlice(kid, partition.id, cid, sid)
+            repository.saveSlice(
+                DccRevocationSlice(
+                    sid = sid,
+                    kid = kid,
+                    x = partition.x?.toByte(),
+                    y = partition.y?.toByte(),
+                    cid = cid,
+                    type = value.type,
+                    version = value.version,
+                    expires = key.parseDate()?.toInstant()?.toEpochMilli() ?: 0,
+                    content = response?.content ?: ""
+                )
+            )
         }
     }
 }
