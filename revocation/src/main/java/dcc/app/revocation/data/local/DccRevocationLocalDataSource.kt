@@ -25,31 +25,43 @@ package dcc.app.revocation.data.local
 import dcc.app.revocation.domain.model.DccRevocationChunk
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.domain.model.DccRevocationPartition
+import dcc.app.revocation.domain.model.DccRevocationSlice
 
 interface DccRevocationLocalDataSource {
+
+    suspend fun getDccRevocationKidMetadataBy(kid: String): DccRevocationKidMetadata?
+
+    suspend fun getPartitionById(partitionId: String, kid: String): DccRevocationPartition?
+
     fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata)
+
+    fun addOrUpdate(dccRevocationPartition: DccRevocationPartition)
+
+    suspend fun addOrUpdate(dccRevocationSlice: DccRevocationSlice)
+
+    suspend fun removeOutdatedKidItems(kidList: List<String>)
+
+    suspend fun removeOutdatedPartitionChunks(partitionId: String, partitionChunkIds: List<String>)
+
+    suspend fun deleteExpiredKIDs(currentTime: Long)
+
+    suspend fun deleteExpiredPartitions(currentTime: Long)
+
+    suspend fun deleteExpireSlices(currentTime: Long)
+
+//    TODO: not used below
+
+    fun addOrUpdate(dccRevocationChunk: DccRevocationChunk)
 
     fun getDccRevocationKidMetadataListBy(kid: String)
 
     fun removeDccRevocationKidMetadataBy(kid: String)
 
-    fun addOrUpdate(dccRevocationPartition: DccRevocationPartition)
-
     fun getDccRevocationPartitionListBy(kid: String): List<DccRevocationPartition>
 
     fun removeDccRevocationPartitionBy(pid: String)
 
-    fun addOrUpdate(dccRevocationChunk: DccRevocationChunk)
-
     fun getDccRevocationChunkListBy(kid: String): List<DccRevocationChunk>
 
     fun removeDccRevocationChunkListBy(cid: String)
-
-    suspend fun removeOutdatedKidItems(kidList: List<String>)
-
-    suspend fun getDccRevocationKidMetadataBy(kid: String): DccRevocationKidMetadata?
-
-    suspend fun removeOutdatedPartitionChunks(partitionId: String, partitionChunkIds: List<String>)
-
-    suspend fun getPartitionById(partitionId: String, kid: String): DccRevocationPartition?
 }

@@ -32,7 +32,7 @@ data class DccRevocationChunk (
     val id: String,
     // Chunk id
     val cid: String,
-    val type: DccChunkType,
+    val type: DccSliceType,
     val version: String,
     val expiration: ZonedDateTime,
     val section: String,

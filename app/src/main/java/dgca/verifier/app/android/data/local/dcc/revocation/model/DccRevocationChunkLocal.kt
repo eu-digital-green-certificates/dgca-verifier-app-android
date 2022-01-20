@@ -26,7 +26,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import dcc.app.revocation.domain.model.DccChunkType
+import dcc.app.revocation.domain.model.DccSliceType
 import java.time.ZonedDateTime
 
 @Entity(
@@ -60,7 +60,7 @@ data class DccRevocationChunkLocal(
     val id: String,
     // Chunk id
     val cid: String,
-    val type: DccChunkType,
+    val type: DccSliceType,
     val version: String,
     val expiration: ZonedDateTime,
     val section: String,

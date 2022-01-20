@@ -27,7 +27,7 @@ data class RevocationChunkResponse(
     val x: String,
     val y: String,
     val cid: String,
-    val type: ChunkType,
+    val type: SliceType,
     val version: String,
     val expires: String,
     val content: String

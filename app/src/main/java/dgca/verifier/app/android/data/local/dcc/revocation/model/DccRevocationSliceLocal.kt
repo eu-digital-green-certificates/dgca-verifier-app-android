@@ -17,26 +17,38 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 05/01/2022, 13:30
+ *  Created by osarapulov on 1/8/22, 3:04 PM
  */
 
-package dcc.app.revocation.data.network.model
+package dgca.verifier.app.android.data.local.dcc.revocation.model
 
-data class RevocationPartitionResponse(
-    val id: String,
-    val x: String?,
-    val y: String?,
-    val z: String?,
-    val expires: String,
-    val chunks: Map<String, Map<String, Chunk>>
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import dcc.app.revocation.domain.model.DccSliceType
+
+@Entity(
+    tableName = "dcc_revocation_slice",
+    indices = [
+        Index(
+            value = ["sid", "kid", "x", "y", "cid"],
+            unique = true
+        ),
+        Index(
+            value = ["sid"],
+            unique = true
+        ),
+    ]
 )
-
-data class Chunk(
-    val type: SliceType,
+data class DccRevocationSliceLocal(
+    @PrimaryKey
+    val sid: String,
+    val kid: String,
+    val x: Byte?,
+    val y: Byte?,
+    val cid: String,
+    val type: DccSliceType,
     val version: String,
-    val hash: String
+    val expires: Long,
+    val content: String
 )
-
-enum class SliceType {
-    Hash, Bloom
-}
