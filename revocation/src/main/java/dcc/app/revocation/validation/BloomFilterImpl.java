@@ -5,9 +5,6 @@
 
 package dcc.app.revocation.validation;
 
-import com.google.common.primitives.SignedBytes;
-import com.google.common.primitives.UnsignedBytes;
-
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -18,7 +15,6 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -26,13 +22,13 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLongArray;
 
 public class BloomFilterImpl implements BloomFilter, Serializable {
-    private int numBytes;
+    private int numBits;
     private int numberOfHashes;
-    private float probRate;
-    private AtomicLongArray bits;
+    private double probRate;
+    private AtomicLongArray data;
     private final static int NUM_BITS = 8;
-    private final static int DATA_OFFSET = 6;
-//    @Serial
+    private final static byte NUM_BYTES = Long.BYTES;
+    //    @Serial
     private static final long serialVersionUID = 7526472295622776147L;
 
     public BloomFilterImpl(InputStream inputStream) {
@@ -45,53 +41,62 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
         if (numberOfHashes == 0) {
             throw new IllegalArgumentException("numberOfHashes cannot be 0");
         }
-        this.numBytes = (size * NUM_BITS);
+
+        size = (size / NUM_BYTES) + (size % NUM_BYTES);
+        this.numBits = ((size / NUM_BYTES) + (size % NUM_BYTES)) * (NUM_BITS * NUM_BYTES);
         this.numberOfHashes = numberOfHashes;
-        // p = pow(1 - exp(-k / (m / n)), k)
-        this.probRate = (float) Math.pow(1 - Math.exp(-numberOfHashes / ((this.numBytes / NUM_BITS) / this.numBytes)), numberOfHashes);
-        this.bits = new AtomicLongArray(this.numBytes);
+        this.probRate = (float) Math.pow(1 - Math.exp(-numberOfHashes / (float) ((float) (this.numBits / NUM_BITS) / this.numBits)), numberOfHashes);
+        this.data = new AtomicLongArray(size);
     }
 
-    public BloomFilterImpl(int numberOfElements, int numberOfHashes, float probRate) {
+    public BloomFilterImpl(int numberOfElements, int numberOfHashes, double probRate) {
         super();
         if (numberOfElements == 0 || numberOfHashes == 0 || probRate > 1 || probRate == 0) {
             throw new IllegalArgumentException("numberOfElements != 0, numberOfHashes != 0, probRate <= 1");
         }
         // n: numberOfElements
         // m: numberOfBits -> ceil((n * log(p)) / log(1 / pow(2, log(2))));
-        this.numBytes = (int) (Math.ceil((numberOfElements * Math.log(probRate)) / Math.log(1 / Math.pow(2, Math.log(2)))));
+        this.numBits = (int) (Math.ceil((numberOfElements * Math.log(probRate)) / Math.log(1 / Math.pow(2, Math.log(2)))));
+
+        int bytes = (this.numBits / NUM_BITS) + 1;
+        int size = (bytes / NUM_BYTES) + (bytes % NUM_BYTES);
+
         this.numberOfHashes = numberOfHashes;
         this.probRate = probRate;
-        this.bits = new AtomicLongArray(this.numBytes);
+        this.data = new AtomicLongArray(size);
     }
 
-    public AtomicLongArray getBits() {
-        return bits;
+    public AtomicLongArray getData() {
+        return data;
     }
 
     @Override
     public void add(byte[] element) throws NoSuchAlgorithmException, IOException {
         for (int i = 0; i < this.numberOfHashes; i++) {
-            BigInteger index = this.calcInternal(element, i);
+            int index = this.calcIndex(element, i, this.numBits).intValue();
             System.out.println("INDEX: " + index);
-            this.bits.set(index.intValue(), 0x1);
+            int bytepos = index / (NUM_BYTES * NUM_BITS);
+            long pattern = Long.MIN_VALUE >>> index - 1;
+            this.data.set(bytepos, this.data.get(bytepos) | pattern);
         }
     }
 
     @Override
     public boolean contains(byte[] element) throws NoSuchAlgorithmException, IOException {
         for (int i = 0; i < this.numberOfHashes; i++) {
-            BigInteger index = this.calcInternal(element, i);
-            if (this.bits.get(index.intValue()) == 0x1) {
+            int index = this.calcIndex(element, i, this.numBits).intValue();
+            int bytepos = index / (NUM_BYTES * NUM_BITS);
+            long pattern = Long.MIN_VALUE >>> index - 1;
+            if ((this.data.get(bytepos) & pattern) == pattern) {
                 return true;
             }
         }
         return false;
     }
 
-    private BigInteger calcInternal(byte[] element, int i) throws NoSuchAlgorithmException, IOException {
+    public BigInteger calcIndex(byte[] element, int i, long bits) throws NoSuchAlgorithmException, IOException {
         BigInteger bi = new BigInteger(this.hash(element, (char) i));
-        return bi.mod(BigInteger.valueOf(this.numBytes));
+        return bi.mod(BigInteger.valueOf(bits));
     }
 
     private byte[] hash(byte[] toHash, char seed) throws NoSuchAlgorithmException, IOException {
@@ -121,32 +126,25 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
         // k = 1 (numberOfHashes), p = 4 (probRate),
         // 0 = k, 1 = p, 5 = filter
         DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
-
-        dataOutputStream.write(new byte[]{UnsignedBytes.checkedCast(this.numberOfHashes)}, 0, 1);
-        dataOutputStream.write(new byte[]{SignedBytes.checkedCast((long) this.probRate)}, 1, 4);
-        dataOutputStream.write(new byte[]{UnsignedBytes.checkedCast(this.getBits().length())}, 5, 1);
-        // dataOutputStream.writeInt(this.numberOfHashes);
-        // dataOutputStream.write(UnsignedBytes.checkedCast(((long) this.probRate)));
-        // dataOutputStream.write(this.getBits().toString().getBytes(StandardCharsets.UTF_8));
-        dataOutputStream.write(this.getBits().toString().getBytes(StandardCharsets.UTF_8),
-                DATA_OFFSET, this.getBits().length());
-        /*
-        for (int i = 0; i < this.getBits().length(); i++) {
-            dataOutputStream.writeLong(this.getBits().get(i));
+        dataOutputStream.writeInt(this.numberOfHashes);
+        dataOutputStream.writeDouble(this.probRate);
+        dataOutputStream.writeInt(this.getData().length());
+        for (int i = 0; i < this.getData().length(); i++) {
+            dataOutputStream.writeLong(this.getData().get(i));
         }
-        */
+
     }
 
     private void readFromStream(DataInputStream dis) {
         try {
-            this.numberOfHashes = dis.read(new byte[1]);
-            this.probRate = dis.read(new byte[4]);
-            int dataLength = dis.read(new byte[1]);
+            this.numberOfHashes = dis.readInt();
+            this.probRate = dis.readDouble();
+            int dataLength = dis.readInt();
             long[] data = new long[dataLength];
             for (int i = 0; i < dataLength; i++) {
-                data[i] = dis.read();
+                data[i] = dis.readLong();
             }
-            this.bits = new AtomicLongArray(data);
+            this.data = new AtomicLongArray(data);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -201,7 +199,7 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
     }
 
     public int hashCode() {
-        return Objects.hashCode(new Object[]{this.numBytes, this.numberOfHashes, this.getBits()});
+        return Objects.hashCode(new Object[]{this.numBits, this.numberOfHashes, this.getData()});
     }
 
     private void readObject(

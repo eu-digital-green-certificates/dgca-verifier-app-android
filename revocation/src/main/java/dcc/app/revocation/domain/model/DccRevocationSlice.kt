@@ -29,6 +29,7 @@ data class DccRevocationSlice(
     val kid: String,
     val x: Char?,
     val y: Char?,
+    val z: Char?,
     val cid: String,
     val type: SliceType,
     val version: String,

@@ -44,7 +44,7 @@ class IsDccRevokedUseCase @Inject constructor(
         val kid = params.kid
         val kidMetadata = repository.getMetadataByKid(kid)
         kidMetadata ?: return false
-
+//  TODO: use hashType
         val mode = kidMetadata.mode
         val uvciSha256 = params.uvciSha256
         val coUvciSha256 = params.coUvciSha256
@@ -62,6 +62,7 @@ class IsDccRevokedUseCase @Inject constructor(
 
         var x: Char? = null
         var y: Char? = null
+        var z: Char? = null
         val cid: Char
 
         when (mode) {
@@ -76,16 +77,17 @@ class IsDccRevokedUseCase @Inject constructor(
                 cid = hash[2]
                 x = hash[0]
                 y = hash[1]
+                z = hash[2]
             }
             DccRevocationMode.UNKNOWN -> return false
         }
 
-        val validationData = getValidationData(kid, x, y, cid)
+        val validationData = getValidationData(kid, x, y, z, cid)
         return contains(hash, validationData)
     }
 
-    private suspend fun getValidationData(kid: String, x: Char?, y: Char?, cid: Char): ValidationData? {
-        val partition = repository.getRevocationPartition(kid, x, y)
+    private suspend fun getValidationData(kid: String, x: Char?, y: Char?, z: Char?, cid: Char): ValidationData? {
+        val partition = repository.getRevocationPartition(kid, x, y, z)
         val chunks = partition?.chunks ?: return null
 
         val type: Type = object : TypeToken<Map<String, Map<String, Slice>>>() {}.type
@@ -95,15 +97,14 @@ class IsDccRevokedUseCase @Inject constructor(
         val hashList = mutableListOf<String>()
 
         val slices = localChunks[cid.toString()]
-        slices?.values?.forEach { slice ->
-            repository.getChunkSlices(slice.hash, kid, x, y, cid)?.let {
+        slices?.values?.map { it.hash }?.let { sliceIds ->
+            repository.getChunkSlices(sliceIds, kid, x, y, z, cid)?.let {
                 when (it.type) {
                     SliceType.Hash -> hashList.add(it.content)
                     SliceType.Bloom -> bloomFilterList.add(it.content)
                 }
             }
         }
-
 
         return ValidationData(bloomFilterList, hashList)
     }

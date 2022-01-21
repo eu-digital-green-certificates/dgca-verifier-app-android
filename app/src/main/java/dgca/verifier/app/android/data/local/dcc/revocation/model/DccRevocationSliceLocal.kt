@@ -31,7 +31,7 @@ import dcc.app.revocation.domain.model.DccSliceType
     tableName = "dcc_revocation_slice",
     indices = [
         Index(
-            value = ["sid", "kid", "x", "y", "cid"],
+            value = ["sid", "kid", "x", "y", "z", "cid"],
             unique = true
         ),
         Index(
@@ -46,6 +46,7 @@ data class DccRevocationSliceLocal(
     val kid: String,
     val x: Char?,
     val y: Char?,
+    val z: Char?,
     val cid: String,
     val type: DccSliceType,
     val version: String,
