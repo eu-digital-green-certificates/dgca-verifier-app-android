@@ -27,8 +27,8 @@ import dcc.app.revocation.data.network.model.SliceType
 data class DccRevocationSlice(
     val sid: String,
     val kid: String,
-    val x: Byte?,
-    val y: Byte?,
+    val x: Char?,
+    val y: Char?,
     val cid: String,
     val type: SliceType,
     val version: String,
