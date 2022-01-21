@@ -23,40 +23,13 @@
 package dcc.app.revocation.data.network.mapper
 
 import dcc.app.revocation.data.network.model.RevocationKIDResponse
-import dcc.app.revocation.data.network.model.RevocationSettings
-import dcc.app.revocation.domain.model.DccRevocationHashType
-import dcc.app.revocation.domain.model.DccRevocationMode
 import dcc.app.revocation.domain.model.RevocationKidData
-import dcc.app.revocation.domain.model.RevocationSettingsData
 
 fun RevocationKIDResponse.toRevocationKidData(): RevocationKidData =
     RevocationKidData(
         kid = kid,
-        settings = settings.toSettingsData()
-    )
-
-fun RevocationSettings.toSettingsData(): RevocationSettingsData =
-    RevocationSettingsData(
-        mode = mode.toDccRevocationMode(),
-        hashType = hashType.toDccRevocationHashType(),
+        mode = mode,
+        hashType = hashType,
         expires = expires,
         lastUpdated = lastUpdated
     )
-
-fun Int.toDccRevocationMode(): DccRevocationMode =
-    when (this) {
-        0 -> DccRevocationMode.COORDINATE
-        1 -> DccRevocationMode.VECTOR
-        2 -> DccRevocationMode.POINT
-        else -> DccRevocationMode.UNKNOWN
-    }
-
-fun Int.toDccRevocationHashType(): DccRevocationHashType =
-    when (this) {
-        0 -> DccRevocationHashType.SIGNATURE
-        1 -> DccRevocationHashType.UCI
-        2 -> DccRevocationHashType.COUNTRYCODEUCI
-        else -> DccRevocationHashType.UNKNOWN
-    }
-
-// TODO: review constants later

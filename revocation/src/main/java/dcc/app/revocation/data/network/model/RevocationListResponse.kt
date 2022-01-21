@@ -23,22 +23,19 @@
 package dcc.app.revocation.data.network.model
 
 import com.google.gson.annotations.SerializedName
+import dcc.app.revocation.domain.model.DccRevocationHashType
+import dcc.app.revocation.domain.model.DccRevocationMode
 
 data class RevocationKIDResponse(
 
     @SerializedName("kid")
     val kid: String,
 
-    @SerializedName("settings")
-    val settings: RevocationSettings
-)
-
-data class RevocationSettings(
     @SerializedName("mode")
-    val mode: Int,
+    val mode: DccRevocationMode,
 
     @SerializedName("hashType")
-    val hashType: Int,
+    val hashType: Set<DccRevocationHashType>,
 
     @SerializedName("expires")
     val expires: String,

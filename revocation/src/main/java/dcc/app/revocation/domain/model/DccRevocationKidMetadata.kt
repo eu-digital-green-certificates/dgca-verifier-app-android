@@ -24,7 +24,7 @@ package dcc.app.revocation.domain.model
 
 data class DccRevocationKidMetadata(
     val kid: String,
-    val hashType: DccRevocationHashType,
+    val hashType: Set<DccRevocationHashType>,
     val mode: DccRevocationMode,
     val expires: Long,
     val lastUpdated: String

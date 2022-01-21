@@ -1,35 +1,200 @@
 [
   {
-    "id": "partitionID",
-    "x": null,
-    "y": null,
-    "z": null,
-    "expires": "2011-01-01T12:00:00+01:00",
+    "id": "ucia_coordinate",
+    "x": "7",
+    "y": "d",
+    "z": "2",
+    "expires": "2023-01-01T12:00:00+01:00",
     "chunks": {
       "0": {
-        "2011-01-01T12:00:00+01:00": {
+        "2023-01-01T12:00:00+01:00": {
           "type": "Bloom",
           "version": "1.0",
-          "hash": "34343ffff3333"
-        },
-        "2010-01-01T12:00:00+01:00": {
-          "type": "Bloom",
-          "version": "1.0",
-          "hash": "40559ffffff"
+          "hash": "s4343ffff3333"
         }
       },
-      "1": {
-        "2010-01-01T12:00:00+01:00": {
+      "2": {
+        "2023-01-01T12:00:00+01:00": {
           "type": "Bloom",
           "version": "1.0",
-          "hash": "ff34434444"
+          "hash": "rc34434444"
         }
       },
       "f": {
-        "2009-01-01T12:00:00+01:00": {
+        "2023-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "pf33344eeee"
+        }
+      }
+    }
+  },
+  {
+    "id": "co_ucia_coordinate",
+    "x": "a",
+    "y": "3",
+    "z": "0",
+    "expires": "2023-01-01T12:00:00+01:00",
+    "chunks": {
+      "0": {
+        "2023-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "o4343ffff3333"
+        }
+      },
+      "f": {
+        "2023-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "nf33344eeee"
+        }
+      }
+    }
+  },
+  {
+    "id": "signature_coordinate",
+    "x": "0",
+    "y": "d",
+    "z": "d",
+    "expires": "2023-01-01T12:00:00+01:00",
+    "chunks": {
+      "0": {
+        "2023-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "m4343ffff3333"
+        }
+      },
+      "d": {
+        "2023-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "lf33344eeee"
+        }
+      }
+    }
+  },
+  {
+    "id": "ucia_vector",
+    "x": "7",
+    "y": "null",
+    "z": "null",
+    "expires": "2023-01-01T12:00:00+01:00",
+    "chunks": {
+      "0": {
+        "2023-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "k4343ffff3333"
+        }
+      },
+      "d": {
+        "2023-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "jc34434444"
+        }
+      },
+      "f": {
+        "2023-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "hf33344eeee"
+        }
+      }
+    }
+  },
+  {
+    "id": "co_ucia_vector",
+    "x": "a",
+    "y": "null",
+    "z": "null",
+    "expires": "2023-01-01T12:00:00+01:00",
+    "chunks": {
+      "0": {
+        "2023-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "g4343ffff3333"
+        }
+      },
+      "3": {
+        "2023-01-01T12:00:00+01:00": {
           "type": "Bloom",
           "version": "1.0",
           "hash": "ff33344eeee"
+        }
+      }
+    }
+  },
+  {
+    "id": "signature_vector",
+    "x": "0",
+    "y": "null",
+    "z": "null",
+    "expires": "2023-01-01T12:00:00+01:00",
+    "chunks": {
+      "0": {
+        "2023-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "e4343ffff3333"
+        }
+      },
+      "d": {
+        "2023-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "df33344eeee"
+        }
+      }
+    }
+  },
+  {
+    "id": "ucia_point",
+    "x": "null",
+    "y": "null",
+    "z": "null",
+    "expires": "2023-01-01T12:00:00+01:00",
+    "chunks": {
+      "7": {
+        "2023-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "c4343ffff3333"
+        }
+      }
+    }
+  },
+  {
+    "id": "co_ucia_point",
+    "x": "null",
+    "y": "null",
+    "z": "null",
+    "expires": "2023-01-01T12:00:00+01:00",
+    "chunks": {
+      "a": {
+        "2023-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "b4343ffff3333"
+        }
+      }
+    }
+  },
+  {
+    "id": "signature_point",
+    "x": "null",
+    "y": "null",
+    "z": "null",
+    "expires": "2023-01-01T12:00:00+01:00",
+    "chunks": {
+      "0": {
+        "2023-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "a4343ffff3333"
         }
       }
     }

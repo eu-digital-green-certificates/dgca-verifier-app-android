@@ -25,6 +25,7 @@ package dgca.verifier.app.android.data.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import dcc.app.revocation.data.local.EnumConverter
 import dgca.verifier.app.android.data.local.dcc.revocation.DccRevocationDao
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationChunkLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationKidMetadataLocal
@@ -43,7 +44,7 @@ import dgca.verifier.app.android.data.local.rules.Converters
     ],
     version = 1
 )
-@TypeConverters(Converters::class)
+@TypeConverters(Converters::class, EnumConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun keyDao(): KeyDao

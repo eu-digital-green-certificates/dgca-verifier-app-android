@@ -38,11 +38,18 @@ class DccRevocationLocalDataSourceImpl(private val dccRevocationDao: DccRevocati
     override suspend fun getPartitionById(partitionId: String, kid: String): DccRevocationPartition? =
         dccRevocationDao.getDccRevocationPartitionBy(partitionId, kid)?.fromLocal()
 
-    override suspend fun getRevocationPartition(kid: String, x: Char?, y: Char?): DccRevocationPartition? =
-        dccRevocationDao.getDccRevocationPartition(kid, x, y)?.fromLocal()
+    override suspend fun getRevocationPartition(kid: String, x: Char?, y: Char?, z: Char?): DccRevocationPartition? =
+        dccRevocationDao.getDccRevocationPartition(kid, x, y, z)?.fromLocal()
 
-    override suspend fun getChunkSlice(sid: String, kid: String, x: Char?, y: Char?, cid: Char): DccRevocationSlice? =
-        dccRevocationDao.getChunkSlice(sid, kid, x, y, cid)?.fromLocal()
+    override suspend fun getChunkSlice(
+        sliceIds: List<String>,
+        kid: String,
+        x: Char?,
+        y: Char?,
+        z: Char?,
+        cid: Char
+    ): DccRevocationSlice? =
+        dccRevocationDao.getChunkSlice(sliceIds, kid, x, y, z, cid)?.fromLocal()
 
     override fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata) {
         dccRevocationDao.upsert(dccRevocationKidMetadata.toLocal())
