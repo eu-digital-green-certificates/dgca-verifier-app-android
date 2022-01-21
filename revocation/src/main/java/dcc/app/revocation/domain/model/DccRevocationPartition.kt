@@ -25,9 +25,9 @@ package dcc.app.revocation.domain.model
 data class DccRevocationPartition(
     val id: String,
     val kid: String,
-    val x: Byte?,
-    val y: Byte?,
-    val z: Byte?,
+    val x: Char?,
+    val y: Char?,
+    val z: Char?,
     val expires: Long,
     val chunks: String
 )

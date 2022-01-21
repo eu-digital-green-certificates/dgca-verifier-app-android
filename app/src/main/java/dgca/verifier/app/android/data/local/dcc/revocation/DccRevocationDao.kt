@@ -31,11 +31,17 @@ import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationSl
 @Dao
 interface DccRevocationDao {
 
-    @Query("SELECT * FROM dcc_revocation_kid_metadata WHERE kid LIKE :kid")
+    @Query("SELECT * FROM dcc_revocation_kid_metadata WHERE kid = :kid")
     suspend fun getDccRevocationKidMetadataBy(kid: String): DccRevocationKidMetadataLocal?
 
     @Query("SELECT * FROM dcc_revocation_partition WHERE id = :partitionId AND kid = :kid")
     suspend fun getDccRevocationPartitionBy(partitionId: String, kid: String): DccRevocationPartitionLocal?
+
+    @Query("SELECT * FROM dcc_revocation_partition WHERE kid = :kid AND x = :x AND y = :y")
+    suspend fun getDccRevocationPartition(kid: String, x: Char?, y: Char?): DccRevocationPartitionLocal?
+
+    @Query("SELECT * FROM dcc_revocation_slice WHERE sid = :sid AND kid = :kid AND x = :x AND y = :y AND cid = :cid")
+    suspend fun getChunkSlice(sid: String, kid: String, x: Char?, y: Char?, cid: Char): DccRevocationSliceLocal?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(entity: DccRevocationKidMetadataLocal): Long

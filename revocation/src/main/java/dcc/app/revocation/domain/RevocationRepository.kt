@@ -48,6 +48,10 @@ interface RevocationRepository {
 
     suspend fun getLocalRevocationPartition(partitionId: String, kid: String): DccRevocationPartition?
 
+    suspend fun getRevocationPartition(kid: String, x: Char?, y: Char?): DccRevocationPartition?
+
+    suspend fun getChunkSlices(sid: String, kid: String, x: Char?, y: Char?, cid: Char): DccRevocationSlice?
+
     suspend fun saveKidMetadata(dccRevocationKidMetadata: DccRevocationKidMetadata)
 
     suspend fun savePartition(partitionData: DccRevocationPartition)

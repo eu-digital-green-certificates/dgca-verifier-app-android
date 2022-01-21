@@ -22,9 +22,9 @@
 
 package dcc.app.revocation
 
-import dcc.app.revocation.data.network.model.Chunk
+import dcc.app.revocation.data.network.model.Slice
 
-fun Chunk?.isEqualTo(remote: Chunk): Boolean {
+fun Slice?.isEqualTo(remote: Slice): Boolean {
     this ?: return false
     return hash == remote.hash
 }
