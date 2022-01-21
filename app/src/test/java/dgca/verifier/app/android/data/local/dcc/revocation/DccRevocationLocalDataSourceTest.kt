@@ -52,9 +52,9 @@ class DccRevocationLocalDataSourceTest {
 
     private val testDccRevocationPartition = DccRevocationPartition(
         kid = "a1b2c3",
-        x = 'a'.toByte(),
-        y = '1'.toByte(),
-        z = '2'.toByte(),
+        x = 'a',
+        y = '1',
+        z = '2',
         id = "id",
         expires = System.currentTimeMillis(),
         chunks = ""

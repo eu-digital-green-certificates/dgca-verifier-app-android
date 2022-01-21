@@ -46,7 +46,7 @@ abstract class BaseUseCase<Type, Params> constructor(
         params: Params = Any() as Params,
         onSuccess: (Type) -> Unit = {},
         onFailure: (ErrorType) -> Unit = {},
-        onComplete: () -> Unit = {},
+        onComplete: () -> Unit = {}
     ) {
         scope.launch(executionDispatcher) {
             supervisorScope {
@@ -70,7 +70,7 @@ abstract class BaseUseCase<Type, Params> constructor(
         params: Params = Any() as Params,
         onSuccess: (Type) -> Unit = {},
         onFailure: (ErrorType) -> Unit = {},
-        onComplete: () -> Unit = {},
+        onComplete: () -> Unit = {}
     ) {
         try {
             onSuccess(invoke(params))
@@ -81,6 +81,15 @@ abstract class BaseUseCase<Type, Params> constructor(
             onComplete()
         }
     }
+
+    @Suppress("UNCHECKED_CAST")
+    open suspend fun execute(params: Params = Any() as Params): Type? =
+        try {
+            invoke(params)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to execute ${this@BaseUseCase}")
+            null
+        }
 
     open fun cancel() {
         if (backgroundDeferredJob.isActive) {

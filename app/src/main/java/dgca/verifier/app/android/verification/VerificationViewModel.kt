@@ -27,9 +27,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dcc.app.revocation.data.local.DccRevocationRepository
 import dcc.app.revocation.domain.getDccSignatureSha256
+import dcc.app.revocation.domain.model.DccRevokationDataHolder
 import dcc.app.revocation.domain.toSha256HexString
+import dcc.app.revocation.domain.usacase.IsDccRevokedUseCase
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.model.rules.toRuleValidationResultModels
@@ -81,7 +82,7 @@ class VerificationViewModel @Inject constructor(
     private val getRulesUseCase: GetRulesUseCase,
     private val valueSetsRepository: ValueSetsRepository,
     private val preferences: Preferences,
-    private val dccRevocationRepository: DccRevocationRepository
+    private val isDccRevokedUseCase: IsDccRevokedUseCase
 ) : ViewModel() {
 
     private val _qrCodeVerificationResult = MutableLiveData<QrCodeVerificationResult>()
@@ -230,7 +231,7 @@ class VerificationViewModel @Inject constructor(
                     certificateExpired = true
                 }
 
-                certificateRevoked = isDCCRevoked(greenCertificateData?.greenCertificate, cose)
+                certificateRevoked = isDCCRevoked(base64EncodedKid, greenCertificateData?.greenCertificate, cose)
 
                 return@forEach
             }
@@ -248,7 +249,7 @@ class VerificationViewModel @Inject constructor(
         )
     }
 
-    private fun isDCCRevoked(greenCertificate: GreenCertificate?, cose: ByteArray): Boolean {
+    private suspend fun isDCCRevoked(kid: String, greenCertificate: GreenCertificate?, cose: ByteArray): Boolean {
         greenCertificate ?: return false
 
         greenCertificate.vaccinations?.firstOrNull()?.let {
@@ -256,7 +257,16 @@ class VerificationViewModel @Inject constructor(
             val coUvciSha256 = (it.countryOfVaccination + it.certificateIdentifier).toByteArray().toSha256HexString()
             val signatureSha256 = cose.getDccSignatureSha256()
 
+            val data = DccRevokationDataHolder(
+                kid,
+                uvciSha256,
+                coUvciSha256,
+                signatureSha256
+            )
+
 //            TODO: check lookup mode
+            val result = isDccRevokedUseCase.execute(data)
+
         }
 
         return true

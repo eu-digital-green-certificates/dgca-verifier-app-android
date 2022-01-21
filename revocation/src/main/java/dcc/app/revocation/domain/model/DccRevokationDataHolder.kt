@@ -17,38 +17,14 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 1/8/22, 3:04 PM
+ *  Created by mykhailo.nester on 20/01/2022, 18:48
  */
 
-package dgca.verifier.app.android.data.local.dcc.revocation.model
+package dcc.app.revocation.domain.model
 
-import androidx.room.Entity
-import androidx.room.Index
-import androidx.room.PrimaryKey
-import dcc.app.revocation.domain.model.DccSliceType
-
-@Entity(
-    tableName = "dcc_revocation_slice",
-    indices = [
-        Index(
-            value = ["sid", "kid", "x", "y", "cid"],
-            unique = true
-        ),
-        Index(
-            value = ["sid"],
-            unique = true
-        ),
-    ]
-)
-data class DccRevocationSliceLocal(
-    @PrimaryKey
-    val sid: String,
+data class DccRevokationDataHolder(
     val kid: String,
-    val x: Char?,
-    val y: Char?,
-    val cid: String,
-    val type: DccSliceType,
-    val version: String,
-    val expires: Long,
-    val content: String
+    val uvciSha256: String?,
+    val coUvciSha256: String?,
+    val signatureSha256: String?
 )

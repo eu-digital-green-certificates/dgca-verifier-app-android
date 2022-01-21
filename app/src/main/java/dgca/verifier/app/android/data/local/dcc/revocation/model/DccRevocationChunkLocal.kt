@@ -29,6 +29,8 @@ import androidx.room.PrimaryKey
 import dcc.app.revocation.domain.model.DccSliceType
 import java.time.ZonedDateTime
 
+
+//TODO: chunk not used update later
 @Entity(
     tableName = "dcc_revocation_chunk",
     foreignKeys = [
