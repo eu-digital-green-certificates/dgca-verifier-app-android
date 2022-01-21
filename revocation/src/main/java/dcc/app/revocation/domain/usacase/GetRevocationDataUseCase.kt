@@ -28,7 +28,10 @@ import dcc.app.revocation.data.network.model.RevocationPartitionResponse
 import dcc.app.revocation.data.network.model.Slice
 import dcc.app.revocation.domain.ErrorHandler
 import dcc.app.revocation.domain.RevocationRepository
-import dcc.app.revocation.domain.model.*
+import dcc.app.revocation.domain.model.DccRevocationKidMetadata
+import dcc.app.revocation.domain.model.DccRevocationPartition
+import dcc.app.revocation.domain.model.DccRevocationSlice
+import dcc.app.revocation.domain.model.RevocationKidData
 import dcc.app.revocation.isEqualTo
 import dcc.app.revocation.parseDate
 import kotlinx.coroutines.CoroutineDispatcher
@@ -61,31 +64,30 @@ class GetRevocationDataUseCase @Inject constructor(
     private suspend fun checkKidMetadata(revocationKidData: RevocationKidData) {
         val kid = revocationKidData.kid
         val metadataLocal = repository.getMetadataByKid(kid)
-        val settings = revocationKidData.settings
 
         //  Initial sync. no KID metadata in DB
         if (metadataLocal == null) {
-            saveKidMetadata(kid, settings)
+            saveKidMetadata(kid, revocationKidData)
             getPartitions(kid)
             return
         }
 
         // If mode has changed remove all data related to this kid
-        if (settings.mode != metadataLocal.mode) {
+        if (revocationKidData.mode != metadataLocal.mode) {
             repository.deleteOutdatedKidItems(listOf(kid))
         }
 
         // Insert/Update new KID metadata
-        saveKidMetadata(kid, settings)
+        saveKidMetadata(kid, revocationKidData)
 
         // Check the last modified date for each kid. If the last date per kid != received date,
         // call for the kid /{kid}/partitions to receive the metadata objects. If last date ==  received date, do nothing.
-        if (metadataLocal.lastUpdated != settings.lastUpdated) {
+        if (metadataLocal.lastUpdated != revocationKidData.lastUpdated) {
             getPartitions(kid)
         }
     }
 
-    private suspend fun saveKidMetadata(kid: String, revocationSettingsData: RevocationSettingsData) {
+    private suspend fun saveKidMetadata(kid: String, revocationSettingsData: RevocationKidData) {
         repository.saveKidMetadata(
             DccRevocationKidMetadata(
                 kid,
@@ -210,6 +212,7 @@ class GetRevocationDataUseCase @Inject constructor(
                     kid = kid,
                     x = partition.x,
                     y = partition.y,
+                    z = partition.z,
                     cid = cid,
                     type = value.type,
                     version = value.version,
