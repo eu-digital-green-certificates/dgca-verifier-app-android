@@ -24,8 +24,8 @@ package dcc.app.revocation.domain.usacase
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import dcc.app.revocation.data.network.model.Chunk
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
+import dcc.app.revocation.data.network.model.Slice
 import dcc.app.revocation.domain.ErrorHandler
 import dcc.app.revocation.domain.RevocationRepository
 import dcc.app.revocation.domain.model.*
@@ -136,8 +136,8 @@ class GetRevocationDataUseCase @Inject constructor(
         localPartition: DccRevocationPartition,
         remotePartition: RevocationPartitionResponse
     ) {
-        val type: Type = object : TypeToken<Map<String, Map<String, Chunk>>>() {}.type
-        val localChunks = Gson().fromJson<Map<String, Map<String, Chunk>>>(localPartition.chunks, type)
+        val type: Type = object : TypeToken<Map<String, Map<String, Slice>>>() {}.type
+        val localChunks = Gson().fromJson<Map<String, Map<String, Slice>>>(localPartition.chunks, type)
 
         remotePartition.chunks.forEach { (remoteChunkKey, remoteChunkValue) ->
             val localSlices = localChunks[remoteChunkKey]
@@ -152,7 +152,7 @@ class GetRevocationDataUseCase @Inject constructor(
                 }
 
             } else {
-                val slices = mutableMapOf<String, Chunk>()
+                val slices = mutableMapOf<String, Slice>()
 
                 // Compare slices with local chunk slices
                 remoteChunkValue.forEach { (remoteSliceKey, remoteSliceValue) ->
@@ -179,9 +179,9 @@ class GetRevocationDataUseCase @Inject constructor(
             DccRevocationPartition(
                 id = partition.id,
                 kid = kid,
-                x = partition.x?.toByte(),
-                y = partition.y?.toByte(),
-                z = partition.z?.toByte(),
+                x = partition.x,
+                y = partition.y,
+                z = partition.z,
                 expires = partition.expires.parseDate()?.toInstant()?.toEpochMilli() ?: 0,
                 chunks = Gson().toJson(partition.chunks)
             )
@@ -199,7 +199,7 @@ class GetRevocationDataUseCase @Inject constructor(
         kid: String,
         partition: RevocationPartitionResponse,
         cid: String,
-        slices: Map<String, Chunk>
+        slices: Map<String, Slice>
     ) {
         slices.forEach { (key, value) ->
             val sid = value.hash
@@ -208,8 +208,8 @@ class GetRevocationDataUseCase @Inject constructor(
                 DccRevocationSlice(
                     sid = sid,
                     kid = kid,
-                    x = partition.x?.toByte(),
-                    y = partition.y?.toByte(),
+                    x = partition.x,
+                    y = partition.y,
                     cid = cid,
                     type = value.type,
                     version = value.version,

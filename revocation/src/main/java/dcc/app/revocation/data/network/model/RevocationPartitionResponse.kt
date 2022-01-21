@@ -24,14 +24,14 @@ package dcc.app.revocation.data.network.model
 
 data class RevocationPartitionResponse(
     val id: String,
-    val x: String?,
-    val y: String?,
-    val z: String?,
+    val x: Char?,
+    val y: Char?,
+    val z: Char?,
     val expires: String,
-    val chunks: Map<String, Map<String, Chunk>>
+    val chunks: Map<String, Map<String, Slice>>
 )
 
-data class Chunk(
+data class Slice(
     val type: SliceType,
     val version: String,
     val hash: String
