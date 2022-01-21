@@ -17,31 +17,34 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 1/8/22, 10:52 AM
+ *  Created by mykhailo.nester on 21/01/2022, 14:45
  */
 
-package dgca.verifier.app.android.data.local.dcc.revocation.model
+package dcc.app.revocation.data.local
 
-import androidx.room.Entity
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import androidx.room.TypeConverter
 import dcc.app.revocation.domain.model.DccRevocationHashType
-import dcc.app.revocation.domain.model.DccRevocationMode
 
-@Entity(
-    tableName = "dcc_revocation_kid_metadata",
-    indices = [
-        Index(
-            value = ["kid", "hashType"],
-            unique = true
-        )
-    ]
-)
-data class DccRevocationKidMetadataLocal(
-    @PrimaryKey
-    val kid: String,
-    val hashType: Set<DccRevocationHashType>,
-    val mode: DccRevocationMode,
-    val expires: Long,
-    val lastUpdated: String
-)
+class EnumConverter {
+
+    @TypeConverter
+    fun storedStringToEnum(value: String): Set<DccRevocationHashType> {
+        val dbValues: List<String> = value.split("\\s*,\\s*".toRegex())
+        val enums = mutableSetOf<DccRevocationHashType>()
+        for (s in dbValues) {
+            if (s.isNotEmpty()) {
+                enums.add(DccRevocationHashType.valueOf(s))
+            }
+        }
+        return enums
+    }
+
+    @TypeConverter
+    fun languagesToStoredString(list: Set<DccRevocationHashType>): String {
+        var value = ""
+        list.forEach {
+            value += it.name + ","
+        }
+        return value
+    }
+}

@@ -100,11 +100,17 @@ class RevocationRepositoryImpl @Inject constructor(
     override suspend fun getLocalRevocationPartition(partitionId: String, kid: String): DccRevocationPartition? =
         dccRevocationLocalDataSource.getPartitionById(partitionId, kid)
 
-    override suspend fun getRevocationPartition(kid: String, x: Char?, y: Char?): DccRevocationPartition? =
-        dccRevocationLocalDataSource.getRevocationPartition(kid, x, y)
+    override suspend fun getRevocationPartition(kid: String, x: Char?, y: Char?, z: Char?): DccRevocationPartition? =
+        dccRevocationLocalDataSource.getRevocationPartition(kid, x, y, z)
 
-    override suspend fun getChunkSlices(sid: String, kid: String, x: Char?, y: Char?, cid: Char): DccRevocationSlice? =
-        dccRevocationLocalDataSource.getChunkSlice(sid, kid, x, y, cid)
+    override suspend fun getChunkSlices(
+        sliceIds: List<String>,
+        kid: String,
+        x: Char?,
+        y: Char?,
+        z: Char?,
+        cid: Char
+    ): DccRevocationSlice? = dccRevocationLocalDataSource.getChunkSlice(sliceIds, kid, x, y, z, cid)
 
     override suspend fun saveKidMetadata(dccRevocationKidMetadata: DccRevocationKidMetadata) {
         dccRevocationLocalDataSource.addOrUpdate(dccRevocationKidMetadata)

@@ -33,9 +33,9 @@ interface DccRevocationLocalDataSource {
 
     suspend fun getPartitionById(partitionId: String, kid: String): DccRevocationPartition?
 
-    suspend fun getRevocationPartition(kid: String, x: Char?, y: Char?): DccRevocationPartition?
+    suspend fun getRevocationPartition(kid: String, x: Char?, y: Char?, z: Char?): DccRevocationPartition?
 
-    suspend fun getChunkSlice(sid: String, kid: String, x: Char?, y: Char?, cid: Char): DccRevocationSlice?
+    suspend fun getChunkSlice(sliceIds: List<String>, kid: String, x: Char?, y: Char?, z: Char?, cid: Char): DccRevocationSlice?
 
     fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata)
 
