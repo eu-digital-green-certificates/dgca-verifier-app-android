@@ -36,8 +36,8 @@ data class InnerVerificationResult(
         val debugData: DebugData? = null,
         val certificateRevoked: Boolean = false
 ) {
-    fun isValid() =
-        !noPublicKeysFound && !certificateExpired && greenCertificateData != null && isApplicableCode && base64EncodedKid?.isNotBlank() == true
+    fun isValid() = !noPublicKeysFound && !certificateExpired && greenCertificateData != null
+            && isApplicableCode && base64EncodedKid?.isNotBlank() == true && !certificateRevoked
 }
 
 @Parcelize
