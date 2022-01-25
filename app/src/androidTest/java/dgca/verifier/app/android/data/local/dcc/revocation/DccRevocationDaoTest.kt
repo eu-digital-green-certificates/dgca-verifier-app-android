@@ -1,86 +1,82 @@
-///*
-// *  ---license-start
-// *  eu-digital-green-certificates / dcc-revocation-app-android
-// *  ---
-// *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
-// *  ---
-// *  Licensed under the Apache License, Version 2.0 (the "License");
-// *  you may not use this file except in compliance with the License.
-// *  You may obtain a copy of the License at
-// *
-// *       http://www.apache.org/licenses/LICENSE-2.0
-// *
-// *  Unless required by applicable law or agreed to in writing, software
-// *  distributed under the License is distributed on an "AS IS" BASIS,
-// *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// *  See the License for the specific language governing permissions and
-// *  limitations under the License.
-// *  ---license-end
-// *
-// *  Created by osarapulov on 1/3/22, 10:55 PM
-// */
-//
-//package dgca.verifier.app.android.data.local.dcc.revocation
-//
-//import android.content.Context
-//import android.database.sqlite.SQLiteConstraintException
-//import androidx.room.Room
-//import androidx.test.core.app.ApplicationProvider
-//import androidx.test.ext.junit.runners.AndroidJUnit4
-//import com.fasterxml.jackson.databind.ObjectMapper
-//import dcc.app.revocation.domain.model.*
-//import dgca.verifier.app.android.data.local.AppDatabase
-//import dgca.verifier.app.android.data.local.dcc.revocation.mapper.toLocal
-//import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
-//import dgca.verifier.app.android.utils.sha256
-//import dgca.verifier.app.engine.UTC_ZONE_ID
-//import org.apache.commons.io.IOUtils
-//import org.junit.After
-//import org.junit.Assert.*
-//import org.junit.Before
-//import org.junit.Ignore
-//import org.junit.Test
-//import org.junit.runner.RunWith
-//import java.io.IOException
-//import java.io.InputStream
-//import java.nio.charset.Charset
-//import java.time.ZonedDateTime
-//
-// TODO: update tests
-//@Ignore("DB changed need to review this")
-//@RunWith(AndroidJUnit4::class)
-//internal class DccRevocationDaoTest {
-//    private lateinit var dccRevocationDao: DccRevocationDao
-//    private lateinit var db: AppDatabase
-//    private val objectMapper = ObjectMapper().apply { this.findAndRegisterModules() }
-//
-//    companion object {
-//        private const val REVOCATION_PATH = "revocation"
-//        const val REVOCATION_PARTITION_0 = "${REVOCATION_PATH}/revocation_partition_0.json"
-//    }
-//
-//    private fun fetchPartition(fileName: String): DccRevocationPartitionLocal {
-//        val inputStream: InputStream =
-//            javaClass.classLoader!!.getResourceAsStream(fileName)
-//        val ruleJson = IOUtils.toString(inputStream, Charset.defaultCharset())
-//        return objectMapper.readValue(ruleJson, DccRevocationPartitionLocal::class.java)
-//    }
-//
-//    @Before
-//    fun createDb() {
-//        val context = ApplicationProvider.getApplicationContext<Context>()
-//        db = Room.inMemoryDatabaseBuilder(
-//            context, AppDatabase::class.java
-//        ).build()
-//        dccRevocationDao = db.dccRevocationPartitionDao()
-//    }
-//
-//    @After
-//    @Throws(IOException::class)
-//    fun closeDb() {
-//        db.close()
-//    }
-//
+/*
+ *  ---license-start
+ *  eu-digital-green-certificates / dcc-revocation-app-android
+ *  ---
+ *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
+ *  ---
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *  ---license-end
+ *
+ *  Created by osarapulov on 1/3/22, 10:55 PM
+ */
+
+package dgca.verifier.app.android.data.local.dcc.revocation
+
+import android.content.Context
+import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.fasterxml.jackson.databind.ObjectMapper
+import dcc.app.revocation.domain.model.*
+import dgca.verifier.app.android.data.local.AppDatabase
+import dgca.verifier.app.android.data.local.dcc.revocation.mapper.fromLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.mapper.toLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
+import dgca.verifier.app.android.utils.sha256
+import kotlinx.coroutines.runBlocking
+import org.apache.commons.io.IOUtils
+import org.junit.After
+import org.junit.Assert.*
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import java.io.IOException
+import java.io.InputStream
+import java.nio.charset.Charset
+
+@RunWith(AndroidJUnit4::class)
+internal class DccRevocationDaoTest {
+    private lateinit var dccRevocationDao: DccRevocationDao
+    private lateinit var db: AppDatabase
+    private val objectMapper = ObjectMapper().apply { this.findAndRegisterModules() }
+
+    companion object {
+        private const val REVOCATION_PATH = "revocation"
+        const val REVOCATION_PARTITION_0 = "${REVOCATION_PATH}/revocation_partition_0.json"
+    }
+
+    private fun fetchPartition(fileName: String): DccRevocationPartitionLocal {
+        val inputStream: InputStream =
+            javaClass.classLoader!!.getResourceAsStream(fileName)
+        val ruleJson = IOUtils.toString(inputStream, Charset.defaultCharset())
+        return objectMapper.readValue(ruleJson, DccRevocationPartitionLocal::class.java)
+    }
+
+    @Before
+    fun createDb() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        db = Room.inMemoryDatabaseBuilder(
+            context, AppDatabase::class.java
+        ).build()
+        dccRevocationDao = db.dccRevocationPartitionDao()
+    }
+
+    @After
+    @Throws(IOException::class)
+    fun closeDb() {
+        db.close()
+    }
+
 //    @Test
 //    fun dccRevocationKidMetadataTest() {
 //        val kid = "a0a0a0"
@@ -183,110 +179,73 @@
 //
 //        dccRevocationDao.insert(dccRevocationPartition.toLocal())
 //    }
-//
-//    @Test
-//    @Throws(Exception::class)
-//    fun dccRevocationPartitionTest() {
-//        val kid = "a0a0a0"
-//
-//
-//        // Insert kid metadata
-//        val dccRevocationKidSignatureMetadata = DccRevocationKidMetadata(
-//            kid = kid,
-//            hashType = DccRevocationHashType.SIGNATURE,
-//            mode = DccRevocationMode.POINT,
-//            tag = "tag"
-//        )
-//
-//        dccRevocationDao.insert(dccRevocationKidSignatureMetadata.toLocal())
-//
-//        val hash = "".sha256()
-//        val hashBytes = hash.toByteArray()
-//        val x = hashBytes[0]
-//        val y = hashBytes[1]
-//
-//
-//        // Insert partition with empty x and y
-//        val dccRevocationPartition = DccRevocationPartition(
-//            kid = kid,
-//            x = null,
-//            y = null,
-//            pid = "pid",
-//            hashType = DccRevocationHashType.SIGNATURE,
-//            version = "version",
-//            expiration = ZonedDateTime.now(UTC_ZONE_ID),
-//            chunks = "chunks"
-//        )
-//
-//        dccRevocationDao.insert(dccRevocationPartition.toLocal())
-//
-//        var list = dccRevocationDao.getDccRevocationPartitionListBy(
-//            kid = dccRevocationPartition.kid
-//        )
-//
-//        assertEquals(1, list.size)
-//        assertEquals(dccRevocationPartition.toLocal().copy(partitionId = 1), list[0])
-//
-//
-//        // Insert partition with empty y
-//        val dccRevocationPartitionX = dccRevocationPartition.copy(x = x, pid = "pidX")
-//
-//        dccRevocationDao.insert(dccRevocationPartitionX.toLocal())
-//
-//        list = dccRevocationDao.getDccRevocationPartitionListBy(
-//            kid = dccRevocationPartition.kid
-//        )
-//
-//        assertEquals(2, list.size)
-//        assertTrue(list.contains(dccRevocationPartitionX.toLocal().copy(partitionId = 2)))
-//
-//
-//        // Insert partition with x and y filled
-//        val dccRevocationPartitionXY = dccRevocationPartitionX.copy(y = y, pid = "pidXY")
-//
-//        dccRevocationDao.insert(dccRevocationPartitionXY.toLocal())
-//
-//        list = dccRevocationDao.getDccRevocationPartitionListBy(
-//            kid = dccRevocationPartition.kid
-//        )
-//
-//        assertEquals(3, list.size)
-//        assertTrue(list.contains(dccRevocationPartitionXY.toLocal().copy(partitionId = 3)))
-//
-//        val dccRevocationPartitionXYNew = dccRevocationPartitionXY.copy(version = "newVersion")
-//
-//
-//        // Insert the same partition twice
-//        dccRevocationDao.insert(dccRevocationPartitionXYNew.toLocal())
-//
-//        list = dccRevocationDao.getDccRevocationPartitionListBy(
-//            kid = dccRevocationPartition.kid
-//        )
-//
-//        assertEquals(3, list.size)
-//        assertTrue(list.contains(dccRevocationPartitionXYNew.toLocal().copy(partitionId = 4)))
-//
-//
-//        // Remove partition by pid (remote partition id)
-//        dccRevocationDao.deleteDccRevocationPartitionBy("pidXY")
-//
-//        list = dccRevocationDao.getDccRevocationPartitionListBy(
-//            kid = dccRevocationPartition.kid
-//        )
-//
-//        assertEquals(2, list.size)
-//        assertFalse(list.contains(dccRevocationPartitionXYNew.toLocal().copy(partitionId = 4)))
-//
-//
-//        // Remove kid, all partitions are expected to be removed
-//        dccRevocationDao.deleteDccRevocationKidMetadataListBy(kid = kid)
-//
-//        list = dccRevocationDao.getDccRevocationPartitionListBy(
-//            kid = dccRevocationPartition.kid
-//        )
-//
-//        assertTrue(list.isEmpty())
-//    }
+
+    @Test
+    fun dccRevocationPartitionTest() = runBlocking {
+        val kid = "a0a0a0"
+
+        // Insert kid metadata
+        val dccRevocationKidSignatureMetadata = DccRevocationKidMetadata(
+            kid = kid,
+            hashType = setOf(DccRevocationHashType.COUNTRYCODEUCI),
+            mode = DccRevocationMode.POINT,
+            expires = System.currentTimeMillis() + System.currentTimeMillis(),
+            lastUpdated = System.currentTimeMillis().toString()
+        )
+
+        dccRevocationDao.insert(dccRevocationKidSignatureMetadata.toLocal())
+
+        val hash = "".sha256()
+        val hashBytes = hash.toByteArray()
+
+        val nullDccPartition = DccRevocationPartition(
+            kid = kid,
+            x = null,
+            y = null,
+            chunks = "chunks",
+            id = "null",
+            z = null,
+            expires = 0
+        )
+
+        dccRevocationDao.insert(nullDccPartition.toLocal())
+
+        val xDccPartition = nullDccPartition.copy(id = "x", x = hashBytes[0].toChar())
+        dccRevocationDao.insert(xDccPartition.toLocal())
+
+        val xyDccPartition = xDccPartition.copy(id = "xy", y = hashBytes[1].toChar())
+        dccRevocationDao.insert(xyDccPartition.toLocal())
+
+        val xyzDccPartition = xyDccPartition.copy(id = "xyz", z = hashBytes[2].toChar())
+        dccRevocationDao.insert(xyzDccPartition.toLocal())
+
+        assertEquals(4, dccRevocationDao.getDccRevocationPartitionListBy(kid = kid).size)
+        assertEquals(nullDccPartition, dccRevocationDao.getDccRevocationPartition(
+            kid = kid,
+            x = nullDccPartition.x,
+            y = nullDccPartition.y,
+            z = nullDccPartition.z
+        )?.fromLocal())
+        assertEquals(xDccPartition, dccRevocationDao.getDccRevocationPartition(
+            kid = kid,
+            x = xDccPartition.x,
+            y = xDccPartition.y,
+            z = xDccPartition.z
+        )?.fromLocal())
+        assertEquals(xyDccPartition, dccRevocationDao.getDccRevocationPartition(
+            kid = kid,
+            x = xyDccPartition.x,
+            y = xyDccPartition.y,
+            z = xyDccPartition.z
+        )?.fromLocal())
+        assertEquals(xyzDccPartition, dccRevocationDao.getDccRevocationPartition(
+            kid = kid,
+            x = xyzDccPartition.x,
+            y = xyzDccPartition.y,
+            z = xyzDccPartition.z
+        )?.fromLocal())
+    }
+
 //
 //    @Test(expected = SQLiteConstraintException::class)
 //    fun dccRevocationChunkCantInsertTest() {
@@ -426,4 +385,4 @@
 //
 //        assertTrue(list.isEmpty())
 //    }
-//}
+}
