@@ -51,7 +51,7 @@ class DccRevocationRepositoryTest {
     fun addOrUpdateTest() {
         val dccRevocationKidMetadata = DccRevocationKidMetadata(
             kid = "kid",
-            hashType = DccRevocationHashType.SIGNATURE,
+            hashType = setOf(DccRevocationHashType.SIGNATURE),
             mode = DccRevocationMode.POINT,
             expires = 1293879600000,
             lastUpdated = "lastUpdate"
