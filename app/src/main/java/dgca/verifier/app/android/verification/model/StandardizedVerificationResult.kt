@@ -54,6 +54,7 @@ fun extractStandardizedVerificationResultFrom(
         verificationResult.isValid() && innerVerificationResult.isValid() -> StandardizedVerificationResult.SUCCESS
         innerVerificationResult.noPublicKeysFound -> StandardizedVerificationResult.VERIFICATION_FAILED
         innerVerificationResult.certificateExpired -> StandardizedVerificationResult.CERTIFICATE_EXPIRED
+        innerVerificationResult.certificateRevoked -> StandardizedVerificationResult.CERTIFICATE_REVOKED
         !verificationResult.coseVerified -> StandardizedVerificationResult.CRYPTOGRAPHIC_SIGNATURE_INVALID
         !verificationResult.isNotExpired -> StandardizedVerificationResult.GREEN_CERTIFICATE_EXPIRED
         verificationResult.isVaccinationDateInTheFuture() -> StandardizedVerificationResult.VACCINATION_DATE_IS_IN_THE_FUTURE
