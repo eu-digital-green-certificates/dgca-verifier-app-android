@@ -1,9 +1,8 @@
 [
   {
-    "id": "ucia_coordinate",
-    "x": "7",
-    "y": "d",
-    "z": "2",
+    "id": "uvci_coordinate",
+    "x": "f",
+    "y": "8",
     "expires": "2023-01-01T12:00:00+01:00",
     "chunks": {
       "0": {
@@ -20,7 +19,7 @@
           "hash": "rc34434444"
         }
       },
-      "f": {
+      "7": {
         "2023-01-01T12:00:00+01:00": {
           "type": "Bloom",
           "version": "1.0",
@@ -30,10 +29,9 @@
     }
   },
   {
-    "id": "co_ucia_coordinate",
-    "x": "a",
-    "y": "3",
-    "z": "0",
+    "id": "co_uvci_coordinate",
+    "x": "8",
+    "y": "e",
     "expires": "2023-01-01T12:00:00+01:00",
     "chunks": {
       "0": {
@@ -43,7 +41,7 @@
           "hash": "o4343ffff3333"
         }
       },
-      "f": {
+      "4": {
         "2023-01-01T12:00:00+01:00": {
           "type": "Bloom",
           "version": "1.0",
@@ -54,9 +52,8 @@
   },
   {
     "id": "signature_coordinate",
-    "x": "0",
-    "y": "d",
-    "z": "d",
+    "x": "6",
+    "y": "8",
     "expires": "2023-01-01T12:00:00+01:00",
     "chunks": {
       "0": {
@@ -76,10 +73,9 @@
     }
   },
   {
-    "id": "ucia_vector",
-    "x": "7",
+    "id": "uvci_vector",
+    "x": "f",
     "y": "null",
-    "z": "null",
     "expires": "2023-01-01T12:00:00+01:00",
     "chunks": {
       "0": {
@@ -89,7 +85,7 @@
           "hash": "k4343ffff3333"
         }
       },
-      "d": {
+      "8": {
         "2023-01-01T12:00:00+01:00": {
           "type": "Bloom",
           "version": "1.0",
@@ -106,10 +102,9 @@
     }
   },
   {
-    "id": "co_ucia_vector",
-    "x": "a",
+    "id": "co_uvci_vector",
+    "x": "8",
     "y": "null",
-    "z": "null",
     "expires": "2023-01-01T12:00:00+01:00",
     "chunks": {
       "0": {
@@ -119,7 +114,7 @@
           "hash": "g4343ffff3333"
         }
       },
-      "3": {
+      "e": {
         "2023-01-01T12:00:00+01:00": {
           "type": "Bloom",
           "version": "1.0",
@@ -130,9 +125,8 @@
   },
   {
     "id": "signature_vector",
-    "x": "0",
+    "x": "6",
     "y": "null",
-    "z": "null",
     "expires": "2023-01-01T12:00:00+01:00",
     "chunks": {
       "0": {
@@ -142,7 +136,7 @@
           "hash": "e4343ffff3333"
         }
       },
-      "d": {
+      "8": {
         "2023-01-01T12:00:00+01:00": {
           "type": "Bloom",
           "version": "1.0",
@@ -152,49 +146,30 @@
     }
   },
   {
-    "id": "ucia_point",
+    "id": "uvci_point",
     "x": "null",
     "y": "null",
-    "z": "null",
     "expires": "2023-01-01T12:00:00+01:00",
     "chunks": {
-      "7": {
+      "6": {
+        "2023-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "a4343ffff3333"
+        }
+      },
+      "8": {
         "2023-01-01T12:00:00+01:00": {
           "type": "Bloom",
           "version": "1.0",
           "hash": "c4343ffff3333"
         }
-      }
-    }
-  },
-  {
-    "id": "co_ucia_point",
-    "x": "null",
-    "y": "null",
-    "z": "null",
-    "expires": "2023-01-01T12:00:00+01:00",
-    "chunks": {
-      "a": {
+      },
+      "f": {
         "2023-01-01T12:00:00+01:00": {
           "type": "Bloom",
           "version": "1.0",
           "hash": "b4343ffff3333"
-        }
-      }
-    }
-  },
-  {
-    "id": "signature_point",
-    "x": "null",
-    "y": "null",
-    "z": "null",
-    "expires": "2023-01-01T12:00:00+01:00",
-    "chunks": {
-      "0": {
-        "2023-01-01T12:00:00+01:00": {
-          "type": "Bloom",
-          "version": "1.0",
-          "hash": "a4343ffff3333"
         }
       }
     }

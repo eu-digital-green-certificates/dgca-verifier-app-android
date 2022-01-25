@@ -5,12 +5,28 @@
 
 package dcc.app.revocation.validation;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import dcc.app.revocation.validation.exception.FilterException;
 
 public interface BloomFilter {
+    float getP();
 
-    void add(byte[] element) throws NoSuchAlgorithmException, IOException;
+    int getK();
 
-    boolean contains(byte[] element) throws NoSuchAlgorithmException, IOException;
+    long getM();
+
+    int getN();
+
+    int getCurrentN();
+
+    void add(byte[] element) throws FilterException;
+
+    boolean mightContain(byte[] element) throws FilterException;
+
+    void readFrom(InputStream inputStream);
+
+    void writeTo(OutputStream outputStream) throws FilterException;
+
 }

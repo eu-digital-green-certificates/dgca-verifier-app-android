@@ -48,6 +48,7 @@ import dgca.verifier.app.decoder.model.*
 import dgca.verifier.app.decoder.prefixvalidation.PrefixValidationService
 import dgca.verifier.app.decoder.schema.SchemaValidator
 import dgca.verifier.app.decoder.toBase64
+import dgca.verifier.app.decoder.toBase64Url
 import dgca.verifier.app.engine.CertLogicEngine
 import dgca.verifier.app.engine.Result
 import dgca.verifier.app.engine.UTC_ZONE_ID
@@ -231,7 +232,7 @@ class VerificationViewModel @Inject constructor(
                     certificateExpired = true
                 }
 
-                certificateRevoked = isDCCRevoked(base64EncodedKid, greenCertificateData?.greenCertificate, cose)
+                certificateRevoked = isDCCRevoked(kid.toBase64Url(), greenCertificateData?.greenCertificate, cose)
 
                 return@forEach
             }
