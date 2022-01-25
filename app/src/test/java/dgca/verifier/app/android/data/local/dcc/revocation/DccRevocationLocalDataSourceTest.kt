@@ -44,7 +44,7 @@ class DccRevocationLocalDataSourceTest {
 
     private val testDccRevocationKidMetadata = DccRevocationKidMetadata(
         kid = "a1b2c3",
-        hashType = DccRevocationHashType.SIGNATURE,
+        hashType = setOf(DccRevocationHashType.SIGNATURE),
         mode = DccRevocationMode.POINT,
         expires = System.currentTimeMillis(),
         lastUpdated = "2009-01-01T12:00:00+01:00"
