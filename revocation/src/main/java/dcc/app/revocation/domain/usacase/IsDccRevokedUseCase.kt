@@ -28,9 +28,14 @@ import dcc.app.revocation.data.network.model.Slice
 import dcc.app.revocation.data.network.model.SliceType
 import dcc.app.revocation.domain.ErrorHandler
 import dcc.app.revocation.domain.RevocationRepository
+import dcc.app.revocation.domain.hexToByteArray
+import dcc.app.revocation.domain.model.DccRevocationHashType
 import dcc.app.revocation.domain.model.DccRevocationMode
 import dcc.app.revocation.domain.model.DccRevokationDataHolder
+import dcc.app.revocation.validation.BloomFilterImpl
 import kotlinx.coroutines.CoroutineDispatcher
+import java.io.ByteArrayInputStream
+import java.io.InputStream
 import java.lang.reflect.Type
 import javax.inject.Inject
 
@@ -44,15 +49,22 @@ class IsDccRevokedUseCase @Inject constructor(
         val kid = params.kid
         val kidMetadata = repository.getMetadataByKid(kid)
         kidMetadata ?: return false
-//  TODO: use hashType
-        val mode = kidMetadata.mode
-        val uvciSha256 = params.uvciSha256
-        val coUvciSha256 = params.coUvciSha256
-        val signatureSha256 = params.signatureSha256
 
-        val containsUvciSha256 = isContainsHash(kid, mode, uvciSha256)
-        val containsCoUvciSha256 = isContainsHash(kid, mode, coUvciSha256)
-        val containsSignatureSha256 = isContainsHash(kid, mode, signatureSha256)
+        val mode = kidMetadata.mode
+        var containsUvciSha256 = false
+        if (kidMetadata.hashType.contains(DccRevocationHashType.UCI)) {
+            containsUvciSha256 = isContainsHash(kid, mode, params.uvciSha256)
+        }
+
+        var containsCoUvciSha256 = false
+        if (kidMetadata.hashType.contains(DccRevocationHashType.COUNTRYCODEUCI)) {
+            containsCoUvciSha256 = isContainsHash(kid, mode, params.coUvciSha256)
+        }
+
+        var containsSignatureSha256 = false
+        if (kidMetadata.hashType.contains(DccRevocationHashType.COUNTRYCODEUCI)) {
+            containsSignatureSha256 = isContainsHash(kid, mode, params.signatureSha256)
+        }
 
         return containsUvciSha256 || containsCoUvciSha256 || containsSignatureSha256
     }
@@ -62,7 +74,6 @@ class IsDccRevokedUseCase @Inject constructor(
 
         var x: Char? = null
         var y: Char? = null
-        var z: Char? = null
         val cid: Char
 
         when (mode) {
@@ -77,17 +88,16 @@ class IsDccRevokedUseCase @Inject constructor(
                 cid = hash[2]
                 x = hash[0]
                 y = hash[1]
-                z = hash[2]
             }
             DccRevocationMode.UNKNOWN -> return false
         }
 
-        val validationData = getValidationData(kid, x, y, z, cid)
+        val validationData = getValidationData(kid, x, y, cid)
         return contains(hash, validationData)
     }
 
-    private suspend fun getValidationData(kid: String, x: Char?, y: Char?, z: Char?, cid: Char): ValidationData? {
-        val partition = repository.getRevocationPartition(kid, x, y, z)
+    private suspend fun getValidationData(kid: String, x: Char?, y: Char?, cid: Char): ValidationData? {
+        val partition = repository.getRevocationPartition(kid, x, y)
         val chunks = partition?.chunks ?: return null
 
         val type: Type = object : TypeToken<Map<String, Map<String, Slice>>>() {}.type
@@ -98,7 +108,7 @@ class IsDccRevokedUseCase @Inject constructor(
 
         val slices = localChunks[cid.toString()]
         slices?.values?.map { it.hash }?.let { sliceIds ->
-            repository.getChunkSlices(sliceIds, kid, x, y, z, cid)?.let {
+            repository.getChunkSlices(sliceIds, kid, x, y, cid)?.let {
                 when (it.type) {
                     SliceType.Hash -> hashList.add(it.content)
                     SliceType.Bloom -> bloomFilterList.add(it.content)
@@ -112,7 +122,17 @@ class IsDccRevokedUseCase @Inject constructor(
     private fun contains(dccHash: String, validationData: ValidationData?): Boolean {
         validationData ?: return false
 
-        return validationData.hashList.contains(dccHash)
+        validationData.bloomFilterList.forEach {
+            val inputStream: InputStream = ByteArrayInputStream(it.hexToByteArray())
+            val bloomFilter = BloomFilterImpl(inputStream)
+            val contains = bloomFilter.mightContain(dccHash.toByteArray())
+            if (contains) {
+                return true
+            }
+        }
+
+
+        return false // validationData.hashList.contains(dccHash)
 
 //        validationData.bloomFilterList.
 //  TODO: add validation

@@ -26,12 +26,13 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import dcc.app.revocation.domain.model.DccSliceType
+import java.time.ZonedDateTime
 
 @Entity(
     tableName = "dcc_revocation_slice",
     indices = [
         Index(
-            value = ["sid", "kid", "x", "y", "z", "cid"],
+            value = ["sid", "kid", "x", "y", "cid"],
             unique = true
         ),
         Index(
@@ -46,10 +47,9 @@ data class DccRevocationSliceLocal(
     val kid: String,
     val x: Char?,
     val y: Char?,
-    val z: Char?,
     val cid: String,
     val type: DccSliceType,
     val version: String,
-    val expires: Long,
+    val expires: ZonedDateTime,
     val content: String
 )

@@ -26,6 +26,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import java.time.ZonedDateTime
 
 @Entity(
     tableName = "dcc_revocation_partition",
@@ -39,7 +40,7 @@ import androidx.room.PrimaryKey
     ],
     indices = [
         Index(
-            value = ["kid", "x", "y", "z", "id"],
+            value = ["kid", "x", "y", "id"],
             unique = true
         ),
         Index(
@@ -54,7 +55,6 @@ data class DccRevocationPartitionLocal(
     val kid: String,
     val x: Char?,
     val y: Char?,
-    val z: Char?,
-    val expires: Long,
+    val expires: ZonedDateTime,
     val chunks: String
 )

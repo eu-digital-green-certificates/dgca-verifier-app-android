@@ -29,6 +29,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dcc.app.revocation.domain.getDccSignatureSha256
 import dcc.app.revocation.domain.model.DccRevokationDataHolder
+import dcc.app.revocation.domain.toBase64Url
 import dcc.app.revocation.domain.toSha256HexString
 import dcc.app.revocation.domain.usacase.IsDccRevokedUseCase
 import dgca.verifier.app.android.data.VerifierRepository
@@ -231,7 +232,7 @@ class VerificationViewModel @Inject constructor(
                     certificateExpired = true
                 }
 
-                certificateRevoked = isDCCRevoked(base64EncodedKid, greenCertificateData?.greenCertificate, cose)
+                certificateRevoked = isDCCRevoked(kid.toBase64(), greenCertificateData?.greenCertificate, cose)
 
                 return@forEach
             }
@@ -269,7 +270,7 @@ class VerificationViewModel @Inject constructor(
 
         }
 
-        return true
+        return false
     }
 
     private suspend fun GreenCertificateData.validateRules(

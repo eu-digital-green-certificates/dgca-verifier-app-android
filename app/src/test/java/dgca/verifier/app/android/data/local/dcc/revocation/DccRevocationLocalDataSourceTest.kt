@@ -37,6 +37,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
+import java.time.ZonedDateTime
 
 @RunWith(MockitoJUnitRunner::class)
 class DccRevocationLocalDataSourceTest {
@@ -46,17 +47,16 @@ class DccRevocationLocalDataSourceTest {
         kid = "a1b2c3",
         hashType = setOf(DccRevocationHashType.SIGNATURE),
         mode = DccRevocationMode.POINT,
-        expires = System.currentTimeMillis(),
-        lastUpdated = "2009-01-01T12:00:00+01:00"
+        expires = ZonedDateTime.now(),
+        lastUpdated = ZonedDateTime.now()
     )
 
     private val testDccRevocationPartition = DccRevocationPartition(
         kid = "a1b2c3",
         x = 'a',
         y = '1',
-        z = '2',
         id = "id",
-        expires = System.currentTimeMillis(),
+        expires = ZonedDateTime.now(),
         chunks = ""
     )
 

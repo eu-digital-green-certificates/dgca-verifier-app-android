@@ -3,7 +3,6 @@
     "id": "ucia_coordinate",
     "x": "7",
     "y": "d",
-    "z": "2",
     "expires": "2023-01-01T12:00:00+01:00",
     "chunks": {
       "0": {
@@ -33,7 +32,6 @@
     "id": "co_ucia_coordinate",
     "x": "a",
     "y": "3",
-    "z": "0",
     "expires": "2023-01-01T12:00:00+01:00",
     "chunks": {
       "0": {
@@ -56,7 +54,6 @@
     "id": "signature_coordinate",
     "x": "0",
     "y": "d",
-    "z": "d",
     "expires": "2023-01-01T12:00:00+01:00",
     "chunks": {
       "0": {
@@ -79,7 +76,6 @@
     "id": "ucia_vector",
     "x": "7",
     "y": "null",
-    "z": "null",
     "expires": "2023-01-01T12:00:00+01:00",
     "chunks": {
       "0": {
@@ -109,7 +105,6 @@
     "id": "co_ucia_vector",
     "x": "a",
     "y": "null",
-    "z": "null",
     "expires": "2023-01-01T12:00:00+01:00",
     "chunks": {
       "0": {
@@ -132,7 +127,6 @@
     "id": "signature_vector",
     "x": "0",
     "y": "null",
-    "z": "null",
     "expires": "2023-01-01T12:00:00+01:00",
     "chunks": {
       "0": {
@@ -155,39 +149,6 @@
     "id": "ucia_point",
     "x": "null",
     "y": "null",
-    "z": "null",
-    "expires": "2023-01-01T12:00:00+01:00",
-    "chunks": {
-      "7": {
-        "2023-01-01T12:00:00+01:00": {
-          "type": "Bloom",
-          "version": "1.0",
-          "hash": "c4343ffff3333"
-        }
-      }
-    }
-  },
-  {
-    "id": "co_ucia_point",
-    "x": "null",
-    "y": "null",
-    "z": "null",
-    "expires": "2023-01-01T12:00:00+01:00",
-    "chunks": {
-      "a": {
-        "2023-01-01T12:00:00+01:00": {
-          "type": "Bloom",
-          "version": "1.0",
-          "hash": "b4343ffff3333"
-        }
-      }
-    }
-  },
-  {
-    "id": "signature_point",
-    "x": "null",
-    "y": "null",
-    "z": "null",
     "expires": "2023-01-01T12:00:00+01:00",
     "chunks": {
       "0": {
@@ -195,6 +156,20 @@
           "type": "Bloom",
           "version": "1.0",
           "hash": "a4343ffff3333"
+        }
+      },
+      "7": {
+        "2023-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "c4343ffff3333"
+        }
+      },
+      "a": {
+        "2023-01-01T12:00:00+01:00": {
+          "type": "Bloom",
+          "version": "1.0",
+          "hash": "b4343ffff3333"
         }
       }
     }
