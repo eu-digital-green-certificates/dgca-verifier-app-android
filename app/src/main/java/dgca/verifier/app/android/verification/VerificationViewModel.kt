@@ -29,6 +29,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dcc.app.revocation.domain.getDccSignatureSha256
 import dcc.app.revocation.domain.model.DccRevokationDataHolder
+import dcc.app.revocation.domain.toBase64Url
 import dcc.app.revocation.domain.toSha256HexString
 import dcc.app.revocation.domain.usacase.IsDccRevokedUseCase
 import dgca.verifier.app.android.data.VerifierRepository
@@ -48,7 +49,6 @@ import dgca.verifier.app.decoder.model.*
 import dgca.verifier.app.decoder.prefixvalidation.PrefixValidationService
 import dgca.verifier.app.decoder.schema.SchemaValidator
 import dgca.verifier.app.decoder.toBase64
-import dgca.verifier.app.decoder.toBase64Url
 import dgca.verifier.app.engine.CertLogicEngine
 import dgca.verifier.app.engine.Result
 import dgca.verifier.app.engine.UTC_ZONE_ID
