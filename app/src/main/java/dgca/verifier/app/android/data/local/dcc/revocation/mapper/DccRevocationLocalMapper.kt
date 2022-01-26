@@ -55,7 +55,6 @@ fun DccRevocationPartitionLocal.fromLocal(): DccRevocationPartition {
         kid = kid,
         x = x,
         y = y,
-        z = z,
         expires = expires,
         chunks = chunks
     )
@@ -67,7 +66,6 @@ fun DccRevocationPartition.toLocal(): DccRevocationPartitionLocal {
         kid = kid,
         x = x,
         y = y,
-        z = z,
         expires = expires,
         chunks = chunks
     )
@@ -109,7 +107,6 @@ fun DccRevocationSliceLocal.fromLocal(): DccRevocationSlice {
         kid = kid,
         x = x,
         y = y,
-        z = z,
         cid = cid,
         type = type.toSliceType(),
         version = version,
@@ -130,7 +127,6 @@ fun DccRevocationSlice.toLocal(): DccRevocationSliceLocal {
         kid = kid,
         x = x,
         y = y,
-        z = z,
         cid = cid,
         type = type.toDccSliceType(),
         version = version,

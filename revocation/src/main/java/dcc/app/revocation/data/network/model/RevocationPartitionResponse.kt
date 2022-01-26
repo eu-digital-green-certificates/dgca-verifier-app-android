@@ -22,18 +22,36 @@
 
 package dcc.app.revocation.data.network.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import java.time.ZonedDateTime
+
 data class RevocationPartitionResponse(
+
+    @JsonProperty("id")
     val id: String,
+
+    @JsonProperty("x")
     val x: Char?,
+
+    @JsonProperty("y")
     val y: Char?,
-    val z: Char?,
-    val expires: String,
+
+    @JsonProperty("expires")
+    val expires: ZonedDateTime,
+
+    @JsonProperty("chunks")
     val chunks: Map<String, Map<String, Slice>>
 )
 
 data class Slice(
+
+    @JsonProperty("type")
     val type: SliceType,
+
+    @JsonProperty("version")
     val version: String,
+
+    @JsonProperty("hash")
     val hash: String
 )
 
