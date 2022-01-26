@@ -27,6 +27,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import dcc.app.revocation.domain.model.DccRevocationHashType
 import dcc.app.revocation.domain.model.DccRevocationMode
+import java.time.ZonedDateTime
 
 @Entity(
     tableName = "dcc_revocation_kid_metadata",
@@ -42,6 +43,6 @@ data class DccRevocationKidMetadataLocal(
     val kid: String,
     val hashType: Set<DccRevocationHashType>,
     val mode: DccRevocationMode,
-    val expires: Long,
-    val lastUpdated: String
+    val expires: ZonedDateTime,
+    val lastUpdated: ZonedDateTime
 )

@@ -1,0 +1,44 @@
+[
+  {
+    "p": 0.01,
+    "filter": "WzAsIDAsIDAsIDAsIDAsIDAsIDAsIDEsIDAsIDBd",
+    "data": [
+      "a"
+    ],
+    "exists": "[1]",
+    "k": 1,
+    "written": [
+      1
+    ]
+  },
+  {
+    "p": 0.01,
+    "filter": "WzAsIDAsIDAsIDAsIDAsIDAsIDAsIDEsIDAsIDEsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDBd",
+    "data": [
+      "a",
+      "b"
+    ],
+    "exists": "[1, 1]",
+    "k": 1,
+    "written": [
+      1,
+      1
+    ]
+  },
+  {
+    "p": 0.01,
+    "filter": "WzAsIDEsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDEsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDAsIDBd",
+    "data": [
+      "a",
+      "b",
+      "c"
+    ],
+    "exists": "[1, 0, 1]",
+    "k": 1,
+    "written": [
+      1,
+      0,
+      1
+    ]
+  }
+]

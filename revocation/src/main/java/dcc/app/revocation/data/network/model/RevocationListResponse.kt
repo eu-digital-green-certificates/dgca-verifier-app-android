@@ -22,24 +22,25 @@
 
 package dcc.app.revocation.data.network.model
 
-import com.google.gson.annotations.SerializedName
+import com.fasterxml.jackson.annotation.JsonProperty
 import dcc.app.revocation.domain.model.DccRevocationHashType
 import dcc.app.revocation.domain.model.DccRevocationMode
+import java.time.ZonedDateTime
 
 data class RevocationKIDResponse(
 
-    @SerializedName("kid")
+    @JsonProperty("kid")
     val kid: String,
 
-    @SerializedName("mode")
+    @JsonProperty("mode")
     val mode: DccRevocationMode,
 
-    @SerializedName("hashType")
+    @JsonProperty("hashType")
     val hashType: Set<DccRevocationHashType>,
 
-    @SerializedName("expires")
-    val expires: String,
+    @JsonProperty("expires")
+    val expires: ZonedDateTime,
 
-    @SerializedName("lastUpdated")
-    val lastUpdated: String
+    @JsonProperty("lastUpdated")
+    val lastUpdated: ZonedDateTime
 )

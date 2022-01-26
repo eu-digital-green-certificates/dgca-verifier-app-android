@@ -22,6 +22,7 @@
 
 package dcc.app.revocation.domain
 
+import android.util.Base64
 import com.upokecenter.cbor.CBORObject
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -73,5 +74,10 @@ fun ByteArray.sha256(): ByteArray? {
     }
 }
 
+fun ByteArray.toHexString(): String = joinToString("") { "%02x".format(it) }
 
+fun String.hexToByteArray(): ByteArray = chunked(2)
+    .map { it.toInt(16).toByte() }
+    .toByteArray()
 
+fun ByteArray.toBase64Url(): String = Base64.encodeToString(this, Base64.URL_SAFE)

@@ -68,11 +68,10 @@ class DgcaApplication : Application(), Configuration.Provider {
 //        TODO: for test purpose uncomment when finish.
         WorkManager.getInstance(this).apply {
 //            schedulePeriodicWorker<ConfigsLoadingWorker>(WORKER_CONFIGS)
-//            schedulePeriodicWorker<RulesLoadWorker>(WORKER_RULES)
-//            schedulePeriodicWorker<LoadKeysWorker>(WORKER_KEYS)
-//            schedulePeriodicWorker<CountriesLoadWorker>(WORKER_COUNTRIES)
-//            schedulePeriodicWorker<ValueSetsLoadWorker>(WORKER_VALUESETS)
-//            schedulePeriodicWorker<RevocationWorker>(WORKER_REVOCATION)
+            schedulePeriodicWorker<RulesLoadWorker>(WORKER_RULES)
+            schedulePeriodicWorker<LoadKeysWorker>(WORKER_KEYS)
+            schedulePeriodicWorker<CountriesLoadWorker>(WORKER_COUNTRIES)
+            schedulePeriodicWorker<ValueSetsLoadWorker>(WORKER_VALUESETS)
             scheduleOneTimeWorker<RevocationWorker>(WORKER_REVOCATION)
         }
 
