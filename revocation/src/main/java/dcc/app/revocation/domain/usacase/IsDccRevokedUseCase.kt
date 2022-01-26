@@ -28,10 +28,14 @@ import dcc.app.revocation.data.network.model.Slice
 import dcc.app.revocation.data.network.model.SliceType
 import dcc.app.revocation.domain.ErrorHandler
 import dcc.app.revocation.domain.RevocationRepository
+import dcc.app.revocation.domain.hexToByteArray
 import dcc.app.revocation.domain.model.DccRevocationHashType
 import dcc.app.revocation.domain.model.DccRevocationMode
 import dcc.app.revocation.domain.model.DccRevokationDataHolder
+import dcc.app.revocation.validation.BloomFilterImpl
 import kotlinx.coroutines.CoroutineDispatcher
+import java.io.ByteArrayInputStream
+import java.io.InputStream
 import java.lang.reflect.Type
 import javax.inject.Inject
 
@@ -117,6 +121,16 @@ class IsDccRevokedUseCase @Inject constructor(
 
     private fun contains(dccHash: String, validationData: ValidationData?): Boolean {
         validationData ?: return false
+
+        validationData.bloomFilterList.forEach {
+            val inputStream: InputStream = ByteArrayInputStream(it.hexToByteArray())
+            val bloomFilter = BloomFilterImpl(inputStream)
+            val contains = bloomFilter.mightContain(dccHash.toByteArray())
+            if (contains) {
+                return true
+            }
+        }
+
 
         return validationData.hashList.contains(dccHash)
 
