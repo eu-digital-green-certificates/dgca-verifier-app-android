@@ -31,16 +31,16 @@ import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationSl
 @Dao
 interface DccRevocationDao {
 
-    @Query("SELECT * FROM dcc_revocation_kid_metadata WHERE kid = :kid")
+    @Query("SELECT * FROM dcc_revocation_kid_metadata WHERE kid is :kid")
     suspend fun getDccRevocationKidMetadataBy(kid: String): DccRevocationKidMetadataLocal?
 
-    @Query("SELECT * FROM dcc_revocation_partition WHERE id = :partitionId AND kid = :kid")
+    @Query("SELECT * FROM dcc_revocation_partition WHERE id is :partitionId AND kid is :kid")
     suspend fun getDccRevocationPartitionBy(partitionId: String, kid: String): DccRevocationPartitionLocal?
 
-    @Query("SELECT * FROM dcc_revocation_partition WHERE kid = :kid AND x = :x AND y = :y")
+    @Query("SELECT * FROM dcc_revocation_partition WHERE kid is :kid AND x is :x AND y is :y")
     suspend fun getDccRevocationPartition(kid: String, x: Char?, y: Char?): DccRevocationPartitionLocal?
 
-    @Query("SELECT * FROM dcc_revocation_slice WHERE sid IN (:sliceIds) AND kid = :kid AND x = :x AND y = :y AND cid = :cid")
+    @Query("SELECT * FROM dcc_revocation_slice WHERE sid IN (:sliceIds) AND kid is :kid AND x is :x AND y is :y AND cid is :cid")
     suspend fun getChunkSlice(
         sliceIds: List<String>,
         kid: String,
@@ -125,7 +125,7 @@ interface DccRevocationDao {
     @Query("DELETE FROM dcc_revocation_slice WHERE kid NOT IN (:kidList)")
     suspend fun removeOutdatedSlices(kidList: List<String>)
 
-    @Query("DELETE FROM dcc_revocation_chunk WHERE id = :partitionId AND cid NOT IN (:partitionChunkIds)")
+    @Query("DELETE FROM dcc_revocation_chunk WHERE id is :partitionId AND cid NOT IN (:partitionChunkIds)")
     suspend fun removeOutdatedPartitionChunks(partitionId: String, partitionChunkIds: List<String>)
 
     @Query("DELETE FROM dcc_revocation_kid_metadata WHERE expires <= :currentTime")
@@ -139,23 +139,23 @@ interface DccRevocationDao {
 
 //    TODO: not used below
 
-    @Query("SELECT * FROM dcc_revocation_kid_metadata WHERE kid = :kid")
+    @Query("SELECT * FROM dcc_revocation_kid_metadata WHERE kid is :kid")
     fun getDccRevocationKidMetadataListBy(kid: String): List<DccRevocationKidMetadataLocal>
 
-    @Query("DELETE FROM dcc_revocation_kid_metadata WHERE kid = :kid")
+    @Query("DELETE FROM dcc_revocation_kid_metadata WHERE kid is :kid")
     fun deleteDccRevocationKidMetadataListBy(kid: String)
 
-    @Query("SELECT * FROM dcc_revocation_partition WHERE kid = :kid")
+    @Query("SELECT * FROM dcc_revocation_partition WHERE kid is :kid")
     fun getDccRevocationPartitionListBy(kid: String): List<DccRevocationPartitionLocal>
 
-    @Query("DELETE FROM dcc_revocation_partition WHERE id = :partitionId")
+    @Query("DELETE FROM dcc_revocation_partition WHERE id is :partitionId")
     fun deleteDccRevocationPartitionBy(partitionId: String)
 
-    @Query("SELECT * FROM dcc_revocation_chunk WHERE kid = :kid")
+    @Query("SELECT * FROM dcc_revocation_chunk WHERE kid is :kid")
     fun getDccRevocationChunkList(
         kid: String
     ): List<DccRevocationChunkLocal>
 
-    @Query("DELETE FROM dcc_revocation_chunk WHERE cid = :chunkId")
+    @Query("DELETE FROM dcc_revocation_chunk WHERE cid is :chunkId")
     fun deleteDccRevocationChunkBy(chunkId: String)
 }
