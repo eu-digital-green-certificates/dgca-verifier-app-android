@@ -33,9 +33,9 @@ import dcc.app.revocation.domain.model.DccRevocationPartition
 import dcc.app.revocation.domain.model.DccRevocationSlice
 import dcc.app.revocation.domain.model.RevocationKidData
 import dcc.app.revocation.isEqualTo
-import dcc.app.revocation.parseDate
 import kotlinx.coroutines.CoroutineDispatcher
 import java.lang.reflect.Type
+import java.time.ZonedDateTime
 import javax.inject.Inject
 
 private const val SUPPORTED_TAG = "1.0"
@@ -47,9 +47,6 @@ class GetRevocationDataUseCase @Inject constructor(
 ) : BaseUseCase<Unit, Any>(dispatcher, errorHandler) {
 
     override suspend fun invoke(params: Any) {
-        // Delete expired data
-        repository.deleteExpiredData(System.currentTimeMillis())
-
         // Load list of KIDs
         val newKidItems = repository.getRevocationLists()
 
@@ -59,6 +56,9 @@ class GetRevocationDataUseCase @Inject constructor(
         newKidItems.forEach { revocationKidData ->
             checkKidMetadata(revocationKidData)
         }
+
+        // Delete expired data
+        repository.deleteExpiredData(System.currentTimeMillis())
     }
 
     private suspend fun checkKidMetadata(revocationKidData: RevocationKidData) {
@@ -93,7 +93,7 @@ class GetRevocationDataUseCase @Inject constructor(
                 kid,
                 revocationSettingsData.hashType,
                 revocationSettingsData.mode,
-                revocationSettingsData.expires.parseDate()?.toInstant()?.toEpochMilli() ?: 0,
+                revocationSettingsData.expires,
                 revocationSettingsData.lastUpdated
             )
         )
@@ -183,8 +183,7 @@ class GetRevocationDataUseCase @Inject constructor(
                 kid = kid,
                 x = partition.x,
                 y = partition.y,
-                z = partition.z,
-                expires = partition.expires.parseDate()?.toInstant()?.toEpochMilli() ?: 0,
+                expires = partition.expires,
                 chunks = Gson().toJson(partition.chunks)
             )
         )
@@ -212,11 +211,10 @@ class GetRevocationDataUseCase @Inject constructor(
                     kid = kid,
                     x = partition.x,
                     y = partition.y,
-                    z = partition.z,
                     cid = cid,
                     type = value.type,
                     version = value.version,
-                    expires = key.parseDate()?.toInstant()?.toEpochMilli() ?: 0,
+                    expires = ZonedDateTime.parse(key),
                     content = response?.content ?: ""
                 )
             )

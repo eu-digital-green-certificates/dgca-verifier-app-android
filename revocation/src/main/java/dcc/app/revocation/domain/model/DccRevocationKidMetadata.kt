@@ -22,10 +22,12 @@
 
 package dcc.app.revocation.domain.model
 
+import java.time.ZonedDateTime
+
 data class DccRevocationKidMetadata(
     val kid: String,
     val hashType: Set<DccRevocationHashType>,
     val mode: DccRevocationMode,
-    val expires: Long,
-    val lastUpdated: String
+    val expires: ZonedDateTime,
+    val lastUpdated: ZonedDateTime
 )

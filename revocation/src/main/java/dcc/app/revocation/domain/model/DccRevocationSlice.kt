@@ -23,16 +23,16 @@
 package dcc.app.revocation.domain.model
 
 import dcc.app.revocation.data.network.model.SliceType
+import java.time.ZonedDateTime
 
 data class DccRevocationSlice(
     val sid: String,
     val kid: String,
     val x: Char?,
     val y: Char?,
-    val z: Char?,
     val cid: String,
     val type: SliceType,
     val version: String,
-    val expires: Long,
+    val expires: ZonedDateTime,
     val content: String
 )

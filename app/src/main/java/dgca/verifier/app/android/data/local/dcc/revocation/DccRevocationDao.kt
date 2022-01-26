@@ -37,16 +37,15 @@ interface DccRevocationDao {
     @Query("SELECT * FROM dcc_revocation_partition WHERE id is :partitionId AND kid is :kid")
     suspend fun getDccRevocationPartitionBy(partitionId: String, kid: String): DccRevocationPartitionLocal?
 
-    @Query("SELECT * FROM dcc_revocation_partition WHERE kid is :kid AND x is :x AND y is :y AND z is :z")
-    suspend fun getDccRevocationPartition(kid: String, x: Char?, y: Char?, z: Char?): DccRevocationPartitionLocal?
+    @Query("SELECT * FROM dcc_revocation_partition WHERE kid is :kid AND x is :x AND y is :y")
+    suspend fun getDccRevocationPartition(kid: String, x: Char?, y: Char?): DccRevocationPartitionLocal?
 
-    @Query("SELECT * FROM dcc_revocation_slice WHERE sid IN (:sliceIds) AND kid is :kid AND x is :x AND y is :y AND z is :z AND cid is :cid")
+    @Query("SELECT * FROM dcc_revocation_slice WHERE sid IN (:sliceIds) AND kid is :kid AND x is :x AND y is :y AND cid is :cid")
     suspend fun getChunkSlice(
         sliceIds: List<String>,
         kid: String,
         x: Char?,
         y: Char?,
-        z: Char?,
         cid: Char
     ): DccRevocationSliceLocal?
 
