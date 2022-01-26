@@ -70,7 +70,7 @@ class ExampleUnitTest {
 //        assertThat(filter.mightContain(dccHash), `is`(true))
 //        assertThat(filter.mightContain(randomHash), `is`(false))
 
-        val impl = BloomFilterImpl(3, 3.toByte(), 3)
+        val impl = BloomFilterImpl(3, 0.1F)
         impl.add(hash1.toByteArray())
         impl.add(hash2.toByteArray())
         impl.add(hash3.toByteArray())

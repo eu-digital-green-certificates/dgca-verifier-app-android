@@ -232,7 +232,7 @@ class VerificationViewModel @Inject constructor(
                     certificateExpired = true
                 }
 
-                certificateRevoked = isDCCRevoked(kid.toBase64Url(), greenCertificateData?.greenCertificate, cose)
+                certificateRevoked = isDCCRevoked(kid.toBase64(), greenCertificateData?.greenCertificate, cose)
 
                 return@forEach
             }
@@ -270,7 +270,7 @@ class VerificationViewModel @Inject constructor(
 
         }
 
-        return true
+        return false
     }
 
     private suspend fun GreenCertificateData.validateRules(

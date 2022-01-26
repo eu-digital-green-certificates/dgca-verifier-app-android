@@ -132,7 +132,7 @@ class IsDccRevokedUseCase @Inject constructor(
         }
 
 
-        return validationData.hashList.contains(dccHash)
+        return false // validationData.hashList.contains(dccHash)
 
 //        validationData.bloomFilterList.
 //  TODO: add validation
