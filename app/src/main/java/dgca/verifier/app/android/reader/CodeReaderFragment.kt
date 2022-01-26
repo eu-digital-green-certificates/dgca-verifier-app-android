@@ -267,11 +267,15 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(), NavCont
     }
 
     fun onNdefMessageReceived(qrCodeText: String) {
-        val action =
-            CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationDialogFragment(
+        try {
+            val action =
+                CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationDialogFragment(
                 qrCodeText,
                 binding.countrySelector.selectedItem?.toString() ?: ""
-            )
-        findNavController().navigate(action)
+                )
+            findNavController().navigate(action)
+        } catch (ex: Exception) {
+            Timber.d("action_codeReaderFragment_to_verificationDialogFragment cannot be found from the current destination Destination.")
+        }
     }
 }
