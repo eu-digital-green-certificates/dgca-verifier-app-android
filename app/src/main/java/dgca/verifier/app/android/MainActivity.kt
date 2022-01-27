@@ -113,25 +113,24 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        val builder = StringBuilder()
-        val records = NdefParser.parse(messages[0])
-        val size = records.size
+        val itr = messages.listIterator()
 
-        for (i in 0 until size) {
-            val record = records[i]
-            val str = record.str()
-            builder.append(str)
-        }
+        while (itr.hasNext()) {
+            val records = NdefParser.parse(itr.next())
 
-        val qrCodeText = builder.toString()
-        if (qrCodeText.isNotEmpty()) {
-            navHostFragment.childFragmentManager.primaryNavigationFragment?.let { fragment ->
-                if (fragment is CodeReaderFragment && fragment.isVisible) {
-                    fragment.onNdefMessageReceived(qrCodeText)
+            for (i in 0 until records.size) {
+                if (records[i] != null) {
+                    val record = records[i].str()
+
+                    if (record.length >= 5 && record.substring(0, 4) == "HC1:") {
+                       navHostFragment.childFragmentManager.primaryNavigationFragment?.let { fragment ->
+                            if (fragment is CodeReaderFragment && fragment.isVisible) {
+                                fragment.onNdefMessageReceived(record)
+                            }
+                        }
+                    }
                 }
             }
-        } else {
-            Timber.d("Received empty NDEFMessage")
         }
     }
 }
