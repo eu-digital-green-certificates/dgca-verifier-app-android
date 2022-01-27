@@ -23,21 +23,12 @@
 package dgca.verifier.app.android.data.local.dcc.revocation.model
 
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.time.ZonedDateTime
 
 @Entity(
     tableName = "dcc_revocation_partition",
-    foreignKeys = [
-        ForeignKey(
-            entity = DccRevocationKidMetadataLocal::class,
-            parentColumns = arrayOf("kid"),
-            childColumns = arrayOf("kid"),
-            onDelete = ForeignKey.CASCADE
-        )
-    ],
     indices = [
         Index(
             value = ["kid", "x", "y", "id"],

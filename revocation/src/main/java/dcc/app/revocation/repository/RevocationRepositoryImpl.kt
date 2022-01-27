@@ -103,13 +103,8 @@ class RevocationRepositoryImpl @Inject constructor(
     override suspend fun getRevocationPartition(kid: String, x: Char?, y: Char?): DccRevocationPartition? =
         dccRevocationLocalDataSource.getRevocationPartition(kid, x, y)
 
-    override suspend fun getChunkSlices(
-        sliceIds: List<String>,
-        kid: String,
-        x: Char?,
-        y: Char?,
-        cid: Char
-    ): DccRevocationSlice? = dccRevocationLocalDataSource.getChunkSlice(sliceIds, kid, x, y, cid)
+    override suspend fun getChunkSlices(kid: String, x: Char?, y: Char?, cid: String): List<DccRevocationSlice> =
+        dccRevocationLocalDataSource.getChunkSlices(kid, x, y, cid)
 
     override suspend fun saveKidMetadata(dccRevocationKidMetadata: DccRevocationKidMetadata) {
         dccRevocationLocalDataSource.addOrUpdate(dccRevocationKidMetadata)
@@ -127,13 +122,13 @@ class RevocationRepositoryImpl @Inject constructor(
         dccRevocationLocalDataSource.removeOutdatedKidItems(notInKidList)
     }
 
-    override suspend fun deleteOutdatedChunksForPartitionId(partitionId: String, partitionChunkIds: List<String>) {
-        dccRevocationLocalDataSource.removeOutdatedPartitionChunks(partitionId, partitionChunkIds)
-    }
-
     override suspend fun deleteExpiredData(currentTime: Long) {
         dccRevocationLocalDataSource.deleteExpiredKIDs(currentTime)
         dccRevocationLocalDataSource.deleteExpiredPartitions(currentTime)
         dccRevocationLocalDataSource.deleteExpireSlices(currentTime)
+    }
+
+    override suspend fun deleteOutdatedSlicesForPartitionId(kid: String, chunksIds: List<String>) {
+        dccRevocationLocalDataSource.deleteOutdatedSlicesForPartitionId(kid, chunksIds)
     }
 }
