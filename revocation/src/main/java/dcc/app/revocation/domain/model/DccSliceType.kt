@@ -22,8 +22,8 @@
 
 package dcc.app.revocation.domain.model
 
-enum class DccSliceType {
-    HASH,
+enum class DccSliceType(val tag: String) {
+    HASH("Hash"),
     // Bloom Filter
-    BF
+    BF("Bloom")
 }
