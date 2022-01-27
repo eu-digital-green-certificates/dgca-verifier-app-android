@@ -34,6 +34,7 @@ import dgca.verifier.app.android.data.local.dcc.revocation.mapper.fromLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.mapper.toLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationKidMetadataLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationSliceLocal
 import dgca.verifier.app.android.utils.sha256
 import dgca.verifier.app.decoder.toBase64
 import dgca.verifier.app.engine.UTC_ZONE_ID
@@ -101,10 +102,10 @@ internal class DccRevocationDaoTest {
         if (prefixes.size >= amount) return prefixes.toTypedArray()
         prefixes.add("")
         if (prefixes.size >= amount) return prefixes.toTypedArray()
-        for (x in 0 until 256) {
+        for (x in 65 until 256) {
             prefixes.add("${x.toChar()}")
             if (prefixes.size >= amount) return prefixes.toTypedArray()
-            for (y in 0 until 256) {
+            for (y in 65 until 256) {
                 prefixes.add("${x.toChar()}${y.toChar()}")
                 if (prefixes.size >= amount) return prefixes.toTypedArray()
             }
@@ -118,12 +119,12 @@ internal class DccRevocationDaoTest {
         val version: String = "1.0"
     )
 
-    private fun generateChunks(chunksAmount: Int, slicesAmount: Int): Map<String, Map<String, Slice>> {
-        val chunks = mutableMapOf<String, Map<String, Slice>>()
+    private fun generateChunks(chunksAmount: Int, slicesAmount: Int): Map<String, Map<ZonedDateTime, Slice>> {
+        val chunks = mutableMapOf<String, Map<ZonedDateTime, Slice>>()
         for (i in 0 until chunksAmount) {
-            val slices = mutableMapOf<String, Slice>()
+            val slices = mutableMapOf<ZonedDateTime, Slice>()
             for (j in 0 until slicesAmount) {
-                slices[ZonedDateTime.now().toString()] = Slice(
+                slices[ZonedDateTime.now().plusYears(j.toLong())] = Slice(
                     hash = UUID.randomUUID().toString()
                 )
             }
@@ -134,7 +135,7 @@ internal class DccRevocationDaoTest {
 
     @Test
     fun loadTest() {
-        val amountOfKids = 50
+        val amountOfKids = 10
         val generatedKids = generateUniqueKidsArray(amountOfKids)
 
         generatedKids.forEachIndexed { index, s ->
@@ -154,12 +155,11 @@ internal class DccRevocationDaoTest {
             )
         }
 
-        val amountOfPartitions = 5000
+        val amountOfPartitions = 50
         val generatedPartitions = generateUniquePartitionPrefixesArray(amountOfPartitions)
 
         val chunksAmount = min(16, Int.MAX_VALUE)
         val slicesAmount = min(10, Int.MAX_VALUE)
-
         generatedPartitions.forEachIndexed { index, s ->
             val mode = DccRevocationMode.values()[s.length]
             val kidIndex = index % amountOfKids
@@ -172,34 +172,45 @@ internal class DccRevocationDaoTest {
             val kid = generatedKids[modeKidShift]
             val chunks = generateChunks(chunksAmount, slicesAmount)
             val chunksString = jacksonObjectMapper().writeValueAsString(chunks)
-            val partition = when(mode) {
-                DccRevocationMode.POINT -> DccRevocationPartitionLocal(
-                    id = "$index",
-                    kid = kid,
-                    x = null,
-                    y = null,
-                    ZonedDateTime.now(),
-                    chunksString
-                )
-                DccRevocationMode.COORDINATE -> DccRevocationPartitionLocal(
-                    id = "$index",
-                    kid = kid,
-                    x = s[0],
-                    y = null,
-                    ZonedDateTime.now(),
-                    chunksString
-                )
-                DccRevocationMode.VECTOR -> DccRevocationPartitionLocal(
-                    id = "$index",
-                    kid = kid,
-                    x = s[0],
-                    y = s[1],
-                    ZonedDateTime.now(),
-                    chunksString
-                )
+            val (x, y) = when(mode) {
+                DccRevocationMode.POINT -> Pair(null, null)
+                DccRevocationMode.COORDINATE -> Pair(s[0], null)
+                DccRevocationMode.VECTOR -> Pair(s[0], s[1])
                 DccRevocationMode.UNKNOWN -> throw IllegalStateException()
             }
+            val partition =DccRevocationPartitionLocal(
+                id = "$index",
+                kid = kid,
+                x = x,
+                y = y,
+                ZonedDateTime.now(),
+                chunksString
+            )
             dccRevocationDao.insert(partition)
+
+            chunks.forEach { (cid, slices) ->
+                slices.forEach { (expirationTime, slice) ->
+                    val hashStart = s + cid
+                    println("HashStart: $hashStart")
+                    val hashes = mutableSetOf<String>()
+                    for (i in 0..10) {
+                        val hash = System.currentTimeMillis().toString().sha256().replaceRange(0, hashStart.length, hashStart)
+                        hashes.add(hash)
+                    }
+                    val sliceLocal = DccRevocationSliceLocal(
+                        sid = slice.hash,
+                        kid = kid,
+                        x = x,
+                        y = y,
+                        cid = cid,
+                        type = DccSliceType.values().first() { it.tag ==slice.type },
+                        version = slice.version,
+                        expires = expirationTime,
+                        content = hashes.joinToString(separator = "")
+                    )
+                    dccRevocationDao.insert(sliceLocal)
+                }
+            }
         }
 
         return
