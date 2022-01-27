@@ -47,6 +47,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
 import java.io.InputStream
+import java.lang.IllegalStateException
 import java.nio.charset.Charset
 import java.time.ZonedDateTime
 import java.util.*
