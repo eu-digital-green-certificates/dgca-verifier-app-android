@@ -27,10 +27,8 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.fasterxml.jackson.databind.ObjectMapper
-import dcc.app.revocation.domain.model.DccRevocationHashType
-import dcc.app.revocation.domain.model.DccRevocationKidMetadata
-import dcc.app.revocation.domain.model.DccRevocationMode
-import dcc.app.revocation.domain.model.DccRevocationPartition
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import dcc.app.revocation.domain.model.*
 import dgca.verifier.app.android.data.local.AppDatabase
 import dgca.verifier.app.android.data.local.dcc.revocation.mapper.fromLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.mapper.toLocal
@@ -49,6 +47,9 @@ import java.io.IOException
 import java.io.InputStream
 import java.lang.IllegalStateException
 import java.nio.charset.Charset
+import java.time.ZonedDateTime
+import java.util.*
+import kotlin.math.min
 import kotlin.random.Random
 
 @RunWith(AndroidJUnit4::class)
@@ -110,6 +111,26 @@ internal class DccRevocationDaoTest {
         return prefixes.toTypedArray()
     }
 
+    data class Slice(
+        val hash: String,
+        val type: String = DccSliceType.BF.tag,
+        val version: String = "1.0"
+    )
+
+    private fun generateChunks(chunksAmount: Int, slicesAmount: Int): Map<String, Map<String, Slice>> {
+        val chunks = mutableMapOf<String, Map<String, Slice>>()
+        for (i in 0 until chunksAmount) {
+            val slices = mutableMapOf<String, Slice>()
+            for (j in 0 until slicesAmount) {
+                slices[ZonedDateTime.now().toString()] = Slice(
+                    hash = UUID.randomUUID().toString()
+                )
+            }
+            chunks["${i.toChar()}"] = slices
+        }
+        return chunks
+    }
+
     @Test
     fun loadTest() {
         val amountOfKids = 50
@@ -135,6 +156,9 @@ internal class DccRevocationDaoTest {
         val amountOfPartitions = 5000
         val generatedPartitions = generateUniquePartitionPrefixesArray(amountOfPartitions)
 
+        val chunksAmount = min(16, Int.MAX_VALUE)
+        val slicesAmount = min(10, Int.MAX_VALUE)
+
         generatedPartitions.forEachIndexed { index, s ->
             val mode = DccRevocationMode.values()[s.length]
             val kidIndex = index % amountOfKids
@@ -145,6 +169,8 @@ internal class DccRevocationDaoTest {
                 else -> kidIndex
             }
             val kid = generatedKids[modeKidShift]
+            val chunks = generateChunks(chunksAmount, slicesAmount)
+            val chunksString = jacksonObjectMapper().writeValueAsString(chunks)
             val partition = when(mode) {
                 DccRevocationMode.POINT -> DccRevocationPartitionLocal(
                     id = "$index",
@@ -153,7 +179,7 @@ internal class DccRevocationDaoTest {
                     y = null,
                     z = null,
                     Long.MAX_VALUE,
-                    ""
+                    chunksString
                 )
                 DccRevocationMode.COORDINATE -> DccRevocationPartitionLocal(
                     id = "$index",
@@ -162,7 +188,7 @@ internal class DccRevocationDaoTest {
                     y = null,
                     z = null,
                     Long.MAX_VALUE,
-                    ""
+                    chunksString
                 )
                 DccRevocationMode.VECTOR -> DccRevocationPartitionLocal(
                     id = "$index",
@@ -171,7 +197,7 @@ internal class DccRevocationDaoTest {
                     y = s[1],
                     z = null,
                     Long.MAX_VALUE,
-                    ""
+                    chunksString
                 )
                 DccRevocationMode.UNKNOWN -> throw IllegalStateException()
             }
