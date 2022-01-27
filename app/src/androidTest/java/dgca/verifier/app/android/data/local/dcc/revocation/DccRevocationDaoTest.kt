@@ -147,8 +147,8 @@ internal class DccRevocationDaoTest {
                         DccRevocationHashType.UCI
                     ),
                     mode = mode,
-                    expires = Long.MAX_VALUE,
-                    lastUpdated = ""
+                    expires = ZonedDateTime.now(),
+                    lastUpdated = ZonedDateTime.now()
                 )
             )
         }
@@ -177,8 +177,7 @@ internal class DccRevocationDaoTest {
                     kid = kid,
                     x = null,
                     y = null,
-                    z = null,
-                    Long.MAX_VALUE,
+                    ZonedDateTime.now(),
                     chunksString
                 )
                 DccRevocationMode.COORDINATE -> DccRevocationPartitionLocal(
@@ -186,8 +185,7 @@ internal class DccRevocationDaoTest {
                     kid = kid,
                     x = s[0],
                     y = null,
-                    z = null,
-                    Long.MAX_VALUE,
+                    ZonedDateTime.now(),
                     chunksString
                 )
                 DccRevocationMode.VECTOR -> DccRevocationPartitionLocal(
@@ -195,8 +193,7 @@ internal class DccRevocationDaoTest {
                     kid = kid,
                     x = s[0],
                     y = s[1],
-                    z = null,
-                    Long.MAX_VALUE,
+                    ZonedDateTime.now(),
                     chunksString
                 )
                 DccRevocationMode.UNKNOWN -> throw IllegalStateException()
@@ -319,8 +316,8 @@ internal class DccRevocationDaoTest {
             kid = kid,
             hashType = setOf(DccRevocationHashType.COUNTRYCODEUCI),
             mode = DccRevocationMode.POINT,
-            expires = System.currentTimeMillis() + System.currentTimeMillis(),
-            lastUpdated = System.currentTimeMillis().toString()
+            expires = ZonedDateTime.now().plusYears(1),
+            lastUpdated = ZonedDateTime.now()
         )
 
         dccRevocationDao.insert(dccRevocationKidSignatureMetadata.toLocal())
@@ -334,8 +331,7 @@ internal class DccRevocationDaoTest {
             y = null,
             chunks = "chunks",
             id = "null",
-            z = null,
-            expires = 0
+            expires = ZonedDateTime.now().plusYears(1)
         )
 
         dccRevocationDao.insert(nullDccPartition.toLocal())
@@ -346,16 +342,12 @@ internal class DccRevocationDaoTest {
         val xyDccPartition = xDccPartition.copy(id = "xy", y = hashBytes[1].toChar())
         dccRevocationDao.insert(xyDccPartition.toLocal())
 
-        val xyzDccPartition = xyDccPartition.copy(id = "xyz", z = hashBytes[2].toChar())
-        dccRevocationDao.insert(xyzDccPartition.toLocal())
-
-        assertEquals(4, dccRevocationDao.getDccRevocationPartitionListBy(kid = kid).size)
+        assertEquals(3, dccRevocationDao.getDccRevocationPartitionListBy(kid = kid).size)
         assertEquals(
             nullDccPartition, dccRevocationDao.getDccRevocationPartition(
                 kid = kid,
                 x = nullDccPartition.x,
                 y = nullDccPartition.y,
-                z = nullDccPartition.z
             )?.fromLocal()
         )
         assertEquals(
@@ -363,7 +355,6 @@ internal class DccRevocationDaoTest {
                 kid = kid,
                 x = xDccPartition.x,
                 y = xDccPartition.y,
-                z = xDccPartition.z
             )?.fromLocal()
         )
         assertEquals(
@@ -371,15 +362,6 @@ internal class DccRevocationDaoTest {
                 kid = kid,
                 x = xyDccPartition.x,
                 y = xyDccPartition.y,
-                z = xyDccPartition.z
-            )?.fromLocal()
-        )
-        assertEquals(
-            xyzDccPartition, dccRevocationDao.getDccRevocationPartition(
-                kid = kid,
-                x = xyzDccPartition.x,
-                y = xyzDccPartition.y,
-                z = xyzDccPartition.z
             )?.fromLocal()
         )
     }
