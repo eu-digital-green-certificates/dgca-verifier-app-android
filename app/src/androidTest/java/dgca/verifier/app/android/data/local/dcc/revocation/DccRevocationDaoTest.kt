@@ -36,6 +36,7 @@ import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationKi
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
 import dgca.verifier.app.android.utils.sha256
 import dgca.verifier.app.decoder.toBase64
+import dgca.verifier.app.engine.UTC_ZONE_ID
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.io.IOUtils
 import org.junit.After
@@ -331,7 +332,7 @@ internal class DccRevocationDaoTest {
             y = null,
             chunks = "chunks",
             id = "null",
-            expires = ZonedDateTime.now().plusYears(1)
+            expires = ZonedDateTime.now().plusYears(1).withZoneSameInstant(UTC_ZONE_ID)
         )
 
         dccRevocationDao.insert(nullDccPartition.toLocal())
