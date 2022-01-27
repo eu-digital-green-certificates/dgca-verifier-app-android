@@ -27,22 +27,29 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.fasterxml.jackson.databind.ObjectMapper
-import dcc.app.revocation.domain.model.*
+import dcc.app.revocation.domain.model.DccRevocationHashType
+import dcc.app.revocation.domain.model.DccRevocationKidMetadata
+import dcc.app.revocation.domain.model.DccRevocationMode
+import dcc.app.revocation.domain.model.DccRevocationPartition
 import dgca.verifier.app.android.data.local.AppDatabase
 import dgca.verifier.app.android.data.local.dcc.revocation.mapper.fromLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.mapper.toLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationKidMetadataLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
 import dgca.verifier.app.android.utils.sha256
+import dgca.verifier.app.decoder.toBase64
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.io.IOUtils
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
 import java.io.InputStream
+import java.lang.IllegalStateException
 import java.nio.charset.Charset
+import kotlin.random.Random
 
 @RunWith(AndroidJUnit4::class)
 internal class DccRevocationDaoTest {
@@ -75,6 +82,103 @@ internal class DccRevocationDaoTest {
     @Throws(IOException::class)
     fun closeDb() {
         db.close()
+    }
+
+    private fun generateUniqueKidsArray(amount: Int): Array<String> {
+        val kids = mutableSetOf<String>()
+        while (kids.size < amount) {
+            val kid = Random.nextBytes(9).toBase64()
+            kids.add(kid)
+        }
+        return kids.toTypedArray()
+    }
+
+    // Prefixes represent 3 first characters of hashes to be stored in partition.
+    private fun generateUniquePartitionPrefixesArray(amount: Int): Array<String> {
+        val prefixes = mutableSetOf<String>()
+        if (prefixes.size >= amount) return prefixes.toTypedArray()
+        prefixes.add("")
+        if (prefixes.size >= amount) return prefixes.toTypedArray()
+        for (x in 0 until 256) {
+            prefixes.add("${x.toChar()}")
+            if (prefixes.size >= amount) return prefixes.toTypedArray()
+            for (y in 0 until 256) {
+                prefixes.add("${x.toChar()}${y.toChar()}")
+                if (prefixes.size >= amount) return prefixes.toTypedArray()
+            }
+        }
+        return prefixes.toTypedArray()
+    }
+
+    @Test
+    fun loadTest() {
+        val amountOfKids = 50
+        val generatedKids = generateUniqueKidsArray(amountOfKids)
+
+        generatedKids.forEachIndexed { index, s ->
+            val mode = DccRevocationMode.values()[index % 3]
+            dccRevocationDao.insert(
+                DccRevocationKidMetadataLocal(
+                    kid = s,
+                    hashType = setOf(
+                        DccRevocationHashType.COUNTRYCODEUCI,
+                        DccRevocationHashType.SIGNATURE,
+                        DccRevocationHashType.UCI
+                    ),
+                    mode = mode,
+                    expires = Long.MAX_VALUE,
+                    lastUpdated = ""
+                )
+            )
+        }
+
+        val amountOfPartitions = 5000
+        val generatedPartitions = generateUniquePartitionPrefixesArray(amountOfPartitions)
+
+        generatedPartitions.forEachIndexed { index, s ->
+            val mode = DccRevocationMode.values()[s.length]
+            val kidIndex = index % amountOfKids
+            val modeShift = kidIndex % 3
+            val modeKidShift = when {
+                s.length > modeShift -> (index + s.length - modeShift) % amountOfKids
+                s.length < modeShift -> (index + modeShift - s.length) % amountOfKids
+                else -> kidIndex
+            }
+            val kid = generatedKids[modeKidShift]
+            val partition = when(mode) {
+                DccRevocationMode.POINT -> DccRevocationPartitionLocal(
+                    id = "$index",
+                    kid = kid,
+                    x = null,
+                    y = null,
+                    z = null,
+                    Long.MAX_VALUE,
+                    ""
+                )
+                DccRevocationMode.COORDINATE -> DccRevocationPartitionLocal(
+                    id = "$index",
+                    kid = kid,
+                    x = s[0],
+                    y = null,
+                    z = null,
+                    Long.MAX_VALUE,
+                    ""
+                )
+                DccRevocationMode.VECTOR -> DccRevocationPartitionLocal(
+                    id = "$index",
+                    kid = kid,
+                    x = s[0],
+                    y = s[1],
+                    z = null,
+                    Long.MAX_VALUE,
+                    ""
+                )
+                DccRevocationMode.UNKNOWN -> throw IllegalStateException()
+            }
+            dccRevocationDao.insert(partition)
+        }
+
+        return
     }
 
 //    @Test
@@ -220,30 +324,38 @@ internal class DccRevocationDaoTest {
         dccRevocationDao.insert(xyzDccPartition.toLocal())
 
         assertEquals(4, dccRevocationDao.getDccRevocationPartitionListBy(kid = kid).size)
-        assertEquals(nullDccPartition, dccRevocationDao.getDccRevocationPartition(
-            kid = kid,
-            x = nullDccPartition.x,
-            y = nullDccPartition.y,
-            z = nullDccPartition.z
-        )?.fromLocal())
-        assertEquals(xDccPartition, dccRevocationDao.getDccRevocationPartition(
-            kid = kid,
-            x = xDccPartition.x,
-            y = xDccPartition.y,
-            z = xDccPartition.z
-        )?.fromLocal())
-        assertEquals(xyDccPartition, dccRevocationDao.getDccRevocationPartition(
-            kid = kid,
-            x = xyDccPartition.x,
-            y = xyDccPartition.y,
-            z = xyDccPartition.z
-        )?.fromLocal())
-        assertEquals(xyzDccPartition, dccRevocationDao.getDccRevocationPartition(
-            kid = kid,
-            x = xyzDccPartition.x,
-            y = xyzDccPartition.y,
-            z = xyzDccPartition.z
-        )?.fromLocal())
+        assertEquals(
+            nullDccPartition, dccRevocationDao.getDccRevocationPartition(
+                kid = kid,
+                x = nullDccPartition.x,
+                y = nullDccPartition.y,
+                z = nullDccPartition.z
+            )?.fromLocal()
+        )
+        assertEquals(
+            xDccPartition, dccRevocationDao.getDccRevocationPartition(
+                kid = kid,
+                x = xDccPartition.x,
+                y = xDccPartition.y,
+                z = xDccPartition.z
+            )?.fromLocal()
+        )
+        assertEquals(
+            xyDccPartition, dccRevocationDao.getDccRevocationPartition(
+                kid = kid,
+                x = xyDccPartition.x,
+                y = xyDccPartition.y,
+                z = xyDccPartition.z
+            )?.fromLocal()
+        )
+        assertEquals(
+            xyzDccPartition, dccRevocationDao.getDccRevocationPartition(
+                kid = kid,
+                x = xyzDccPartition.x,
+                y = xyzDccPartition.y,
+                z = xyzDccPartition.z
+            )?.fromLocal()
+        )
     }
 
 //
