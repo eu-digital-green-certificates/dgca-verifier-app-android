@@ -22,6 +22,7 @@
 
 package dgca.verifier.app.android.data.local.dcc.revocation
 
+//import kotlinx.coroutines.test.TestCoroutineDispatcher
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
@@ -33,7 +34,6 @@ import dcc.app.revocation.data.RevocationPreferences
 import dcc.app.revocation.data.RevocationPreferencesImpl
 import dcc.app.revocation.data.local.DccRevocationLocalDataSource
 import dcc.app.revocation.data.network.RevocationService
-import dcc.app.revocation.di.RevocationNetworkModule
 import dcc.app.revocation.domain.ErrorHandler
 import dcc.app.revocation.domain.RevocationRepository
 import dcc.app.revocation.domain.model.*
@@ -54,10 +54,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-//import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.apache.commons.io.IOUtils
 import org.junit.After
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -322,12 +321,25 @@ internal class DccRevocationDaoTest {
             }
         }
 
-        val res = isDccRevokedUseCase.execute(DccRevokationDataHolder(
+        val res = isDccRevokedUseCase.execute(
+            DccRevokationDataHolder(
             kid = modeKids[DccRevocationMode.POINT]!!.first(),
             hashes.first(),
             hashes.first(),
             hashes.first()
         ))
+
+        assertTrue(res!!)
+
+        val shouldNotContain = isDccRevokedUseCase.execute(
+            DccRevokationDataHolder(
+                kid = modeKids[DccRevocationMode.POINT]!!.first(),
+                hashes.first().replaceRange(0, 1, "+"),
+                hashes.first().replaceRange(0, 1, "+"),
+                hashes.first().replaceRange(0, 1, "+")
+            )
+        )
+        assertFalse(shouldNotContain!!)
         return@runBlocking
     }
 
