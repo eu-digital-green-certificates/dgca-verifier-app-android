@@ -26,6 +26,7 @@ import android.util.Base64
 import com.upokecenter.cbor.CBORObject
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import java.util.*
 
 const val ECDSA_256 = -7
 const val RSA_PSS_256 = -37
@@ -40,7 +41,7 @@ fun ByteArray.getDccSignatureSha256(): String {
         return when (getAlgoFromHeader(protectedHeader, unprotectedHeader)) {
             ECDSA_256 -> {
                 val len = coseSignature.size / 2
-                val r = copyOfRange(0, len)
+                val r = Arrays.copyOfRange(coseSignature, 0, len)
                 r.toSha256HexString()
             }
             RSA_PSS_256 -> coseSignature.toSha256HexString()
