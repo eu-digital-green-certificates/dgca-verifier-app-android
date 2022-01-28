@@ -50,7 +50,7 @@ interface RevocationRepository {
 
     suspend fun getRevocationPartition(kid: String, x: Char?, y: Char?): DccRevocationPartition?
 
-    suspend fun getChunkSlices(sliceIds: List<String>, kid: String, x: Char?, y: Char?, cid: Char): DccRevocationSlice?
+    suspend fun getChunkSlices(kid: String, x: Char?, y: Char?, cid: String): List<DccRevocationSlice>
 
     suspend fun saveKidMetadata(dccRevocationKidMetadata: DccRevocationKidMetadata)
 
@@ -60,7 +60,7 @@ interface RevocationRepository {
 
     suspend fun deleteOutdatedKidItems(notInKidList: List<String>)
 
-    suspend fun deleteOutdatedChunksForPartitionId(partitionId: String, partitionChunkIds: List<String>)
-
     suspend fun deleteExpiredData(currentTime: Long)
+
+    suspend fun deleteOutdatedSlicesForPartitionId(kid: String, chunksIds: List<String>)
 }
