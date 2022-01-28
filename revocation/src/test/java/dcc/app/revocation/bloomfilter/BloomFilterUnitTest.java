@@ -180,7 +180,7 @@ public class BloomFilterUnitTest {
     public void testProbabilistcRate2() throws FilterException {
         int scans = 10000000;
         BloomFilter filter = new BloomFilterImpl(100, (byte) 1, 4);
-        float propScan = filter.getP();
+        double propScan = filter.getP();
         filter.add(new byte[]{5, 1, 2, 3, 6});
         filter.add(new byte[]{2, 1, 2, 3, 6});
         filter.add(new byte[]{7, 1, 2, 3, 6});
@@ -269,7 +269,6 @@ public class BloomFilterUnitTest {
             this.lookupFilter(testData, object, i);
             return;
         }
-
     }*/
 
     /**
@@ -413,6 +412,4 @@ public class BloomFilterUnitTest {
     private Object getFromObject(String key, JSONObject object) {
         return object.get(key);
     }
-
-
 }

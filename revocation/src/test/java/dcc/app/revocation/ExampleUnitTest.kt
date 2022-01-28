@@ -51,7 +51,7 @@ class ExampleUnitTest {
         val dccHash = "60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752"
         val randomHash = "a441b15fe9a3cf56661190a0b93b9dec7d04127288cc87250967cf3b52894d11"
 
-        val impl = BloomFilterImpl(3, 0.1f)
+        val impl = BloomFilterImpl(3, 0.1)
         impl.add(hash1.toByteArray())
         impl.add(hash2.toByteArray())
         impl.add(hash3.toByteArray())
