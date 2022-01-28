@@ -33,6 +33,7 @@ import dcc.app.revocation.data.RevocationPreferences
 import dcc.app.revocation.data.RevocationPreferencesImpl
 import dcc.app.revocation.data.local.DccRevocationLocalDataSource
 import dcc.app.revocation.data.network.RevocationService
+import dcc.app.revocation.di.RevocationNetworkModule
 import dcc.app.revocation.domain.ErrorHandler
 import dcc.app.revocation.domain.RevocationRepository
 import dcc.app.revocation.domain.model.*
@@ -45,11 +46,15 @@ import dgca.verifier.app.android.data.local.dcc.revocation.mapper.toLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationKidMetadataLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationSliceLocal
+import dgca.verifier.app.android.di.BASE_URL
 import dgca.verifier.app.android.utils.sha256
 import dgca.verifier.app.decoder.toBase64
 import dgca.verifier.app.engine.UTC_ZONE_ID
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+//import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.apache.commons.io.IOUtils
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -78,7 +83,8 @@ internal class DccRevocationDaoTest {
     private lateinit var db: AppDatabase
     private val objectMapper = ObjectMapper().apply { this.findAndRegisterModules() }
 
-    private lateinit var testCoroutineDispatcher: TestCoroutineDispatcher
+    @ExperimentalCoroutinesApi
+    private lateinit var testCoroutineDispatcher: CoroutineDispatcher
     private lateinit var errorHandler: ErrorHandler
     private lateinit var revocationService: RevocationService
     private lateinit var revocationPreferences: RevocationPreferences
@@ -111,7 +117,7 @@ internal class DccRevocationDaoTest {
         ).build()
         dccRevocationDao = db.dccRevocationPartitionDao()
         dccRevocationLocalDataSource = DccRevocationLocalDataSourceImpl(dccRevocationDao)
-        revocationService = Retrofit.Builder().build().create(RevocationService::class.java)
+        revocationService = Retrofit.Builder().baseUrl(BASE_URL).build().create(RevocationService::class.java)
         revocationPreferences = RevocationPreferencesImpl(context)
         revocationRepository = RevocationRepositoryImpl(
             revocationService,
@@ -119,6 +125,7 @@ internal class DccRevocationDaoTest {
             dccRevocationLocalDataSource
         )
         errorHandler = GeneralErrorHandlerImpl()
+        testCoroutineDispatcher = Dispatchers.Main
         isDccRevokedUseCase = IsDccRevokedUseCase(revocationRepository, testCoroutineDispatcher, errorHandler)
         return
     }
@@ -225,7 +232,7 @@ internal class DccRevocationDaoTest {
     }
 
     @Test
-    fun loadTest() {
+    fun loadTest() = runBlocking {
         val amountOfKids = 19
         // Amount of partitions
         val amountOfHashPrefixes = min(256, 500)
@@ -314,7 +321,14 @@ internal class DccRevocationDaoTest {
                 }
             }
         }
-        return
+
+        val res = isDccRevokedUseCase.execute(DccRevokationDataHolder(
+            kid = modeKids[DccRevocationMode.POINT]!!.first(),
+            hashes.first(),
+            hashes.first(),
+            hashes.first()
+        ))
+        return@runBlocking
     }
 
 //    @Test
