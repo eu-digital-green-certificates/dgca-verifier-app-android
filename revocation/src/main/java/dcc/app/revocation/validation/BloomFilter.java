@@ -30,4 +30,6 @@ public interface BloomFilter {
 
     void writeTo(OutputStream outputStream) throws FilterException;
 
+    void reset(int bytes);
+
 }
