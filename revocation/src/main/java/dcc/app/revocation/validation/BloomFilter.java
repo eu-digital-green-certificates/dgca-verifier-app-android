@@ -10,8 +10,9 @@ import java.io.OutputStream;
 
 import dcc.app.revocation.validation.exception.FilterException;
 
+
 public interface BloomFilter {
-    float getP();
+    double getP();
 
     int getK();
 
