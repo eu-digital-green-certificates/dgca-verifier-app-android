@@ -31,13 +31,13 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
     private int currentElementAmount = 0;
     private int definedElementAmount = 0;
     private byte usedHashFunction = 0;
-    private float probRate;
+    private double probRate;
     private AtomicIntegerArray data;
     private final static int NUM_BITS = 8;
     private final static byte NUM_BYTES = Integer.BYTES;
     private final static byte NUM_BIT_FORMAT = (NUM_BYTES * NUM_BITS);
 
-//    @Serial
+    //    @Serial
     private static final long serialVersionUID = 7526472295622776147L;
     private static final short version = 1;
 
@@ -68,14 +68,14 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
         this.data = new AtomicIntegerArray(size);
     }
 
-    public BloomFilterImpl(int numberOfElements, float probRate) throws FilterException {
+    public BloomFilterImpl(int numberOfElements, double probRate) throws FilterException {
         super();
         if (numberOfElements <= 0 || probRate > 1 || probRate <= 0) {
             throw new FilterException("numberOfElements <=0, probRate <= 1", FilterExceptionsTypes.INVALID_PARAM);
         }
         // n: numberOfElements
         // m: numberOfBits -> ceil((n * log(p)) / log(1 / pow(2, log(2))));
-        this.numBits = (long) (Math.ceil((numberOfElements * Math.log((double) probRate)) / Math.log(1 / Math.pow(2, Math.log(2)))));
+        this.numBits = (long) (Math.ceil((numberOfElements * Math.log(probRate)) / Math.log(1 / Math.pow(2, Math.log(2)))));
 
         int bytes = (int) (this.numBits / NUM_BITS) + 1;
         int size = (bytes / NUM_BYTES) + (bytes % NUM_BYTES);
@@ -86,10 +86,9 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
             throw new FilterException(FilterExceptionsTypes.INVALID_SIZE);
         }
 
-//        TODO: investigate crash
-//        if (heapFreeSize < (long) size * NUM_BYTES) {
-//            throw new FilterException(FilterExceptionsTypes.OUT_OF_HEAP);
-//        }
+        if (heapFreeSize < (long) size * NUM_BYTES) {
+            throw new FilterException(FilterExceptionsTypes.OUT_OF_HEAP);
+        }
 
         this.definedElementAmount = numberOfElements;
         this.numberOfHashes = (byte) Math.max(1, (int) Math.round((double) this.numBits / numberOfElements * Math.log(2)));
@@ -188,7 +187,7 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
             dataOutputStream.writeShort(version);
             dataOutputStream.writeByte(usedHashFunction);
             dataOutputStream.writeByte(this.numberOfHashes);
-            dataOutputStream.writeFloat(this.probRate);
+            dataOutputStream.writeDouble(this.probRate);
             dataOutputStream.writeInt(this.definedElementAmount);
             dataOutputStream.writeInt(this.currentElementAmount);
             dataOutputStream.writeInt(this.getData().length());
@@ -205,7 +204,7 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
             int version = dis.readShort(); // for later compatibility
             this.usedHashFunction = dis.readByte();
             this.numberOfHashes = dis.readByte();
-            this.probRate = dis.readFloat();
+            this.probRate = dis.readDouble();
             this.definedElementAmount = dis.readInt();
             this.currentElementAmount = dis.readInt();
             int dataLength = dis.readInt();
@@ -286,7 +285,7 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
     //endregion
 
     @Override
-    public float getP() {
+    public double getP() {
         return this.probRate;
     }
 
