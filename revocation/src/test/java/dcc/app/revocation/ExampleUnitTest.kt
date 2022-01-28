@@ -22,17 +22,12 @@
 
 package dcc.app.revocation
 
-import com.google.common.hash.BloomFilter
-import com.google.common.hash.Funnels
 import dcc.app.revocation.validation.BloomFilterImpl
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Test
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
-import java.nio.charset.Charset
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -47,7 +42,6 @@ class ExampleUnitTest {
         assertEquals(4, 2 + 2)
     }
 
-    //    TODO: check implementation
     @Test
     fun bloomFilterTest() {
         val hash1 = "1b4f0e9851971998e732078544c96b36c3d01cedf7caa332359d6f1d83567014"
@@ -57,44 +51,21 @@ class ExampleUnitTest {
         val dccHash = "60303ae22b998861bce3b28f33eec1be758a213c86c93c076dbe9f558c11c752"
         val randomHash = "a441b15fe9a3cf56661190a0b93b9dec7d04127288cc87250967cf3b52894d11"
 
-//        val filter = BloomFilter.create(
-//            Funnels.stringFunnel(Charset.defaultCharset()),
-//            3,
-//            0.01
-//        )
-//
-//        filter.put(hash1)
-//        filter.put(hash2)
-//        filter.put(hash3)
-//
-//        assertThat(filter.mightContain(dccHash), `is`(true))
-//        assertThat(filter.mightContain(randomHash), `is`(false))
-
-        val impl = BloomFilterImpl(3, 3.toByte(), 3)
+        val impl = BloomFilterImpl(3, 0.1f)
         impl.add(hash1.toByteArray())
         impl.add(hash2.toByteArray())
         impl.add(hash3.toByteArray())
 
-        val stream: ByteArrayOutputStream = ByteArrayOutputStream()
+        assertTrue(impl.mightContain(dccHash.toByteArray()))        // True
+        assertFalse(impl.mightContain(randomHash.toByteArray()))    // False
+
+        val stream = ByteArrayOutputStream()
         impl.writeTo(stream)
+        val filterByteArray = stream.toByteArray()
+        val inputStream: InputStream = ByteArrayInputStream(filterByteArray)
+        val bloomFilterNew = BloomFilterImpl(inputStream)
 
-        assert(impl.mightContain(dccHash.toByteArray()))
-
-        val test1 = stream.toByteArray().toHexString()
-        val array = test1.hexToByteArray()
-
-        val inputStream: InputStream = ByteArrayInputStream(array)
-        val test = BloomFilterImpl(inputStream)
-
-        assert(impl.mightContain(dccHash.toByteArray()))
-
-        assert(impl.mightContain(dccHash.toByteArray()))
-        assert(impl.data.length() == 3)
+        assertTrue(bloomFilterNew.mightContain(dccHash.toByteArray()))      // True
+        assertFalse(bloomFilterNew.mightContain(randomHash.toByteArray()))  // False
     }
-
-    fun ByteArray.toHexString(): String = joinToString("") { "%02x".format(it) }
-
-    fun String.hexToByteArray(): ByteArray = chunked(2)
-        .map { it.toInt(16).toByte() }
-        .toByteArray()
 }

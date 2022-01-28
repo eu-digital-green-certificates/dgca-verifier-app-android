@@ -23,7 +23,6 @@
 package dgca.verifier.app.android.data.local.dcc.revocation
 
 import androidx.room.*
-import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationChunkLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationKidMetadataLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationSliceLocal
@@ -40,14 +39,8 @@ interface DccRevocationDao {
     @Query("SELECT * FROM dcc_revocation_partition WHERE kid is :kid AND x is :x AND y is :y")
     suspend fun getDccRevocationPartition(kid: String, x: Char?, y: Char?): DccRevocationPartitionLocal?
 
-    @Query("SELECT * FROM dcc_revocation_slice WHERE sid IN (:sliceIds) AND kid is :kid AND x is :x AND y is :y AND cid is :cid")
-    suspend fun getChunkSlice(
-        sliceIds: List<String>,
-        kid: String,
-        x: Char?,
-        y: Char?,
-        cid: Char
-    ): DccRevocationSliceLocal?
+    @Query("SELECT * FROM dcc_revocation_slice WHERE kid is :kid AND x is :x AND y is :y AND cid is :cid")
+    suspend fun getChunkSlices(kid: String, x: Char?, y: Char?, cid: String): List<DccRevocationSliceLocal>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(entity: DccRevocationKidMetadataLocal): Long
@@ -60,12 +53,6 @@ interface DccRevocationDao {
 
     @Update(entity = DccRevocationPartitionLocal::class, onConflict = OnConflictStrategy.REPLACE)
     fun update(entity: DccRevocationPartitionLocal): Int
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(entity: DccRevocationChunkLocal): Long
-
-    @Update(entity = DccRevocationChunkLocal::class, onConflict = OnConflictStrategy.REPLACE)
-    fun update(entity: DccRevocationChunkLocal): Int
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(entity: DccRevocationSliceLocal): Long
@@ -90,14 +77,6 @@ interface DccRevocationDao {
     }
 
     @Transaction
-    fun upsert(entity: DccRevocationChunkLocal) {
-        val id = insert(entity)
-        if (id == -1L) {
-            update(entity)
-        }
-    }
-
-    @Transaction
     fun upsert(entity: DccRevocationSliceLocal) {
         val id = insert(entity)
         if (id == -1L) {
@@ -109,7 +88,6 @@ interface DccRevocationDao {
     suspend fun removeOutdatedKidItems(kidList: List<String>) {
         removeOutdatedKidMetadata(kidList)
         removeOutdatedPartition(kidList)
-        removeOutdatedChunks(kidList)
         removeOutdatedSlices(kidList)
     }
 
@@ -119,14 +97,8 @@ interface DccRevocationDao {
     @Query("DELETE FROM dcc_revocation_partition WHERE kid NOT IN (:kidList)")
     suspend fun removeOutdatedPartition(kidList: List<String>)
 
-    @Query("DELETE FROM dcc_revocation_chunk WHERE kid NOT IN (:kidList)")
-    suspend fun removeOutdatedChunks(kidList: List<String>)
-
     @Query("DELETE FROM dcc_revocation_slice WHERE kid NOT IN (:kidList)")
     suspend fun removeOutdatedSlices(kidList: List<String>)
-
-    @Query("DELETE FROM dcc_revocation_chunk WHERE id is :partitionId AND cid NOT IN (:partitionChunkIds)")
-    suspend fun removeOutdatedPartitionChunks(partitionId: String, partitionChunkIds: List<String>)
 
     @Query("DELETE FROM dcc_revocation_kid_metadata WHERE expires <= :currentTime")
     suspend fun deleteExpiredKIDs(currentTime: Long)
@@ -136,6 +108,9 @@ interface DccRevocationDao {
 
     @Query("DELETE FROM dcc_revocation_slice WHERE expires <= :currentTime")
     suspend fun deleteExpiredSlices(currentTime: Long)
+
+    @Query("DELETE FROM dcc_revocation_slice WHERE kid is :kid AND cid NOT IN (:chunksIds)")
+    suspend fun deleteOutdatedSlicesForPartitionId(kid: String, chunksIds: List<String>)
 
 //    TODO: not used below
 
@@ -150,12 +125,4 @@ interface DccRevocationDao {
 
     @Query("DELETE FROM dcc_revocation_partition WHERE id is :partitionId")
     fun deleteDccRevocationPartitionBy(partitionId: String)
-
-    @Query("SELECT * FROM dcc_revocation_chunk WHERE kid is :kid")
-    fun getDccRevocationChunkList(
-        kid: String
-    ): List<DccRevocationChunkLocal>
-
-    @Query("DELETE FROM dcc_revocation_chunk WHERE cid is :chunkId")
-    fun deleteDccRevocationChunkBy(chunkId: String)
 }

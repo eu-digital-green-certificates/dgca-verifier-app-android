@@ -29,7 +29,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dcc.app.revocation.domain.getDccSignatureSha256
 import dcc.app.revocation.domain.model.DccRevokationDataHolder
-import dcc.app.revocation.domain.toBase64Url
 import dcc.app.revocation.domain.toSha256HexString
 import dcc.app.revocation.domain.usacase.IsDccRevokedUseCase
 import dgca.verifier.app.android.data.VerifierRepository
@@ -251,6 +250,7 @@ class VerificationViewModel @Inject constructor(
     }
 
     private suspend fun isDCCRevoked(kid: String, greenCertificate: GreenCertificate?, cose: ByteArray): Boolean {
+        Timber.d("revocation start")
         greenCertificate ?: return false
 
         greenCertificate.vaccinations?.firstOrNull()?.let {
@@ -265,9 +265,10 @@ class VerificationViewModel @Inject constructor(
                 signatureSha256
             )
 
-//            TODO: check lookup mode
-            val result = isDccRevokedUseCase.execute(data)
+            val result = isDccRevokedUseCase.execute(data) ?: false
 
+            Timber.d("revocation end")
+            return result
         }
 
         return false
