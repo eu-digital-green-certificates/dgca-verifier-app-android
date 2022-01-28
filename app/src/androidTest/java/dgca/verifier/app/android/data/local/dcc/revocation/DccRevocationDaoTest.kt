@@ -295,7 +295,7 @@ internal class DccRevocationDaoTest {
                     )
                     partitions.add(partition)
 
-                    val bloomFilter = BloomFilterImpl(amountOfHashesPerSlice, 0.00000000001f)
+                    val bloomFilter = BloomFilterImpl(amountOfHashesPerSlice, 0.00000000001)
                     chunks.forEach { (cid, slices) ->
                         slices.forEach { (expirationTime, slice) ->
                             val hashStart = hashPrefix + cid
