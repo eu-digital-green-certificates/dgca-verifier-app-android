@@ -28,7 +28,17 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import dcc.app.revocation.data.GeneralErrorHandlerImpl
+import dcc.app.revocation.data.RevocationPreferences
+import dcc.app.revocation.data.RevocationPreferencesImpl
+import dcc.app.revocation.data.local.DccRevocationLocalDataSource
+import dcc.app.revocation.data.network.RevocationService
+import dcc.app.revocation.domain.ErrorHandler
+import dcc.app.revocation.domain.RevocationRepository
 import dcc.app.revocation.domain.model.*
+import dcc.app.revocation.domain.usacase.IsDccRevokedUseCase
+import dcc.app.revocation.repository.RevocationRepositoryImpl
+import dcc.app.revocation.validation.BloomFilterImpl
 import dgca.verifier.app.android.data.local.AppDatabase
 import dgca.verifier.app.android.data.local.dcc.revocation.mapper.fromLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.mapper.toLocal
@@ -39,15 +49,17 @@ import dgca.verifier.app.android.utils.sha256
 import dgca.verifier.app.decoder.toBase64
 import dgca.verifier.app.engine.UTC_ZONE_ID
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.apache.commons.io.IOUtils
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import retrofit2.Retrofit
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.lang.IllegalStateException
 import java.nio.charset.Charset
 import java.time.ZonedDateTime
 import java.util.*
@@ -65,6 +77,14 @@ internal class DccRevocationDaoTest {
     private lateinit var dccRevocationDao: DccRevocationDao
     private lateinit var db: AppDatabase
     private val objectMapper = ObjectMapper().apply { this.findAndRegisterModules() }
+
+    private lateinit var testCoroutineDispatcher: TestCoroutineDispatcher
+    private lateinit var errorHandler: ErrorHandler
+    private lateinit var revocationService: RevocationService
+    private lateinit var revocationPreferences: RevocationPreferences
+    private lateinit var dccRevocationLocalDataSource: DccRevocationLocalDataSource
+    private lateinit var revocationRepository: RevocationRepository
+    private lateinit var isDccRevokedUseCase: IsDccRevokedUseCase
 
     companion object {
         private const val REVOCATION_PATH = "revocation"
@@ -90,6 +110,17 @@ internal class DccRevocationDaoTest {
             context, AppDatabase::class.java
         ).build()
         dccRevocationDao = db.dccRevocationPartitionDao()
+        dccRevocationLocalDataSource = DccRevocationLocalDataSourceImpl(dccRevocationDao)
+        revocationService = Retrofit.Builder().build().create(RevocationService::class.java)
+        revocationPreferences = RevocationPreferencesImpl(context)
+        revocationRepository = RevocationRepositoryImpl(
+            revocationService,
+            revocationPreferences,
+            dccRevocationLocalDataSource
+        )
+        errorHandler = GeneralErrorHandlerImpl()
+        isDccRevokedUseCase = IsDccRevokedUseCase(revocationRepository, testCoroutineDispatcher, errorHandler)
+        return
     }
 
     @After
@@ -199,14 +230,17 @@ internal class DccRevocationDaoTest {
         // Amount of partitions
         val amountOfHashPrefixes = min(256, 500)
         val chunksPerPartition = min(16, Int.MAX_VALUE)
-        val wantedAmountOfHashes = 100_000
+        val wantedAmountOfHashes = 10_000
         val minAmountOfHashes = amountOfHashPrefixes * chunksPerPartition
-        val approximateAmountOfHashes = if (wantedAmountOfHashes < minAmountOfHashes) minAmountOfHashes else wantedAmountOfHashes
+        val approximateAmountOfHashes =
+            if (wantedAmountOfHashes < minAmountOfHashes) minAmountOfHashes else wantedAmountOfHashes
         val hashesPerPrefix = approximateAmountOfHashes / amountOfHashPrefixes
         val hashesPerChunk = hashesPerPrefix / chunksPerPartition
         val wantedAmountOfSlicesPerChunk = 10
-        val amountOfSlicesPerChunk = if (wantedAmountOfSlicesPerChunk > hashesPerChunk) hashesPerChunk else wantedAmountOfSlicesPerChunk
-        val amountOfHashesPerSlice = approximateAmountOfHashes / (amountOfHashPrefixes * chunksPerPartition * amountOfSlicesPerChunk)
+        val amountOfSlicesPerChunk =
+            if (wantedAmountOfSlicesPerChunk > hashesPerChunk) hashesPerChunk else wantedAmountOfSlicesPerChunk
+        val amountOfHashesPerSlice =
+            approximateAmountOfHashes / (amountOfHashPrefixes * chunksPerPartition * amountOfSlicesPerChunk)
         val modeKids = generateUniqueKids(amountOfKids)
         modeKids.forEach { (mode, kids) ->
             kids.forEach { kid ->
@@ -214,6 +248,8 @@ internal class DccRevocationDaoTest {
                 dccRevocationDao.insert(kidMetadata)
             }
         }
+
+        val hashes = mutableSetOf<String>()
 
         val modeHashPrefixes = generateHashPrefixes(amountOfHashPrefixes)
         DccRevocationMode.values().forEach { mode ->
@@ -249,11 +285,17 @@ internal class DccRevocationDaoTest {
                         slices.forEach { (expirationTime, slice) ->
                             val hashStart = hashPrefix + cid
                             println("HashStart: $hashStart")
-                            val hashes = mutableSetOf<String>()
+                            val bloomFilter = BloomFilterImpl(1000, 0.1f)
+
                             for (i in 0..amountOfHashesPerSlice) {
                                 val hash = System.currentTimeMillis().toString().sha256()
                                     .replaceRange(0, hashStart.length, hashStart)
+                                bloomFilter.add(hash.toByteArray())
                                 hashes.add(hash)
+                            }
+                            val content = ByteArrayOutputStream().use {
+                                bloomFilter.writeTo(it)
+                                it.toByteArray()
                             }
                             val sliceLocal = DccRevocationSliceLocal(
                                 sid = slice.hash,
@@ -264,7 +306,7 @@ internal class DccRevocationDaoTest {
                                 type = DccSliceType.values().first() { it.tag == slice.type },
                                 version = slice.version,
                                 expires = expirationTime,
-                                content = hashes.joinToString()
+                                content = content
                             )
                             dccRevocationDao.insert(sliceLocal)
                         }
