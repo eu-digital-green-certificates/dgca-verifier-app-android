@@ -34,5 +34,38 @@ data class DccRevocationSlice(
     val type: SliceType,
     val version: String,
     val expires: ZonedDateTime,
-    val content: String
-)
+    val content: ByteArray
+) {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as DccRevocationSlice
+
+        if (sid != other.sid) return false
+        if (kid != other.kid) return false
+        if (x != other.x) return false
+        if (y != other.y) return false
+        if (cid != other.cid) return false
+        if (type != other.type) return false
+        if (version != other.version) return false
+        if (expires != other.expires) return false
+        if (!content.contentEquals(other.content)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = sid.hashCode()
+        result = 31 * result + kid.hashCode()
+        result = 31 * result + (x?.hashCode() ?: 0)
+        result = 31 * result + (y?.hashCode() ?: 0)
+        result = 31 * result + cid.hashCode()
+        result = 31 * result + type.hashCode()
+        result = 31 * result + version.hashCode()
+        result = 31 * result + expires.hashCode()
+        result = 31 * result + content.contentHashCode()
+        return result
+    }
+}
