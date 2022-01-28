@@ -125,4 +125,10 @@ interface DccRevocationDao {
 
     @Query("DELETE FROM dcc_revocation_partition WHERE id is :partitionId")
     fun deleteDccRevocationPartitionBy(partitionId: String)
+
+    @Insert(entity = DccRevocationPartitionLocal::class, onConflict = OnConflictStrategy.IGNORE)
+    fun insertList(entity: List<DccRevocationPartitionLocal>)
+
+    @Insert(entity = DccRevocationSliceLocal::class, onConflict = OnConflictStrategy.IGNORE)
+    fun insertSlicesList(entity: List<DccRevocationSliceLocal>)
 }

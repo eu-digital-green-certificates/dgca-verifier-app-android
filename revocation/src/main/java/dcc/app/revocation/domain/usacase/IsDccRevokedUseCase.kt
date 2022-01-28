@@ -114,14 +114,14 @@ class IsDccRevokedUseCase @Inject constructor(
             val inputStream: InputStream = ByteArrayInputStream(it)
             val bloomFilter = BloomFilterImpl(inputStream)
             val contains = bloomFilter.mightContain(dccHash.toByteArray())
-            if (contains) {
-                Timber.d("contains:$contains")
-                return true
-            }
+//            if (contains) {
+//                Timber.d("contains:$contains")
+//                return true
+//            }
         }
 
         // TODO: hash list check
-        return false // validationData.hashList.contains(dccHash)
+        return true // validationData.hashList.contains(dccHash)
     }
 
     internal data class ValidationData(
