@@ -22,21 +22,17 @@
 
 package dcc.app.revocation.domain.usacase
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import dcc.app.revocation.data.network.model.Slice
 import dcc.app.revocation.data.network.model.SliceType
 import dcc.app.revocation.domain.ErrorHandler
 import dcc.app.revocation.domain.RevocationRepository
-import dcc.app.revocation.domain.hexToByteArray
 import dcc.app.revocation.domain.model.DccRevocationHashType
 import dcc.app.revocation.domain.model.DccRevocationMode
 import dcc.app.revocation.domain.model.DccRevokationDataHolder
 import dcc.app.revocation.validation.BloomFilterImpl
 import kotlinx.coroutines.CoroutineDispatcher
+import timber.log.Timber
 import java.io.ByteArrayInputStream
 import java.io.InputStream
-import java.lang.reflect.Type
 import javax.inject.Inject
 
 class IsDccRevokedUseCase @Inject constructor(
@@ -92,27 +88,19 @@ class IsDccRevokedUseCase @Inject constructor(
             DccRevocationMode.UNKNOWN -> return false
         }
 
-        val validationData = getValidationData(kid, x, y, cid)
+        val validationData = getValidationData(kid, x, y, cid.toString())
         return contains(hash, validationData)
     }
 
-    private suspend fun getValidationData(kid: String, x: Char?, y: Char?, cid: Char): ValidationData? {
-        val partition = repository.getRevocationPartition(kid, x, y)
-        val chunks = partition?.chunks ?: return null
+    private suspend fun getValidationData(kid: String, x: Char?, y: Char?, cid: String): ValidationData? {
+        val bloomFilterList = mutableSetOf<ByteArray>()
+        val hashList = mutableSetOf<ByteArray>()
 
-        val type: Type = object : TypeToken<Map<String, Map<String, Slice>>>() {}.type
-        val localChunks = Gson().fromJson<Map<String, Map<String, Slice>>>(chunks, type)
-
-        val bloomFilterList = mutableListOf<String>()
-        val hashList = mutableListOf<String>()
-
-        val slices = localChunks[cid.toString()]
-        slices?.values?.map { it.hash }?.let { sliceIds ->
-            repository.getChunkSlices(sliceIds, kid, x, y, cid)?.let {
-                when (it.type) {
-                    SliceType.Hash -> hashList.add(it.content)
-                    SliceType.Bloom -> bloomFilterList.add(it.content)
-                }
+        val result = repository.getChunkSlices(kid, x, y, cid)
+        result.forEach {
+            when (it.type) {
+                SliceType.Hash -> hashList.add(it.content)
+                SliceType.Bloom -> bloomFilterList.add(it.content)
             }
         }
 
@@ -123,24 +111,21 @@ class IsDccRevokedUseCase @Inject constructor(
         validationData ?: return false
 
         validationData.bloomFilterList.forEach {
-            val inputStream: InputStream = ByteArrayInputStream(it.hexToByteArray())
+            val inputStream: InputStream = ByteArrayInputStream(it)
             val bloomFilter = BloomFilterImpl(inputStream)
             val contains = bloomFilter.mightContain(dccHash.toByteArray())
             if (contains) {
+                Timber.d("contains:$contains")
                 return true
             }
         }
 
-
+        // TODO: hash list check
         return false // validationData.hashList.contains(dccHash)
-
-//        validationData.bloomFilterList.
-//  TODO: add validation
-//        return false
     }
 
     internal data class ValidationData(
-        val bloomFilterList: List<String>,
-        val hashList: List<String>
+        val bloomFilterList: Set<ByteArray>,
+        val hashList: Set<ByteArray>
     )
 }

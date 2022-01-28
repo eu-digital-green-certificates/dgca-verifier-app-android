@@ -34,6 +34,7 @@ import dcc.app.revocation.domain.model.DccRevocationSlice
 import dcc.app.revocation.domain.model.RevocationKidData
 import dcc.app.revocation.isEqualTo
 import kotlinx.coroutines.CoroutineDispatcher
+import java.io.ByteArrayOutputStream
 import java.lang.reflect.Type
 import java.time.ZonedDateTime
 import javax.inject.Inject
@@ -130,7 +131,7 @@ class GetRevocationDataUseCase @Inject constructor(
         val chunksIds = mutableListOf<String>()
         remotePartition.chunks.keys.forEach { chunksIds.add(it) }
         // Remove all Chunks which are not more available (delete from .. not in .. ).
-        repository.deleteOutdatedChunksForPartitionId(remotePartition.id, chunksIds)
+        repository.deleteOutdatedSlicesForPartitionId(kid, chunksIds)
     }
 
     private suspend fun compareChunksWithLocal(
@@ -192,7 +193,6 @@ class GetRevocationDataUseCase @Inject constructor(
     private suspend fun getChunk(kid: String, id: String, cid: String) {
         val chunk = repository.getRevocationChunk(kid, id, cid)
 
-
 //        TODO: update chunk in DB
     }
 
@@ -205,19 +205,27 @@ class GetRevocationDataUseCase @Inject constructor(
         slices.forEach { (key, value) ->
             val sid = value.hash
             val response = repository.getSlice(kid, partition.id, cid, sid)
-            repository.saveSlice(
-                DccRevocationSlice(
-                    sid = sid,
-                    kid = kid,
-                    x = partition.x,
-                    y = partition.y,
-                    cid = cid,
-                    type = value.type,
-                    version = value.version,
-                    expires = ZonedDateTime.parse(key),
-                    content = response?.content ?: ""
+
+//            TODO: parse Gzip and replace content
+
+            ByteArrayOutputStream().use {
+//                bloomFilter.writeTo(it)
+//                val content = it.toByteArray()
+
+                repository.saveSlice(
+                    DccRevocationSlice(
+                        sid = sid,
+                        kid = kid,
+                        x = partition.x,
+                        y = partition.y,
+                        cid = cid,
+                        type = value.type,
+                        version = value.version,
+                        expires = ZonedDateTime.parse(key),
+                        content = "".toByteArray()
+                    )
                 )
-            )
+            }
         }
     }
 }

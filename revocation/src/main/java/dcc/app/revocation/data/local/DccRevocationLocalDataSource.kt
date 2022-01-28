@@ -22,7 +22,6 @@
 
 package dcc.app.revocation.data.local
 
-import dcc.app.revocation.domain.model.DccRevocationChunk
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.domain.model.DccRevocationPartition
 import dcc.app.revocation.domain.model.DccRevocationSlice
@@ -35,7 +34,7 @@ interface DccRevocationLocalDataSource {
 
     suspend fun getRevocationPartition(kid: String, x: Char?, y: Char?): DccRevocationPartition?
 
-    suspend fun getChunkSlice(sliceIds: List<String>, kid: String, x: Char?, y: Char?, cid: Char): DccRevocationSlice?
+    suspend fun getChunkSlices(kid: String, x: Char?, y: Char?, cid: String): List<DccRevocationSlice>
 
     fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata)
 
@@ -45,17 +44,15 @@ interface DccRevocationLocalDataSource {
 
     suspend fun removeOutdatedKidItems(kidList: List<String>)
 
-    suspend fun removeOutdatedPartitionChunks(partitionId: String, partitionChunkIds: List<String>)
-
     suspend fun deleteExpiredKIDs(currentTime: Long)
 
     suspend fun deleteExpiredPartitions(currentTime: Long)
 
     suspend fun deleteExpireSlices(currentTime: Long)
 
-//    TODO: not used below
+    suspend fun deleteOutdatedSlicesForPartitionId(kid: String, chunksIds: List<String>)
 
-    fun addOrUpdate(dccRevocationChunk: DccRevocationChunk)
+//    TODO: not used below
 
     fun getDccRevocationKidMetadataListBy(kid: String)
 
@@ -64,8 +61,4 @@ interface DccRevocationLocalDataSource {
     fun getDccRevocationPartitionListBy(kid: String): List<DccRevocationPartition>
 
     fun removeDccRevocationPartitionBy(pid: String)
-
-    fun getDccRevocationChunkListBy(kid: String): List<DccRevocationChunk>
-
-    fun removeDccRevocationChunkListBy(cid: String)
 }
