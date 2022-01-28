@@ -5,6 +5,7 @@
 
 package dcc.app.revocation.validation;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -197,6 +198,18 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
         } catch (IOException io) {
             throw new FilterException(io.getLocalizedMessage(), FilterExceptionsTypes.IO_EXCEPTION);
         }
+    }
+
+    @Override
+    public void reset(int numberOfElements) {
+        // n: numberOfElements
+        // m: numberOfBits -> ceil((n * log(p)) / log(1 / pow(2, log(2))));
+        this.numBits = (long) (Math.ceil((numberOfElements * Math.log((double) probRate)) / Math.log(1 / Math.pow(2, Math.log(2)))));
+
+        int bytes = (int) (this.numBits / NUM_BITS) + 1;
+        int size = (bytes / NUM_BYTES) + (bytes % NUM_BYTES);
+        this.numBits = (long) size * NUM_BIT_FORMAT;
+        this.data = new AtomicIntegerArray(size);
     }
 
     private void readFromStream(DataInputStream dis) {
