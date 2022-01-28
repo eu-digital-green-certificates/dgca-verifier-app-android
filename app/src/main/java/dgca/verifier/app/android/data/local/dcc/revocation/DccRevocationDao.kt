@@ -27,7 +27,6 @@ import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationKi
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationSliceLocal
 
-
 @Dao
 interface DccRevocationDao {
 

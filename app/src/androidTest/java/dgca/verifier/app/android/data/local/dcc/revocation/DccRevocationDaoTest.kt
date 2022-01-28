@@ -22,7 +22,6 @@
 
 package dgca.verifier.app.android.data.local.dcc.revocation
 
-//import kotlinx.coroutines.test.TestCoroutineDispatcher
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
