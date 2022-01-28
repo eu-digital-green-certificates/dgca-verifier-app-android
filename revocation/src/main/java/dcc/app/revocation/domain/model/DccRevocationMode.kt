@@ -23,5 +23,5 @@
 package dcc.app.revocation.domain.model
 
 enum class DccRevocationMode {
-    POINT, COORDINATE, VECTOR, UNKNOWN
+    POINT, VECTOR, COORDINATE, UNKNOWN
 }
