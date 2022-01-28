@@ -28,26 +28,43 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import dcc.app.revocation.data.GeneralErrorHandlerImpl
+import dcc.app.revocation.data.RevocationPreferences
+import dcc.app.revocation.data.RevocationPreferencesImpl
+import dcc.app.revocation.data.local.DccRevocationLocalDataSource
+import dcc.app.revocation.data.network.RevocationService
+import dcc.app.revocation.domain.ErrorHandler
+import dcc.app.revocation.domain.RevocationRepository
 import dcc.app.revocation.domain.model.*
+import dcc.app.revocation.domain.usacase.IsDccRevokedUseCase
+import dcc.app.revocation.repository.RevocationRepositoryImpl
+import dcc.app.revocation.validation.BloomFilterImpl
 import dgca.verifier.app.android.data.local.AppDatabase
 import dgca.verifier.app.android.data.local.dcc.revocation.mapper.fromLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.mapper.toLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationKidMetadataLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationSliceLocal
+import dgca.verifier.app.android.di.BASE_URL
 import dgca.verifier.app.android.utils.sha256
 import dgca.verifier.app.decoder.toBase64
 import dgca.verifier.app.engine.UTC_ZONE_ID
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import okhttp3.internal.toHexString
 import org.apache.commons.io.IOUtils
 import org.junit.After
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import retrofit2.Retrofit
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.lang.IllegalStateException
 import java.nio.charset.Charset
 import java.time.ZonedDateTime
 import java.util.*
@@ -65,6 +82,15 @@ internal class DccRevocationDaoTest {
     private lateinit var dccRevocationDao: DccRevocationDao
     private lateinit var db: AppDatabase
     private val objectMapper = ObjectMapper().apply { this.findAndRegisterModules() }
+
+    @ExperimentalCoroutinesApi
+    private lateinit var testCoroutineDispatcher: CoroutineDispatcher
+    private lateinit var errorHandler: ErrorHandler
+    private lateinit var revocationService: RevocationService
+    private lateinit var revocationPreferences: RevocationPreferences
+    private lateinit var dccRevocationLocalDataSource: DccRevocationLocalDataSource
+    private lateinit var revocationRepository: RevocationRepository
+    private lateinit var isDccRevokedUseCase: IsDccRevokedUseCase
 
     companion object {
         private const val REVOCATION_PATH = "revocation"
@@ -90,6 +116,18 @@ internal class DccRevocationDaoTest {
             context, AppDatabase::class.java
         ).build()
         dccRevocationDao = db.dccRevocationPartitionDao()
+        dccRevocationLocalDataSource = DccRevocationLocalDataSourceImpl(dccRevocationDao)
+        revocationService = Retrofit.Builder().baseUrl(BASE_URL).build().create(RevocationService::class.java)
+        revocationPreferences = RevocationPreferencesImpl(context)
+        revocationRepository = RevocationRepositoryImpl(
+            revocationService,
+            revocationPreferences,
+            dccRevocationLocalDataSource
+        )
+        errorHandler = GeneralErrorHandlerImpl()
+        testCoroutineDispatcher = Dispatchers.Main
+        isDccRevokedUseCase = IsDccRevokedUseCase(revocationRepository, testCoroutineDispatcher, errorHandler)
+        return
     }
 
     @After
@@ -167,7 +205,7 @@ internal class DccRevocationDaoTest {
         for (i in 0 until chunksAmount) {
             val slices = mutableMapOf<ZonedDateTime, Slice>()
             for (j in 0 until slicesAmount) {
-                slices[ZonedDateTime.now().plusYears(j.toLong())] = Slice(
+                slices[ZonedDateTime.now().plusSeconds(j.toLong())] = Slice(
                     hash = UUID.randomUUID().toString()
                 )
             }
@@ -194,26 +232,38 @@ internal class DccRevocationDaoTest {
     }
 
     @Test
-    fun loadTest() {
-        val amountOfKids = 19
+    fun loadTest() = runBlocking {
+        val testStartTime = System.currentTimeMillis()
+
+        val amountOfKids = 1
         // Amount of partitions
-        val amountOfHashPrefixes = min(256, 500)
+        val amountOfHashPrefixes = min(256, 1)
         val chunksPerPartition = min(16, Int.MAX_VALUE)
         val wantedAmountOfHashes = 100_000
         val minAmountOfHashes = amountOfHashPrefixes * chunksPerPartition
-        val approximateAmountOfHashes = if (wantedAmountOfHashes < minAmountOfHashes) minAmountOfHashes else wantedAmountOfHashes
+        val approximateAmountOfHashes =
+            if (wantedAmountOfHashes < minAmountOfHashes) minAmountOfHashes else wantedAmountOfHashes
         val hashesPerPrefix = approximateAmountOfHashes / amountOfHashPrefixes
         val hashesPerChunk = hashesPerPrefix / chunksPerPartition
         val wantedAmountOfSlicesPerChunk = 10
-        val amountOfSlicesPerChunk = if (wantedAmountOfSlicesPerChunk > hashesPerChunk) hashesPerChunk else wantedAmountOfSlicesPerChunk
-        val amountOfHashesPerSlice = approximateAmountOfHashes / (amountOfHashPrefixes * chunksPerPartition * amountOfSlicesPerChunk)
+        val amountOfSlicesPerChunk =
+            if (wantedAmountOfSlicesPerChunk > hashesPerChunk) hashesPerChunk else wantedAmountOfSlicesPerChunk
+        val amountOfHashesPerSlice =
+            approximateAmountOfHashes / (amountOfHashPrefixes * chunksPerPartition * amountOfSlicesPerChunk)
         val modeKids = generateUniqueKids(amountOfKids)
+
+        var shouldSkipHashesGeneration = false
+
         modeKids.forEach { (mode, kids) ->
             kids.forEach { kid ->
                 val kidMetadata = generateKidMetadata(kid, mode)
                 dccRevocationDao.insert(kidMetadata)
             }
         }
+
+        val hashes = mutableListOf<String>()
+        val partitions = mutableListOf<DccRevocationPartitionLocal>()
+        val slicesList = mutableListOf<DccRevocationSliceLocal>()
 
         val modeHashPrefixes = generateHashPrefixes(amountOfHashPrefixes)
         DccRevocationMode.values().forEach { mode ->
@@ -243,18 +293,33 @@ internal class DccRevocationDaoTest {
                         ZonedDateTime.now(),
                         chunksString
                     )
-                    dccRevocationDao.insert(partition)
+                    partitions.add(partition)
 
+                    val bloomFilter = BloomFilterImpl(amountOfHashesPerSlice, 0.00000000001)
                     chunks.forEach { (cid, slices) ->
                         slices.forEach { (expirationTime, slice) ->
                             val hashStart = hashPrefix + cid
-                            println("HashStart: $hashStart")
-                            val hashes = mutableSetOf<String>()
+
+                            bloomFilter.reset(amountOfHashesPerSlice)
+
                             for (i in 0..amountOfHashesPerSlice) {
-                                val hash = System.currentTimeMillis().toString().sha256()
-                                    .replaceRange(0, hashStart.length, hashStart)
+                                val hash = if (shouldSkipHashesGeneration) {
+                                    Random.nextInt(Integer.MAX_VALUE).toHexString()
+                                } else {
+                                    shouldSkipHashesGeneration = true
+                                    System.currentTimeMillis().toString().sha256()
+                                        .replaceRange(0, hashStart.length, hashStart)
+                                }
+
+                                bloomFilter.add(hash.toByteArray())
                                 hashes.add(hash)
                             }
+//                            val content = ByteArray(0)
+                            val content = ByteArrayOutputStream().use {
+                                bloomFilter.writeTo(it)
+                                it.toByteArray()
+                            }
+                            println("MYTAG BF bytes amount: ${content.size}, num of elements: ${amountOfHashesPerSlice}")
                             val sliceLocal = DccRevocationSliceLocal(
                                 sid = slice.hash,
                                 kid = kid,
@@ -264,15 +329,43 @@ internal class DccRevocationDaoTest {
                                 type = DccSliceType.values().first() { it.tag == slice.type },
                                 version = slice.version,
                                 expires = expirationTime,
-                                content = hashes.joinToString()
+                                content = content
                             )
-                            dccRevocationDao.insert(sliceLocal)
+                            slicesList.add(sliceLocal)
                         }
                     }
                 }
             }
         }
-        return
+
+        dccRevocationDao.insertList(partitions)
+        dccRevocationDao.insertSlicesList(slicesList)
+        val searchExistingTimeStart = System.currentTimeMillis()
+        val res = isDccRevokedUseCase.execute(
+            DccRevokationDataHolder(
+            kid = modeKids[DccRevocationMode.POINT]!!.first(),
+            hashes.first(),
+            hashes.first(),
+            hashes.first()
+        ))
+        val searchExistingTimeEnd = System.currentTimeMillis()
+        println("MYTAG Existing hash search time: ${searchExistingTimeEnd - searchExistingTimeStart}")
+
+        assertTrue(res!!)
+
+        val shouldNotContain = isDccRevokedUseCase.execute(
+            DccRevokationDataHolder(
+                kid = modeKids[DccRevocationMode.POINT]!!.first(),
+                hashes.first().replaceRange(0, 1, "+"),
+                hashes.first().replaceRange(0, 1, "+"),
+                hashes.first().replaceRange(0, 1, "+")
+            )
+        )
+//        assertFalse(shouldNotContain!!)
+
+        val testEndTime = System.currentTimeMillis()
+        println("MYTAG Test time: ${testEndTime - testStartTime}")
+        return@runBlocking
     }
 
 //    @Test
