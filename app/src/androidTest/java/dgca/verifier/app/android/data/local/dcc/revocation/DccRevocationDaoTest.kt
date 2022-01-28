@@ -240,13 +240,13 @@ internal class DccRevocationDaoTest {
         // Amount of partitions
         val amountOfHashPrefixes = min(256, 1)
         val chunksPerPartition = min(16, Int.MAX_VALUE)
-        val wantedAmountOfHashes = 1_000
+        val wantedAmountOfHashes = 100_000
         val minAmountOfHashes = amountOfHashPrefixes * chunksPerPartition
         val approximateAmountOfHashes =
             if (wantedAmountOfHashes < minAmountOfHashes) minAmountOfHashes else wantedAmountOfHashes
         val hashesPerPrefix = approximateAmountOfHashes / amountOfHashPrefixes
         val hashesPerChunk = hashesPerPrefix / chunksPerPartition
-        val wantedAmountOfSlicesPerChunk = 25
+        val wantedAmountOfSlicesPerChunk = 10
         val amountOfSlicesPerChunk =
             if (wantedAmountOfSlicesPerChunk > hashesPerChunk) hashesPerChunk else wantedAmountOfSlicesPerChunk
         val amountOfHashesPerSlice =
