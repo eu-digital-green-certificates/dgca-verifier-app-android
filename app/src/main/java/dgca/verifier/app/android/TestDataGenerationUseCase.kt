@@ -38,41 +38,47 @@ import java.io.ByteArrayOutputStream
 import java.time.ZonedDateTime
 import java.util.*
 import javax.inject.Inject
-import kotlin.math.min
 import kotlin.random.Random
 
 data class TestConfig(
-    val amountOfKids: Int,
     val wantedAmountOfHashes: Int,
-    val wantedAmountOfSlicesPerChunk: Int
+    val mode: DccRevocationMode
+)
+
+data class TestGenerationResult(
+    val modeKids: Map<DccRevocationMode, Array<String>>,
+    val hashes: List<String>
 )
 
 class TestDataGenerationUseCase @Inject constructor(
     private val repository: RevocationRepository,
     dispatcher: CoroutineDispatcher,
     errorHandler: ErrorHandler,
-) : BaseUseCase<DccRevokationDataHolder, TestConfig>(dispatcher, errorHandler) {
+) : BaseUseCase<TestGenerationResult, TestConfig>(dispatcher, errorHandler) {
 
-    override suspend fun invoke(params: TestConfig): DccRevokationDataHolder {
+    override suspend fun invoke(params: TestConfig): TestGenerationResult {
         Timber.d("TestDataGenerationUseCase: start generation")
-        val testStartTime = System.currentTimeMillis()
-
-        val amountOfKids = params.amountOfKids
-        // Amount of partitions
-        val amountOfHashPrefixes = min(256, 1)
-        val chunksPerPartition = min(16, Int.MAX_VALUE)
+        val amountOfKids = 1
         val wantedAmountOfHashes = params.wantedAmountOfHashes
-        val minAmountOfHashes = amountOfHashPrefixes * chunksPerPartition
-        val approximateAmountOfHashes =
-            if (wantedAmountOfHashes < minAmountOfHashes) minAmountOfHashes else wantedAmountOfHashes
-        val hashesPerPrefix = approximateAmountOfHashes / amountOfHashPrefixes
-        val hashesPerChunk = hashesPerPrefix / chunksPerPartition
-        val wantedAmountOfSlicesPerChunk = params.wantedAmountOfSlicesPerChunk
-        val amountOfSlicesPerChunk =
-            if (wantedAmountOfSlicesPerChunk > hashesPerChunk) hashesPerChunk else wantedAmountOfSlicesPerChunk
-        val amountOfHashesPerSlice =
-            approximateAmountOfHashes / (amountOfHashPrefixes * chunksPerPartition * amountOfSlicesPerChunk)
-        val modeKids = generateUniqueKids(amountOfKids)
+        val dccMode = params.mode
+        // Amount of partitions
+        val chunksPerPartition = 16
+        val modeKids = generateUniqueKids(amountOfKids, dccMode)
+
+        val amountOfSlicesPerChunk = 10
+        var amountOfHashesPerSlice = 0
+
+        if (dccMode == DccRevocationMode.POINT) {
+            amountOfHashesPerSlice = wantedAmountOfHashes / (chunksPerPartition * amountOfSlicesPerChunk * amountOfKids)
+        }
+
+        if (dccMode == DccRevocationMode.VECTOR) {
+            amountOfHashesPerSlice = wantedAmountOfHashes / (chunksPerPartition * amountOfSlicesPerChunk * 16 * amountOfKids)
+        }
+
+        if (dccMode == DccRevocationMode.COORDINATE) {
+            amountOfHashesPerSlice = wantedAmountOfHashes / (chunksPerPartition * amountOfSlicesPerChunk * 256 * amountOfKids)
+        }
 
         var shouldSkipHashesGeneration = false
 
@@ -84,10 +90,10 @@ class TestDataGenerationUseCase @Inject constructor(
         }
 
         val hashes = mutableListOf<String>()
+        val dummyhashes = mutableListOf<String>()
         val partitions = mutableListOf<DccRevocationPartition>()
-        val slicesList = mutableListOf<DccRevocationSlice>()
 
-        val modeHashPrefixes = generateHashPrefixes(amountOfHashPrefixes)
+        val modeHashPrefixes = generateHashPrefixes()
         DccRevocationMode.values().forEach { mode ->
             val kids: Array<String>? = modeKids[mode]
             val hashPrefixes: Array<String>? = modeHashPrefixes[mode]
@@ -116,31 +122,43 @@ class TestDataGenerationUseCase @Inject constructor(
                         chunksString
                     )
                     partitions.add(partition)
-
+                    var counter = 0;
                     val bloomFilter = BloomFilterImpl(amountOfHashesPerSlice, 0.00000000001)
                     chunks.forEach { (cid, slices) ->
                         slices.forEach { (expirationTime, slice) ->
                             val hashStart = hashPrefix + cid
 
-                            bloomFilter.reset(amountOfHashesPerSlice)
+                            if (counter < 2) {
 
-                            for (i in 0..amountOfHashesPerSlice) {
-                                val hash = if (shouldSkipHashesGeneration) {
-                                    Random.nextInt(Integer.MAX_VALUE).toHexString()
-                                } else {
-                                    shouldSkipHashesGeneration = true
-                                    System.currentTimeMillis().toString().sha256()
-                                        .replaceRange(0, hashStart.length, hashStart)
+                                bloomFilter.reset(amountOfHashesPerSlice)
+
+                                for (i in 0..amountOfHashesPerSlice) {
+                                    val hash = if (shouldSkipHashesGeneration) {
+                                        Random.nextInt(Integer.MAX_VALUE).toHexString();
+                                    } else {
+                                        shouldSkipHashesGeneration = true
+                                        System.currentTimeMillis().toString().sha256()
+                                            .replaceRange(0, hashStart.length, hashStart)
+                                    }
+
+                                    bloomFilter.add(hash.toByteArray())
+                                    hashes.add(hash)
+
+                                    if (shouldSkipHashesGeneration) {
+                                        dummyhashes.add(hash)
+                                    }
                                 }
-
-                                bloomFilter.add(hash.toByteArray())
-                                hashes.add(hash)
+                            } else {
+                                if (hashes.size < 1_000_000) // hash bookkeeping needs a lot of memory, 1M is enough to simulate random accessing
+                                    hashes.addAll(dummyhashes)
                             }
+
+                            counter++
                             val content = ByteArrayOutputStream().use {
                                 bloomFilter.writeTo(it)
                                 it.toByteArray()
                             }
-                            Timber.d("BF bytes amount: ${content.size}, num of elements: $amountOfHashesPerSlice")
+                            Timber.d("MYTAG BF bytes amount: ${content.size}, num of elements: $amountOfHashesPerSlice")
                             val sliceLocal = DccRevocationSlice(
                                 sid = slice.hash,
                                 kid = kid,
@@ -152,7 +170,7 @@ class TestDataGenerationUseCase @Inject constructor(
                                 expires = expirationTime,
                                 content = content
                             )
-                            slicesList.add(sliceLocal)
+                            repository.saveSlice(sliceLocal)
                         }
                     }
                 }
@@ -160,57 +178,63 @@ class TestDataGenerationUseCase @Inject constructor(
         }
 
         repository.savePartitions(partitions)
-        repository.saveSlices(slicesList)
 
-        return DccRevokationDataHolder(
-            kid = modeKids[DccRevocationMode.POINT]!!.first(),
-            hashes.first(),
-            hashes.first(),
-            hashes.first()
+        return TestGenerationResult(
+            modeKids,
+            hashes
         )
     }
 
-    private fun generateUniqueKids(amount: Int): Map<DccRevocationMode, Array<String>> {
+
+    private fun generateUniqueKids(amount: Int, mode: DccRevocationMode): Map<DccRevocationMode, Array<String>> {
         if (amount <= 0) return emptyMap()
+        val kids = mutableListOf<String>()
+        val ret = mutableMapOf<DccRevocationMode, Array<String>>()
+        /*    val pointModeKid = Random.nextBytes(9).toBase64()
+           val modeKids = mutableMapOf(DccRevocationMode.POINT to arrayOf(pointModeKid))
 
-        val pointModeKid = Random.nextBytes(9).toBase64()
-        val modeKids = mutableMapOf(DccRevocationMode.POINT to arrayOf(pointModeKid))
+           val amountOfVectorAndCoordinateKids = amount - 1
+           val amountOfCoordinateKids = amountOfVectorAndCoordinateKids / 2
+           val amountOfVectorKids = amountOfVectorAndCoordinateKids - amountOfCoordinateKids
 
-        val amountOfVectorAndCoordinateKids = amount - 1
-        val amountOfCoordinateKids = amountOfVectorAndCoordinateKids / 2
-        val amountOfVectorKids = amountOfVectorAndCoordinateKids - amountOfCoordinateKids
+           val vectorModeKids = mutableSetOf<String>()
+           while (vectorModeKids.size < hexCharsAmount && vectorModeKids.size < amountOfVectorKids) {
+               val kid = Random.nextBytes(9).toBase64()
+               vectorModeKids.add(kid)
+           }
+           if (vectorModeKids.isNotEmpty()) {
+               modeKids[DccRevocationMode.VECTOR] = vectorModeKids.toTypedArray()
+           }
 
-        val vectorModeKids = mutableSetOf<String>()
-        while (vectorModeKids.size < hexCharsAmount && vectorModeKids.size < amountOfVectorKids) {
+           val coordinateModeKids = mutableSetOf<String>()
+           while (coordinateModeKids.size < amountOfUniqueHexCharsPairs && coordinateModeKids.size < amountOfCoordinateKids) {
+               val kid = Random.nextBytes(9).toBase64()
+               coordinateModeKids.add(kid)
+           }
+           if (coordinateModeKids.isNotEmpty()) {
+               modeKids[DccRevocationMode.COORDINATE] = coordinateModeKids.toTypedArray()
+           }
+         return modeKids;*/
+        var c = 0;
+        while (c < amount) {
             val kid = Random.nextBytes(9).toBase64()
-            vectorModeKids.add(kid)
+            kids.add(kid)
+            c++;
         }
-        if (vectorModeKids.isNotEmpty()) {
-            modeKids[DccRevocationMode.VECTOR] = vectorModeKids.toTypedArray()
-        }
-
-        val coordinateModeKids = mutableSetOf<String>()
-        while (coordinateModeKids.size < amountOfUniqueHexCharsPairs && coordinateModeKids.size < amountOfCoordinateKids) {
-            val kid = Random.nextBytes(9).toBase64()
-            coordinateModeKids.add(kid)
-        }
-        if (coordinateModeKids.isNotEmpty()) {
-            modeKids[DccRevocationMode.COORDINATE] = coordinateModeKids.toTypedArray()
-        }
-
-        return modeKids
+        ret[mode] = kids.toTypedArray();
+        return ret
     }
 
     // Prefixes represent 3 first characters of hashes to be stored in partition.
-    private fun generateHashPrefixes(amount: Int): Map<DccRevocationMode, Array<String>> {
-        if (amount <= 0) return emptyMap()
+    private fun generateHashPrefixes(): Map<DccRevocationMode, Array<String>> {
+        //if (amount <= 0) return emptyMap()
 
         val pointModeHashPrefix = ""
         val modeHashPrefixes = mutableMapOf(DccRevocationMode.POINT to arrayOf(pointModeHashPrefix))
 
         val vectorModePrefixes = mutableSetOf<String>()
         var x = 0
-        while (x < hexCharsAmount && vectorModePrefixes.size + 1 < amount) {
+        while (x < hexCharsAmount && vectorModePrefixes.size < 16) {
             val prefix = "${hexChars[x++]}"
             vectorModePrefixes.add(prefix)
         }
@@ -218,9 +242,9 @@ class TestDataGenerationUseCase @Inject constructor(
 
         val coordinateModePrefixes = mutableSetOf<String>()
         x = 0
-        while (x < hexCharsAmount && coordinateModePrefixes.size + vectorModePrefixes.size + 1 < amount) {
+        while (x < hexCharsAmount && coordinateModePrefixes.size < 256) {
             var y = 0
-            while (y < hexCharsAmount && coordinateModePrefixes.size + vectorModePrefixes.size + 1 < amount) {
+            while (y < hexCharsAmount) {
                 val prefix = "${hexChars[x]}${hexChars[y++]}"
                 coordinateModePrefixes.add(prefix)
             }

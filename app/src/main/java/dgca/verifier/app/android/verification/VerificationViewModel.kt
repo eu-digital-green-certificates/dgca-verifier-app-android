@@ -28,11 +28,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dcc.app.revocation.domain.getDccSignatureSha256
+import dcc.app.revocation.domain.model.DccRevocationMode
 import dcc.app.revocation.domain.model.DccRevokationDataHolder
 import dcc.app.revocation.domain.toSha256HexString
 import dcc.app.revocation.domain.usacase.IsDccRevokedUseCase
 import dgca.verifier.app.android.TestConfig
 import dgca.verifier.app.android.TestDataGenerationUseCase
+import dgca.verifier.app.android.TestGenerationResult
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.model.rules.toRuleValidationResultModels
@@ -69,6 +71,7 @@ import java.time.ZonedDateTime
 import java.util.*
 import java.util.regex.Pattern
 import javax.inject.Inject
+import kotlin.random.Random
 
 @HiltViewModel
 class VerificationViewModel @Inject constructor(
@@ -384,7 +387,7 @@ class VerificationViewModel @Inject constructor(
 
 
     //    TODO: Test method
-    var hashData: DccRevokationDataHolder? = null
+    var hashData: TestGenerationResult? = null
 
     private fun runTestFlow() {
         viewModelScope.launch {
@@ -393,10 +396,13 @@ class VerificationViewModel @Inject constructor(
     }
 
     private suspend fun generateAndTest() {
+        val mode = DccRevocationMode.POINT
+        val amountOfHashes = 1000
+
         if (hashData == null) {
             val generationStart = System.currentTimeMillis()
             Timber.d("DCCtag: generation started")
-            hashData = testDataGenerationUseCase.execute(TestConfig(1, 100000, 100))
+            hashData = testDataGenerationUseCase.execute(TestConfig(amountOfHashes, mode))
             val generationEnd = System.currentTimeMillis()
             Timber.d("DCCtag: generation finished. Result: ${generationEnd - generationStart}")
         } else {
@@ -404,11 +410,40 @@ class VerificationViewModel @Inject constructor(
         }
 
         hashData?.let {
-            val start = System.currentTimeMillis()
-            Timber.d("DCCtag: search started")
-            isDccRevokedUseCase.execute(it)
-            val end = System.currentTimeMillis()
-            Timber.d("DCCtag: search finished. Result: ${end - start}")
+            var shouldNotContain = true
+            val results: MutableList<Long> = mutableListOf()
+            val r = Random(amountOfHashes)
+
+            for (x in 0..100) {
+
+                val testS = System.currentTimeMillis()
+                if (x == 0) {
+                    shouldNotContain = shouldNotContain and isDccRevokedUseCase.execute(
+                        DccRevokationDataHolder(
+                            kid = it.modeKids[mode]!!.first(),
+                            it.hashes.first(),
+                            it.hashes.first(),
+                            it.hashes.first(),
+                        )
+                    )!!
+                } else {
+                    val idx = r.nextInt(it.hashes.size)
+                    shouldNotContain = shouldNotContain and isDccRevokedUseCase.execute(
+                        DccRevokationDataHolder(
+                            kid = it.modeKids[mode]!!.first(),
+                            it.hashes[idx],
+                            it.hashes[idx],
+                            it.hashes[idx]
+                        )
+                    )!!
+                }
+                val testE = System.currentTimeMillis()
+                results.add(testE - testS)
+
+                Timber.d("DCCtag: Test times #x: ${testE - testS}")
+            }
+
+            Timber.d("DCCtag: Test times: Min: ${results.min()} Max: ${results.max()} Avg:  ${results.sum() / results.count()}")
         }
     }
 }
