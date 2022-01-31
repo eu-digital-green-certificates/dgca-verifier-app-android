@@ -87,9 +87,10 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
             throw new FilterException(FilterExceptionsTypes.INVALID_SIZE);
         }
 
-        if (heapFreeSize < (long) size * NUM_BYTES) {
-            throw new FilterException(FilterExceptionsTypes.OUT_OF_HEAP);
-        }
+//        TODO: investigate crash
+//        if (heapFreeSize < (long) size * NUM_BYTES) {
+//            throw new FilterException(FilterExceptionsTypes.OUT_OF_HEAP);
+//        }
 
         this.definedElementAmount = numberOfElements;
         this.numberOfHashes = (byte) Math.max(1, (int) Math.round((double) this.numBits / numberOfElements * Math.log(2)));

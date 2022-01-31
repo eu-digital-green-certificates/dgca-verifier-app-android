@@ -36,9 +36,9 @@ interface DccRevocationLocalDataSource {
 
     suspend fun getChunkSlices(kid: String, x: Char?, y: Char?, cid: String): List<DccRevocationSlice>
 
-    fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata)
+    suspend fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata)
 
-    fun addOrUpdate(dccRevocationPartition: DccRevocationPartition)
+    suspend fun addOrUpdate(dccRevocationPartition: DccRevocationPartition)
 
     suspend fun addOrUpdate(dccRevocationSlice: DccRevocationSlice)
 
@@ -52,13 +52,7 @@ interface DccRevocationLocalDataSource {
 
     suspend fun deleteOutdatedSlicesForPartitionId(kid: String, chunksIds: List<String>)
 
-//    TODO: not used below
+    suspend fun savePartitions(partitions: List<DccRevocationPartition>)
 
-    fun getDccRevocationKidMetadataListBy(kid: String)
-
-    fun removeDccRevocationKidMetadataBy(kid: String)
-
-    fun getDccRevocationPartitionListBy(kid: String): List<DccRevocationPartition>
-
-    fun removeDccRevocationPartitionBy(pid: String)
+    suspend fun saveSlices(slicesList: List<DccRevocationSlice>)
 }

@@ -63,4 +63,8 @@ interface RevocationRepository {
     suspend fun deleteExpiredData(currentTime: Long)
 
     suspend fun deleteOutdatedSlicesForPartitionId(kid: String, chunksIds: List<String>)
+
+    suspend fun savePartitions(partitions: List<DccRevocationPartition>)
+
+    suspend fun saveSlices(slicesList: List<DccRevocationSlice>)
 }

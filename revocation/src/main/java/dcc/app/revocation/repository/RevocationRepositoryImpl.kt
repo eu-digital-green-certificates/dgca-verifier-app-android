@@ -131,4 +131,12 @@ class RevocationRepositoryImpl @Inject constructor(
     override suspend fun deleteOutdatedSlicesForPartitionId(kid: String, chunksIds: List<String>) {
         dccRevocationLocalDataSource.deleteOutdatedSlicesForPartitionId(kid, chunksIds)
     }
+
+    override suspend fun savePartitions(partitions: List<DccRevocationPartition>) {
+        dccRevocationLocalDataSource.savePartitions(partitions)
+    }
+
+    override suspend fun saveSlices(slicesList: List<DccRevocationSlice>) {
+        dccRevocationLocalDataSource.saveSlices(slicesList)
+    }
 }

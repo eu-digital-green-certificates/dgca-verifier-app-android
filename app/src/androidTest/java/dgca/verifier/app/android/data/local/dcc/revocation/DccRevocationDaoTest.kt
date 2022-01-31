@@ -61,7 +61,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import retrofit2.Retrofit
-import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -338,7 +337,7 @@ internal class DccRevocationDaoTest {
             }
         }
 
-        dccRevocationDao.insertList(partitions)
+        dccRevocationDao.insertPartitions(partitions)
         dccRevocationDao.insertSlicesList(slicesList)
         val searchExistingTimeStart = System.currentTimeMillis()
         val res = isDccRevokedUseCase.execute(

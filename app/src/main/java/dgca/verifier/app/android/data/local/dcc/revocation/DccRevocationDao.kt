@@ -43,25 +43,25 @@ interface DccRevocationDao {
     suspend fun getChunkSlices(kid: String, x: Char?, y: Char?, cid: String): List<DccRevocationSliceLocal>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(entity: DccRevocationKidMetadataLocal): Long
+    suspend fun insert(entity: DccRevocationKidMetadataLocal): Long
 
     @Update(entity = DccRevocationKidMetadataLocal::class, onConflict = OnConflictStrategy.REPLACE)
-    fun update(entity: DccRevocationKidMetadataLocal): Int
+    suspend fun update(entity: DccRevocationKidMetadataLocal): Int
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(entity: DccRevocationPartitionLocal): Long
+    suspend fun insert(entity: DccRevocationPartitionLocal): Long
 
     @Update(entity = DccRevocationPartitionLocal::class, onConflict = OnConflictStrategy.REPLACE)
-    fun update(entity: DccRevocationPartitionLocal): Int
+    suspend fun update(entity: DccRevocationPartitionLocal): Int
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(entity: DccRevocationSliceLocal): Long
+    suspend fun insert(entity: DccRevocationSliceLocal): Long
 
     @Update(entity = DccRevocationSliceLocal::class, onConflict = OnConflictStrategy.REPLACE)
-    fun update(entity: DccRevocationSliceLocal): Int
+    suspend fun update(entity: DccRevocationSliceLocal): Int
 
     @Transaction
-    fun upsert(entity: DccRevocationKidMetadataLocal) {
+    suspend fun upsert(entity: DccRevocationKidMetadataLocal) {
         val id = insert(entity)
         if (id == -1L) {
             update(entity)
@@ -69,7 +69,7 @@ interface DccRevocationDao {
     }
 
     @Transaction
-    fun upsert(entity: DccRevocationPartitionLocal) {
+    suspend fun upsert(entity: DccRevocationPartitionLocal) {
         val id = insert(entity)
         if (id == -1L) {
             update(entity)
@@ -77,7 +77,7 @@ interface DccRevocationDao {
     }
 
     @Transaction
-    fun upsert(entity: DccRevocationSliceLocal) {
+    suspend fun upsert(entity: DccRevocationSliceLocal) {
         val id = insert(entity)
         if (id == -1L) {
             update(entity)
@@ -112,23 +112,11 @@ interface DccRevocationDao {
     @Query("DELETE FROM dcc_revocation_slice WHERE kid is :kid AND cid NOT IN (:chunksIds)")
     suspend fun deleteOutdatedSlicesForPartitionId(kid: String, chunksIds: List<String>)
 
-//    TODO: not used below
-
-    @Query("SELECT * FROM dcc_revocation_kid_metadata WHERE kid is :kid")
-    fun getDccRevocationKidMetadataListBy(kid: String): List<DccRevocationKidMetadataLocal>
-
-    @Query("DELETE FROM dcc_revocation_kid_metadata WHERE kid is :kid")
-    fun deleteDccRevocationKidMetadataListBy(kid: String)
-
-    @Query("SELECT * FROM dcc_revocation_partition WHERE kid is :kid")
-    fun getDccRevocationPartitionListBy(kid: String): List<DccRevocationPartitionLocal>
-
-    @Query("DELETE FROM dcc_revocation_partition WHERE id is :partitionId")
-    fun deleteDccRevocationPartitionBy(partitionId: String)
+//    TODO: test purpose for TestDataGenerationUseCase.
 
     @Insert(entity = DccRevocationPartitionLocal::class, onConflict = OnConflictStrategy.IGNORE)
-    fun insertList(entity: List<DccRevocationPartitionLocal>)
+    suspend fun insertPartitions(entity: List<DccRevocationPartitionLocal>)
 
     @Insert(entity = DccRevocationSliceLocal::class, onConflict = OnConflictStrategy.IGNORE)
-    fun insertSlicesList(entity: List<DccRevocationSliceLocal>)
+    suspend fun insertSlicesList(entity: List<DccRevocationSliceLocal>)
 }

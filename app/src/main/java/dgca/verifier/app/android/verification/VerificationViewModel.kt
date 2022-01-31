@@ -31,6 +31,8 @@ import dcc.app.revocation.domain.getDccSignatureSha256
 import dcc.app.revocation.domain.model.DccRevokationDataHolder
 import dcc.app.revocation.domain.toSha256HexString
 import dcc.app.revocation.domain.usacase.IsDccRevokedUseCase
+import dgca.verifier.app.android.TestConfig
+import dgca.verifier.app.android.TestDataGenerationUseCase
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.model.rules.toRuleValidationResultModels
@@ -82,14 +84,17 @@ class VerificationViewModel @Inject constructor(
     private val getRulesUseCase: GetRulesUseCase,
     private val valueSetsRepository: ValueSetsRepository,
     private val preferences: Preferences,
-    private val isDccRevokedUseCase: IsDccRevokedUseCase
+    private val isDccRevokedUseCase: IsDccRevokedUseCase,
+    private val testDataGenerationUseCase: TestDataGenerationUseCase
 ) : ViewModel() {
 
     private val _qrCodeVerificationResult = MutableLiveData<QrCodeVerificationResult>()
     val qrCodeVerificationResult: LiveData<QrCodeVerificationResult> = _qrCodeVerificationResult
 
     fun init(qrCodeText: String, countryIsoCode: String) {
-        decode(qrCodeText, countryIsoCode)
+//        TODO: remove after test
+        runTestFlow()
+//        decode(qrCodeText, countryIsoCode)
     }
 
     private fun decode(code: String, countryOfArrivalIsoCode: String) {
@@ -374,6 +379,36 @@ class VerificationViewModel @Inject constructor(
                         )
                 }
             }
+        }
+    }
+
+
+    //    TODO: Test method
+    var hashData: DccRevokationDataHolder? = null
+
+    private fun runTestFlow() {
+        viewModelScope.launch {
+            generateAndTest()
+        }
+    }
+
+    private suspend fun generateAndTest() {
+        if (hashData == null) {
+            val generationStart = System.currentTimeMillis()
+            Timber.d("DCCtag: generation started")
+            hashData = testDataGenerationUseCase.execute(TestConfig(1, 100000, 100))
+            val generationEnd = System.currentTimeMillis()
+            Timber.d("DCCtag: generation finished. Result: ${generationEnd - generationStart}")
+        } else {
+            Timber.d("DCCtag: data already generated")
+        }
+
+        hashData?.let {
+            val start = System.currentTimeMillis()
+            Timber.d("DCCtag: search started")
+            isDccRevokedUseCase.execute(it)
+            val end = System.currentTimeMillis()
+            Timber.d("DCCtag: search finished. Result: ${end - start}")
         }
     }
 }
