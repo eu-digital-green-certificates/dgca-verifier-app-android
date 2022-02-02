@@ -65,7 +65,9 @@ fun NdefRecord.parse(): ParsedNdefRecord? {
                 Charsets.UTF_16
             }
 
-            val text = String(recordPayload, textEncoding)
+            val langCodeLen = (recordPayload[0] and 63.toByte()).toInt()
+            val text = String(recordPayload, textEncoding).substring(1 + langCodeLen)
+
             return TextRecord(text)
         } catch (e: UnsupportedEncodingException) {
             Timber.w("We got a malformed tag.")
