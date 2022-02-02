@@ -288,7 +288,7 @@ class VerificationViewModel @Inject constructor(
                     certificateIssuingCountryIsoCode
                 } else {
                     this.getNormalizedIssuingCountry()
-                }
+                }.toLowerCase(Locale.ROOT)
                 val rules = getRulesUseCase.invoke(
                     ZonedDateTime.now().withZoneSameInstant(UTC_ZONE_ID),
                     countryOfArrivalIsoCode,
