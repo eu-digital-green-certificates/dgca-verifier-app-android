@@ -267,21 +267,15 @@ class CodeReaderFragment : BindingFragment<FragmentCodeReaderBinding>(), NavCont
     }
 
     fun onNdefMessageReceived(qrCodeText: String) {
-        val position = binding.countrySelector.selectedItemPosition
-        if (position == -1 || refinedCountries.isEmpty()) {
-            return
-        }
-
         try {
-            val countryCode = refinedCountries[position].toLowerCase(Locale.ROOT)
             val action =
                 CodeReaderFragmentDirections.actionCodeReaderFragmentToVerificationDialogFragment(
-                    qrCodeText,
-                    countryCode
+                qrCodeText,
+                binding.countrySelector.selectedItem?.toString() ?: ""
                 )
             findNavController().navigate(action)
         } catch (ex: Exception) {
-            Timber.d("Cannot get iso country code for position.")
+            Timber.d("action_codeReaderFragment_to_verificationDialogFragment cannot be found from the current destination Destination.")
         }
     }
 }
