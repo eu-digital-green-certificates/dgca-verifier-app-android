@@ -130,7 +130,7 @@ dependencies {
     implementation Deps.log_interceptor
     implementation Deps.gson_converter
     implementation Deps.jackson_kotlin
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.0")
+    implementation Deps.jackson_datetype
 
     implementation Deps.timber
 

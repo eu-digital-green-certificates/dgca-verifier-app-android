@@ -62,7 +62,6 @@ object Versions {
     const val java_cose = "1.1.0"
     const val bouncy_castle = "1.68"
     const val jackson_kotlin = "2.12.0"
-    // const val jackson_datetype = "jackson-datatype-jsr310"
     const val jackson_datetype = "2.12.0"
     const val appache_commons = "2.9.0"
 
