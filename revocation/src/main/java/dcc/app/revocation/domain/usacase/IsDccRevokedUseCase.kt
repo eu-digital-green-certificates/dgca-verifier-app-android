@@ -57,7 +57,7 @@ class IsDccRevokedUseCase @Inject constructor(
         }
 
         var containsSignatureSha256 = false
-        if (kidMetadata.hashType.contains(DccRevocationHashType.COUNTRYCODEUCI)) {
+        if (kidMetadata.hashType.contains(DccRevocationHashType.SIGNATURE)) {
             containsSignatureSha256 = isContainsHash(kid, mode, params.signatureSha256)
         }
 
@@ -113,10 +113,9 @@ class IsDccRevokedUseCase @Inject constructor(
             val inputStream: InputStream = ByteArrayInputStream(it)
             val bloomFilter = BloomFilterImpl(inputStream)
             val contains = bloomFilter.mightContain(dccHash.toByteArray())
-//            if (contains) {
-//                Timber.d("contains:$contains")
-//                return true
-//            }
+            if (contains) {
+                return true
+            }
         }
 
         // TODO: hash list check

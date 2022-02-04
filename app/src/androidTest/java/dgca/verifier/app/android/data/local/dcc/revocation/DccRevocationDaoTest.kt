@@ -61,7 +61,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import retrofit2.Retrofit
-import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -290,17 +289,15 @@ internal class DccRevocationDaoTest {
                         kid = kid,
                         x = x,
                         y = y,
-                        ZonedDateTime.now(),
-                        chunksString
+                        expires = ZonedDateTime.now(),
+                        chunks = chunksString
                     )
                     partitions.add(partition)
 
-                    val bloomFilter = BloomFilterImpl(amountOfHashesPerSlice, 0.00000000001)
+                    val bloomFilter = BloomFilterImpl(amountOfHashesPerSlice, 0.00000000001F)
                     chunks.forEach { (cid, slices) ->
                         slices.forEach { (expirationTime, slice) ->
                             val hashStart = hashPrefix + cid
-
-                            bloomFilter.reset(amountOfHashesPerSlice)
 
                             for (i in 0..amountOfHashesPerSlice) {
                                 val hash = if (shouldSkipHashesGeneration) {
@@ -343,11 +340,12 @@ internal class DccRevocationDaoTest {
         val searchExistingTimeStart = System.currentTimeMillis()
         val res = isDccRevokedUseCase.execute(
             DccRevokationDataHolder(
-            kid = modeKids[DccRevocationMode.POINT]!!.first(),
-            hashes.first(),
-            hashes.first(),
-            hashes.first()
-        ))
+                kid = modeKids[DccRevocationMode.POINT]!!.first(),
+                uvciSha256 = hashes.first(),
+                coUvciSha256 = hashes.first(),
+                signatureSha256 = hashes.first()
+            )
+        )
         val searchExistingTimeEnd = System.currentTimeMillis()
         println("MYTAG Existing hash search time: ${searchExistingTimeEnd - searchExistingTimeStart}")
 
@@ -356,9 +354,9 @@ internal class DccRevocationDaoTest {
         val shouldNotContain = isDccRevokedUseCase.execute(
             DccRevokationDataHolder(
                 kid = modeKids[DccRevocationMode.POINT]!!.first(),
-                hashes.first().replaceRange(0, 1, "+"),
-                hashes.first().replaceRange(0, 1, "+"),
-                hashes.first().replaceRange(0, 1, "+")
+                uvciSha256 = hashes.first().replaceRange(0, 1, "+"),
+                coUvciSha256 = hashes.first().replaceRange(0, 1, "+"),
+                signatureSha256 = hashes.first().replaceRange(0, 1, "+")
             )
         )
 //        assertFalse(shouldNotContain!!)
