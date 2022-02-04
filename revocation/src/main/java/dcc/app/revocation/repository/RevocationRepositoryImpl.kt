@@ -29,7 +29,6 @@ import dcc.app.revocation.data.network.RevocationService
 import dcc.app.revocation.data.network.mapper.toRevocationKidData
 import dcc.app.revocation.data.network.model.RevocationChunkResponse
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
-import dcc.app.revocation.data.network.model.RevocationSliceResponse
 import dcc.app.revocation.domain.RevocationRepository
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.domain.model.DccRevocationPartition
@@ -86,7 +85,7 @@ class RevocationRepositoryImpl @Inject constructor(
 
     override suspend fun getSlice(kid: String, partitionId: String?, cid: String, sid: String): ResponseBody? {
         val eTag = revocationPreferences.eTag ?: ""
-        val response = revocationService.getRevocationChunkSlice(eTag, kid, partitionId?: "null", cid, sid)
+        val response = revocationService.getRevocationChunkSlice(eTag, kid, partitionId ?: "null", cid, sid)
 
         if (response.containsServerError()) {
             throw HttpException(response)

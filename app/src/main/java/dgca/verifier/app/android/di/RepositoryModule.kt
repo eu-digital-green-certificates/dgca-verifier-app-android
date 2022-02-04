@@ -26,8 +26,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dcc.app.revocation.data.local.DccRevocationRepository
-import dcc.app.revocation.data.local.DccRevocationRepositoryImpl
 import dgca.verifier.app.android.data.ConfigRepository
 import dgca.verifier.app.android.data.ConfigRepositoryImpl
 import dgca.verifier.app.android.data.VerifierRepository
@@ -57,8 +55,4 @@ abstract class RepositoryModule {
     @Singleton
     @Binds
     abstract fun bindConfigRepository(configRepository: ConfigRepositoryImpl): ConfigRepository
-
-    @Singleton
-    @Binds
-    abstract fun bindRevokedDccRepository(revokedDccRepository: DccRevocationRepositoryImpl): DccRevocationRepository
 }

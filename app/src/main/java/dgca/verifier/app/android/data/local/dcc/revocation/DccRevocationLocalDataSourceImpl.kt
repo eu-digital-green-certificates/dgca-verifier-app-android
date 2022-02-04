@@ -74,21 +74,4 @@ class DccRevocationLocalDataSourceImpl(private val dccRevocationDao: DccRevocati
     override suspend fun deleteOutdatedSlicesForPartitionId(kid: String, chunksIds: List<String>) {
         dccRevocationDao.deleteOutdatedSlicesForPartitionId(kid, chunksIds)
     }
-
-//    TODO: Not used below
-
-    override fun getDccRevocationKidMetadataListBy(kid: String) {
-        dccRevocationDao.getDccRevocationKidMetadataListBy(kid = kid)
-    }
-
-    override fun removeDccRevocationKidMetadataBy(kid: String) {
-        dccRevocationDao.deleteDccRevocationKidMetadataListBy(kid = kid)
-    }
-
-    override fun getDccRevocationPartitionListBy(kid: String): List<DccRevocationPartition> =
-        dccRevocationDao.getDccRevocationPartitionListBy(kid = kid).map { it.fromLocal() }
-
-    override fun removeDccRevocationPartitionBy(pid: String) {
-        dccRevocationDao.deleteDccRevocationPartitionBy(partitionId = pid)
-    }
 }
