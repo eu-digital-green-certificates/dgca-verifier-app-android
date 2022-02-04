@@ -90,6 +90,7 @@ dependencies {
 
     implementation Deps.jackson_cbor
     implementation Deps.bouncy_castle
+    implementation Deps.appache_compress
 
     implementation Deps.timber
 

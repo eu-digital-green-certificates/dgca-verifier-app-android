@@ -28,6 +28,7 @@ import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.*
 
+
 const val ECDSA_256 = -7
 const val RSA_PSS_256 = -37
 
@@ -81,4 +82,5 @@ fun String.hexToByteArray(): ByteArray = chunked(2)
     .map { it.toInt(16).toByte() }
     .toByteArray()
 
-fun ByteArray.toBase64Url(): String = Base64.encodeToString(this, Base64.URL_SAFE)
+fun String.toBase64Url(): String =
+    Base64.encodeToString(Base64.decode(this, Base64.DEFAULT), Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP)
