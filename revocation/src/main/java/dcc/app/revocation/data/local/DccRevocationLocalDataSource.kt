@@ -30,7 +30,7 @@ interface DccRevocationLocalDataSource {
 
     suspend fun getDccRevocationKidMetadataBy(kid: String): DccRevocationKidMetadata?
 
-    suspend fun getPartitionById(partitionId: String, kid: String): DccRevocationPartition?
+    suspend fun getPartitionById(partitionId: String?, kid: String): DccRevocationPartition?
 
     suspend fun getRevocationPartition(kid: String, x: Char?, y: Char?): DccRevocationPartition?
 

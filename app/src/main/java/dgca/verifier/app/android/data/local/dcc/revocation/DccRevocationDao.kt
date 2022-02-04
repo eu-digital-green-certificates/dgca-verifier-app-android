@@ -34,7 +34,7 @@ interface DccRevocationDao {
     suspend fun getDccRevocationKidMetadataBy(kid: String): DccRevocationKidMetadataLocal?
 
     @Query("SELECT * FROM dcc_revocation_partition WHERE id is :partitionId AND kid is :kid")
-    suspend fun getDccRevocationPartitionBy(partitionId: String, kid: String): DccRevocationPartitionLocal?
+    suspend fun getDccRevocationPartitionBy(partitionId: String?, kid: String): DccRevocationPartitionLocal?
 
     @Query("SELECT * FROM dcc_revocation_partition WHERE kid is :kid AND x is :x AND y is :y")
     suspend fun getDccRevocationPartition(kid: String, x: Char?, y: Char?): DccRevocationPartitionLocal?

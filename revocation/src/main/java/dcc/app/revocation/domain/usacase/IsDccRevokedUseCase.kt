@@ -30,7 +30,6 @@ import dcc.app.revocation.domain.model.DccRevocationMode
 import dcc.app.revocation.domain.model.DccRevokationDataHolder
 import dcc.app.revocation.validation.BloomFilterImpl
 import kotlinx.coroutines.CoroutineDispatcher
-import timber.log.Timber
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import javax.inject.Inject

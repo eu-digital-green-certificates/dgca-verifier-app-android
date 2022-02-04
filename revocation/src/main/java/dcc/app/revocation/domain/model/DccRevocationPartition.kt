@@ -25,7 +25,7 @@ package dcc.app.revocation.domain.model
 import java.time.ZonedDateTime
 
 data class DccRevocationPartition(
-    val id: String,
+    val id: String?,
     val kid: String,
     val x: Char?,
     val y: Char?,

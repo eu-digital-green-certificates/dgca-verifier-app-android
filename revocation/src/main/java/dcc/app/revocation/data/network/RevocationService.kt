@@ -25,31 +25,29 @@ package dcc.app.revocation.data.network
 import dcc.app.revocation.data.network.model.RevocationChunkResponse
 import dcc.app.revocation.data.network.model.RevocationKIDResponse
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
-import dcc.app.revocation.data.network.model.RevocationSliceResponse
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
-import retrofit2.http.Headers
 import retrofit2.http.Path
 
 interface RevocationService {
 
-    @Headers("mock:true")
+    //    @Headers("mock:true")
     @GET("/lists")
     suspend fun getRevocationLists(
         @Header("If-None-Match") eTag: String
     ): Response<List<RevocationKIDResponse>>
 
-    @Headers("mock:true")
-    @GET("/{tag}/{kid}/partitions")
+    //    @Headers("mock:true")
+    @GET("/lists/{kid}/partitions")
     suspend fun getRevocationListPartitions(
-        @Header("If-Match") eTag: String,
-        @Path("tag") tag: String,
+        @Header("if-Match") eTag: String,
         @Path("kid") kid: String
     ): Response<List<RevocationPartitionResponse>>
 
-    @Headers("mock:true")
-    @GET("/{kid}/partitions/{id}/chunks/{cid}")
+    //    @Headers("mock:true")
+    @GET("/lists/{kid}/partitions/{id}/chunks/{cid}")
     suspend fun getRevocationChunk(
         @Header("If-Match") eTag: String,
         @Path("kid") kid: String,
@@ -57,13 +55,13 @@ interface RevocationService {
         @Path("cid") chunkId: String
     ): Response<RevocationChunkResponse>
 
-    @Headers("mock:true")
-    @GET("/{kid}/partitions/{id}/chunks/{cid}/slice/{sid}")
+    //    @Headers("mock:true")
+    @GET("/lists/{kid}/partitions/{id}/chunks/{cid}/slices/{sid}")
     suspend fun getRevocationChunkSlice(
         @Header("If-Match") eTag: String,
         @Path("kid") kid: String,
         @Path("id") id: String,
         @Path("cid") chunkId: String,
         @Path("sid") sliceId: String
-    ): Response<RevocationSliceResponse>
+    ): Response<ResponseBody>
 }

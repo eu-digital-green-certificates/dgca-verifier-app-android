@@ -29,7 +29,7 @@ fun RevocationKIDResponse.toRevocationKidData(): RevocationKidData =
     RevocationKidData(
         kid = kid,
         mode = mode,
-        hashType = hashType,
+        hashType = hashTypes,
         expires = expires,
         lastUpdated = lastUpdated
     )

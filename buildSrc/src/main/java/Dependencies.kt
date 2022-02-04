@@ -69,6 +69,7 @@ object Deps {
     const val jackson_kotlin = "com.fasterxml.jackson.module:jackson-module-kotlin:${Versions.jackson_kotlin}"
     const val jackson_datetype = "com.fasterxml.jackson.datatype:${Versions.jackson_datetype}"
     const val appache_commons = "commons-io:commons-io:${Versions.appache_commons}"
+    const val appache_compress = "org.apache.commons:commons-compress:${Versions.appache_compress}"
 
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
 

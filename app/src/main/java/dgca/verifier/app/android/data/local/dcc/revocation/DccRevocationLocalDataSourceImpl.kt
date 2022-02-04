@@ -34,7 +34,7 @@ class DccRevocationLocalDataSourceImpl(private val dccRevocationDao: DccRevocati
     override suspend fun getDccRevocationKidMetadataBy(kid: String): DccRevocationKidMetadata? =
         dccRevocationDao.getDccRevocationKidMetadataBy(kid)?.fromLocal()
 
-    override suspend fun getPartitionById(partitionId: String, kid: String): DccRevocationPartition? =
+    override suspend fun getPartitionById(partitionId: String?, kid: String): DccRevocationPartition? =
         dccRevocationDao.getDccRevocationPartitionBy(partitionId, kid)?.fromLocal()
 
     override suspend fun getRevocationPartition(kid: String, x: Char?, y: Char?): DccRevocationPartition? =

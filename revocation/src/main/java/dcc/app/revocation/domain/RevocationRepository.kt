@@ -24,11 +24,11 @@ package dcc.app.revocation.domain
 
 import dcc.app.revocation.data.network.model.RevocationChunkResponse
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
-import dcc.app.revocation.data.network.model.RevocationSliceResponse
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.domain.model.DccRevocationPartition
 import dcc.app.revocation.domain.model.DccRevocationSlice
 import dcc.app.revocation.domain.model.RevocationKidData
+import okhttp3.ResponseBody
 
 interface RevocationRepository {
 
@@ -36,17 +36,17 @@ interface RevocationRepository {
     suspend fun getRevocationLists(): List<RevocationKidData>
 
     @Throws(Exception::class)
-    suspend fun getRevocationPartitions(tag: String, kid: String): List<RevocationPartitionResponse>?
+    suspend fun getRevocationPartitions(kid: String): List<RevocationPartitionResponse>?
 
     @Throws(Exception::class)
     suspend fun getRevocationChunk(kid: String, id: String, chunkId: String): RevocationChunkResponse?
 
     @Throws(Exception::class)
-    suspend fun getSlice(kid: String, partitionId: String, cid: String, sid: String): RevocationSliceResponse?
+    suspend fun getSlice(kid: String, partitionId: String?, cid: String, sid: String): ResponseBody?
 
     suspend fun getMetadataByKid(kid: String): DccRevocationKidMetadata?
 
-    suspend fun getLocalRevocationPartition(partitionId: String, kid: String): DccRevocationPartition?
+    suspend fun getLocalRevocationPartition(partitionId: String?, kid: String): DccRevocationPartition?
 
     suspend fun getRevocationPartition(kid: String, x: Char?, y: Char?): DccRevocationPartition?
 
