@@ -41,8 +41,9 @@ import java.time.ZonedDateTime
     ]
 )
 data class DccRevocationPartitionLocal(
-    @PrimaryKey
-    val id: String,
+    @PrimaryKey(autoGenerate = true)
+    val localId: Int = 0,
+    val id: String?,
     val kid: String,
     val x: Char?,
     val y: Char?,

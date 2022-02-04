@@ -28,14 +28,11 @@ import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.domain.model.DccRevocationMode
 import dcc.app.revocation.domain.model.DccRevocationPartition
 import dgca.verifier.app.android.data.local.dcc.revocation.mapper.toLocal
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import java.time.ZonedDateTime
 
@@ -76,39 +73,9 @@ class DccRevocationLocalDataSourceTest {
     }
 
     @Test
-    fun testRemoveDccRevocationKidMetadata() {
-        dccRevocationLocalDataSource.removeDccRevocationKidMetadataBy(testDccRevocationKidMetadata.kid)
-
-        verify(dccRevocationDao).deleteDccRevocationKidMetadataListBy(eq(testDccRevocationKidMetadata.kid))
-    }
-
-    @Test
     fun testAddOrUpdate() {
         dccRevocationLocalDataSource.addOrUpdate(testDccRevocationPartition)
 
         verify(dccRevocationDao).upsert(testDccRevocationPartition.toLocal())
-    }
-
-    @Test
-    fun testGetBy() {
-        doReturn(listOf(testDccRevocationPartition.toLocal())).`when`(dccRevocationDao).getDccRevocationPartitionListBy(
-            eq(testDccRevocationPartition.kid)
-        )
-
-        val actual = dccRevocationLocalDataSource.getDccRevocationPartitionListBy(
-            testDccRevocationPartition.kid
-        )
-
-        verify(dccRevocationDao).getDccRevocationPartitionListBy(
-            eq(testDccRevocationPartition.kid)
-        )
-        assertEquals(listOf(testDccRevocationPartition), actual)
-    }
-
-    @Test
-    fun testRemove() {
-        dccRevocationLocalDataSource.removeDccRevocationPartitionBy(testDccRevocationPartition.id)
-
-        verify(dccRevocationDao).deleteDccRevocationPartitionBy(partitionId = testDccRevocationPartition.id)
     }
 }

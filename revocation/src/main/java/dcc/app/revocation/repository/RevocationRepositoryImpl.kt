@@ -29,12 +29,12 @@ import dcc.app.revocation.data.network.RevocationService
 import dcc.app.revocation.data.network.mapper.toRevocationKidData
 import dcc.app.revocation.data.network.model.RevocationChunkResponse
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
-import dcc.app.revocation.data.network.model.RevocationSliceResponse
 import dcc.app.revocation.domain.RevocationRepository
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.domain.model.DccRevocationPartition
 import dcc.app.revocation.domain.model.DccRevocationSlice
 import dcc.app.revocation.domain.model.RevocationKidData
+import okhttp3.ResponseBody
 import retrofit2.HttpException
 import javax.inject.Inject
 
@@ -59,9 +59,9 @@ class RevocationRepositoryImpl @Inject constructor(
     }
 
     @Throws(Exception::class)
-    override suspend fun getRevocationPartitions(tag: String, kid: String): List<RevocationPartitionResponse>? {
+    override suspend fun getRevocationPartitions(kid: String): List<RevocationPartitionResponse>? {
         val eTag = revocationPreferences.eTag ?: ""
-        val response = revocationService.getRevocationListPartitions(eTag, tag, kid)
+        val response = revocationService.getRevocationListPartitions(eTag, kid)
 
 
         if (response.containsServerError()) {
@@ -83,9 +83,9 @@ class RevocationRepositoryImpl @Inject constructor(
         return response.body()
     }
 
-    override suspend fun getSlice(kid: String, partitionId: String, cid: String, sid: String): RevocationSliceResponse? {
+    override suspend fun getSlice(kid: String, partitionId: String?, cid: String, sid: String): ResponseBody? {
         val eTag = revocationPreferences.eTag ?: ""
-        val response = revocationService.getRevocationChunkSlice(eTag, kid, partitionId, cid, sid)
+        val response = revocationService.getRevocationChunkSlice(eTag, kid, partitionId ?: "null", cid, sid)
 
         if (response.containsServerError()) {
             throw HttpException(response)
@@ -97,7 +97,7 @@ class RevocationRepositoryImpl @Inject constructor(
     override suspend fun getMetadataByKid(kid: String): DccRevocationKidMetadata? =
         dccRevocationLocalDataSource.getDccRevocationKidMetadataBy(kid)
 
-    override suspend fun getLocalRevocationPartition(partitionId: String, kid: String): DccRevocationPartition? =
+    override suspend fun getLocalRevocationPartition(partitionId: String?, kid: String): DccRevocationPartition? =
         dccRevocationLocalDataSource.getPartitionById(partitionId, kid)
 
     override suspend fun getRevocationPartition(kid: String, x: Char?, y: Char?): DccRevocationPartition? =

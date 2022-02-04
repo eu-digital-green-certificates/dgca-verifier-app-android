@@ -32,14 +32,14 @@ import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.domain.model.DccRevocationPartition
 import dcc.app.revocation.domain.model.DccRevocationSlice
 import dcc.app.revocation.domain.model.RevocationKidData
+import dcc.app.revocation.domain.toBase64Url
 import dcc.app.revocation.isEqualTo
 import kotlinx.coroutines.CoroutineDispatcher
-import java.io.ByteArrayOutputStream
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import java.lang.reflect.Type
 import java.time.ZonedDateTime
+import java.util.zip.GZIPInputStream
 import javax.inject.Inject
-
-private const val SUPPORTED_TAG = "1.0"
 
 class GetRevocationDataUseCase @Inject constructor(
     private val repository: RevocationRepository,
@@ -101,7 +101,8 @@ class GetRevocationDataUseCase @Inject constructor(
     }
 
     private suspend fun getPartitions(kid: String) {
-        repository.getRevocationPartitions(SUPPORTED_TAG, kid)?.forEach { partition ->
+        val kidUrlSafe = kid.toBase64Url()
+        repository.getRevocationPartitions(kidUrlSafe)?.forEach { partition ->
             handlePartition(kid, partition)
         }
     }
@@ -191,7 +192,7 @@ class GetRevocationDataUseCase @Inject constructor(
     }
 
     private suspend fun getChunk(kid: String, id: String, cid: String) {
-        val chunk = repository.getRevocationChunk(kid, id, cid)
+        val chunk = repository.getRevocationChunk(kid.toBase64Url(), id, cid)
 
 //        TODO: update chunk in DB
     }
@@ -204,14 +205,13 @@ class GetRevocationDataUseCase @Inject constructor(
     ) {
         slices.forEach { (key, value) ->
             val sid = value.hash
-            val response = repository.getSlice(kid, partition.id, cid, sid)
+            val response = repository.getSlice(kid.toBase64Url(), partition.id, cid, sid)
+            response ?: return
 
-//            TODO: parse Gzip and replace content
-
-            ByteArrayOutputStream().use {
-//                bloomFilter.writeTo(it)
-//                val content = it.toByteArray()
-
+            val tarInputStream = TarArchiveInputStream(GZIPInputStream(response.byteStream()))
+            tarInputStream.nextTarEntry
+            tarInputStream.use {
+                val bytes = it.readBytes()
                 repository.saveSlice(
                     DccRevocationSlice(
                         sid = sid,
@@ -222,7 +222,7 @@ class GetRevocationDataUseCase @Inject constructor(
                         type = value.type,
                         version = value.version,
                         expires = ZonedDateTime.parse(key),
-                        content = "".toByteArray()
+                        content = bytes
                     )
                 )
             }

@@ -30,7 +30,7 @@ interface DccRevocationLocalDataSource {
 
     suspend fun getDccRevocationKidMetadataBy(kid: String): DccRevocationKidMetadata?
 
-    suspend fun getPartitionById(partitionId: String, kid: String): DccRevocationPartition?
+    suspend fun getPartitionById(partitionId: String?, kid: String): DccRevocationPartition?
 
     suspend fun getRevocationPartition(kid: String, x: Char?, y: Char?): DccRevocationPartition?
 
@@ -51,14 +51,4 @@ interface DccRevocationLocalDataSource {
     suspend fun deleteExpireSlices(currentTime: Long)
 
     suspend fun deleteOutdatedSlicesForPartitionId(kid: String, chunksIds: List<String>)
-
-//    TODO: not used below
-
-    fun getDccRevocationKidMetadataListBy(kid: String)
-
-    fun removeDccRevocationKidMetadataBy(kid: String)
-
-    fun getDccRevocationPartitionListBy(kid: String): List<DccRevocationPartition>
-
-    fun removeDccRevocationPartitionBy(pid: String)
 }

@@ -35,8 +35,8 @@ data class RevocationKIDResponse(
     @JsonProperty("mode")
     val mode: DccRevocationMode,
 
-    @JsonProperty("hashType")
-    val hashType: Set<DccRevocationHashType>,
+    @JsonProperty("hashTypes")
+    val hashTypes: Set<DccRevocationHashType>,
 
     @JsonProperty("expires")
     val expires: ZonedDateTime,

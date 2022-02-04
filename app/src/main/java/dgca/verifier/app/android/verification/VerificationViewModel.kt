@@ -231,7 +231,7 @@ class VerificationViewModel @Inject constructor(
                     certificateExpired = true
                 }
 
-                certificateRevoked = isDCCRevoked(kid.toBase64(), greenCertificateData?.greenCertificate, cose)
+                certificateRevoked = isDCCRevoked(base64EncodedKid, greenCertificateData?.greenCertificate, cose)
 
                 return@forEach
             }
@@ -270,6 +270,7 @@ class VerificationViewModel @Inject constructor(
             Timber.d("revocation end")
             return result
         }
+//        TODO: check test and recovery
 
         return false
     }
