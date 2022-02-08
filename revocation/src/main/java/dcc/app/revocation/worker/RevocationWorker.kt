@@ -42,19 +42,13 @@ class RevocationWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         Timber.d("Revocation list loading start")
         return try {
+            var result = Result.success()
             getRevocationDataUseCase.execute(
-                onFailure = {
-                    when (it) {
-                        ErrorType.PreconditionFailedException -> {
-//                            TODO: remove partition or whole data from DB
-                        }
-                        else -> {}
-                    }
-                }
+                onFailure = { if (it == ErrorType.PreconditionFailedException) result = Result.retry() }
             )
 
             Timber.d("Revocation loading succeeded")
-            Result.success()
+            result
         } catch (error: Throwable) {
             Timber.d("Revocation loading retry")
             Result.retry()
