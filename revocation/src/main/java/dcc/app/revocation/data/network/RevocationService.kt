@@ -22,7 +22,6 @@
 
 package dcc.app.revocation.data.network
 
-import dcc.app.revocation.data.network.model.RevocationChunkResponse
 import dcc.app.revocation.data.network.model.RevocationKIDResponse
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
 import okhttp3.ResponseBody
@@ -33,29 +32,25 @@ import retrofit2.http.Path
 
 interface RevocationService {
 
-    //    @Headers("mock:true")
     @GET("/lists")
     suspend fun getRevocationLists(
         @Header("If-None-Match") eTag: String
     ): Response<List<RevocationKIDResponse>>
 
-    //    @Headers("mock:true")
     @GET("/lists/{kid}/partitions")
     suspend fun getRevocationListPartitions(
         @Header("if-Match") eTag: String,
         @Path("kid") kid: String
     ): Response<List<RevocationPartitionResponse>>
 
-    //    @Headers("mock:true")
-    @GET("/lists/{kid}/partitions/{id}/chunks/{cid}")
+    @GET("/lists/{kid}/partitions/{id}/chunks/{cid}/slices")
     suspend fun getRevocationChunk(
         @Header("If-Match") eTag: String,
         @Path("kid") kid: String,
         @Path("id") id: String,
         @Path("cid") chunkId: String
-    ): Response<RevocationChunkResponse>
+    ): Response<ResponseBody>
 
-    //    @Headers("mock:true")
     @GET("/lists/{kid}/partitions/{id}/chunks/{cid}/slices/{sid}")
     suspend fun getRevocationChunkSlice(
         @Header("If-Match") eTag: String,
