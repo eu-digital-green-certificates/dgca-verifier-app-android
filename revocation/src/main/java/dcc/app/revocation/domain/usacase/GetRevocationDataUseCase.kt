@@ -109,21 +109,14 @@ class GetRevocationDataUseCase @Inject constructor(
 
     private suspend fun handlePartition(kid: String, remotePartition: RevocationPartitionResponse) {
         val localPartition = repository.getLocalRevocationPartition(remotePartition.id, kid)
-
         if (localPartition != null) {
             // Optimization - section/chunk validation what changed
             compareChunksWithLocal(kid, localPartition, remotePartition)
         } else {
             // Initial sync. load all chunks
-
-            // TODO: Use slices for now. Clarify response for chunks
-//            remotePartition.chunks.keys.forEach {
-//                 Download from /{kid}/partitions/{id}/chunks/{chunkId} the missing chunks
-//                getChunk(kid, remotePartition.id, it)
-//            }
-
             remotePartition.chunks.forEach { (remoteChunkKey, remoteChunkValue) ->
-                getSlices(kid, remotePartition, remoteChunkKey, remoteChunkValue)
+                // Download from /{kid}/partitions/{id}/chunks/{chunkId} the missing chunks
+                getChunk(kid, remotePartition, remoteChunkKey, remoteChunkValue)
             }
         }
 
@@ -147,13 +140,7 @@ class GetRevocationDataUseCase @Inject constructor(
             val localSlices = localChunks[remoteChunkKey]
             if (localSlices == null) {
                 // When chunk not found load from api
-
-                // TODO: Use slices for now. Clarify response for chunks
-//                getChunk(kid, remotePartition.id, remoteChunkKey)
-
-                remotePartition.chunks.forEach { (remoteChunkKey, remoteChunkValue) ->
-                    getSlices(kid, remotePartition, remoteChunkKey, remoteChunkValue)
-                }
+                getChunk(kid, remotePartition, remoteChunkKey, remoteChunkValue)
 
             } else {
                 val slices = mutableMapOf<String, Slice>()
@@ -170,9 +157,7 @@ class GetRevocationDataUseCase @Inject constructor(
                 if (slices.size < remoteChunkValue.size / 2) {
                     getSlices(kid, remotePartition, remoteChunkKey, slices)
                 } else {
-                    // TODO: Use slices for now. Clarify response for chunks
-//                    getChunk(kid, remotePartition.id, remoteChunkKey)
-                    getSlices(kid, remotePartition, remoteChunkKey, slices)
+                    getChunk(kid, remotePartition, remoteChunkKey, remoteChunkValue)
                 }
             }
         }
@@ -191,10 +176,42 @@ class GetRevocationDataUseCase @Inject constructor(
         )
     }
 
-    private suspend fun getChunk(kid: String, id: String, cid: String) {
-        val chunk = repository.getRevocationChunk(kid.toBase64Url(), id, cid)
+    private suspend fun getChunk(
+        kid: String,
+        partition: RevocationPartitionResponse,
+        cid: String,
+        chunkValue: Map<String, Slice>
+    ) {
+        val response = repository.getRevocationChunk(kid.toBase64Url(), partition.id, cid)
 
-//        TODO: update chunk in DB
+        response ?: return
+
+        val tarInputStream = TarArchiveInputStream(GZIPInputStream(response.byteStream()))
+        var entry = tarInputStream.nextTarEntry
+        tarInputStream.use { stream ->
+            while (entry != null) {
+                val bytes = stream.readBytes()
+                val sid = entry.name.split("/").last()
+                val sliceMap = chunkValue.filterValues { it.hash == sid }
+                val sliceExpires = sliceMap.keys.first()
+                val sliceValue = sliceMap.values.first()
+
+                repository.saveSlice(
+                    DccRevocationSlice(
+                        sid = sid,
+                        kid = kid,
+                        x = partition.x,
+                        y = partition.y,
+                        cid = cid,
+                        type = sliceValue.type,
+                        version = sliceValue.version,
+                        expires = ZonedDateTime.parse(sliceExpires),
+                        content = bytes
+                    )
+                )
+                entry = tarInputStream.nextTarEntry
+            }
+        }
     }
 
     private suspend fun getSlices(

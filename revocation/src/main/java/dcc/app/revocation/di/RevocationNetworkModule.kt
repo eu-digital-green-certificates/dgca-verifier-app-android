@@ -29,7 +29,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dcc.app.revocation.BuildConfig
-import dcc.app.revocation.mock.MockRequestInterceptor
 import dcc.app.revocation.data.network.RevocationService
 import okhttp3.Cache
 import okhttp3.Call
@@ -64,8 +63,6 @@ object RevocationNetworkModule {
     internal fun provideOkhttpClient(@ApplicationContext context: Context, @Revocation cache: Cache): OkHttpClient {
         val httpClient = getHttpClient(cache)
         addLogging(httpClient)
-//        TODO: remove after connecting to real server
-        httpClient.addInterceptor(MockRequestInterceptor(context))
 
         return httpClient.build()
     }

@@ -27,7 +27,6 @@ import dcc.app.revocation.data.containsServerError
 import dcc.app.revocation.data.local.DccRevocationLocalDataSource
 import dcc.app.revocation.data.network.RevocationService
 import dcc.app.revocation.data.network.mapper.toRevocationKidData
-import dcc.app.revocation.data.network.model.RevocationChunkResponse
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
 import dcc.app.revocation.domain.RevocationRepository
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata
@@ -53,7 +52,7 @@ class RevocationRepositoryImpl @Inject constructor(
         if (response.containsServerError()) {
             throw HttpException(response)
         }
-        revocationPreferences.eTag = response.headers()["eTag"]
+        revocationPreferences.eTag = response.headers()["eTag"]?.replace("\"", "")
 
         return response.body()?.map { it.toRevocationKidData() } ?: emptyList()
     }
@@ -72,9 +71,9 @@ class RevocationRepositoryImpl @Inject constructor(
     }
 
     @Throws(Exception::class)
-    override suspend fun getRevocationChunk(kid: String, id: String, chunkId: String): RevocationChunkResponse? {
+    override suspend fun getRevocationChunk(kid: String, id: String?, chunkId: String): ResponseBody? {
         val eTag = revocationPreferences.eTag ?: ""
-        val response = revocationService.getRevocationChunk(eTag, kid, id, chunkId)
+        val response = revocationService.getRevocationChunk(eTag, kid, id ?: "null", chunkId)
 
         if (response.containsServerError()) {
             throw HttpException(response)
