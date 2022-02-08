@@ -27,16 +27,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dcc.app.revocation.domain.getDccSignatureSha256
 import dcc.app.revocation.domain.model.DccRevokationDataHolder
-import dcc.app.revocation.domain.toSha256HexString
 import dcc.app.revocation.domain.usacase.IsDccRevokedUseCase
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.model.rules.toRuleValidationResultModels
 import dgca.verifier.app.android.model.toCertificateModel
 import dgca.verifier.app.android.settings.debug.mode.DebugModeState
-import dgca.verifier.app.android.verification.*
 import dgca.verifier.app.android.verification.model.*
 import dgca.verifier.app.decoder.base45.Base45Service
 import dgca.verifier.app.decoder.cbor.CborService
@@ -52,8 +49,8 @@ import dgca.verifier.app.engine.CertLogicEngine
 import dgca.verifier.app.engine.Result
 import dgca.verifier.app.engine.UTC_ZONE_ID
 import dgca.verifier.app.engine.ValidationResult
-import dgca.verifier.app.engine.data.*
 import dgca.verifier.app.engine.data.CertificateType
+import dgca.verifier.app.engine.data.ExternalParameter
 import dgca.verifier.app.engine.data.source.valuesets.ValueSetsRepository
 import dgca.verifier.app.engine.domain.rules.GetRulesUseCase
 import kotlinx.coroutines.Dispatchers
@@ -250,29 +247,42 @@ class VerificationViewModel @Inject constructor(
     }
 
     private suspend fun isDCCRevoked(kid: String, greenCertificate: GreenCertificate?, cose: ByteArray): Boolean {
-        Timber.d("revocation start")
         greenCertificate ?: return false
 
-        greenCertificate.vaccinations?.firstOrNull()?.let {
-            val uvciSha256 = it.certificateIdentifier.toByteArray().toSha256HexString()
-            val coUvciSha256 = (it.countryOfVaccination + it.certificateIdentifier).toByteArray().toSha256HexString()
-            val signatureSha256 = cose.getDccSignatureSha256()
-
-            val data = DccRevokationDataHolder(
-                kid,
-                uvciSha256,
-                coUvciSha256,
-                signatureSha256
+        val isVaccinationRevoked = greenCertificate.vaccinations?.firstOrNull()?.let {
+            isDccRevokedUseCase.execute(
+                DccRevokationDataHolder(
+                    kid,
+                    it.certificateIdentifier,
+                    (it.countryOfVaccination + it.certificateIdentifier),
+                    cose
+                )
             )
+        } ?: false
 
-            val result = isDccRevokedUseCase.execute(data) ?: false
+        val isTestRevoked = greenCertificate.tests?.firstOrNull()?.let {
+            isDccRevokedUseCase.execute(
+                DccRevokationDataHolder(
+                    kid,
+                    it.certificateIdentifier,
+                    (it.countryOfVaccination + it.certificateIdentifier),
+                    cose
+                )
+            )
+        } ?: false
 
-            Timber.d("revocation end")
-            return result
-        }
-//        TODO: check test and recovery
+        val isRecoveryRevoked = greenCertificate.recoveryStatements?.firstOrNull()?.let {
+            isDccRevokedUseCase.execute(
+                DccRevokationDataHolder(
+                    kid,
+                    it.certificateIdentifier,
+                    (it.countryOfVaccination + it.certificateIdentifier),
+                    cose
+                )
+            )
+        } ?: false
 
-        return false
+        return isVaccinationRevoked || isTestRevoked || isRecoveryRevoked
     }
 
     private suspend fun GreenCertificateData.validateRules(

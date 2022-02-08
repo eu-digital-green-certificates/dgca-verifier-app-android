@@ -112,6 +112,67 @@ class SliceTesting {
         }
     }
 
+    @Test
+    fun `generate tarGzip from multiple binary and convert back to binary`() {
+        val binaryData0 = "fd61a03af4f77d870fc21e05e7e80678095c92d808cfb3b5c279ee04c74aca13".toByteArray()
+        val binaryData1 = "fd61a03af4f77d870fc21e05e7e80678095c92d808cfb3b5c279ee04c74aca14".toByteArray()
+        val sliceEntity = listOf(
+            SliceEntity(
+                "testKid",
+                "id",
+                "chunkcId",
+                "fd61a03af4f77d870fc21e05e7e80678095c92d808cfb3b5c279ee04c74aca13",
+                binaryData0
+            ),
+            SliceEntity(
+                "testKid",
+                "id",
+                "chunkcId",
+                "fd61a03af4f77d870fc21e05e7e80678095c92d808cfb3b5c279ee04c74aca14",
+                binaryData1
+            )
+        )
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        var outTar: TarArchiveOutputStream? = null
+        try {
+            val gzipOutputStream = GZIPOutputStream(byteArrayOutputStream)
+            outTar = TarArchiveOutputStream(gzipOutputStream)
+
+            sliceEntity.forEach {
+                val archiveEntryName = java.lang.String.format(
+                    "%s/%s/%s/%s",
+                    it.kid,
+                    it.id,
+                    it.chunk,
+                    it.hash
+                )
+                val tarArchiveEntry = TarArchiveEntry(archiveEntryName)
+                tarArchiveEntry.size = it.binaryData.size.toLong()
+                outTar.putArchiveEntry(tarArchiveEntry)
+                outTar.write(it.binaryData)
+                outTar.closeArchiveEntry()
+                Timber.d("Slice binary:${it.binaryData}")
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } finally {
+            outTar?.close()
+        }
+
+        val tarGzipByteArray = byteArrayOutputStream.toByteArray()
+        Timber.d("Tar binary:$tarGzipByteArray")
+
+        val byteArrayInputStream = ByteArrayInputStream(tarGzipByteArray)
+        val tarInputStream = TarArchiveInputStream(GZIPInputStream(byteArrayInputStream))
+        tarInputStream.use {
+            sliceEntity.forEach { slice ->
+                tarInputStream.nextTarEntry
+                val bytes = it.readBytes()
+                assertThat(slice.binaryData, `is`(bytes))
+            }
+        }
+    }
+
     internal data class SliceEntity(
         var kid: String? = null,
         var id: String? = null,
