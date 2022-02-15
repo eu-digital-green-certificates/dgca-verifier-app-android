@@ -29,10 +29,7 @@ import dcc.app.revocation.data.network.RevocationService
 import dcc.app.revocation.data.network.mapper.toRevocationKidData
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
 import dcc.app.revocation.domain.RevocationRepository
-import dcc.app.revocation.domain.model.DccRevocationKidMetadata
-import dcc.app.revocation.domain.model.DccRevocationPartition
-import dcc.app.revocation.domain.model.DccRevocationSlice
-import dcc.app.revocation.domain.model.RevocationKidData
+import dcc.app.revocation.domain.model.*
 import okhttp3.ResponseBody
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -105,6 +102,14 @@ class RevocationRepositoryImpl @Inject constructor(
     override suspend fun getChunkSlices(kid: String, x: Char?, y: Char?, cid: String): List<DccRevocationSlice> =
         dccRevocationLocalDataSource.getChunkSlices(kid, x, y, cid)
 
+    override suspend fun getHashListSlice(
+        sid: String,
+        x: Char?,
+        y: Char?,
+        dccHashListBytes: ByteArray
+    ): DccRevocationHashListSlice? =
+        dccRevocationLocalDataSource.getHashListSlice(sid, x, y, dccHashListBytes)
+
     override suspend fun saveKidMetadata(dccRevocationKidMetadata: DccRevocationKidMetadata) {
         dccRevocationLocalDataSource.addOrUpdate(dccRevocationKidMetadata)
     }
@@ -115,6 +120,10 @@ class RevocationRepositoryImpl @Inject constructor(
 
     override suspend fun saveSlice(dccRevocationSlice: DccRevocationSlice) {
         dccRevocationLocalDataSource.addOrUpdate(dccRevocationSlice)
+    }
+
+    override suspend fun saveHashListSlices(hashListSlices: List<DccRevocationHashListSlice>) {
+        dccRevocationLocalDataSource.saveHashListSlices(hashListSlices)
     }
 
     override suspend fun deleteOutdatedKidItems(notInKidList: List<String>) {

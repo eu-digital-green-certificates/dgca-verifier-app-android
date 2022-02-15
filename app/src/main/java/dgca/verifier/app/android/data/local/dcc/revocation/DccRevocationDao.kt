@@ -23,9 +23,7 @@
 package dgca.verifier.app.android.data.local.dcc.revocation
 
 import androidx.room.*
-import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationKidMetadataLocal
-import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
-import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationSliceLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.model.*
 
 @Dao
 interface DccRevocationDao {
@@ -41,6 +39,9 @@ interface DccRevocationDao {
 
     @Query("SELECT * FROM dcc_revocation_slice WHERE kid is :kid AND x is :x AND y is :y AND cid is :cid")
     suspend fun getChunkSlices(kid: String, x: Char?, y: Char?, cid: String): List<DccRevocationSliceLocal>
+
+    @Query("SELECT * FROM dcc_revocation_hashlist_slice WHERE sid is :sid AND x is :x AND y is :y AND hash is :dccHashListBytes")
+    suspend fun getHashListSlice(sid: String, x: Char?, y: Char?, dccHashListBytes: ByteArray): DccRevocationHashListSliceLocal?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(entity: DccRevocationKidMetadataLocal): Long
@@ -91,6 +92,9 @@ interface DccRevocationDao {
         removeOutdatedSlices(kidList)
     }
 
+    @Insert(entity = DccRevocationHashListSliceLocal::class, onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertHashListSlices(list: List<DccRevocationHashListSliceLocal>)
+
     @Query("DELETE FROM dcc_revocation_kid_metadata WHERE kid NOT IN (:kidList)")
     suspend fun removeOutdatedKidMetadata(kidList: List<String>)
 
@@ -112,23 +116,6 @@ interface DccRevocationDao {
     @Query("DELETE FROM dcc_revocation_slice WHERE kid is :kid AND cid NOT IN (:chunksIds)")
     suspend fun deleteOutdatedSlicesForPartitionId(kid: String, chunksIds: List<String>)
 
-//    TODO: not used below
-
-    @Query("SELECT * FROM dcc_revocation_kid_metadata WHERE kid is :kid")
-    fun getDccRevocationKidMetadataListBy(kid: String): List<DccRevocationKidMetadataLocal>
-
-    @Query("DELETE FROM dcc_revocation_kid_metadata WHERE kid is :kid")
-    fun deleteDccRevocationKidMetadataListBy(kid: String)
-
-    @Query("SELECT * FROM dcc_revocation_partition WHERE kid is :kid")
-    fun getDccRevocationPartitionListBy(kid: String): List<DccRevocationPartitionLocal>
-
-    @Query("DELETE FROM dcc_revocation_partition WHERE id is :partitionId")
-    fun deleteDccRevocationPartitionBy(partitionId: String)
-
-    @Insert(entity = DccRevocationPartitionLocal::class, onConflict = OnConflictStrategy.IGNORE)
-    fun insertList(entity: List<DccRevocationPartitionLocal>)
-
-    @Insert(entity = DccRevocationSliceLocal::class, onConflict = OnConflictStrategy.IGNORE)
-    fun insertSlicesList(entity: List<DccRevocationSliceLocal>)
+    @Query("DELETE FROM dcc_revocation_slice WHERE sid is :s")
+    suspend fun deleteSlice(s: String)
 }

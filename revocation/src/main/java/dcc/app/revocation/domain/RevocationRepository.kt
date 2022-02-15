@@ -23,10 +23,7 @@
 package dcc.app.revocation.domain
 
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
-import dcc.app.revocation.domain.model.DccRevocationKidMetadata
-import dcc.app.revocation.domain.model.DccRevocationPartition
-import dcc.app.revocation.domain.model.DccRevocationSlice
-import dcc.app.revocation.domain.model.RevocationKidData
+import dcc.app.revocation.domain.model.*
 import okhttp3.ResponseBody
 
 interface RevocationRepository {
@@ -51,11 +48,15 @@ interface RevocationRepository {
 
     suspend fun getChunkSlices(kid: String, x: Char?, y: Char?, cid: String): List<DccRevocationSlice>
 
+    suspend fun getHashListSlice(sid: String, x: Char?, y: Char?, dccHashListBytes: ByteArray): DccRevocationHashListSlice?
+
     suspend fun saveKidMetadata(dccRevocationKidMetadata: DccRevocationKidMetadata)
 
     suspend fun savePartition(partitionData: DccRevocationPartition)
 
     suspend fun saveSlice(dccRevocationSlice: DccRevocationSlice)
+
+    suspend fun saveHashListSlices(hashListSlices: List<DccRevocationHashListSlice>)
 
     suspend fun deleteOutdatedKidItems(notInKidList: List<String>)
 

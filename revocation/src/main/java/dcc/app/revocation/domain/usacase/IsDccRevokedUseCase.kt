@@ -96,22 +96,22 @@ class IsDccRevokedUseCase @Inject constructor(
         return contains(hash, validationData)
     }
 
-    private suspend fun getValidationData(kid: String, x: Char?, y: Char?, cid: String): ValidationData? {
+    private suspend fun getValidationData(kid: String, x: Char?, y: Char?, cid: String): ValidationData {
         val bloomFilterList = mutableSetOf<ByteArray>()
-        val hashList = mutableSetOf<ByteArray>()
+        val hashList = mutableSetOf<String>()
 
         val result = repository.getChunkSlices(kid, x, y, cid)
         result.forEach {
             when (it.type) {
-                SliceType.Hash -> hashList.add(it.content)
+                SliceType.Hash -> hashList.add(it.sid)
                 SliceType.Bloom -> bloomFilterList.add(it.content)
             }
         }
 
-        return ValidationData(bloomFilterList, hashList)
+        return ValidationData(x, y, bloomFilterList, hashList)
     }
 
-    private fun contains(dccHash: String, validationData: ValidationData?): Boolean {
+    private suspend fun contains(dccHash: String, validationData: ValidationData?): Boolean {
         validationData ?: return false
 
         validationData.bloomFilterList.forEach {
@@ -123,12 +123,21 @@ class IsDccRevokedUseCase @Inject constructor(
             }
         }
 
-        // TODO: hash list check
-        return true // validationData.hashList.contains(dccHash)
+        val dccHashListBytes = dccHash.toByteArray().copyOfRange(0, 2)
+        validationData.hashListIds.forEach {
+            val result = repository.getHashListSlice(it, validationData.x, validationData.y, dccHashListBytes)
+            if (result != null) {
+                return true
+            }
+        }
+
+        return false
     }
 
     internal data class ValidationData(
+        val x: Char?,
+        val y: Char?,
         val bloomFilterList: Set<ByteArray>,
-        val hashList: Set<ByteArray>
+        val hashListIds: Set<String>
     )
 }

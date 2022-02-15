@@ -22,6 +22,7 @@
 
 package dcc.app.revocation.data.local
 
+import dcc.app.revocation.domain.model.DccRevocationHashListSlice
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.domain.model.DccRevocationPartition
 import dcc.app.revocation.domain.model.DccRevocationSlice
@@ -36,11 +37,15 @@ interface DccRevocationLocalDataSource {
 
     suspend fun getChunkSlices(kid: String, x: Char?, y: Char?, cid: String): List<DccRevocationSlice>
 
+    suspend fun getHashListSlice(sid: String, x: Char?, y: Char?, dccHashListBytes: ByteArray): DccRevocationHashListSlice?
+
     fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata)
 
     fun addOrUpdate(dccRevocationPartition: DccRevocationPartition)
 
     suspend fun addOrUpdate(dccRevocationSlice: DccRevocationSlice)
+
+    suspend fun saveHashListSlices(hashListSlices: List<DccRevocationHashListSlice>)
 
     suspend fun removeOutdatedKidItems(kidList: List<String>)
 
