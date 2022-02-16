@@ -27,7 +27,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dcc.app.revocation.domain.getDccSignatureSha256
 import dcc.app.revocation.domain.model.DccRevokationDataHolder
+import dcc.app.revocation.domain.toSha256HexString
 import dcc.app.revocation.domain.usacase.IsDccRevokedUseCase
 import dgca.verifier.app.android.data.VerifierRepository
 import dgca.verifier.app.android.data.local.Preferences
@@ -249,13 +251,14 @@ class VerificationViewModel @Inject constructor(
     private suspend fun isDCCRevoked(kid: String, greenCertificate: GreenCertificate?, cose: ByteArray): Boolean {
         greenCertificate ?: return false
 
+
         val isVaccinationRevoked = greenCertificate.vaccinations?.firstOrNull()?.let {
             isDccRevokedUseCase.execute(
                 DccRevokationDataHolder(
                     kid,
-                    it.certificateIdentifier,
-                    (it.countryOfVaccination + it.certificateIdentifier),
-                    cose
+                    it.certificateIdentifier.toByteArray().toSha256HexString(),
+                    (it.countryOfVaccination + it.certificateIdentifier).toByteArray().toSha256HexString(),
+                    cose.getDccSignatureSha256()
                 )
             )
         } ?: false
@@ -264,9 +267,9 @@ class VerificationViewModel @Inject constructor(
             isDccRevokedUseCase.execute(
                 DccRevokationDataHolder(
                     kid,
-                    it.certificateIdentifier,
-                    (it.countryOfVaccination + it.certificateIdentifier),
-                    cose
+                    it.certificateIdentifier.toByteArray().toSha256HexString(),
+                    (it.countryOfVaccination + it.certificateIdentifier).toByteArray().toSha256HexString(),
+                    cose.getDccSignatureSha256()
                 )
             )
         } ?: false
@@ -275,9 +278,9 @@ class VerificationViewModel @Inject constructor(
             isDccRevokedUseCase.execute(
                 DccRevokationDataHolder(
                     kid,
-                    it.certificateIdentifier,
-                    (it.countryOfVaccination + it.certificateIdentifier),
-                    cose
+                    it.certificateIdentifier.toByteArray().toSha256HexString(),
+                    (it.countryOfVaccination + it.certificateIdentifier).toByteArray().toSha256HexString(),
+                    cose.getDccSignatureSha256()
                 )
             )
         } ?: false
