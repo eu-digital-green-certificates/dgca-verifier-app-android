@@ -25,11 +25,9 @@ package dcc.app.revocation.domain.usacase
 import dcc.app.revocation.data.network.model.SliceType
 import dcc.app.revocation.domain.ErrorHandler
 import dcc.app.revocation.domain.RevocationRepository
-import dcc.app.revocation.domain.getDccSignatureSha256
 import dcc.app.revocation.domain.model.DccRevocationHashType
 import dcc.app.revocation.domain.model.DccRevocationMode
 import dcc.app.revocation.domain.model.DccRevokationDataHolder
-import dcc.app.revocation.domain.toSha256HexString
 import dcc.app.revocation.validation.BloomFilterImpl
 import kotlinx.coroutines.CoroutineDispatcher
 import java.io.ByteArrayInputStream
@@ -50,20 +48,17 @@ class IsDccRevokedUseCase @Inject constructor(
         val mode = kidMetadata.mode
         var containsUvciSha256 = false
         if (kidMetadata.hashType.contains(DccRevocationHashType.UCI)) {
-            val uciSha256 = params.uci.toByteArray().toSha256HexString()
-            containsUvciSha256 = isContainsHash(kid, mode, uciSha256)
+            containsUvciSha256 = isContainsHash(kid, mode, params.uvciSha256)
         }
 
         var containsCoUvciSha256 = false
         if (kidMetadata.hashType.contains(DccRevocationHashType.COUNTRYCODEUCI)) {
-            val coUvciSha256 = params.coUvci.toByteArray().toSha256HexString()
-            containsCoUvciSha256 = isContainsHash(kid, mode, coUvciSha256)
+            containsCoUvciSha256 = isContainsHash(kid, mode, params.coUvciSha256)
         }
 
         var containsSignatureSha256 = false
         if (kidMetadata.hashType.contains(DccRevocationHashType.SIGNATURE)) {
-            val signatureSha256 = params.cose.getDccSignatureSha256()
-            containsSignatureSha256 = isContainsHash(kid, mode, signatureSha256)
+            containsSignatureSha256 = isContainsHash(kid, mode, params.signatureSha256)
         }
 
         return containsUvciSha256 || containsCoUvciSha256 || containsSignatureSha256

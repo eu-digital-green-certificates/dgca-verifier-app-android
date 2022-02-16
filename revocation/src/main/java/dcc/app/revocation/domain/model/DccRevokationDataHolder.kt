@@ -24,29 +24,7 @@ package dcc.app.revocation.domain.model
 
 data class DccRevokationDataHolder(
     val kid: String,
-    val uci: String,
-    val coUvci: String,
-    val cose: ByteArray
-) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as DccRevokationDataHolder
-
-        if (kid != other.kid) return false
-        if (uci != other.uci) return false
-        if (coUvci != other.coUvci) return false
-        if (!cose.contentEquals(other.cose)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = kid.hashCode()
-        result = 31 * result + uci.hashCode()
-        result = 31 * result + coUvci.hashCode()
-        result = 31 * result + cose.contentHashCode()
-        return result
-    }
-}
+    val uvciSha256: String?,
+    val coUvciSha256: String?,
+    val signatureSha256: String?
+)

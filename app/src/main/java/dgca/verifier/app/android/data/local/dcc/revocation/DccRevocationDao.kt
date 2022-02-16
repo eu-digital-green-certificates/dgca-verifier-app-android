@@ -126,4 +126,10 @@ interface DccRevocationDao {
 
     @Query("DELETE FROM dcc_revocation_slice WHERE sid is :s")
     suspend fun deleteSlice(s: String)
+
+    @Insert(entity = DccRevocationPartitionLocal::class, onConflict = OnConflictStrategy.IGNORE)
+    fun insertList(entity: List<DccRevocationPartitionLocal>)
+
+    @Insert(entity = DccRevocationSliceLocal::class, onConflict = OnConflictStrategy.IGNORE)
+    fun insertSlicesList(entity: List<DccRevocationSliceLocal>)
 }
