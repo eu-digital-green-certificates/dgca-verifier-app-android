@@ -45,12 +45,12 @@ class DccRevocationLocalDataSourceImpl(private val dccRevocationDao: DccRevocati
         dccRevocationDao.getChunkSlices(kid, x, y, cid).map { it.fromLocal() }
 
     override suspend fun getHashListSlice(
-        sid: String,
+        sidList: Set<String>,
         x: Char?,
         y: Char?,
         dccHashListBytes: ByteArray
     ): DccRevocationHashListSlice? =
-        dccRevocationDao.getHashListSlice(sid, x, y, dccHashListBytes)?.fromLocal()
+        dccRevocationDao.getHashListSlice(sidList, x, y, dccHashListBytes)?.fromLocal()
 
     override fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata) {
         dccRevocationDao.upsert(dccRevocationKidMetadata.toLocal())

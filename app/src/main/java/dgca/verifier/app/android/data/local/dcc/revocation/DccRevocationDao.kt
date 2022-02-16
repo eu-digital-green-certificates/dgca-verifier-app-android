@@ -23,7 +23,10 @@
 package dgca.verifier.app.android.data.local.dcc.revocation
 
 import androidx.room.*
-import dgca.verifier.app.android.data.local.dcc.revocation.model.*
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationHashListSliceLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationKidMetadataLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationSliceLocal
 
 @Dao
 interface DccRevocationDao {
@@ -40,8 +43,13 @@ interface DccRevocationDao {
     @Query("SELECT * FROM dcc_revocation_slice WHERE kid is :kid AND x is :x AND y is :y AND cid is :cid")
     suspend fun getChunkSlices(kid: String, x: Char?, y: Char?, cid: String): List<DccRevocationSliceLocal>
 
-    @Query("SELECT * FROM dcc_revocation_hashlist_slice WHERE sid is :sid AND x is :x AND y is :y AND hash is :dccHashListBytes")
-    suspend fun getHashListSlice(sid: String, x: Char?, y: Char?, dccHashListBytes: ByteArray): DccRevocationHashListSliceLocal?
+    @Query("SELECT * FROM dcc_revocation_hashlist_slice WHERE sid IN (:sidList) AND x is :x AND y is :y AND hash is :dccHashListBytes")
+    suspend fun getHashListSlice(
+        sidList: Set<String>,
+        x: Char?,
+        y: Char?,
+        dccHashListBytes: ByteArray
+    ): DccRevocationHashListSliceLocal?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(entity: DccRevocationKidMetadataLocal): Long

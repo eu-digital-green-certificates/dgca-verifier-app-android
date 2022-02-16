@@ -124,11 +124,9 @@ class IsDccRevokedUseCase @Inject constructor(
         }
 
         val dccHashListBytes = dccHash.toByteArray().copyOfRange(0, 2)
-        validationData.hashListIds.forEach {
-            val result = repository.getHashListSlice(it, validationData.x, validationData.y, dccHashListBytes)
-            if (result != null) {
-                return true
-            }
+        val result = repository.getHashListSlice(validationData.hashListIds, validationData.x, validationData.y, dccHashListBytes)
+        if (result != null) {
+            return true
         }
 
         return false

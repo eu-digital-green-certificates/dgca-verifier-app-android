@@ -112,7 +112,7 @@ class DccRevocationHashListTest {
         dccRevocationDao.insertHashListSlices(hashListSlices)
 
         // When
-        val result = dccRevocationDao.getHashListSlice("sidTest", 'x', 'y', hash)
+        val result = dccRevocationDao.getHashListSlice(setOf("sidTest"), 'x', 'y', hash)
 
         // Then
         assertThat(result, equalTo(hashListSlice))
@@ -148,7 +148,7 @@ class DccRevocationHashListTest {
         dccRevocationDao.deleteSlice("sidTest")
 
         // Then
-        val result = dccRevocationDao.getHashListSlice("sidTest", 'x', 'y', hash)
+        val result = dccRevocationDao.getHashListSlice(setOf("sidTest"), 'x', 'y', hash)
         assertThat(result, nullValue())
     }
 }

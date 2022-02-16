@@ -48,7 +48,7 @@ interface RevocationRepository {
 
     suspend fun getChunkSlices(kid: String, x: Char?, y: Char?, cid: String): List<DccRevocationSlice>
 
-    suspend fun getHashListSlice(sid: String, x: Char?, y: Char?, dccHashListBytes: ByteArray): DccRevocationHashListSlice?
+    suspend fun getHashListSlice(sidList: Set<String>, x: Char?, y: Char?, dccHashListBytes: ByteArray): DccRevocationHashListSlice?
 
     suspend fun saveKidMetadata(dccRevocationKidMetadata: DccRevocationKidMetadata)
 
