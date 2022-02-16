@@ -43,6 +43,7 @@ import dcc.app.revocation.validation.BloomFilterImpl
 import dgca.verifier.app.android.data.local.AppDatabase
 import dgca.verifier.app.android.data.local.dcc.revocation.mapper.fromLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.mapper.toLocal
+import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationHashListSliceLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationKidMetadataLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationSliceLocal
@@ -345,6 +346,152 @@ internal class DccRevocationDaoTest {
                 uvciSha256 = hashes.first(),
                 coUvciSha256 = hashes.first(),
                 signatureSha256 = hashes.first()
+            )
+        )
+        val searchExistingTimeEnd = System.currentTimeMillis()
+        println("MYTAG Existing hash search time: ${searchExistingTimeEnd - searchExistingTimeStart}")
+
+        assertTrue(res!!)
+
+        val shouldNotContain = isDccRevokedUseCase.execute(
+            DccRevokationDataHolder(
+                kid = modeKids[DccRevocationMode.POINT]!!.first(),
+                uvciSha256 = hashes.first().replaceRange(0, 1, "+"),
+                coUvciSha256 = hashes.first().replaceRange(0, 1, "+"),
+                signatureSha256 = hashes.first().replaceRange(0, 1, "+")
+            )
+        )
+        assertFalse(shouldNotContain!!)
+
+        val testEndTime = System.currentTimeMillis()
+        println("MYTAG Test time: ${testEndTime - testStartTime}")
+        return@runBlocking
+    }
+
+    @Test
+    fun loadHashListTest() = runBlocking {
+        val testStartTime = System.currentTimeMillis()
+
+        val amountOfKids = 1
+        // Amount of partitions
+        val amountOfHashPrefixes = min(256, 1)
+        val chunksPerPartition = min(16, Int.MAX_VALUE)
+        val wantedAmountOfHashes = 10_000
+        val minAmountOfHashes = amountOfHashPrefixes * chunksPerPartition
+        val approximateAmountOfHashes =
+            if (wantedAmountOfHashes < minAmountOfHashes) minAmountOfHashes else wantedAmountOfHashes
+        val hashesPerPrefix = approximateAmountOfHashes / amountOfHashPrefixes
+        val hashesPerChunk = hashesPerPrefix / chunksPerPartition
+        val wantedAmountOfSlicesPerChunk = 10
+        val amountOfSlicesPerChunk =
+            if (wantedAmountOfSlicesPerChunk > hashesPerChunk) hashesPerChunk else wantedAmountOfSlicesPerChunk
+        val amountOfHashesPerSlice =
+            approximateAmountOfHashes / (amountOfHashPrefixes * chunksPerPartition * amountOfSlicesPerChunk)
+        val modeKids = generateUniqueKids(amountOfKids)
+
+        var shouldSkipHashesGeneration = false
+
+        modeKids.forEach { (mode, kids) ->
+            kids.forEach { kid ->
+                val kidMetadata = generateKidMetadata(kid, mode)
+                dccRevocationDao.insert(kidMetadata)
+            }
+        }
+
+        val hashes = mutableListOf<String>()
+        val hashBytes = mutableListOf<ByteArray>()
+        val partitions = mutableListOf<DccRevocationPartitionLocal>()
+        val slicesList = mutableListOf<DccRevocationSliceLocal>()
+
+        val modeHashPrefixes = generateHashPrefixes(amountOfHashPrefixes)
+        DccRevocationMode.values().forEach { mode ->
+            val kids: Array<String>? = modeKids[mode]
+            val hashPrefixes: Array<String>? = modeHashPrefixes[mode]
+
+            if (kids != null && hashPrefixes != null) {
+                hashPrefixes.forEachIndexed { index, hashPrefix ->
+                    val kidIndex = index % kids.size
+                    val kid = kids[kidIndex]
+
+                    val (x, y) = when (mode) {
+                        DccRevocationMode.POINT -> Pair(null, null)
+                        DccRevocationMode.VECTOR -> Pair(hashPrefix[0], null)
+                        DccRevocationMode.COORDINATE -> Pair(hashPrefix[0], hashPrefix[1])
+                        DccRevocationMode.UNKNOWN -> throw IllegalStateException()
+                    }
+
+                    val chunks = generateChunks(chunksPerPartition, amountOfSlicesPerChunk)
+                    val chunksString = jacksonObjectMapper().writeValueAsString(chunks)
+
+                    val partition = DccRevocationPartitionLocal(
+                        id = "$index",
+                        kid = kid,
+                        x = x,
+                        y = y,
+                        expires = ZonedDateTime.now(),
+                        chunks = chunksString
+                    )
+                    partitions.add(partition)
+
+                    chunks.forEach { (cid, slices) ->
+                        slices.forEach { (expirationTime, slice) ->
+                            val hashStart = hashPrefix + cid
+
+                            val hashListByteArray = mutableListOf<ByteArray>()
+                            for (i in 0..amountOfHashesPerSlice) {
+                                val hash = if (shouldSkipHashesGeneration) {
+                                    byteArrayOf(i.toByte(), i.toByte())
+                                } else {
+                                    shouldSkipHashesGeneration = true
+                                    "12".toByteArray()
+                                }
+
+                                hashListByteArray.add(hash)
+                                hashBytes.add(hash)
+                                hashes.add(hash[0].toString() + hash[1].toString())
+                            }
+
+                            println("MYTAG BF bytes amount: ${hashListByteArray.size}, num of elements: $amountOfHashesPerSlice")
+                            val sliceLocal = DccRevocationSliceLocal(
+                                sid = slice.hash,
+                                kid = kid,
+                                x = x,
+                                y = y,
+                                cid = cid,
+                                type = DccSliceType.HASH,
+                                version = slice.version,
+                                expires = expirationTime,
+                                content = byteArrayOf()
+                            )
+                            dccRevocationDao.insert(sliceLocal)
+
+                            val hashListSlices = mutableListOf<DccRevocationHashListSliceLocal>()
+                            hashListByteArray.forEach {
+                                hashListSlices.add(
+                                    DccRevocationHashListSliceLocal(
+                                        sid = slice.hash,
+                                        x = x,
+                                        y = y,
+                                        hash = it
+                                    )
+                                )
+                            }
+                            dccRevocationDao.insertHashListSlices(hashListSlices)
+                        }
+                    }
+                }
+            }
+        }
+
+        dccRevocationDao.insertList(partitions)
+
+        val searchExistingTimeStart = System.currentTimeMillis()
+        val res = isDccRevokedUseCase.execute(
+            DccRevokationDataHolder(
+                kid = modeKids[DccRevocationMode.POINT]!!.first(),
+                uvciSha256 = "12",
+                coUvciSha256 = "12",
+                signatureSha256 = "12"
             )
         )
         val searchExistingTimeEnd = System.currentTimeMillis()
