@@ -26,12 +26,10 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
 import dcc.app.revocation.data.network.model.Slice
+import dcc.app.revocation.data.network.model.SliceType
 import dcc.app.revocation.domain.ErrorHandler
 import dcc.app.revocation.domain.RevocationRepository
-import dcc.app.revocation.domain.model.DccRevocationKidMetadata
-import dcc.app.revocation.domain.model.DccRevocationPartition
-import dcc.app.revocation.domain.model.DccRevocationSlice
-import dcc.app.revocation.domain.model.RevocationKidData
+import dcc.app.revocation.domain.model.*
 import dcc.app.revocation.domain.toBase64Url
 import dcc.app.revocation.isEqualTo
 import kotlinx.coroutines.CoroutineDispatcher
@@ -124,6 +122,7 @@ class GetRevocationDataUseCase @Inject constructor(
 
         val chunksIds = mutableListOf<String>()
         remotePartition.chunks.keys.forEach { chunksIds.add(it) }
+
         // Remove all Chunks which are not more available (delete from .. not in .. ).
         repository.deleteOutdatedSlicesForPartitionId(kid, chunksIds)
     }
@@ -190,11 +189,16 @@ class GetRevocationDataUseCase @Inject constructor(
         var entry = tarInputStream.nextTarEntry
         tarInputStream.use { stream ->
             while (entry != null) {
-                val bytes = stream.readBytes()
+                var bytes = stream.readBytes()
                 val sid = entry.name.split("/").last()
                 val sliceMap = chunkValue.filterValues { it.hash == sid }
                 val sliceExpires = sliceMap.keys.first()
                 val sliceValue = sliceMap.values.first()
+
+                if (sliceValue.type == SliceType.Hash) {
+                    saveHashListSlices(bytes, sid, partition.x, partition.y)
+                    bytes = byteArrayOf()
+                }
 
                 repository.saveSlice(
                     DccRevocationSlice(
@@ -209,6 +213,7 @@ class GetRevocationDataUseCase @Inject constructor(
                         content = bytes
                     )
                 )
+
                 entry = tarInputStream.nextTarEntry
             }
         }
@@ -228,7 +233,13 @@ class GetRevocationDataUseCase @Inject constructor(
             val tarInputStream = TarArchiveInputStream(GZIPInputStream(response.byteStream()))
             tarInputStream.nextTarEntry
             tarInputStream.use {
-                val bytes = it.readBytes()
+                var bytes = it.readBytes()
+
+                if (value.type == SliceType.Hash) {
+                    saveHashListSlices(bytes, sid, partition.x, partition.y)
+                    bytes = byteArrayOf()
+                }
+
                 repository.saveSlice(
                     DccRevocationSlice(
                         sid = sid,
@@ -244,5 +255,21 @@ class GetRevocationDataUseCase @Inject constructor(
                 )
             }
         }
+    }
+
+    private suspend fun saveHashListSlices(bytes: ByteArray, sid: String, x: Char?, y: Char?) {
+        if (bytes.size < 2) {
+            return
+        }
+
+        val hashListSlices = mutableListOf<DccRevocationHashListSlice>()
+        var index = 2
+        while (index <= bytes.size) {
+            val hashBytes = bytes.copyOfRange(index - 2, index)
+            hashListSlices.add(DccRevocationHashListSlice(sid, x, y, hashBytes))
+            index += 2
+        }
+
+        repository.saveHashListSlices(hashListSlices)
     }
 }
