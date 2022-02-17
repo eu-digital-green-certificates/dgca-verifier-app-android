@@ -258,7 +258,8 @@ class VerificationViewModel @Inject constructor(
                     kid,
                     it.certificateIdentifier.toByteArray().toSha256HexString(),
                     (it.countryOfVaccination + it.certificateIdentifier).toByteArray().toSha256HexString(),
-                    cose.getDccSignatureSha256()
+                    cose.getDccSignatureSha256(),
+                    cose
                 )
             )
         } ?: false
@@ -269,7 +270,8 @@ class VerificationViewModel @Inject constructor(
                     kid,
                     it.certificateIdentifier.toByteArray().toSha256HexString(),
                     (it.countryOfVaccination + it.certificateIdentifier).toByteArray().toSha256HexString(),
-                    cose.getDccSignatureSha256()
+                    cose.getDccSignatureSha256(),
+                    cose
                 )
             )
         } ?: false
@@ -280,7 +282,8 @@ class VerificationViewModel @Inject constructor(
                     kid,
                     it.certificateIdentifier.toByteArray().toSha256HexString(),
                     (it.countryOfVaccination + it.certificateIdentifier).toByteArray().toSha256HexString(),
-                    cose.getDccSignatureSha256()
+                    cose.getDccSignatureSha256(),
+                    cose
                 )
             )
         } ?: false
