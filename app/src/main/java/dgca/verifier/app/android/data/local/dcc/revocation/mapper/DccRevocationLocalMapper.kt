@@ -88,7 +88,7 @@ fun DccRevocationSliceLocal.fromLocal(): DccRevocationSlice {
 fun DccSliceType.toSliceType(): SliceType =
     when (this) {
         DccSliceType.HASH -> SliceType.Hash
-        DccSliceType.BF -> SliceType.Bloom
+        DccSliceType.BF -> SliceType.BLOOMFILTER
     }
 
 fun DccRevocationSlice.toLocal(): DccRevocationSliceLocal {
@@ -108,7 +108,7 @@ fun DccRevocationSlice.toLocal(): DccRevocationSliceLocal {
 fun SliceType.toDccSliceType(): DccSliceType =
     when (this) {
         SliceType.Hash -> DccSliceType.HASH
-        SliceType.Bloom -> DccSliceType.BF
+        SliceType.BLOOMFILTER -> DccSliceType.BF
     }
 
 fun DccRevocationHashListSlice.toLocal(): DccRevocationHashListSliceLocal =
