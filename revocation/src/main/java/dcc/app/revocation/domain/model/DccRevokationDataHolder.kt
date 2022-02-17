@@ -26,5 +26,6 @@ data class DccRevokationDataHolder(
     val kid: String,
     val uvciSha256: String?,
     val coUvciSha256: String?,
-    val signatureSha256: String?
+    val signatureSha256: String?,
+    val cose: ByteArray? = null
 )

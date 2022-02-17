@@ -32,6 +32,7 @@ import java.util.*
 const val ECDSA_256 = -7
 const val RSA_PSS_256 = -37
 
+//TODO: update/remove.
 fun ByteArray.getDccSignatureSha256(): String {
     return try {
         val messageObject = CBORObject.DecodeFromBytes(this)
@@ -50,6 +51,27 @@ fun ByteArray.getDccSignatureSha256(): String {
         }
     } catch (ex: Exception) {
         ""
+    }
+}
+
+fun ByteArray.getDccSignatureSha256Bytes(): ByteArray? {
+    return try {
+        val messageObject = CBORObject.DecodeFromBytes(this)
+        val protectedHeader = messageObject[0].GetByteString()
+        val unprotectedHeader = messageObject[1]
+        val coseSignature = messageObject.get(3).GetByteString()
+
+        return when (getAlgoFromHeader(protectedHeader, unprotectedHeader)) {
+            ECDSA_256 -> {
+                val len = coseSignature.size / 2
+                val r = Arrays.copyOfRange(coseSignature, 0, len)
+                r.sha256Short()
+            }
+            RSA_PSS_256 -> coseSignature.sha256Short()
+            else -> byteArrayOf()
+        }
+    } catch (ex: Exception) {
+        byteArrayOf()
     }
 }
 
