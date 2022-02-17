@@ -25,6 +25,7 @@ package dcc.app.revocation.domain.usacase
 import dcc.app.revocation.data.network.model.SliceType
 import dcc.app.revocation.domain.ErrorHandler
 import dcc.app.revocation.domain.RevocationRepository
+import dcc.app.revocation.domain.getDccSignatureSha256Bytes
 import dcc.app.revocation.domain.model.DccRevocationHashType
 import dcc.app.revocation.domain.model.DccRevocationMode
 import dcc.app.revocation.domain.model.DccRevokationDataHolder
@@ -58,13 +59,18 @@ class IsDccRevokedUseCase @Inject constructor(
 
         var containsSignatureSha256 = false
         if (kidMetadata.hashType.contains(DccRevocationHashType.SIGNATURE)) {
-            containsSignatureSha256 = isContainsHash(kid, mode, params.signatureSha256)
+            containsSignatureSha256 = isContainsHash(kid, mode, params.signatureSha256, params.cose?.getDccSignatureSha256Bytes())
         }
 
         return containsUvciSha256 || containsCoUvciSha256 || containsSignatureSha256
     }
 
-    private suspend fun isContainsHash(kid: String, mode: DccRevocationMode, hash: String?): Boolean {
+    private suspend fun isContainsHash(
+        kid: String,
+        mode: DccRevocationMode,
+        hash: String?,
+        dccSignatureSha256Bytes: ByteArray? = null
+    ): Boolean {
         hash ?: return false
 
         var x: Char? = null
@@ -88,7 +94,7 @@ class IsDccRevokedUseCase @Inject constructor(
         }
 
         val validationData = getValidationData(kid, x, y, cid.toString())
-        return contains(hash, validationData)
+        return contains(hash, validationData, dccSignatureSha256Bytes)
     }
 
     private suspend fun getValidationData(kid: String, x: Char?, y: Char?, cid: String): ValidationData {
@@ -106,13 +112,13 @@ class IsDccRevokedUseCase @Inject constructor(
         return ValidationData(x, y, bloomFilterList, hashList)
     }
 
-    private suspend fun contains(dccHash: String, validationData: ValidationData?): Boolean {
+    private suspend fun contains(dccHash: String, validationData: ValidationData?, dccSignatureSha256Bytes: ByteArray?): Boolean {
         validationData ?: return false
 
         validationData.bloomFilterList.forEach {
             val inputStream: InputStream = ByteArrayInputStream(it)
             val bloomFilter = BloomFilterImpl(inputStream)
-            val contains = bloomFilter.mightContain(dccHash.toByteArray())
+            val contains = bloomFilter.mightContain(dccSignatureSha256Bytes ?: dccHash.toByteArray())
             if (contains) {
                 return true
             }
