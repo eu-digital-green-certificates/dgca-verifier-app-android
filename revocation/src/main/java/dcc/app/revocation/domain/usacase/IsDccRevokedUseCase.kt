@@ -99,7 +99,7 @@ class IsDccRevokedUseCase @Inject constructor(
         result.forEach {
             when (it.type) {
                 SliceType.Hash -> hashList.add(it.sid)
-                SliceType.Bloom -> bloomFilterList.add(it.content)
+                SliceType.BLOOMFILTER -> bloomFilterList.add(it.content)
             }
         }
 
