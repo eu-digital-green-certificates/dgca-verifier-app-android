@@ -206,7 +206,6 @@ class VerificationViewModel @Inject constructor(
         }
         val noPublicKeysFound = false
         var certificateExpired = false
-        var certificateRevoked = false
         var issuingCountry = ""
         certificates.forEach { innerCertificate ->
             cryptoService.validate(
@@ -230,11 +229,11 @@ class VerificationViewModel @Inject constructor(
                     certificateExpired = true
                 }
 
-                certificateRevoked = isDCCRevoked(base64EncodedKid, greenCertificateData?.greenCertificate, cose)
-
                 return@forEach
             }
         }
+
+        val certificateRevoked = isDCCRevoked(base64EncodedKid, greenCertificateData?.greenCertificate, cose)
 
         return InnerVerificationResult(
             noPublicKeysFound = noPublicKeysFound,
@@ -258,8 +257,7 @@ class VerificationViewModel @Inject constructor(
                     kid,
                     it.certificateIdentifier.toByteArray().toSha256HexString(),
                     (it.countryOfVaccination + it.certificateIdentifier).toByteArray().toSha256HexString(),
-                    cose.getDccSignatureSha256(),
-                    cose
+                    cose.getDccSignatureSha256()
                 )
             )
         } ?: false
@@ -270,8 +268,7 @@ class VerificationViewModel @Inject constructor(
                     kid,
                     it.certificateIdentifier.toByteArray().toSha256HexString(),
                     (it.countryOfVaccination + it.certificateIdentifier).toByteArray().toSha256HexString(),
-                    cose.getDccSignatureSha256(),
-                    cose
+                    cose.getDccSignatureSha256()
                 )
             )
         } ?: false
@@ -282,8 +279,7 @@ class VerificationViewModel @Inject constructor(
                     kid,
                     it.certificateIdentifier.toByteArray().toSha256HexString(),
                     (it.countryOfVaccination + it.certificateIdentifier).toByteArray().toSha256HexString(),
-                    cose.getDccSignatureSha256(),
-                    cose
+                    cose.getDccSignatureSha256()
                 )
             )
         } ?: false
