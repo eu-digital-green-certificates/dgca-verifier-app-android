@@ -206,14 +206,14 @@ class VerificationViewModel @Inject constructor(
         }
         val noPublicKeysFound = false
         var certificateExpired = false
+        var certificateRevoked = false
         var issuingCountry = ""
         certificates.forEach { innerCertificate ->
             cryptoService.validate(
                 cose,
                 innerCertificate,
                 verificationResult,
-                greenCertificateData?.greenCertificate?.getType()
-                    ?: dgca.verifier.app.decoder.model.CertificateType.UNKNOWN
+                greenCertificateData?.greenCertificate?.getType() ?: dgca.verifier.app.decoder.model.CertificateType.UNKNOWN
             )
 
             if (verificationResult.coseVerified) {
@@ -229,11 +229,11 @@ class VerificationViewModel @Inject constructor(
                     certificateExpired = true
                 }
 
+                certificateRevoked = isDCCRevoked(base64EncodedKid, greenCertificateData?.greenCertificate, cose)
+
                 return@forEach
             }
         }
-
-        val certificateRevoked = isDCCRevoked(base64EncodedKid, greenCertificateData?.greenCertificate, cose)
 
         return InnerVerificationResult(
             noPublicKeysFound = noPublicKeysFound,
@@ -249,7 +249,6 @@ class VerificationViewModel @Inject constructor(
 
     private suspend fun isDCCRevoked(kid: String, greenCertificate: GreenCertificate?, cose: ByteArray): Boolean {
         greenCertificate ?: return false
-
 
         val isVaccinationRevoked = greenCertificate.vaccinations?.firstOrNull()?.let {
             isDccRevokedUseCase.execute(
