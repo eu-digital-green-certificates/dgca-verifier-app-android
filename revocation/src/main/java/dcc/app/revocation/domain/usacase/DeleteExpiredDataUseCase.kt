@@ -25,6 +25,9 @@ package dcc.app.revocation.domain.usacase
 import dcc.app.revocation.domain.ErrorHandler
 import dcc.app.revocation.domain.RevocationRepository
 import kotlinx.coroutines.CoroutineDispatcher
+import java.time.Instant
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 class DeleteExpiredDataUseCase @Inject constructor(
@@ -34,6 +37,6 @@ class DeleteExpiredDataUseCase @Inject constructor(
 ) : BaseUseCase<Unit, Any>(dispatcher, errorHandler) {
 
     override suspend fun invoke(params: Any) {
-        repository.deleteExpiredData(System.currentTimeMillis())
+        repository.deleteExpiredData(ChronoUnit.MICROS.between(Instant.EPOCH, ZonedDateTime.now().toInstant()))
     }
 }

@@ -48,7 +48,7 @@ class Converters {
 
     @TypeConverter
     fun fromTimestamp(value: Long?): ZonedDateTime = if (value != null) {
-        val instant: Instant = Instant.EPOCH.plus(value, ChronoUnit.MILLIS)
+        val instant: Instant = Instant.EPOCH.plus(value, ChronoUnit.MICROS)
         ZonedDateTime.ofInstant(instant, UTC_ZONE_ID)
     } else {
         ZonedDateTime.now(UTC_ZONE_ID)
@@ -56,7 +56,7 @@ class Converters {
 
     @TypeConverter
     fun zonedDateTimeToTimestamp(zonedDateTime: ZonedDateTime?): Long {
-        return ChronoUnit.MILLIS.between(
+        return ChronoUnit.MICROS.between(
             Instant.EPOCH,
             (zonedDateTime?.withZoneSameInstant(UTC_ZONE_ID)
                 ?: ZonedDateTime.now(UTC_ZONE_ID)).toInstant()
