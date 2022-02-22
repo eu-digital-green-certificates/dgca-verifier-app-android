@@ -30,6 +30,7 @@ import android.nfc.NfcAdapter
 import android.nfc.NfcManager
 import android.os.Bundle
 import android.view.WindowManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
@@ -45,6 +46,8 @@ class MainActivity : AppCompatActivity() {
     private var adapter: NfcAdapter? = null
     private lateinit var navHostFragment: NavHostFragment
     private lateinit var navController: NavController
+
+    private val viewModel by viewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +65,8 @@ class MainActivity : AppCompatActivity() {
                 checkNdefMessage(intent)
             }
         }
+
+        viewModel.init()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -123,7 +128,7 @@ class MainActivity : AppCompatActivity() {
                     val record = records[i].str()
 
                     if (record.length >= 5 && record.substring(0, 4) == "HC1:") {
-                       navHostFragment.childFragmentManager.primaryNavigationFragment?.let { fragment ->
+                        navHostFragment.childFragmentManager.primaryNavigationFragment?.let { fragment ->
                             if (fragment is CodeReaderFragment && fragment.isVisible) {
                                 fragment.onNdefMessageReceived(record)
                             }
