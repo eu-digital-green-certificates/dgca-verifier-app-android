@@ -59,7 +59,6 @@ class RevocationRepositoryImpl @Inject constructor(
         val eTag = revocationPreferences.eTag ?: ""
         val response = revocationService.getRevocationListPartitions(eTag, kid)
 
-
         if (response.containsServerError()) {
             throw HttpException(response)
         }
@@ -71,7 +70,6 @@ class RevocationRepositoryImpl @Inject constructor(
     override suspend fun getPartitionChunks(kid: String, partitionId: String?, cidList: List<String>): ResponseBody? {
         val eTag = revocationPreferences.eTag ?: ""
         val response = revocationService.getRevocationPartitionChunks(eTag, kid, partitionId ?: "null", cidList)
-
 
         if (response.containsServerError()) {
             throw HttpException(response)
