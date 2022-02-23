@@ -57,6 +57,15 @@ interface RevocationService {
         @Path("cid") chunkId: String
     ): Response<ResponseBody>
 
+    @POST("/lists/{kid}/partitions/{id}/chunks/{cid}/slices")
+    suspend fun getRevocationChunkSlices(
+        @Header("if-Match") eTag: String,
+        @Path("kid") kid: String,
+        @Path("id") partitionId: String,
+        @Path("cid") cid: String,
+        @Body cidList: List<String>
+    ): Response<ResponseBody>
+
     @GET("/lists/{kid}/partitions/{id}/chunks/{cid}/slices/{sid}")
     suspend fun getRevocationChunkSlice(
         @Header("If-Match") eTag: String,

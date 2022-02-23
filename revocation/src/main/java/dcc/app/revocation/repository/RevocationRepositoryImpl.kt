@@ -92,6 +92,25 @@ class RevocationRepositoryImpl @Inject constructor(
         return response.body()
     }
 
+    @Throws(Exception::class)
+    override suspend fun getRevocationChunkSlices(
+        kid: String,
+        partitionId: String?,
+        cid: String,
+        sidList: List<String>
+    ): ResponseBody? {
+        val eTag = revocationPreferences.eTag ?: ""
+        val response = revocationService.getRevocationChunkSlices(eTag, kid, partitionId ?: "null", cid, sidList)
+
+
+        if (response.containsServerError()) {
+            throw HttpException(response)
+        }
+
+        return response.body()
+    }
+
+    @Throws(Exception::class)
     override suspend fun getSlice(kid: String, partitionId: String?, cid: String, sid: String): ResponseBody? {
         val eTag = revocationPreferences.eTag ?: ""
         val response = revocationService.getRevocationChunkSlice(eTag, kid, partitionId ?: "null", cid, sid)

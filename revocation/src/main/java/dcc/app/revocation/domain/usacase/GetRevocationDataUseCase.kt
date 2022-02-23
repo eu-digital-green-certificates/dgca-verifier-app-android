@@ -117,7 +117,7 @@ class GetRevocationDataUseCase @Inject constructor(
             // Initial sync. load all chunks for partition
             val result =
                 repository.getPartitionChunks(kid.toBase64Url(), remotePartition.id, remotePartition.chunks.map { it.key })
-            handlePartitionChunks(kid, remotePartition, result)
+            handlePartitionSlices(kid, remotePartition, result)
         }
 
         savePartition(kid, remotePartition)
@@ -142,7 +142,7 @@ class GetRevocationDataUseCase @Inject constructor(
             if (localSlices == null) {
                 // When chunk not found load from api
                 val response = repository.getRevocationChunk(kid.toBase64Url(), remotePartition.id, remoteChunkKey)
-                handlePartitionChunks(kid, remotePartition, response)
+                handlePartitionSlices(kid, remotePartition, response)
 
             } else {
                 val slices = mutableMapOf<String, Slice>()
@@ -157,10 +157,17 @@ class GetRevocationDataUseCase @Inject constructor(
 
                 // If less than 50% slices has changed load slices by CIDs otherwise load whole chunk
                 if (slices.size < remoteChunkValue.size / 2) {
-                    getSlices(kid, remotePartition, remoteChunkKey, slices)
+                    // Load updated or missing slices by sid list.
+                    val response = repository.getRevocationChunkSlices(
+                        kid.toBase64Url(),
+                        remotePartition.id,
+                        remoteChunkKey,
+                        slices.mapValues { it.value }.map { it.value.hash }
+                    )
+                    handlePartitionSlices(kid, remotePartition, response)
                 } else {
                     val response = repository.getRevocationChunk(kid.toBase64Url(), remotePartition.id, remoteChunkKey)
-                    handlePartitionChunks(kid, remotePartition, response)
+                    handlePartitionSlices(kid, remotePartition, response)
                 }
             }
         }
@@ -179,7 +186,7 @@ class GetRevocationDataUseCase @Inject constructor(
         )
     }
 
-    private suspend fun handlePartitionChunks(
+    private suspend fun handlePartitionSlices(
         kid: String,
         partition: RevocationPartitionResponse,
         response: ResponseBody?
@@ -219,44 +226,6 @@ class GetRevocationDataUseCase @Inject constructor(
                 )
             }
         )
-    }
-
-    private suspend fun getSlices(
-        kid: String,
-        partition: RevocationPartitionResponse,
-        cid: String,
-        slices: Map<String, Slice>
-    ) {
-        slices.forEach { (key, value) ->
-            val sid = value.hash
-            val response = repository.getSlice(kid.toBase64Url(), partition.id, cid, sid)
-            response ?: return
-
-            readTarStream(response.byteStream(),
-                onNextEntry = { stream, entry ->
-                    var bytes = stream.readBytes()
-
-                    if (value.type == SliceType.Hash) {
-                        saveHashListSlices(bytes, sid, partition.x, partition.y)
-                        bytes = byteArrayOf()
-                    }
-
-                    repository.saveSlice(
-                        DccRevocationSlice(
-                            sid = sid,
-                            kid = kid,
-                            x = partition.x,
-                            y = partition.y,
-                            cid = cid,
-                            type = value.type,
-                            version = value.version,
-                            expires = ZonedDateTime.parse(key),
-                            content = bytes
-                        )
-                    )
-                }
-            )
-        }
     }
 
     private inline fun readTarStream(byteStream: InputStream, onNextEntry: (InputStream, TarArchiveEntry) -> Unit) {
