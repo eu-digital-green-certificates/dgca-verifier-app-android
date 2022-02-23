@@ -33,7 +33,10 @@ import dcc.app.revocation.domain.model.*
 import dcc.app.revocation.domain.toBase64Url
 import dcc.app.revocation.isEqualTo
 import kotlinx.coroutines.CoroutineDispatcher
+import okhttp3.ResponseBody
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
+import java.io.InputStream
 import java.lang.reflect.Type
 import java.time.ZonedDateTime
 import java.util.zip.GZIPInputStream
@@ -111,11 +114,10 @@ class GetRevocationDataUseCase @Inject constructor(
             // Optimization - section/chunk validation what changed
             compareChunksWithLocal(kid, localPartition, remotePartition)
         } else {
-            // Initial sync. load all chunks
-            remotePartition.chunks.forEach { (remoteChunkKey, remoteChunkValue) ->
-                // Download from /{kid}/partitions/{id}/chunks/{chunkId} the missing chunks
-                getChunk(kid, remotePartition, remoteChunkKey, remoteChunkValue)
-            }
+            // Initial sync. load all chunks for partition
+            val result =
+                repository.getPartitionChunks(kid.toBase64Url(), remotePartition.id, remotePartition.chunks.map { it.key })
+            handlePartitionChunks(kid, remotePartition, result)
         }
 
         savePartition(kid, remotePartition)
@@ -139,7 +141,8 @@ class GetRevocationDataUseCase @Inject constructor(
             val localSlices = localChunks[remoteChunkKey]
             if (localSlices == null) {
                 // When chunk not found load from api
-                getChunk(kid, remotePartition, remoteChunkKey, remoteChunkValue)
+                val response = repository.getRevocationChunk(kid.toBase64Url(), remotePartition.id, remoteChunkKey)
+                handlePartitionChunks(kid, remotePartition, response)
 
             } else {
                 val slices = mutableMapOf<String, Slice>()
@@ -156,7 +159,8 @@ class GetRevocationDataUseCase @Inject constructor(
                 if (slices.size < remoteChunkValue.size / 2) {
                     getSlices(kid, remotePartition, remoteChunkKey, slices)
                 } else {
-                    getChunk(kid, remotePartition, remoteChunkKey, remoteChunkValue)
+                    val response = repository.getRevocationChunk(kid.toBase64Url(), remotePartition.id, remoteChunkKey)
+                    handlePartitionChunks(kid, remotePartition, response)
                 }
             }
         }
@@ -175,22 +179,22 @@ class GetRevocationDataUseCase @Inject constructor(
         )
     }
 
-    private suspend fun getChunk(
+    private suspend fun handlePartitionChunks(
         kid: String,
         partition: RevocationPartitionResponse,
-        cid: String,
-        chunkValue: Map<String, Slice>
+        response: ResponseBody?
     ) {
-        val response = repository.getRevocationChunk(kid.toBase64Url(), partition.id, cid)
-
         response ?: return
 
-        val tarInputStream = TarArchiveInputStream(GZIPInputStream(response.byteStream()))
-        var entry = tarInputStream.nextTarEntry
-        tarInputStream.use { stream ->
-            while (entry != null) {
+        readTarStream(response.byteStream(),
+            onNextEntry = { stream, entry ->
                 var bytes = stream.readBytes()
-                val sid = entry.name.split("/").last()
+                val segments = entry.name.split("/")
+                val cid = segments[segments.size - CID_POSITION]
+                val sid = segments.last()
+
+                val chunkValue = partition.chunks[cid] ?: return
+
                 val sliceMap = chunkValue.filterValues { it.hash == sid }
                 val sliceExpires = sliceMap.keys.first()
                 val sliceValue = sliceMap.values.first()
@@ -213,10 +217,8 @@ class GetRevocationDataUseCase @Inject constructor(
                         content = bytes
                     )
                 )
-
-                entry = tarInputStream.nextTarEntry
             }
-        }
+        )
     }
 
     private suspend fun getSlices(
@@ -230,29 +232,40 @@ class GetRevocationDataUseCase @Inject constructor(
             val response = repository.getSlice(kid.toBase64Url(), partition.id, cid, sid)
             response ?: return
 
-            val tarInputStream = TarArchiveInputStream(GZIPInputStream(response.byteStream()))
-            tarInputStream.nextTarEntry
-            tarInputStream.use {
-                var bytes = it.readBytes()
+            readTarStream(response.byteStream(),
+                onNextEntry = { stream, entry ->
+                    var bytes = stream.readBytes()
 
-                if (value.type == SliceType.Hash) {
-                    saveHashListSlices(bytes, sid, partition.x, partition.y)
-                    bytes = byteArrayOf()
-                }
+                    if (value.type == SliceType.Hash) {
+                        saveHashListSlices(bytes, sid, partition.x, partition.y)
+                        bytes = byteArrayOf()
+                    }
 
-                repository.saveSlice(
-                    DccRevocationSlice(
-                        sid = sid,
-                        kid = kid,
-                        x = partition.x,
-                        y = partition.y,
-                        cid = cid,
-                        type = value.type,
-                        version = value.version,
-                        expires = ZonedDateTime.parse(key),
-                        content = bytes
+                    repository.saveSlice(
+                        DccRevocationSlice(
+                            sid = sid,
+                            kid = kid,
+                            x = partition.x,
+                            y = partition.y,
+                            cid = cid,
+                            type = value.type,
+                            version = value.version,
+                            expires = ZonedDateTime.parse(key),
+                            content = bytes
+                        )
                     )
-                )
+                }
+            )
+        }
+    }
+
+    private inline fun readTarStream(byteStream: InputStream, onNextEntry: (InputStream, TarArchiveEntry) -> Unit) {
+        val tarInputStream = TarArchiveInputStream(GZIPInputStream(byteStream))
+        var entry = tarInputStream.nextTarEntry
+        tarInputStream.use { stream ->
+            while (entry != null) {
+                onNextEntry(stream, entry)
+                entry = tarInputStream.nextTarEntry
             }
         }
     }
@@ -271,5 +284,9 @@ class GetRevocationDataUseCase @Inject constructor(
         }
 
         repository.saveHashListSlices(hashListSlices)
+    }
+
+    companion object {
+        private const val CID_POSITION = 2
     }
 }

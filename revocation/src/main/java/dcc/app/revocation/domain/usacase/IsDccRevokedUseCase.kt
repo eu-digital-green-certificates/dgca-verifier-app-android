@@ -57,13 +57,13 @@ class IsDccRevokedUseCase @Inject constructor(
 
         var containsCoUvciSha256 = false
         if (kidMetadata.hashType.contains(DccRevocationHashType.COUNTRYCODEUCI)) {
-            Timber.d("COUNTRYCODEUCI Hash: ${params.uvciSha256}")
+            Timber.d("COUNTRYCODEUCI Hash: ${params.coUvciSha256}")
             containsCoUvciSha256 = isContainsHash(kid, mode, params.coUvciSha256)
         }
 
         var containsSignatureSha256 = false
         if (kidMetadata.hashType.contains(DccRevocationHashType.SIGNATURE)) {
-            Timber.d("SIGNATURE Hash: ${params.uvciSha256}")
+            Timber.d("SIGNATURE Hash: ${params.signatureSha256}")
             containsSignatureSha256 = isContainsHash(kid, mode, params.signatureSha256)
         }
 
@@ -104,6 +104,7 @@ class IsDccRevokedUseCase @Inject constructor(
 
         val result = repository.getChunkSlices(kid, x, y, cid)
         result.forEach {
+            Timber.d("Slice found: $it")
             when (it.type) {
                 SliceType.Hash -> hashList.add(it.sid)
                 SliceType.BLOOMFILTER -> bloomFilterList.add(it.content)
@@ -121,6 +122,7 @@ class IsDccRevokedUseCase @Inject constructor(
             val bloomFilter = BloomFilterImpl(inputStream)
             val contains = bloomFilter.mightContain(dccHash.hexToByteArray())
             if (contains) {
+                Timber.d("dcc revoked bloomfilter: $dccHash")
                 return true
             }
         }
@@ -128,6 +130,7 @@ class IsDccRevokedUseCase @Inject constructor(
         val dccHashListBytes = dccHash.toByteArray().copyOfRange(0, 2)
         val result = repository.getHashListSlice(validationData.hashListIds, validationData.x, validationData.y, dccHashListBytes)
         if (result != null) {
+            Timber.d("dcc revoked hashList: $dccHash")
             return true
         }
 

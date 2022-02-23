@@ -26,9 +26,7 @@ import dcc.app.revocation.data.network.model.RevocationKIDResponse
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
 import okhttp3.ResponseBody
 import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface RevocationService {
 
@@ -42,6 +40,14 @@ interface RevocationService {
         @Header("if-Match") eTag: String,
         @Path("kid") kid: String
     ): Response<List<RevocationPartitionResponse>>
+
+    @POST("/lists/{kid}/partitions/{id}/slices")
+    suspend fun getRevocationPartitionChunks(
+        @Header("if-Match") eTag: String,
+        @Path("kid") kid: String,
+        @Path("id") partitionId: String,
+        @Body cidList: List<String>
+    ): Response<ResponseBody>
 
     @GET("/lists/{kid}/partitions/{id}/chunks/{cid}/slices")
     suspend fun getRevocationChunk(
