@@ -51,6 +51,14 @@ interface DccRevocationDao {
         dccHashListBytes: ByteArray
     ): DccRevocationHashListSliceLocal?
 
+    @Query("SELECT * FROM dcc_revocation_hashlist_slice WHERE sid IN (:sidList) AND x is :x AND y is :y AND substr(:hash, 1, length(hash)) like hash")
+    suspend fun getHashListSlices(
+        sidList: Set<String>,
+        x: Char?,
+        y: Char?,
+        hash: String
+    ): List<DccRevocationHashListSliceLocal>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(entity: DccRevocationKidMetadataLocal): Long
 

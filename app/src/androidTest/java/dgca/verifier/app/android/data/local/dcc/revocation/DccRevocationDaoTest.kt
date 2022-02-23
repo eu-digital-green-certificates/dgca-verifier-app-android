@@ -118,7 +118,8 @@ internal class DccRevocationDaoTest {
         ).build()
         dccRevocationDao = db.dccRevocationPartitionDao()
         dccRevocationLocalDataSource = DccRevocationLocalDataSourceImpl(dccRevocationDao)
-        revocationService = Retrofit.Builder().baseUrl(BASE_URL).build().create(RevocationService::class.java)
+        revocationService =
+            Retrofit.Builder().baseUrl(BASE_URL).build().create(RevocationService::class.java)
         revocationPreferences = RevocationPreferencesImpl(context)
         revocationRepository = RevocationRepositoryImpl(
             revocationService,
@@ -127,7 +128,8 @@ internal class DccRevocationDaoTest {
         )
         errorHandler = GeneralErrorHandlerImpl()
         testCoroutineDispatcher = Dispatchers.Main
-        isDccRevokedUseCase = IsDccRevokedUseCase(revocationRepository, testCoroutineDispatcher, errorHandler)
+        isDccRevokedUseCase =
+            IsDccRevokedUseCase(revocationRepository, testCoroutineDispatcher, errorHandler)
         return
     }
 
@@ -306,7 +308,8 @@ internal class DccRevocationDaoTest {
                                     Random.nextInt(Integer.MAX_VALUE).toHexString()
                                 } else {
                                     shouldSkipHashesGeneration = true
-                                    System.currentTimeMillis().toString().toByteArray().toSha256HexString()
+                                    System.currentTimeMillis().toString().toByteArray()
+                                        .toSha256HexString()
                                         .replaceRange(0, hashStart.length, hashStart)
                                 }
 
@@ -570,5 +573,49 @@ internal class DccRevocationDaoTest {
                 y = xyDccPartition.y,
             )?.fromLocal()
         )
+    }
+
+    @Test
+    fun shouldFetchSlicesForPartialVariableLength() = runBlocking {
+        val hash = "abc123"
+
+        val sliceId = "sliceId"
+        val slice1 = "a"
+        val slice2 = "ab"
+        val slice3 = "abc12"
+
+        val slice4 = "zyx"
+
+        val x = 'x'
+        val y = 'y'
+
+        val kid = "kid"
+        val cid = "cid"
+
+        dccRevocationDao.insert(
+            DccRevocationSliceLocal(
+                sliceId,
+                kid,
+                x,
+                y,
+                cid,
+                DccSliceType.HASH,
+                "",
+                ZonedDateTime.now(),
+                byteArrayOf()
+            )
+        )
+
+        dccRevocationDao.insertHashListSlices(
+            listOf(
+                DccRevocationHashListSliceLocal(1, sliceId, x, y, slice1.toByteArray()),
+                DccRevocationHashListSliceLocal(2, sliceId, x, y, slice2.toByteArray()),
+                DccRevocationHashListSliceLocal(3, sliceId, x, y, slice3.toByteArray()),
+                DccRevocationHashListSliceLocal(4, sliceId, x, y, slice4.toByteArray())
+            )
+        )
+
+        val res = dccRevocationDao.getHashListSlices(setOf(sliceId), x, y, hash)
+        assertEquals(3, res.size)
     }
 }

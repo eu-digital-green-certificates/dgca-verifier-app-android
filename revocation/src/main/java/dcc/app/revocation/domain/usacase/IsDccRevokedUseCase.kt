@@ -71,7 +71,11 @@ class IsDccRevokedUseCase @Inject constructor(
         return containsUvciSha256 || containsCoUvciSha256 || containsSignatureSha256
     }
 
-    private suspend fun isContainsHash(kid: String, mode: DccRevocationMode, hash: String?): Boolean {
+    private suspend fun isContainsHash(
+        kid: String,
+        mode: DccRevocationMode,
+        hash: String?
+    ): Boolean {
         hash ?: return false
 
         var x: Char? = null
@@ -98,7 +102,12 @@ class IsDccRevokedUseCase @Inject constructor(
         return contains(hash, validationData)
     }
 
-    private suspend fun getValidationData(kid: String, x: Char?, y: Char?, cid: String): ValidationData {
+    private suspend fun getValidationData(
+        kid: String,
+        x: Char?,
+        y: Char?,
+        cid: String
+    ): ValidationData {
         val bloomFilterList = mutableSetOf<ByteArray>()
         val hashList = mutableSetOf<String>()
 
@@ -125,13 +134,13 @@ class IsDccRevokedUseCase @Inject constructor(
             }
         }
 
-        val dccHashListBytes = dccHash.toByteArray().copyOfRange(0, 2)
-        val result = repository.getHashListSlice(validationData.hashListIds, validationData.x, validationData.y, dccHashListBytes)
-        if (result != null) {
-            return true
-        }
-
-        return false
+        val result = repository.getHashListSlices(
+            validationData.hashListIds,
+            validationData.x,
+            validationData.y,
+            dccHash
+        )
+        return result.isNotEmpty()
     }
 
     internal data class ValidationData(
