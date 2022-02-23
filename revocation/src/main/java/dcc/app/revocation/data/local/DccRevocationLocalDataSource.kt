@@ -35,9 +35,26 @@ interface DccRevocationLocalDataSource {
 
     suspend fun getRevocationPartition(kid: String, x: Char?, y: Char?): DccRevocationPartition?
 
-    suspend fun getChunkSlices(kid: String, x: Char?, y: Char?, cid: String): List<DccRevocationSlice>
+    suspend fun getChunkSlices(
+        kid: String,
+        x: Char?,
+        y: Char?,
+        cid: String
+    ): List<DccRevocationSlice>
 
-    suspend fun getHashListSlice(sidList: Set<String>, x: Char?, y: Char?, dccHashListBytes: ByteArray): DccRevocationHashListSlice?
+    suspend fun getHashListSlice(
+        sidList: Set<String>,
+        x: Char?,
+        y: Char?,
+        dccHashListBytes: ByteArray
+    ): DccRevocationHashListSlice?
+
+    suspend fun getHashListSlices(
+        sidList: Set<String>,
+        x: Char?,
+        y: Char?,
+        dccHash: String
+    ): List<DccRevocationHashListSlice>
 
     fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata)
 

@@ -28,7 +28,7 @@ import androidx.room.*
     tableName = "dcc_revocation_hashlist_slice",
     indices = [
         Index(
-            value = ["sid", "x", "y"],
+            value = ["sid", "x", "y", "hash"],
             unique = true
         )
     ],

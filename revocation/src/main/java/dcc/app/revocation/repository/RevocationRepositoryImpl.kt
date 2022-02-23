@@ -110,6 +110,15 @@ class RevocationRepositoryImpl @Inject constructor(
     ): DccRevocationHashListSlice? =
         dccRevocationLocalDataSource.getHashListSlice(sidList, x, y, dccHashListBytes)
 
+    override suspend fun getHashListSlices(
+        sidList: Set<String>,
+        x: Char?,
+        y: Char?,
+        dccHash: String
+    ): List<DccRevocationHashListSlice?> {
+        return dccRevocationLocalDataSource.getHashListSlices(sidList, x, y, dccHash)
+    }
+
     override suspend fun saveKidMetadata(dccRevocationKidMetadata: DccRevocationKidMetadata) {
         dccRevocationLocalDataSource.addOrUpdate(dccRevocationKidMetadata)
     }
