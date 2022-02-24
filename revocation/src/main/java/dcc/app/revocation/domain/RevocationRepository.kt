@@ -48,11 +48,19 @@ interface RevocationRepository {
 
     suspend fun getMetadataByKid(kid: String): DccRevocationKidMetadata?
 
-    suspend fun getLocalRevocationPartition(partitionId: String?, kid: String): DccRevocationPartition?
+    suspend fun getLocalRevocationPartition(
+        partitionId: String?,
+        kid: String
+    ): DccRevocationPartition?
 
     suspend fun getRevocationPartition(kid: String, x: Char?, y: Char?): DccRevocationPartition?
 
-    suspend fun getChunkSlices(kid: String, x: Char?, y: Char?, cid: String): List<DccRevocationSlice>
+    suspend fun getChunkSlices(
+        kid: String,
+        x: Char?,
+        y: Char?,
+        cid: String
+    ): List<DccRevocationSlice>
 
     suspend fun getHashListSlice(
         sidList: Set<String>,
@@ -60,6 +68,13 @@ interface RevocationRepository {
         y: Char?,
         dccHashListBytes: ByteArray
     ): DccRevocationHashListSlice?
+
+    suspend fun getHashListSlices(
+        sidList: Set<String>,
+        x: Char?,
+        y: Char?,
+        dccHash: String
+    ): List<DccRevocationHashListSlice?>
 
     suspend fun saveKidMetadata(dccRevocationKidMetadata: DccRevocationKidMetadata)
 
