@@ -35,7 +35,13 @@ interface RevocationRepository {
     suspend fun getRevocationPartitions(kid: String): List<RevocationPartitionResponse>?
 
     @Throws(Exception::class)
+    suspend fun getPartitionChunks(kid: String, partitionId: String?, cidList: List<String>): ResponseBody?
+
+    @Throws(Exception::class)
     suspend fun getRevocationChunk(kid: String, id: String?, chunkId: String): ResponseBody?
+
+    @Throws(Exception::class)
+    suspend fun getRevocationChunkSlices(kid: String, partitionId: String?, cid: String, sidList: List<String>): ResponseBody?
 
     @Throws(Exception::class)
     suspend fun getSlice(kid: String, partitionId: String?, cid: String, sid: String): ResponseBody?
