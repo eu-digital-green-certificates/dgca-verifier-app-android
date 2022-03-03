@@ -23,7 +23,10 @@
 package dcc.app.revocation.domain.model
 
 enum class DccSliceType(val tag: String) {
-    HASH("Hash"),
     // Bloom Filter
-    BF("Bloom")
+    BF("Bloom"),
+
+    HASH("Hash"),
+
+    PARTIAL_VARIABLE_LENGTH_HASH("PartialVariableLengthHash")
 }

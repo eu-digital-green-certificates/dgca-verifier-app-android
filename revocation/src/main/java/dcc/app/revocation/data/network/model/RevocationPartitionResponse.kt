@@ -58,5 +58,5 @@ data class Slice(
 )
 
 enum class SliceType {
-    Hash, BLOOMFILTER
+    BLOOMFILTER, HASH, PARTIAL_VARIABLE_LENGTH
 }
