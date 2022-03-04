@@ -45,8 +45,8 @@ data class DccRevocationHashListSliceLocal(
     val sid: String,
     val x: Char?,
     val y: Char?,
-    @ColumnInfo(name = "hash", typeAffinity = ColumnInfo.BLOB)
-    val hash: ByteArray
+    @ColumnInfo(name = "hash", typeAffinity = ColumnInfo.TEXT)
+    val hash: String
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -68,7 +68,7 @@ data class DccRevocationHashListSliceLocal(
         result = 31 * result + sid.hashCode()
         result = 31 * result + (x?.hashCode() ?: 0)
         result = 31 * result + (y?.hashCode() ?: 0)
-        result = 31 * result + hash.contentHashCode()
+        result = 31 * result + hash.hashCode()
         return result
     }
 }

@@ -255,8 +255,8 @@ class GetRevocationDataUseCase @Inject constructor(
         val hashListSlices = mutableListOf<DccRevocationHashListSlice>()
         var index = hashSize
         while (index <= bytes.size) {
-            val hashBytes = bytes.copyOfRange(index - hashSize, index)
-            hashListSlices.add(DccRevocationHashListSlice(sid, x, y, hashBytes))
+            val hashBytes: ByteArray = bytes.copyOfRange(index - hashSize, index)
+            hashListSlices.add(DccRevocationHashListSlice(sid, x, y, String(hashBytes)))
             index += hashSize
         }
 

@@ -26,7 +26,7 @@ data class DccRevocationHashListSlice(
     val sid: String,
     val x: Char?,
     val y: Char?,
-    val hash: ByteArray
+    val hash: String
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -47,7 +47,7 @@ data class DccRevocationHashListSlice(
         var result = sid.hashCode()
         result = 31 * result + (x?.hashCode() ?: 0)
         result = 31 * result + (y?.hashCode() ?: 0)
-        result = 31 * result + hash.contentHashCode()
+        result = 31 * result + hash.hashCode()
         return result
     }
 }
