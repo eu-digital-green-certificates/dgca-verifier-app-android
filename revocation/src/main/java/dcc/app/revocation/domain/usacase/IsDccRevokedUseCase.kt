@@ -115,7 +115,7 @@ class IsDccRevokedUseCase @Inject constructor(
         result.forEach {
             Timber.d("Slice found: $it")
             when (it.type) {
-                SliceType.Hash -> hashList.add(it.sid)
+                SliceType.HASH -> hashList.add(it.sid)
                 SliceType.BLOOMFILTER -> bloomFilterList.add(it.content)
             }
         }

@@ -206,8 +206,16 @@ class GetRevocationDataUseCase @Inject constructor(
                 val sliceExpires = sliceMap.keys.first()
                 val sliceValue = sliceMap.values.first()
 
-                if (sliceValue.type == SliceType.Hash) {
-                    saveHashListSlices(bytes, sid, partition.x, partition.y)
+                val (subHashSize, subBytes) = when (sliceValue.type) {
+                    SliceType.BLOOMFILTER -> Pair(-1, null)
+                    SliceType.HASH -> Pair(2, bytes)
+                    SliceType.PARTIAL_VARIABLE_LENGTH -> Pair(
+                        bytes.first().toInt(),
+                        bytes.copyOfRange(1, bytes.size)
+                    )
+                }
+                if (subHashSize > 0 && subBytes != null) {
+                    saveHashListSlices(subHashSize, subBytes, sid, partition.x, partition.y)
                     bytes = byteArrayOf()
                 }
 
@@ -239,17 +247,17 @@ class GetRevocationDataUseCase @Inject constructor(
         }
     }
 
-    private suspend fun saveHashListSlices(bytes: ByteArray, sid: String, x: Char?, y: Char?) {
-        if (bytes.size < 2) {
+    private suspend fun saveHashListSlices(hashSize: Int, bytes: ByteArray, sid: String, x: Char?, y: Char?) {
+        if (bytes.size < hashSize) {
             return
         }
 
         val hashListSlices = mutableListOf<DccRevocationHashListSlice>()
-        var index = 2
+        var index = hashSize
         while (index <= bytes.size) {
-            val hashBytes = bytes.copyOfRange(index - 2, index)
-            hashListSlices.add(DccRevocationHashListSlice(sid, x, y, hashBytes))
-            index += 2
+            val hashBytes: ByteArray = bytes.copyOfRange(index - hashSize, index)
+            hashListSlices.add(DccRevocationHashListSlice(sid, x, y, String(hashBytes)))
+            index += hashSize
         }
 
         repository.saveHashListSlices(hashListSlices)
