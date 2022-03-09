@@ -1,0 +1,13 @@
+[
+  {
+    "kid": "9cWXDDA52FQ=",
+    "mode": "VECTOR",
+    "hashType": [
+      "SIGNATURE",
+      "UCI",
+      "COUNTRYCODEUCI"
+    ],
+    "expires": "2023-01-01T12:00:00+01:00",
+    "lastUpdated": "2022-01-01T12:00:00+01:00"
+  }
+]

@@ -48,6 +48,7 @@ object Versions {
     const val logging_interceptor = "4.9.2"
     const val gson_converter = "2.1.0"
     const val timber = "4.7.1"
+    const val gson = "2.8.9"
 
     const val google_licenses = "17.0.0"
     const val android_tools_desugar_jdk_libs_version = "1.1.5"
@@ -64,6 +65,7 @@ object Versions {
     const val jackson_kotlin = "2.12.0"
     const val jackson_datetype = "2.12.0"
     const val appache_commons = "2.9.0"
+    const val appache_compress = "1.21"
 
     // Validation
     const val json_validation = "2.2.14"

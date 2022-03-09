@@ -34,7 +34,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CodeReaderViewModel @Inject constructor(
     countriesRepository: CountriesRepository,
-    private val preferences: Preferences
+    private val preferences: Preferences,
 ) : ViewModel() {
 
     private val _countries = MediatorLiveData<List<String>>()
