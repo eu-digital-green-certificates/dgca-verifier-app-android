@@ -112,7 +112,7 @@ class IsDccRevokedUseCase @Inject constructor(
         val hashList = mutableSetOf<String>()
 
         val result = repository.getChunkSlices(kid, x, y, cid)
-        result.forEach {
+        result.iterator().forEach {
             Timber.d("Slice found: $it")
             when (it.type) {
                 SliceType.HASH -> hashList.add(it.sid)
@@ -126,7 +126,7 @@ class IsDccRevokedUseCase @Inject constructor(
     private suspend fun contains(dccHash: String, validationData: ValidationData?): Boolean {
         validationData ?: return false
 
-        validationData.bloomFilterList.forEach {
+        validationData.bloomFilterList.iterator().forEach {
             val inputStream: InputStream = ByteArrayInputStream(it)
             val bloomFilter = BloomFilterImpl(inputStream)
             val contains = bloomFilter.mightContain(dccHash.hexToByteArray())

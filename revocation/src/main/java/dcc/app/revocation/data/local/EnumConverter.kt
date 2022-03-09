@@ -42,7 +42,7 @@ class EnumConverter {
     @TypeConverter
     fun languagesToStoredString(list: Set<DccRevocationHashType>): String {
         var value = ""
-        list.forEach {
+        list.iterator().forEach {
             value += it.name + ","
         }
         return value

@@ -55,7 +55,7 @@ class GetRevocationDataUseCase @Inject constructor(
         // Remove all entities not matching KIDs from list
         repository.deleteOutdatedKidItems(newKidItems.map { it.kid })
 
-        newKidItems.forEach { revocationKidData ->
+        newKidItems.iterator().forEach { revocationKidData ->
             checkKidMetadata(revocationKidData)
         }
 
@@ -103,7 +103,7 @@ class GetRevocationDataUseCase @Inject constructor(
 
     private suspend fun getPartitions(kid: String) {
         val kidUrlSafe = kid.toBase64Url()
-        repository.getRevocationPartitions(kidUrlSafe)?.forEach { partition ->
+        repository.getRevocationPartitions(kidUrlSafe)?.iterator()?.forEach { partition ->
             handlePartition(kid, partition)
         }
     }
@@ -123,7 +123,7 @@ class GetRevocationDataUseCase @Inject constructor(
         savePartition(kid, remotePartition)
 
         val chunksIds = mutableListOf<String>()
-        remotePartition.chunks.keys.forEach { chunksIds.add(it) }
+        remotePartition.chunks.keys.iterator().forEach { chunksIds.add(it) }
 
         // Remove all Chunks which are not more available (delete from .. not in .. ).
         repository.deleteOutdatedSlicesForPartitionId(kid, chunksIds)
@@ -137,7 +137,7 @@ class GetRevocationDataUseCase @Inject constructor(
         val type: Type = object : TypeToken<Map<String, Map<String, Slice>>>() {}.type
         val localChunks = Gson().fromJson<Map<String, Map<String, Slice>>>(localPartition.chunks, type)
 
-        remotePartition.chunks.forEach { (remoteChunkKey, remoteChunkValue) ->
+        remotePartition.chunks.iterator().forEach { (remoteChunkKey, remoteChunkValue) ->
             val localSlices = localChunks[remoteChunkKey]
             if (localSlices == null) {
                 // When chunk not found load from api
@@ -148,7 +148,7 @@ class GetRevocationDataUseCase @Inject constructor(
                 val slices = mutableMapOf<String, Slice>()
 
                 // Compare slices with local chunk slices
-                remoteChunkValue.forEach { (remoteSliceKey, remoteSliceValue) ->
+                remoteChunkValue.iterator().forEach { (remoteSliceKey, remoteSliceValue) ->
                     val localSlice = localSlices[remoteSliceKey]
                     if (localSlice == null || !localSlice.isEqualTo(remoteSliceValue)) {
                         slices[remoteSliceKey] = remoteSliceValue
