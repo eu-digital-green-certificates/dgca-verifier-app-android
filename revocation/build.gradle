@@ -29,6 +29,7 @@ plugins {
 }
 
 android {
+    buildToolsVersion '28.0.3'
     compileSdkVersion Config.compileSdk
 
     defaultConfig {
@@ -52,6 +53,7 @@ android {
     compileOptions {
         sourceCompatibility Config.javaVersion
         targetCompatibility Config.javaVersion
+        coreLibraryDesugaringEnabled true
     }
     kotlinOptions {
         jvmTarget = '1.8'
@@ -94,6 +96,8 @@ dependencies {
 
     implementation Deps.timber
 
+    coreLibraryDesugaring Deps.android_tools_desugar_jdk_libs
+	
     testImplementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
     testImplementation Deps.test_junit
     testImplementation Deps.mockito_core
