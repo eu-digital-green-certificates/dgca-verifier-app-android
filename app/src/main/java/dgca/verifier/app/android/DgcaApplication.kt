@@ -26,6 +26,7 @@ import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.*
 import dagger.hilt.android.HiltAndroidApp
+import dcc.app.revocation.worker.RevocationWorker
 import dgca.verifier.app.android.data.ConfigRepository
 import dgca.verifier.app.android.worker.*
 import kotlinx.coroutines.GlobalScope
@@ -34,7 +35,6 @@ import timber.log.Timber
 import java.io.FileNotFoundException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.reflect.KClass
 
 @HiltAndroidApp
 class DgcaApplication : Application(), Configuration.Provider {
@@ -65,8 +65,10 @@ class DgcaApplication : Application(), Configuration.Provider {
             }
         }
 
+//        TODO: for test purpose uncomment when finish.
         WorkManager.getInstance(this).apply {
-            schedulePeriodicWorker<ConfigsLoadingWorker>(WORKER_CONFIGS)
+//            schedulePeriodicWorker<ConfigsLoadingWorker>(WORKER_CONFIGS)
+            schedulePeriodicWorker<RevocationWorker>(WORKER_REVOCATION)
             schedulePeriodicWorker<RulesLoadWorker>(WORKER_RULES)
             schedulePeriodicWorker<LoadKeysWorker>(WORKER_KEYS)
             schedulePeriodicWorker<CountriesLoadWorker>(WORKER_COUNTRIES)
@@ -77,8 +79,26 @@ class DgcaApplication : Application(), Configuration.Provider {
     }
 
     private inline fun <reified T : ListenableWorker> WorkManager.schedulePeriodicWorker(workerId: String) =
-        this.enqueueUniquePeriodicWork(workerId, ExistingPeriodicWorkPolicy.KEEP,
+        this.enqueueUniquePeriodicWork(
+            workerId, ExistingPeriodicWorkPolicy.KEEP,
             PeriodicWorkRequestBuilder<T>(1, TimeUnit.DAYS)
+                .setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build()
+                )
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    OneTimeWorkRequest.MAX_BACKOFF_MILLIS,
+                    TimeUnit.MILLISECONDS
+                )
+                .build()
+        )
+
+    private inline fun <reified T : ListenableWorker> WorkManager.scheduleOneTimeWorker(workerId: String) =
+        this.enqueueUniqueWork(
+            workerId, ExistingWorkPolicy.REPLACE,
+            OneTimeWorkRequestBuilder<T>()
                 .setConstraints(
                     Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -94,6 +114,7 @@ class DgcaApplication : Application(), Configuration.Provider {
 
     companion object {
         const val WORKER_CONFIGS = "workerConfigs"
+        const val WORKER_REVOCATION = "workerRevocation"
         const val WORKER_RULES = "workerRules"
         const val WORKER_KEYS = "workerKeys"
         const val WORKER_COUNTRIES = "workerCountries"
