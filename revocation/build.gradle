@@ -91,6 +91,7 @@ dependencies {
     }
 
     implementation Deps.jackson_cbor
+    implementation Deps.jackson_datetype    
     implementation Deps.bouncy_castle
     implementation Deps.appache_compress
 
