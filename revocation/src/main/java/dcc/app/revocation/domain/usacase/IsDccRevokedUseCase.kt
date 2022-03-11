@@ -29,7 +29,8 @@ import dcc.app.revocation.domain.hexToByteArray
 import dcc.app.revocation.domain.model.DccRevocationHashType
 import dcc.app.revocation.domain.model.DccRevocationMode
 import dcc.app.revocation.domain.model.DccRevokationDataHolder
-import dcc.app.revocation.validation.BloomFilterImpl
+import dcc.app.revocation.validation.bloom.BloomFilterImpl
+import dcc.app.revocation.validation.hash.PartialVariableHashFilter
 import kotlinx.coroutines.CoroutineDispatcher
 import timber.log.Timber
 import java.io.ByteArrayInputStream
@@ -109,13 +110,13 @@ class IsDccRevokedUseCase @Inject constructor(
         cid: String
     ): ValidationData {
         val bloomFilterList = mutableSetOf<ByteArray>()
-        val hashList = mutableSetOf<String>()
+        val hashList = mutableSetOf<ByteArray>()
 
         val result = repository.getChunkSlices(kid, x, y, cid)
         result.forEach {
             Timber.d("Slice found: $it")
             when (it.type) {
-                SliceType.HASH -> hashList.add(it.sid)
+                SliceType.HASH, SliceType.VARHASHLIST -> hashList.add(it.content)
                 SliceType.BLOOMFILTER -> bloomFilterList.add(it.content)
             }
         }
@@ -135,20 +136,29 @@ class IsDccRevokedUseCase @Inject constructor(
                 return true
             }
         }
+        validationData.hashFilterList.forEach {
+            val filter = PartialVariableHashFilter(it)
+            val contains = filter.mightContain(dccHash.hexToByteArray())
+            if (contains) {
+                Timber.d("dcc revoked HashVariable: $dccHash")
+                return true
+            }
+        }
 
-        val result = repository.getHashListSlices(
-            validationData.hashListIds,
-            validationData.x,
-            validationData.y,
-            dccHash
-        )
-        return result.isNotEmpty()
+//        TODO: remove
+//        val result = repository.getHashListSlices(
+//            validationData.hashListIds,
+//            validationData.x,
+//            validationData.y,
+//            dccHash
+//        )
+        return false
     }
 
     internal data class ValidationData(
         val x: Char?,
         val y: Char?,
         val bloomFilterList: Set<ByteArray>,
-        val hashListIds: Set<String>
+        val hashFilterList: Set<ByteArray>
     )
 }

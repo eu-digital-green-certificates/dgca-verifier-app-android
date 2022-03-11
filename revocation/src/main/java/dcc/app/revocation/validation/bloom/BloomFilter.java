@@ -3,14 +3,14 @@
  * Author: Paul Ballmann
  */
 
-package dcc.app.revocation.validation;
+package dcc.app.revocation.validation.bloom;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 
-import dcc.app.revocation.validation.exception.FilterException;
+import dcc.app.revocation.validation.bloom.exception.FilterException;
 
 
 public interface BloomFilter {

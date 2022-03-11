@@ -3,7 +3,7 @@
  * Author: Paul Ballmann
  */
 
-package dcc.app.revocation.validation;
+package dcc.app.revocation.validation.bloom;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -22,7 +22,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.logging.Logger;
 
-import dcc.app.revocation.validation.exception.FilterException;
+import dcc.app.revocation.validation.bloom.exception.FilterException;
 
 public class BloomFilterImpl implements BloomFilter, Serializable {
     private long numBits;

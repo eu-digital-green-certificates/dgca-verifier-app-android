@@ -39,7 +39,7 @@ import dcc.app.revocation.domain.model.*
 import dcc.app.revocation.domain.toSha256HexString
 import dcc.app.revocation.domain.usacase.IsDccRevokedUseCase
 import dcc.app.revocation.repository.RevocationRepositoryImpl
-import dcc.app.revocation.validation.BloomFilterImpl
+import dcc.app.revocation.validation.bloom.BloomFilterImpl
 import dgca.verifier.app.android.data.local.AppDatabase
 import dgca.verifier.app.android.data.local.dcc.revocation.mapper.fromLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.mapper.toLocal

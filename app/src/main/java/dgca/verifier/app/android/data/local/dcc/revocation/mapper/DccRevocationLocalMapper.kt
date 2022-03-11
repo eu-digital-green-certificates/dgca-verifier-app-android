@@ -89,7 +89,7 @@ fun DccSliceType.toSliceType(): SliceType =
     when (this) {
         DccSliceType.BF -> SliceType.BLOOMFILTER
         DccSliceType.HASH -> SliceType.HASH
-        DccSliceType.PARTIAL_VARIABLE_LENGTH_HASH -> SliceType.PARTIAL_VARIABLE_LENGTH
+        DccSliceType.VARHASHLIST -> SliceType.VARHASHLIST
     }
 
 fun DccRevocationSlice.toLocal(): DccRevocationSliceLocal {
@@ -110,7 +110,7 @@ fun SliceType.toDccSliceType(): DccSliceType =
     when (this) {
         SliceType.BLOOMFILTER -> DccSliceType.BF
         SliceType.HASH -> DccSliceType.HASH
-        SliceType.PARTIAL_VARIABLE_LENGTH -> DccSliceType.PARTIAL_VARIABLE_LENGTH_HASH
+        SliceType.VARHASHLIST -> DccSliceType.VARHASHLIST
     }
 
 fun DccRevocationHashListSlice.toLocal(): DccRevocationHashListSliceLocal =
