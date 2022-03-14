@@ -29,7 +29,10 @@ import dcc.app.revocation.data.network.model.Slice
 import dcc.app.revocation.data.network.model.SliceType
 import dcc.app.revocation.domain.ErrorHandler
 import dcc.app.revocation.domain.RevocationRepository
-import dcc.app.revocation.domain.model.*
+import dcc.app.revocation.domain.model.DccRevocationKidMetadata
+import dcc.app.revocation.domain.model.DccRevocationPartition
+import dcc.app.revocation.domain.model.DccRevocationSlice
+import dcc.app.revocation.domain.model.RevocationKidData
 import dcc.app.revocation.domain.toBase64Url
 import dcc.app.revocation.isEqualTo
 import kotlinx.coroutines.CoroutineDispatcher
@@ -251,29 +254,6 @@ class GetRevocationDataUseCase @Inject constructor(
                 entry = tarInputStream.nextTarEntry
             }
         }
-    }
-
-    //        TODO: remove
-    private suspend fun saveHashListSlices(
-        hashSize: Int,
-        bytes: ByteArray,
-        sid: String,
-        x: Char?,
-        y: Char?
-    ) {
-        if (bytes.size < hashSize) {
-            return
-        }
-
-        val hashListSlices = mutableListOf<DccRevocationHashListSlice>()
-        var index = hashSize
-        while (index <= bytes.size) {
-            val hashBytes: ByteArray = bytes.copyOfRange(index - hashSize, index)
-            hashListSlices.add(DccRevocationHashListSlice(sid, x, y, String(hashBytes)))
-            index += hashSize
-        }
-
-        repository.saveHashListSlices(hashListSlices)
     }
 
     companion object {

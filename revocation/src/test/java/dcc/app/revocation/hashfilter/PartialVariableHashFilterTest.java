@@ -36,7 +36,7 @@ public class PartialVariableHashFilterTest {
 
     @Test
     public void mightContainTest() {
-        byte[] byteArray = new byte[]{2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}; // length = 2
+        byte[] byteArray = new byte[]{0, 1, 45, 47, -21, -1, 0, 0, 0, 7, 2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}; // length = 2
         byte[] searchedArray = new byte[]{3, 4};
 
         PartialVariableHashFilter filter = new PartialVariableHashFilter(byteArray);
@@ -46,7 +46,7 @@ public class PartialVariableHashFilterTest {
 
     @Test
     public void filterToBinaryTest() throws IOException {
-        byte[] byteArray = new byte[]{2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}; // length = 2
+        byte[] byteArray = new byte[]{0, 1, 45, 47, -21, -1, 0, 0, 0, 7, 2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}; // length = 2
 
         PartialVariableHashFilter filter = new PartialVariableHashFilter(byteArray);
         byte[] result = filter.writeTo();
@@ -112,14 +112,16 @@ public class PartialVariableHashFilterTest {
         byte minSize = 1;
         PartitionOffset partitionOffset = PartitionOffset.POINT;
         float probRate = 0.000001F;
-        byte[] array = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}; // length = 5
+        byte[] array0 = new byte[]{1, 2, 3, 4, 5};
+        byte[] array1 = new byte[]{6, 7, 8, 9, 10};
         BigInteger[] expectedArray = new BigInteger[]{
             new BigInteger("4328719365"),
             new BigInteger("25887770890")
         };
 
         PartialVariableHashFilter filter = new PartialVariableHashFilter(minSize, partitionOffset, numberOfElements, probRate);
-        filter.add(array);
+        filter.add(array0);
+        filter.add(array1);
         BigInteger[] arrayResult = filter.getArray();
 
         assert filter.getSize() == 5;
@@ -129,33 +131,23 @@ public class PartialVariableHashFilterTest {
     @Test
     public void addHashesToFilterSortTest() {
         int numberOfElements = 10;
-        byte minSize = 1;
+        byte minSize = 4;
         PartitionOffset partitionOffset = PartitionOffset.POINT;
         float probRate = 0.000001F;
-        byte[] array = new byte[]{6, 7, 8, 9, 10, 1, 2, 3, 4, 5}; // length = 5
+        byte[] array0 = new byte[]{6, 7, 8, 9, 10};
+        byte[] array1 = new byte[]{1, 2, 3, 4, 5};
         BigInteger[] expectedArray = new BigInteger[]{
             new BigInteger("4328719365"),
             new BigInteger("25887770890")
         };
 
         PartialVariableHashFilter filter = new PartialVariableHashFilter(minSize, partitionOffset, numberOfElements, probRate);
-        filter.add(array);
+        filter.add(array0);
+        filter.add(array1);
+
         BigInteger[] arrayResult = filter.getArray();
 
         assert filter.getSize() == 5;
         assert Arrays.equals(arrayResult, expectedArray);
-    }
-
-    @Test
-    public void addHashesToFilterDropTest() {
-        int numberOfElements = 10;
-        byte minSize = 1;
-        PartitionOffset partitionOffset = PartitionOffset.POINT;
-        float probRate = 0.000001F;
-        byte[] array = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}; // length = 5
-        PartialVariableHashFilter filter = new PartialVariableHashFilter(minSize, partitionOffset, numberOfElements, probRate);
-        int notAddedBytes = filter.add(array);
-
-        assert notAddedBytes == 3;
     }
 }

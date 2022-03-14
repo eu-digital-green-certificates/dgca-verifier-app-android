@@ -187,23 +187,6 @@ class RevocationRepositoryImpl @Inject constructor(
     ): List<DccRevocationSlice> =
         dccRevocationLocalDataSource.getChunkSlices(kid, x, y, cid)
 
-    override suspend fun getHashListSlice(
-        sidList: Set<String>,
-        x: Char?,
-        y: Char?,
-        dccHashListBytes: ByteArray
-    ): DccRevocationHashListSlice? =
-        dccRevocationLocalDataSource.getHashListSlice(sidList, x, y, dccHashListBytes)
-
-    override suspend fun getHashListSlices(
-        sidList: Set<String>,
-        x: Char?,
-        y: Char?,
-        dccHash: String
-    ): List<DccRevocationHashListSlice?> {
-        return dccRevocationLocalDataSource.getHashListSlices(sidList, x, y, dccHash)
-    }
-
     override suspend fun saveKidMetadata(dccRevocationKidMetadata: DccRevocationKidMetadata) {
         dccRevocationLocalDataSource.addOrUpdate(dccRevocationKidMetadata)
     }
@@ -214,10 +197,6 @@ class RevocationRepositoryImpl @Inject constructor(
 
     override suspend fun saveSlice(dccRevocationSlice: DccRevocationSlice) {
         dccRevocationLocalDataSource.addOrUpdate(dccRevocationSlice)
-    }
-
-    override suspend fun saveHashListSlices(hashListSlices: List<DccRevocationHashListSlice>) {
-        dccRevocationLocalDataSource.saveHashListSlices(hashListSlices)
     }
 
     override suspend fun deleteOutdatedKidItems(notInKidList: List<String>) {

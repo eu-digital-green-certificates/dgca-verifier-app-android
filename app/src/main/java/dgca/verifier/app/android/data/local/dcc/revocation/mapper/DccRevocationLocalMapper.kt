@@ -23,8 +23,10 @@
 package dgca.verifier.app.android.data.local.dcc.revocation.mapper
 
 import dcc.app.revocation.data.network.model.SliceType
-import dcc.app.revocation.domain.model.*
-import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationHashListSliceLocal
+import dcc.app.revocation.domain.model.DccRevocationKidMetadata
+import dcc.app.revocation.domain.model.DccRevocationPartition
+import dcc.app.revocation.domain.model.DccRevocationSlice
+import dcc.app.revocation.domain.model.DccSliceType
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationKidMetadataLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationSliceLocal
@@ -88,7 +90,6 @@ fun DccRevocationSliceLocal.fromLocal(): DccRevocationSlice {
 fun DccSliceType.toSliceType(): SliceType =
     when (this) {
         DccSliceType.BF -> SliceType.BLOOMFILTER
-        DccSliceType.HASH -> SliceType.HASH
         DccSliceType.VARHASHLIST -> SliceType.VARHASHLIST
     }
 
@@ -109,22 +110,5 @@ fun DccRevocationSlice.toLocal(): DccRevocationSliceLocal {
 fun SliceType.toDccSliceType(): DccSliceType =
     when (this) {
         SliceType.BLOOMFILTER -> DccSliceType.BF
-        SliceType.HASH -> DccSliceType.HASH
         SliceType.VARHASHLIST -> DccSliceType.VARHASHLIST
     }
-
-fun DccRevocationHashListSlice.toLocal(): DccRevocationHashListSliceLocal =
-    DccRevocationHashListSliceLocal(
-        sid = sid,
-        x = x,
-        y = y,
-        hash = hash
-    )
-
-fun DccRevocationHashListSliceLocal.fromLocal(): DccRevocationHashListSlice =
-    DccRevocationHashListSlice(
-        sid = sid,
-        x = x,
-        y = y,
-        hash = hash
-    )

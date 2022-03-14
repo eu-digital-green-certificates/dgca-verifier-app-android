@@ -116,7 +116,7 @@ class IsDccRevokedUseCase @Inject constructor(
         result.forEach {
             Timber.d("Slice found: $it")
             when (it.type) {
-                SliceType.HASH, SliceType.VARHASHLIST -> hashList.add(it.content)
+                SliceType.VARHASHLIST -> hashList.add(it.content)
                 SliceType.BLOOMFILTER -> bloomFilterList.add(it.content)
             }
         }
@@ -124,7 +124,7 @@ class IsDccRevokedUseCase @Inject constructor(
         return ValidationData(x, y, bloomFilterList, hashList)
     }
 
-    private suspend fun contains(dccHash: String, validationData: ValidationData?): Boolean {
+    private fun contains(dccHash: String, validationData: ValidationData?): Boolean {
         validationData ?: return false
 
         validationData.bloomFilterList.forEach {
@@ -138,20 +138,14 @@ class IsDccRevokedUseCase @Inject constructor(
         }
         validationData.hashFilterList.forEach {
             val filter = PartialVariableHashFilter(it)
-            val contains = filter.mightContain(dccHash.hexToByteArray())
+            val contains = filter.mightContain(dccHash.toByteArray())
             if (contains) {
+                Timber.d("filter contant size: ${it.size}, hash size: ${filter.size}")
                 Timber.d("dcc revoked HashVariable: $dccHash")
                 return true
             }
         }
 
-//        TODO: remove
-//        val result = repository.getHashListSlices(
-//            validationData.hashListIds,
-//            validationData.x,
-//            validationData.y,
-//            dccHash
-//        )
         return false
     }
 

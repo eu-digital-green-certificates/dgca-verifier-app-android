@@ -24,6 +24,5 @@ package dcc.app.revocation.domain.model
 
 enum class DccSliceType(val tag: String) {
     BF("Bloom"),
-    HASH("Hash"),
     VARHASHLIST("VarHashList")
 }
