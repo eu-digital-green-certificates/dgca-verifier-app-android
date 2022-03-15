@@ -50,26 +50,34 @@ class IsDccRevokedUseCase @Inject constructor(
         kidMetadata ?: return false
 
         val mode = kidMetadata.mode
-        var containsUvciSha256 = false
         if (kidMetadata.hashType.contains(DccRevocationHashType.UCI)) {
             Timber.d("UCI Hash: ${params.uvciSha256}")
-            containsUvciSha256 = isContainsHash(kid, mode, params.uvciSha256)
+            val containsUvciSha256 = isContainsHash(kid, mode, params.uvciSha256)
+            if (containsUvciSha256) {
+                Timber.d("Revocation check end. uci:$containsUvciSha256")
+                return true
+            }
         }
 
-        var containsCoUvciSha256 = false
         if (kidMetadata.hashType.contains(DccRevocationHashType.COUNTRYCODEUCI)) {
             Timber.d("COUNTRYCODEUCI Hash: ${params.coUvciSha256}")
-            containsCoUvciSha256 = isContainsHash(kid, mode, params.coUvciSha256)
+            val containsCoUvciSha256 = isContainsHash(kid, mode, params.coUvciSha256)
+            if (containsCoUvciSha256) {
+                Timber.d("Revocation check end. co+uci:$containsCoUvciSha256")
+                return true
+            }
         }
 
-        var containsSignatureSha256 = false
         if (kidMetadata.hashType.contains(DccRevocationHashType.SIGNATURE)) {
             Timber.d("SIGNATURE Hash: ${params.signatureSha256}")
-            containsSignatureSha256 = isContainsHash(kid, mode, params.signatureSha256)
+            val containsSignatureSha256 = isContainsHash(kid, mode, params.signatureSha256)
+            if (containsSignatureSha256) {
+                Timber.d("Revocation check end. signature:$containsSignatureSha256")
+                return true
+            }
         }
 
-        Timber.d("Revocation check end. uci:$containsUvciSha256, co+uci:$containsCoUvciSha256, signature:$containsSignatureSha256")
-        return containsUvciSha256 || containsCoUvciSha256 || containsSignatureSha256
+        return false
     }
 
     private suspend fun isContainsHash(
@@ -127,6 +135,7 @@ class IsDccRevokedUseCase @Inject constructor(
     private fun contains(dccHash: String, validationData: ValidationData?): Boolean {
         validationData ?: return false
 
+        Timber.d("bloom filter slices: ${validationData.bloomFilterList.size}")
         validationData.bloomFilterList.forEach {
             val inputStream: InputStream = ByteArrayInputStream(it)
             val bloomFilter = BloomFilterImpl(inputStream)
@@ -136,9 +145,11 @@ class IsDccRevokedUseCase @Inject constructor(
                 return true
             }
         }
+
+        Timber.d("hash filter slices: ${validationData.hashFilterList.size}")
         validationData.hashFilterList.forEach {
             val filter = PartialVariableHashFilter(it)
-            val contains = filter.mightContain(dccHash.toByteArray())
+            val contains = filter.mightContain(dccHash.hexToByteArray())
             if (contains) {
                 Timber.d("filter contant size: ${it.size}, hash size: ${filter.size}")
                 Timber.d("dcc revoked HashVariable: $dccHash")
