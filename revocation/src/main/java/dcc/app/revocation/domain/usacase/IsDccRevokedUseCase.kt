@@ -151,7 +151,6 @@ class IsDccRevokedUseCase @Inject constructor(
             val filter = PartialVariableHashFilter(it)
             val contains = filter.mightContain(dccHash.hexToByteArray())
             if (contains) {
-                Timber.d("filter contant size: ${it.size}, hash size: ${filter.size}")
                 Timber.d("dcc revoked HashVariable: $dccHash")
                 return true
             }
