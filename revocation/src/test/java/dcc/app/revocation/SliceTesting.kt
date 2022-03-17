@@ -22,7 +22,7 @@
 
 package dcc.app.revocation
 
-import dcc.app.revocation.validation.BloomFilterImpl
+import dcc.app.revocation.validation.bloom.BloomFilterImpl
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream

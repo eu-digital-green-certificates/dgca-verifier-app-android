@@ -28,9 +28,9 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLongArray;
 
 import dcc.app.revocation.bloomfilter.model.FilterTestData;
-import dcc.app.revocation.validation.BloomFilter;
-import dcc.app.revocation.validation.BloomFilterImpl;
-import dcc.app.revocation.validation.exception.FilterException;
+import dcc.app.revocation.validation.bloom.BloomFilter;
+import dcc.app.revocation.validation.bloom.BloomFilterImpl;
+import dcc.app.revocation.validation.bloom.exception.FilterException;
 
 @Ignore("failing tests")
 public class BloomFilterUnitTest {

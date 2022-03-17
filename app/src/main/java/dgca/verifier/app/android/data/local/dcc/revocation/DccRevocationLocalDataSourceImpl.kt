@@ -23,15 +23,13 @@
 package dgca.verifier.app.android.data.local.dcc.revocation
 
 import dcc.app.revocation.data.local.DccRevocationLocalDataSource
-import dcc.app.revocation.domain.model.DccRevocationHashListSlice
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata
 import dcc.app.revocation.domain.model.DccRevocationPartition
 import dcc.app.revocation.domain.model.DccRevocationSlice
 import dgca.verifier.app.android.data.local.dcc.revocation.mapper.fromLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.mapper.toLocal
 
-class DccRevocationLocalDataSourceImpl(private val dccRevocationDao: DccRevocationDao) :
-    DccRevocationLocalDataSource {
+class DccRevocationLocalDataSourceImpl(private val dccRevocationDao: DccRevocationDao) : DccRevocationLocalDataSource {
 
     override suspend fun getDccRevocationKidMetadataBy(kid: String): DccRevocationKidMetadata? =
         dccRevocationDao.getDccRevocationKidMetadataBy(kid)?.fromLocal()
@@ -57,23 +55,6 @@ class DccRevocationLocalDataSourceImpl(private val dccRevocationDao: DccRevocati
     ): List<DccRevocationSlice> =
         dccRevocationDao.getChunkSlices(kid, x, y, cid).map { it.fromLocal() }
 
-    override suspend fun getHashListSlice(
-        sidList: Set<String>,
-        x: Char?,
-        y: Char?,
-        dccHashListBytes: ByteArray
-    ): DccRevocationHashListSlice? =
-        dccRevocationDao.getHashListSlice(sidList, x, y, dccHashListBytes)?.fromLocal()
-
-    override suspend fun getHashListSlices(
-        sidList: Set<String>,
-        x: Char?,
-        y: Char?,
-        dccHash: String
-    ): List<DccRevocationHashListSlice> {
-        return dccRevocationDao.getHashListSlices(sidList, x, y, dccHash).map { it.fromLocal() }
-    }
-
     override fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata) {
         dccRevocationDao.upsert(dccRevocationKidMetadata.toLocal())
     }
@@ -84,10 +65,6 @@ class DccRevocationLocalDataSourceImpl(private val dccRevocationDao: DccRevocati
 
     override suspend fun addOrUpdate(dccRevocationSlice: DccRevocationSlice) {
         dccRevocationDao.upsert(dccRevocationSlice.toLocal())
-    }
-
-    override suspend fun saveHashListSlices(hashListSlices: List<DccRevocationHashListSlice>) {
-        dccRevocationDao.insertHashListSlices(hashListSlices.map { it.toLocal() })
     }
 
     override suspend fun removeOutdatedKidItems(kidList: List<String>) {

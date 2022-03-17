@@ -1,4 +1,4 @@
-package dcc.app.revocation.validation.exception;
+package dcc.app.revocation.validation.bloom.exception;
 
 import java.util.Optional;
 

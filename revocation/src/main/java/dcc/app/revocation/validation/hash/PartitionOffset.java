@@ -1,6 +1,6 @@
 /*
  *  ---license-start
- *  eu-digital-green-certificates / dcc-revocation-app-android
+ *  eu-digital-green-certificates / dgca-partial-hash-filter
  *  ---
  *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
  *  ---
@@ -17,12 +17,19 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 1/8/22, 3:01 PM
+ *  Created by mykhailo.nester on 08/03/2022, 18:22
  */
 
-package dcc.app.revocation.domain.model
+package dcc.app.revocation.validation.hash;
 
-enum class DccSliceType(val tag: String) {
-    BF("Bloom"),
-    VARHASHLIST("VarHashList")
+public enum PartitionOffset {
+    COORDINATE((byte) 2),
+    VECTOR((byte) 1),
+    POINT((byte) 0);
+
+    public final byte value;
+
+    PartitionOffset(byte value) {
+        this.value = value;
+    }
 }

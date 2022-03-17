@@ -27,7 +27,6 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import dcc.app.revocation.data.local.EnumConverter
 import dgca.verifier.app.android.data.local.dcc.revocation.DccRevocationDao
-import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationHashListSliceLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationKidMetadataLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationPartitionLocal
 import dgca.verifier.app.android.data.local.dcc.revocation.model.DccRevocationSliceLocal
@@ -39,8 +38,7 @@ import dgca.verifier.app.android.data.local.rules.Converters
         Key::class,
         DccRevocationKidMetadataLocal::class,
         DccRevocationPartitionLocal::class,
-        DccRevocationSliceLocal::class,
-        DccRevocationHashListSliceLocal::class
+        DccRevocationSliceLocal::class
     ],
     version = 1
 )
