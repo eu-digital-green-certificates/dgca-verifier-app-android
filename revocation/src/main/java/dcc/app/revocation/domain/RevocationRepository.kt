@@ -23,7 +23,11 @@
 package dcc.app.revocation.domain
 
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
-import dcc.app.revocation.domain.model.*
+import dcc.app.revocation.data.network.model.SliceType
+import dcc.app.revocation.domain.model.DccRevocationKidMetadata
+import dcc.app.revocation.domain.model.DccRevocationPartition
+import dcc.app.revocation.domain.model.DccRevocationSlice
+import dcc.app.revocation.domain.model.RevocationKidData
 import okhttp3.ResponseBody
 
 interface RevocationRepository {
@@ -32,19 +36,25 @@ interface RevocationRepository {
     suspend fun getRevocationLists(): List<RevocationKidData>
 
     @Throws(Exception::class)
-    suspend fun getRevocationPartitions(kid: String): List<RevocationPartitionResponse>?
+    suspend fun getRevocationPartitions(sliceType: SliceType, kid: String): List<RevocationPartitionResponse>?
 
     @Throws(Exception::class)
-    suspend fun getPartitionChunks(kid: String, partitionId: String?, cidList: List<String>): ResponseBody?
+    suspend fun getPartitionChunks(sliceType: SliceType, kid: String, partitionId: String?, cidList: List<String>): ResponseBody?
 
     @Throws(Exception::class)
-    suspend fun getRevocationChunk(kid: String, id: String?, chunkId: String): ResponseBody?
+    suspend fun getRevocationChunk(sliceType: SliceType, kid: String, id: String?, chunkId: String): ResponseBody?
 
     @Throws(Exception::class)
-    suspend fun getRevocationChunkSlices(kid: String, partitionId: String?, cid: String, sidList: List<String>): ResponseBody?
+    suspend fun getRevocationChunkSlices(
+        sliceType: SliceType,
+        kid: String,
+        partitionId: String?,
+        cid: String,
+        sidList: List<String>
+    ): ResponseBody?
 
     @Throws(Exception::class)
-    suspend fun getSlice(kid: String, partitionId: String?, cid: String, sid: String): ResponseBody?
+    suspend fun getSlice(sliceType: SliceType, kid: String, partitionId: String?, cid: String, sid: String): ResponseBody?
 
     suspend fun getMetadataByKid(kid: String): DccRevocationKidMetadata?
 
@@ -62,27 +72,11 @@ interface RevocationRepository {
         cid: String
     ): List<DccRevocationSlice>
 
-    suspend fun getHashListSlice(
-        sidList: Set<String>,
-        x: Char?,
-        y: Char?,
-        dccHashListBytes: ByteArray
-    ): DccRevocationHashListSlice?
-
-    suspend fun getHashListSlices(
-        sidList: Set<String>,
-        x: Char?,
-        y: Char?,
-        dccHash: String
-    ): List<DccRevocationHashListSlice?>
-
     suspend fun saveKidMetadata(dccRevocationKidMetadata: DccRevocationKidMetadata)
 
     suspend fun savePartition(partitionData: DccRevocationPartition)
 
     suspend fun saveSlice(dccRevocationSlice: DccRevocationSlice)
-
-    suspend fun saveHashListSlices(hashListSlices: List<DccRevocationHashListSlice>)
 
     suspend fun deleteOutdatedKidItems(notInKidList: List<String>)
 

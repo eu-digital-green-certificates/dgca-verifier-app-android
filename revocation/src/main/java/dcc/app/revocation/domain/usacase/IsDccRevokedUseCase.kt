@@ -29,7 +29,8 @@ import dcc.app.revocation.domain.hexToByteArray
 import dcc.app.revocation.domain.model.DccRevocationHashType
 import dcc.app.revocation.domain.model.DccRevocationMode
 import dcc.app.revocation.domain.model.DccRevokationDataHolder
-import dcc.app.revocation.validation.BloomFilterImpl
+import dcc.app.revocation.validation.bloom.BloomFilterImpl
+import dcc.app.revocation.validation.hash.PartialVariableHashFilter
 import kotlinx.coroutines.CoroutineDispatcher
 import timber.log.Timber
 import java.io.ByteArrayInputStream
@@ -49,26 +50,34 @@ class IsDccRevokedUseCase @Inject constructor(
         kidMetadata ?: return false
 
         val mode = kidMetadata.mode
-        var containsUvciSha256 = false
         if (kidMetadata.hashType.contains(DccRevocationHashType.UCI)) {
             Timber.d("UCI Hash: ${params.uvciSha256}")
-            containsUvciSha256 = isContainsHash(kid, mode, params.uvciSha256)
+            val containsUvciSha256 = isContainsHash(kid, mode, params.uvciSha256)
+            if (containsUvciSha256) {
+                Timber.d("Revocation check end. uci:$containsUvciSha256")
+                return true
+            }
         }
 
-        var containsCoUvciSha256 = false
         if (kidMetadata.hashType.contains(DccRevocationHashType.COUNTRYCODEUCI)) {
             Timber.d("COUNTRYCODEUCI Hash: ${params.coUvciSha256}")
-            containsCoUvciSha256 = isContainsHash(kid, mode, params.coUvciSha256)
+            val containsCoUvciSha256 = isContainsHash(kid, mode, params.coUvciSha256)
+            if (containsCoUvciSha256) {
+                Timber.d("Revocation check end. co+uci:$containsCoUvciSha256")
+                return true
+            }
         }
 
-        var containsSignatureSha256 = false
         if (kidMetadata.hashType.contains(DccRevocationHashType.SIGNATURE)) {
             Timber.d("SIGNATURE Hash: ${params.signatureSha256}")
-            containsSignatureSha256 = isContainsHash(kid, mode, params.signatureSha256)
+            val containsSignatureSha256 = isContainsHash(kid, mode, params.signatureSha256)
+            if (containsSignatureSha256) {
+                Timber.d("Revocation check end. signature:$containsSignatureSha256")
+                return true
+            }
         }
 
-        Timber.d("Revocation check end. uci:$containsUvciSha256, co+uci:$containsCoUvciSha256, signature:$containsSignatureSha256")
-        return containsUvciSha256 || containsCoUvciSha256 || containsSignatureSha256
+        return false
     }
 
     private suspend fun isContainsHash(
@@ -109,13 +118,13 @@ class IsDccRevokedUseCase @Inject constructor(
         cid: String
     ): ValidationData {
         val bloomFilterList = mutableSetOf<ByteArray>()
-        val hashList = mutableSetOf<String>()
+        val hashList = mutableSetOf<ByteArray>()
 
         val result = repository.getChunkSlices(kid, x, y, cid)
         result.iterator().forEach {
             Timber.d("Slice found: $it")
             when (it.type) {
-                SliceType.HASH -> hashList.add(it.sid)
+                SliceType.VARHASHLIST -> hashList.add(it.content)
                 SliceType.BLOOMFILTER -> bloomFilterList.add(it.content)
             }
         }
@@ -123,9 +132,10 @@ class IsDccRevokedUseCase @Inject constructor(
         return ValidationData(x, y, bloomFilterList, hashList)
     }
 
-    private suspend fun contains(dccHash: String, validationData: ValidationData?): Boolean {
+    private fun contains(dccHash: String, validationData: ValidationData?): Boolean {
         validationData ?: return false
 
+        Timber.d("bloom filter slices: ${validationData.bloomFilterList.size}")
         validationData.bloomFilterList.iterator().forEach {
             val inputStream: InputStream = ByteArrayInputStream(it)
             val bloomFilter = BloomFilterImpl(inputStream)
@@ -136,19 +146,23 @@ class IsDccRevokedUseCase @Inject constructor(
             }
         }
 
-        val result = repository.getHashListSlices(
-            validationData.hashListIds,
-            validationData.x,
-            validationData.y,
-            dccHash
-        )
-        return result.isNotEmpty()
+        Timber.d("hash filter slices: ${validationData.hashFilterList.size}")
+        validationData.hashFilterList.forEach {
+            val filter = PartialVariableHashFilter(it)
+            val contains = filter.mightContain(dccHash.hexToByteArray())
+            if (contains) {
+                Timber.d("dcc revoked HashVariable: $dccHash")
+                return true
+            }
+        }
+
+        return false
     }
 
     internal data class ValidationData(
         val x: Char?,
         val y: Char?,
         val bloomFilterList: Set<ByteArray>,
-        val hashListIds: Set<String>
+        val hashFilterList: Set<ByteArray>
     )
 }

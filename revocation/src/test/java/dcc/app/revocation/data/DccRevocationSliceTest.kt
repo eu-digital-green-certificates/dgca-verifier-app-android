@@ -30,6 +30,7 @@ import org.junit.Test
 import java.time.ZonedDateTime
 
 class DccRevocationSliceTest {
+
     @Test
     fun shouldWork() {
         val firstHash = "2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6"
@@ -48,7 +49,7 @@ class DccRevocationSliceTest {
             y = null,
             id = "id",
             cid = "cid",
-            type = DccSliceType.HASH,
+            type = DccSliceType.VARHASHLIST,
             version = "version",
             expiration = ZonedDateTime.now(),
             section = "section",
