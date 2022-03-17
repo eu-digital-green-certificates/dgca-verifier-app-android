@@ -147,7 +147,7 @@ class IsDccRevokedUseCase @Inject constructor(
         }
 
         Timber.d("hash filter slices: ${validationData.hashFilterList.size}")
-        validationData.hashFilterList.forEach {
+        validationData.hashFilterList.iterator().forEach {
             val filter = PartialVariableHashFilter(it)
             val contains = filter.mightContain(dccHash.hexToByteArray())
             if (contains) {
