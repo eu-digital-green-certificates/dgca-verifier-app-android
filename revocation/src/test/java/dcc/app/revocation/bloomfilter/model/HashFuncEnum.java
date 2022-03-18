@@ -29,7 +29,7 @@ public enum HashFuncEnum {
 
     public static Optional<HashFuncEnum> get(String name) {
         return Arrays.stream(HashFuncEnum.values())
-                .filter(hashName -> hashName.hashFunctionName.equals(name))
-                .findFirst();
+            .filter(hashName -> hashName.hashFunctionName.equals(name))
+            .findFirst();
     }
 }
