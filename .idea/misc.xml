@@ -12,19 +12,33 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.37407407407407406" />
         <entry key="app/src/main/res/layout/dialog_fragment_detailed_verification.xml" value="0.44907407407407407" />
         <entry key="app/src/main/res/layout/dialog_fragment_detailed_verification_result.xml" value="0.44537037037037036" />
+        <entry key="app/src/main/res/layout/dialog_fragment_protocol_handler.xml" value="0.21467391304347827" />
         <entry key="app/src/main/res/layout/dialog_fragment_verification.xml" value="0.4527777777777778" />
         <entry key="app/src/main/res/layout/dialog_fragment_verification_result.xml" value="0.3712962962962963" />
         <entry key="app/src/main/res/layout/fragment_code_reader.xml" value="0.387037037037037" />
         <entry key="app/src/main/res/layout/fragment_countries_selector.xml" value="0.44635416666666666" />
+        <entry key="app/src/main/res/layout/fragment_intent.xml" value="0.21467391304347827" />
+        <entry key="app/src/main/res/layout/fragment_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_nfc.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_qr_reader.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.5898148148148148" />
+        <entry key="app/src/main/res/layout/fragment_url_schema.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_certificate_content.xml" value="0.4101851851851852" />
         <entry key="app/src/main/res/layout/item_country.xml" value="0.30185185185185187" />
         <entry key="app/src/main/res/layout/item_rule_validation_result.xml" value="0.44635416666666666" />
+        <entry key="app/src/main/res/layout/item_settings.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/sd.xml" value="0.17325227963525835" />
+        <entry key="app/src/main/res/layout/sdf.xml" value="0.21467391304347827" />
+        <entry key="app/src/main/res/layout/sfd.xml" value="0.17325227963525835" />
         <entry key="app/src/main/res/layout/view_certificate_content_view.xml" value="0.4101851851851852" />
         <entry key="app/src/main/res/layout/view_detailed_certificate_raw_view.xml" value="0.30185185185185187" />
         <entry key="app/src/main/res/layout/view_detailed_certificate_view.xml" value="0.30185185185185187" />
         <entry key="app/src/main/res/layout/view_detailed_verification_result.xml" value="0.44635416666666666" />
         <entry key="app/src/main/res/layout/view_detailed_verification_result_header.xml" value="0.30520833333333336" />
+        <entry key="branches/dcc/src/main/res/layout/dialog_fragment_verification_result.xml" value="0.18177083333333333" />
+        <entry key="branches/dcc/src/main/res/layout/fragment_dcc_intermediate.xml" value="0.1859375" />
+        <entry key="branches/dcc/src/main/res/layout/fragment_dcc_settings.xml" value="0.19010416666666666" />
+        <entry key="branches/dcc/src/main/res/layout/view_detailed_verification_result_header.xml" value="0.19021739130434784" />
       </map>
     </option>
   </component>
@@ -34,6 +48,7 @@
       <item index="1" class="java.lang.String" itemvalue="dagger.Provides" />
     </list>
   </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>

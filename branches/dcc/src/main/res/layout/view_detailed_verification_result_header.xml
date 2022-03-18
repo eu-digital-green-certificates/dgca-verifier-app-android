@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~  license-start
+  ~  eu-digital-green-certificates / dgca-verifier-app-android
+  ~
+  ~  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  ~  license-end
+  ~
+  ~  Created by osarapulov on 8/31/21 9:23 AM
+  -->
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:parentTag="com.android.app.dcc.ui.verification.detailed.DetailedVerificationResultHeaderView">
+
+    <View
+        android:id="@+id/verificationStatusBackground"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bottom_sheet_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:backgroundTint="@color/green" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/personFullName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_half_margin"
+        android:layout_marginTop="@dimen/default_double_margin"
+        android:textColor="@color/white"
+        android:textSize="26sp"
+        android:typeface="normal"
+        app:layout_constraintBottom_toTopOf="@id/status"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Gabriele \nMusterfrau" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/certStatusIcon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/check"
+        app:layout_constraintBottom_toBottomOf="@id/status"
+        app:layout_constraintStart_toStartOf="@id/personFullName"
+        app:layout_constraintTop_toBottomOf="@id/personFullName"
+        app:layout_constraintTop_toTopOf="@id/status" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/status"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="@dimen/default_margin"
+        android:textColor="@color/white"
+        android:textSize="42sp"
+        app:layout_constraintBottom_toTopOf="@id/detailedVerificationResultView"
+        app:layout_constraintEnd_toEndOf="@id/personFullName"
+        app:layout_constraintStart_toEndOf="@id/certStatusIcon"
+        app:layout_constraintTop_toBottomOf="@id/personFullName"
+        tools:text="@string/cert_valid" />
+
+    <dgca.verifier.app.android.dcc.ui.verification.detailed.DetailedVerificationResultView
+        android:id="@+id/detailedVerificationResultView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/default_half_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/personFullName"
+        app:layout_constraintStart_toStartOf="@id/personFullName"
+        app:layout_constraintTop_toBottomOf="@id/status" />
+
+</merge>
