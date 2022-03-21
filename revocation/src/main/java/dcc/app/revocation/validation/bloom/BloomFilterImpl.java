@@ -36,7 +36,6 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
     private final static byte NUM_BYTES = Integer.BYTES;
     private final static byte NUM_BIT_FORMAT = (NUM_BYTES * NUM_BITS);
 
-    //    @Serial
     private static final long serialVersionUID = 7526472295622776147L;
     private static final short version = 1;
 
@@ -255,15 +254,11 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
         return Objects.hashCode(new Object[]{this.numBits, this.numberOfHashes, this.getData()});
     }
 
-    private void readObject(
-            ObjectInputStream inputStream
-    ) throws ClassNotFoundException, IOException {
+    private void readObject(ObjectInputStream inputStream) throws ClassNotFoundException, IOException {
         inputStream.defaultReadObject();
     }
 
-    private void writeObject(
-            ObjectOutputStream outputStream
-    ) throws IOException {
+    private void writeObject(ObjectOutputStream outputStream) throws IOException {
         outputStream.defaultWriteObject();
     }
     //endregion
@@ -287,10 +282,4 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
     public int getN() {
         return this.definedElementAmount;
     }
-
-    @Override
-    public int getCurrentN() {
-        return this.definedElementAmount;
-    }
-
 }
