@@ -26,7 +26,6 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import dcc.app.revocation.data.GeneralErrorHandlerImpl
 import dcc.app.revocation.data.RevocationPreferences
@@ -56,7 +55,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import okhttp3.internal.toHexString
-import org.apache.commons.io.IOUtils
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -65,8 +63,6 @@ import org.junit.runner.RunWith
 import retrofit2.Retrofit
 import java.io.ByteArrayOutputStream
 import java.io.IOException
-import java.io.InputStream
-import java.nio.charset.Charset
 import java.time.ZonedDateTime
 import java.util.*
 import kotlin.random.Random
@@ -79,9 +75,9 @@ data class Slice(
 
 @RunWith(AndroidJUnit4::class)
 internal class DccRevocationDaoTest {
+
     private lateinit var dccRevocationDao: DccRevocationDao
     private lateinit var db: AppDatabase
-    private val objectMapper = ObjectMapper().apply { this.findAndRegisterModules() }
 
     @ExperimentalCoroutinesApi
     private lateinit var testCoroutineDispatcher: CoroutineDispatcher
@@ -94,31 +90,17 @@ internal class DccRevocationDaoTest {
 
     companion object {
         private const val REVOCATION_PATH = "revocation"
-        const val REVOCATION_PARTITION_0 = "${REVOCATION_PATH}/revocation_partition_0.json"
-
-        private val hexChars =
-            arrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f')
+        private val hexChars = arrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f')
         private val hexCharsAmount = hexChars.size
-        private val amountOfUniqueHexCharsPairs = hexCharsAmount * hexCharsAmount
-    }
-
-    private fun fetchPartition(fileName: String): DccRevocationPartitionLocal {
-        val inputStream: InputStream =
-            javaClass.classLoader!!.getResourceAsStream(fileName)
-        val ruleJson = IOUtils.toString(inputStream, Charset.defaultCharset())
-        return objectMapper.readValue(ruleJson, DccRevocationPartitionLocal::class.java)
     }
 
     @Before
     fun createDb() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        db = Room.inMemoryDatabaseBuilder(
-            context, AppDatabase::class.java
-        ).build()
+        db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()
         dccRevocationDao = db.dccRevocationPartitionDao()
         dccRevocationLocalDataSource = DccRevocationLocalDataSourceImpl(dccRevocationDao)
-        revocationService =
-            Retrofit.Builder().baseUrl(BASE_URL).build().create(RevocationService::class.java)
+        revocationService = Retrofit.Builder().baseUrl(BASE_URL).build().create(RevocationService::class.java)
         revocationPreferences = RevocationPreferencesImpl(context)
         revocationRepository = RevocationRepositoryImpl(
             revocationService,
@@ -127,8 +109,7 @@ internal class DccRevocationDaoTest {
         )
         errorHandler = GeneralErrorHandlerImpl()
         testCoroutineDispatcher = Dispatchers.Main
-        isDccRevokedUseCase =
-            IsDccRevokedUseCase(revocationRepository, testCoroutineDispatcher, errorHandler)
+        isDccRevokedUseCase = IsDccRevokedUseCase(revocationRepository, testCoroutineDispatcher, errorHandler)
         return
     }
 
@@ -215,7 +196,7 @@ internal class DccRevocationDaoTest {
     @Test
     fun loadTest() = runBlocking {
         val amountOfKids = 1
-        val wantedAmountOfHashes = 100_000
+        val wantedAmountOfHashes = 1000
         val mode = DccRevocationMode.POINT
         // Amount of partitions
         val chunksPerPartition = 16
@@ -325,7 +306,7 @@ internal class DccRevocationDaoTest {
 
             if (x == 0) {
                 shouldNotContain = shouldNotContain and isDccRevokedUseCase.execute(
-                    DccRevokationDataHolder(
+                    DccRevocationDataHolder(
                         kid = kids.first(),
                         hashes.first(),
                         hashes.first(),
@@ -335,7 +316,7 @@ internal class DccRevocationDaoTest {
             } else {
                 val idx = r.nextInt(hashes.size)
                 shouldNotContain = shouldNotContain and isDccRevokedUseCase.execute(
-                    DccRevokationDataHolder(
+                    DccRevocationDataHolder(
                         kid = kids.first(),
                         hashes[idx],
                         hashes[idx],
@@ -354,8 +335,8 @@ internal class DccRevocationDaoTest {
     @Test
     fun loadTestHashVariable() = runBlocking {
         val amountOfKids = 1
-        val wantedAmountOfHashes = 100_000
-        val mode = DccRevocationMode.COORDINATE
+        val wantedAmountOfHashes = 1000
+        val mode = DccRevocationMode.POINT
         // Amount of partitions
         val chunksPerPartition = 16
         val kids = generateUniqueKids(amountOfKids)
@@ -401,7 +382,7 @@ internal class DccRevocationDaoTest {
                 chunks = chunksString
             )
             partitions.add(partition)
-            var counter = 0;
+            var counter = 0
             val offset = when (mode) {
                 DccRevocationMode.POINT -> PartitionOffset.POINT
                 DccRevocationMode.VECTOR -> PartitionOffset.VECTOR
@@ -414,7 +395,6 @@ internal class DccRevocationDaoTest {
                     val hashFilter = PartialVariableHashFilter(4, offset, amountOfHashesPerSlice, 0.00000000001f)
                     val hashStart = hashPrefix + cid
 
-//                    if (counter < 2) {
                     for (i in 0 until amountOfHashesPerSlice) {
                         val hash = if (shouldSkipHashesGeneration) {
                             i.toHexString().sha256()
@@ -426,15 +406,7 @@ internal class DccRevocationDaoTest {
 
                         hashFilter.add(hash.toByteArray())
                         hashes.add(hash)
-
-//                            if (shouldSkipHashesGeneration) {
-//                                dummyhashes.add(hash)
-//                            }
                     }
-//                    } else {
-//                        if (hashes.size < 1_000_000) // hash bookkeeping needs a lot of memory, 1M is enough to simulate random accessing
-//                            hashes.addAll(dummyhashes)
-//                    }
                     counter++
 
                     val content = hashFilter.writeTo()
@@ -465,7 +437,7 @@ internal class DccRevocationDaoTest {
 
             if (x == 0) {
                 shouldNotContain = shouldNotContain and isDccRevokedUseCase.execute(
-                    DccRevokationDataHolder(
+                    DccRevocationDataHolder(
                         kid = kids.first(),
                         hashes.first(),
                         hashes.first(),
@@ -475,7 +447,7 @@ internal class DccRevocationDaoTest {
             } else {
                 val idx = r.nextInt(hashes.size)
                 shouldNotContain = shouldNotContain and isDccRevokedUseCase.execute(
-                    DccRevokationDataHolder(
+                    DccRevocationDataHolder(
                         kid = kids.first(),
                         hashes[idx],
                         hashes[idx],
