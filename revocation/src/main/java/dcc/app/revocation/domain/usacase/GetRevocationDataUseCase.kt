@@ -24,6 +24,7 @@ package dcc.app.revocation.domain.usacase
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import dcc.app.revocation.data.RevocationPreferences
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
 import dcc.app.revocation.data.network.model.Slice
 import dcc.app.revocation.data.network.model.SliceType
@@ -41,13 +42,15 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import java.io.InputStream
 import java.lang.reflect.Type
+import java.time.Instant
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import java.util.zip.GZIPInputStream
 import javax.inject.Inject
 
-
 class GetRevocationDataUseCase @Inject constructor(
     private val repository: RevocationRepository,
+    private val revocationPreferences: RevocationPreferences,
     dispatcher: CoroutineDispatcher,
     errorHandler: ErrorHandler,
 ) : BaseUseCase<Unit, Any>(dispatcher, errorHandler) {
@@ -66,7 +69,9 @@ class GetRevocationDataUseCase @Inject constructor(
         }
 
         // Delete expired data
-        repository.deleteExpiredData(System.currentTimeMillis())
+        repository.deleteExpiredData(ChronoUnit.MICROS.between(Instant.EPOCH, ZonedDateTime.now().toInstant()))
+
+        revocationPreferences.lastRevocationSyncTimeMillis = System.currentTimeMillis()
     }
 
     private suspend fun checkKidMetadata(revocationKidData: RevocationKidData) {

@@ -24,6 +24,7 @@ package dgca.verifier.app.android.data
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import dcc.app.revocation.data.RevocationPreferences
 import dgca.verifier.app.android.data.local.AppDatabase
 import dgca.verifier.app.android.data.local.Preferences
 import dgca.verifier.app.android.data.local.model.Key
@@ -42,13 +43,14 @@ import javax.inject.Inject
 class VerifierRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val preferences: Preferences,
+    private val revocationPreferences: RevocationPreferences,
     private val db: AppDatabase,
     private val keyStoreCryptor: KeyStoreCryptor
 ) : BaseRepository(), VerifierRepository {
 
     private val validCertList = mutableListOf<String>()
     private val mutex = Mutex()
-    private val lastSyncLiveData: MutableLiveData<Long> = MutableLiveData(preferences.lastKeysSyncTimeMillis)
+    private val lastSyncLiveData = MutableLiveData(preferences.lastKeysSyncTimeMillis)
 
     override suspend fun fetchCertificates(statusUrl: String, updateUrl: String): Boolean? {
         mutex.withLock {
@@ -73,7 +75,9 @@ class VerifierRepositoryImpl @Inject constructor(
             keyStoreCryptor.decrypt(it.key)?.base64ToX509Certificate()!!
         }
 
-    override fun getLastSyncTimeMillis(): LiveData<Long> = lastSyncLiveData
+    override fun getLastPubKeysSyncTimeMillis(): LiveData<Long> = lastSyncLiveData
+
+    override fun getLastRevocationSyncTimeMillis(): Long = revocationPreferences.lastRevocationSyncTimeMillis
 
     private suspend fun fetchCertificate(url: String, resumeToken: Long) {
         val tokenFormatted = if (resumeToken == -1L) "" else resumeToken.toString()

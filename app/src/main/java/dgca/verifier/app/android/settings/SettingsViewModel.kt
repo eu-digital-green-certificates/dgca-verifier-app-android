@@ -24,6 +24,7 @@ package dgca.verifier.app.android.settings
 
 import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dcc.app.revocation.domain.usacase.GetRevocationDataUseCase
 import dgca.verifier.app.android.BuildConfig
 import dgca.verifier.app.android.data.ConfigRepository
 import dgca.verifier.app.android.data.VerifierRepository
@@ -39,13 +40,15 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val configRepository: ConfigRepository,
     private val verifierRepository: VerifierRepository,
-    private val preferences: Preferences
+    private val preferences: Preferences,
+    private val getRevocationDataUseCase: GetRevocationDataUseCase
 ) : ViewModel(), LifecycleObserver {
 
     private val _inProgress = MutableLiveData<Boolean>()
     val inProgress: LiveData<Boolean> = _inProgress
 
-    val lastSyncLiveData: LiveData<Long> = verifierRepository.getLastSyncTimeMillis()
+    val lastSyncLiveData: LiveData<Long> = verifierRepository.getLastPubKeysSyncTimeMillis()
+    val lastRevocationSyncTime = MutableLiveData(verifierRepository.getLastRevocationSyncTimeMillis())
 
     private val _debugModeState: MutableLiveData<DebugModeState> = MutableLiveData(DebugModeState.OFF)
     val debugModeState: LiveData<DebugModeState> = _debugModeState
@@ -77,5 +80,15 @@ class SettingsViewModel @Inject constructor(
             }
             _inProgress.value = false
         }
+    }
+
+    fun syncRevocation() {
+        _inProgress.value = true
+        getRevocationDataUseCase.execute(
+            viewModelScope,
+            onFailure = { Timber.d("error refreshing revocation: $it") },
+            onSuccess = { lastRevocationSyncTime.value = verifierRepository.getLastRevocationSyncTimeMillis() },
+            onComplete = { _inProgress.value = false }
+        )
     }
 }

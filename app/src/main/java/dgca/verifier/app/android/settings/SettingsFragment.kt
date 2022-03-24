@@ -67,13 +67,13 @@ class SettingsFragment : BindingFragment<FragmentSettingsBinding>() {
         binding.syncPublicKeys.setOnClickListener { viewModel.syncPublicKeys() }
         binding.version.text = getString(R.string.version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
 
-        viewModel.inProgress.observe(viewLifecycleOwner, {
+        viewModel.inProgress.observe(viewLifecycleOwner) {
             binding.privacyInformation.isClickable = it != true
             binding.licenses.isClickable = it != true
             binding.syncPublicKeys.isClickable = it != true
             binding.progressBar.visibility = if (it == true) View.VISIBLE else View.GONE
-        })
-        viewModel.lastSyncLiveData.observe(viewLifecycleOwner, {
+        }
+        viewModel.lastSyncLiveData.observe(viewLifecycleOwner) {
             if (it <= 0) {
                 binding.lastUpdate.visibility = View.GONE
             } else {
@@ -83,7 +83,7 @@ class SettingsFragment : BindingFragment<FragmentSettingsBinding>() {
                     it.toLocalDateTime().formatWith(LAST_UPDATE_DATE_TIME_FORMAT)
                 )
             }
-        })
+        }
         viewModel.debugModeState.observe(viewLifecycleOwner) {
             setUpDebugModeButton(it)
         }
@@ -91,6 +91,19 @@ class SettingsFragment : BindingFragment<FragmentSettingsBinding>() {
             val action =
                 SettingsFragmentDirections.actionSettingsFragmentToVerificationResultFragment()
             findNavController().navigate(action)
+        }
+
+        binding.syncRevocation.setOnClickListener { viewModel.syncRevocation() }
+        viewModel.lastRevocationSyncTime.observe(viewLifecycleOwner) {
+            if (it <= 0) {
+                binding.lastRevocationUpdate.visibility = View.GONE
+            } else {
+                binding.lastRevocationUpdate.visibility = View.VISIBLE
+                binding.lastRevocationUpdate.text = getString(
+                    R.string.last_updated,
+                    it.toLocalDateTime().formatWith(LAST_UPDATE_DATE_TIME_FORMAT)
+                )
+            }
         }
     }
 
