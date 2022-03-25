@@ -96,11 +96,12 @@ android {
 dependencies {
     implementation project(":branches:base")
     implementation project(":branches:dcc")
+    implementation project(':branches:dcc:revocation')
     implementation project(":branches:icao")
     implementation project(":branches:divoc")
+    implementation project(":branches:vc")
     implementation project(":decoder")
     implementation project(":engine")
-    implementation project(':branches:dcc:revocation')
 
     implementation Deps.kotlin_stdlib
     implementation Deps.androidx_core

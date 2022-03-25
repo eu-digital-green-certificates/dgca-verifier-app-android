@@ -23,13 +23,13 @@
 package dgca.verifier.app.android.vc.di
 
 import android.content.Context
+import com.android.app.vc.BuildConfig
 import com.fasterxml.jackson.databind.ObjectMapper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import dgca.verifier.app.android.vc.BuildConfig
 import dgca.verifier.app.android.vc.data.remote.VcApiService
 import dgca.verifier.app.android.vc.network.HeaderInterceptor
 import okhttp3.*
@@ -39,6 +39,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Provider
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 private const val CONNECT_TIMEOUT = 30L
@@ -51,6 +52,7 @@ object VcNetworkModule {
 
     @Singleton
     @Provides
+    @VerifiableCredentials
     internal fun provideCache(@ApplicationContext context: Context): Cache {
         val cacheSize = (10 * 1024 * 1024).toLong() // 10 MB
         return Cache(context.cacheDir, cacheSize)
@@ -58,10 +60,12 @@ object VcNetworkModule {
 
     @Singleton
     @Provides
+    @VerifiableCredentials
     internal fun provideHeaderInterceptor(): Interceptor = HeaderInterceptor()
 
     @Singleton
     @Provides
+    @VerifiableCredentials
     internal fun provideOkhttpClient(cache: Cache, interceptor: Interceptor): OkHttpClient {
         val httpClient = getHttpClient(cache).apply {
             addInterceptor(HeaderInterceptor())
@@ -73,6 +77,7 @@ object VcNetworkModule {
 
     @Singleton
     @Provides
+    @VerifiableCredentials
     internal fun provideRetrofit(converterFactory: Converter.Factory, okHttpClient: Provider<OkHttpClient>): Retrofit =
         createRetrofit(converterFactory, okHttpClient)
 
@@ -96,10 +101,12 @@ object VcNetworkModule {
 
     @Singleton
     @Provides
+    @VerifiableCredentials
     internal fun provideObjectMapper(): ObjectMapper = ObjectMapper().apply { findAndRegisterModules() }
 
     @Singleton
     @Provides
+    @VerifiableCredentials
     internal fun provideConverterFactory(objectMapper: ObjectMapper): Converter.Factory =
         JacksonConverterFactory.create(objectMapper)
 
@@ -118,3 +125,7 @@ internal inline fun Retrofit.Builder.callFactory(
 ) = callFactory(object : Call.Factory {
     override fun newCall(request: Request): Call = body(request)
 })
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class VerifiableCredentials

@@ -24,11 +24,16 @@ package dgca.verifier.app.android.vc.ui
 
 import android.os.Bundle
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.android.app.base.RESULT_KEY
-import dgca.verifier.app.android.vc.R
+import com.android.app.vc.R
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class VcActivity : AppCompatActivity() {
+
+    private val viewModel by viewModels<VcViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +41,8 @@ class VcActivity : AppCompatActivity() {
 
         intent.getStringExtra(RESULT_KEY)?.let {
             findViewById<TextView>(R.id.textView).text = it
+
+            viewModel.validate(it)
         }
     }
 }

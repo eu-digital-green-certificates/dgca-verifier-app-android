@@ -23,7 +23,7 @@
 package dgca.verifier.app.android.vc.network
 
 import android.os.Build
-import dgca.verifier.app.android.vc.BuildConfig
+import com.android.app.vc.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response

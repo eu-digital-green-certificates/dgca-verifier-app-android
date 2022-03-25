@@ -17,22 +17,30 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 23/03/2022, 22:35
+ *  Created by mykhailo.nester on 25/03/2022, 23:02
  */
 
 package dgca.verifier.app.android.vc.ui
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.android.app.vc.R
-import dagger.hilt.android.AndroidEntryPoint
+import androidx.lifecycle.ViewModel
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dgca.verifier.app.android.vc.data.JwtEncoded
+import dgca.verifier.app.android.vc.data.JwtTokenParser
+import timber.log.Timber
+import javax.inject.Inject
 
-@AndroidEntryPoint
-class VcSettingsActivity : AppCompatActivity() {
+@HiltViewModel
+class VcViewModel @Inject constructor(
+    private val objectMapper: ObjectMapper,
+    private val jwtTokenParser: JwtTokenParser
+) : ViewModel() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    fun validate(jwt: String) {
+        val encoded: JwtEncoded = jwtTokenParser.parse(jwt).let { objectMapper.readValue(it.body) }
+        val issuer = encoded.iss
 
-        setContentView(R.layout.activity_vc_settings)
+        Timber.d("test")
     }
 }

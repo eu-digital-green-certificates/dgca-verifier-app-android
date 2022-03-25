@@ -23,13 +23,14 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="dgca.verifier.app.android.vc">
+    package="com.android.app.vc">
 
     <application>
         <activity
-            android:name=".ui.VcActivity"
+            android:name="dgca.verifier.app.android.vc.ui.VcActivity"
             android:exported="false"
-            android:label="VcActivity">
+            android:label="VcActivity"
+            android:launchMode="singleInstance">
 
             <intent-filter>
                 <action android:name="com.android.app.vc.View" />
@@ -41,7 +42,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.VcSettingsActivity"
+            android:name="dgca.verifier.app.android.vc.ui.VcSettingsActivity"
             android:exported="false"
             android:label="VcSettingsActivity">
             <intent-filter>

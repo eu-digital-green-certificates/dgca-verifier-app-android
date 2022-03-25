@@ -23,10 +23,17 @@
 package dgca.verifier.app.android.vc.data.remote.model
 
 data class SignerCertificate(
-    val kid: String
+    val kid: String,
+    val timestamp: String,
+    val country: String,
+    val certificateType: String,
+    val thumbprint: String,
+    val signature: String,
+    val rawData: String
 )
-// TODO: update
-//{Document Signer Certificate
+
+//Document Signer Certificate
+//{
 //    "kid": "qroU+hDDovs=",
 //    "timestamp": "2022-02-21T09:54:42.802Z",
 //    "country": "DE",

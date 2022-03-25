@@ -17,22 +17,11 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 23/03/2022, 22:35
+ *  Created by mykhailo.nester on 25/03/2022, 23:16
  */
 
-package dgca.verifier.app.android.vc.ui
+package dgca.verifier.app.android.vc
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.android.app.vc.R
-import dagger.hilt.android.AndroidEntryPoint
+import android.util.Base64
 
-@AndroidEntryPoint
-class VcSettingsActivity : AppCompatActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setContentView(R.layout.activity_vc_settings)
-    }
-}
+fun String.fromBase64(): ByteArray = Base64.decode(this, Base64.NO_WRAP)

@@ -17,22 +17,14 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 23/03/2022, 22:35
+ *  Created by mykhailo.nester on 25/03/2022, 23:16
  */
 
-package dgca.verifier.app.android.vc.ui
+package dgca.verifier.app.android.vc.data
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.android.app.vc.R
-import dagger.hilt.android.AndroidEntryPoint
+class JwtObject(val header: String, val body: String)
 
-@AndroidEntryPoint
-class VcSettingsActivity : AppCompatActivity() {
+interface JwtTokenParser {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setContentView(R.layout.activity_vc_settings)
-    }
+    fun parse(jwtToken: String): JwtObject
 }

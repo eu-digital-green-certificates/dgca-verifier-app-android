@@ -53,7 +53,7 @@ class VcProcessor @Inject constructor(
             return null
         }
 
-        return Intent("com.android.app.dcc.View", Uri.parse("verifier://vc")).apply {
+        return Intent("com.android.app.vc.View", Uri.parse("verifier://vc")).apply {
             putExtra(RESULT_KEY, input)
         }
     }
