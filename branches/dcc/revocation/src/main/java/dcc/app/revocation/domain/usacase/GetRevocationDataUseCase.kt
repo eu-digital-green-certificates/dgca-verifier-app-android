@@ -41,10 +41,11 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import java.io.InputStream
 import java.lang.reflect.Type
+import java.time.Instant
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import java.util.zip.GZIPInputStream
 import javax.inject.Inject
-
 
 class GetRevocationDataUseCase @Inject constructor(
     private val repository: RevocationRepository,
@@ -66,7 +67,7 @@ class GetRevocationDataUseCase @Inject constructor(
         }
 
         // Delete expired data
-        repository.deleteExpiredData(System.currentTimeMillis())
+        repository.deleteExpiredData(ChronoUnit.MICROS.between(Instant.EPOCH, ZonedDateTime.now().toInstant()))
     }
 
     private suspend fun checkKidMetadata(revocationKidData: RevocationKidData) {
