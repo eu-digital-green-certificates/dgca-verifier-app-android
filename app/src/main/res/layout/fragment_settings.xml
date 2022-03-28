@@ -112,7 +112,7 @@
         android:letterSpacing="0"
         android:minHeight="48dp"
         android:paddingHorizontal="@dimen/default_padding"
-        android:text="@string/reload"
+        android:text="@string/reload_pub_keys"
         android:textAllCaps="false"
         app:layout_constraintTop_toBottomOf="@+id/trustedPublicKeys" />
 
@@ -129,6 +129,35 @@
         tools:layout_editor_absoluteX="16dp"
         tools:text="Last Updated: 2021-05-27 09:44" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/syncRevocation"
+        style="@style/TextAppearance.Dgca.SettingsButtonHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/ic_synchronize_solid"
+        android:gravity="start|center"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:letterSpacing="0"
+        android:minHeight="48dp"
+        android:paddingHorizontal="@dimen/default_padding"
+        android:text="@string/reload_revocation"
+        android:textAllCaps="false"
+        app:layout_constraintTop_toBottomOf="@+id/lastUpdate" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/lastRevocationUpdate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_margin"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@color/grey_50"
+        android:textSize="@dimen/text_size_medium"
+        app:layout_constraintTop_toBottomOf="@+id/syncRevocation"
+        tools:layout_editor_absoluteX="16dp"
+        tools:text="Last Updated: 2021-05-27 09:44" />
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/materialTextView"
         android:layout_width="match_parent"
@@ -138,7 +167,7 @@
         android:text="@string/settings_version_title"
         android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@+id/lastUpdate"
+        app:layout_constraintTop_toBottomOf="@+id/lastRevocationUpdate"
         tools:layout_editor_absoluteX="0dp" />
 
     <com.google.android.material.textview.MaterialTextView
