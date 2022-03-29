@@ -33,7 +33,7 @@ import okhttp3.ResponseBody
 interface RevocationRepository {
 
     @Throws(Exception::class)
-    suspend fun getRevocationLists(): List<RevocationKidData>
+    suspend fun getRevocationLists(): List<RevocationKidData>?
 
     @Throws(Exception::class)
     suspend fun getRevocationPartitions(sliceType: SliceType, kid: String): List<RevocationPartitionResponse>?

@@ -59,7 +59,7 @@ class GetRevocationDataUseCase @Inject constructor(
 
     override suspend fun invoke(params: Any) {
         // Load list of KIDs
-        val newKidItems = repository.getRevocationLists()
+        val newKidItems = repository.getRevocationLists() ?: return
 
         // Remove all entities not matching KIDs from list
         repository.deleteOutdatedKidItems(newKidItems.map { it.kid })
