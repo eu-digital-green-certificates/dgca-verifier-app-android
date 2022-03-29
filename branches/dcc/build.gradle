@@ -63,9 +63,9 @@ android {
 
 dependencies {
     implementation project(":branches:base")
+    implementation project(':branches:dcc:revocation')
     implementation project(':decoder')
     implementation project(':engine')
-    implementation project(':branches:dcc:revocation')
 
     implementation Deps.kotlin_stdlib
     implementation Deps.androidx_core

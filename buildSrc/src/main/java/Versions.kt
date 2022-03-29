@@ -39,14 +39,14 @@ object Versions {
     const val androidx_fragment_ktx = "1.3.6"
     const val kotlinx_coroutines = "1.5.2"
     const val kotlinx_coroutines_core = "1.5.1"
-    private const val work_hilt = "1.0.0-beta01"
+    private const val work_hilt = "1.0.0"
     const val androidx_hilt_viewmodel = "1.0.0-alpha02"
     const val androidx_hilt_work = work_hilt
     const val androidx_hilt_compiler = work_hilt
     const val androidx_room = "2.3.0"
     const val androidx_lifecycle_livedata_ktx = "2.4.0-alpha02"
     const val room_ktx = "2.4.0-alpha03"
-    const val androidx_worker_ktx = "2.5.0"
+    const val androidx_worker_ktx = "2.7.1"
     const val google_licenses_version = "0.10.4"
     const val retrofit = "2.9.0"
     const val logging_interceptor = "4.9.1"

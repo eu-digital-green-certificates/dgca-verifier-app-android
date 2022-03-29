@@ -22,7 +22,7 @@
 
 package dcc.app.revocation.domain.model
 
-data class DccRevokationDataHolder(
+data class DccRevocationDataHolder(
     val kid: String,
     val uvciSha256: String?,
     val coUvciSha256: String?,

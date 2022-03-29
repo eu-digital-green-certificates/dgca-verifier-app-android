@@ -33,6 +33,7 @@ import dcc.app.revocation.domain.RevocationRepository
 import dcc.app.revocation.domain.model.*
 import okhttp3.ResponseBody
 import retrofit2.HttpException
+import java.net.HttpURLConnection
 import javax.inject.Inject
 
 @Suppress("BlockingMethodInNonBlockingContext")
@@ -43,16 +44,20 @@ class RevocationRepositoryImpl @Inject constructor(
 ) : RevocationRepository {
 
     @Throws(Exception::class)
-    override suspend fun getRevocationLists(): List<RevocationKidData> {
+    override suspend fun getRevocationLists(): List<RevocationKidData>? {
         val eTag = revocationPreferences.eTag ?: ""
         val response = revocationService.getRevocationLists(eTag)
 
         if (response.containsServerError()) {
             throw HttpException(response)
         }
-        revocationPreferences.eTag = response.headers()["eTag"]?.replace("\"", "")
 
-        return response.body()?.map { it.toRevocationKidData() } ?: emptyList()
+        return if (response.code() == HttpURLConnection.HTTP_OK) {
+            revocationPreferences.eTag = response.headers()["eTag"]?.replace("\"", "")
+            response.body()?.map { it.toRevocationKidData() } ?: emptyList()
+        } else {
+            null
+        }
     }
 
     @Throws(Exception::class)
