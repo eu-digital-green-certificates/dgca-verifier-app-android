@@ -55,11 +55,13 @@ class GetRevocationDataUseCase @Inject constructor(
     errorHandler: ErrorHandler,
 ) : BaseUseCase<Unit, Any>(dispatcher, errorHandler) {
 
-    private val sliceType = SliceType.VARHASHLIST
+    private val sliceType = SliceType.BLOOMFILTER
 
     override suspend fun invoke(params: Any) {
+        revocationPreferences.lastRevocationSyncTimeMillis = System.currentTimeMillis()
+
         // Load list of KIDs
-        val newKidItems = repository.getRevocationLists()
+        val newKidItems = repository.getRevocationLists() ?: return
 
         // Remove all entities not matching KIDs from list
         repository.deleteOutdatedKidItems(newKidItems.map { it.kid })
@@ -70,8 +72,6 @@ class GetRevocationDataUseCase @Inject constructor(
 
         // Delete expired data
         repository.deleteExpiredData(ChronoUnit.MICROS.between(Instant.EPOCH, ZonedDateTime.now().toInstant()))
-
-        revocationPreferences.lastRevocationSyncTimeMillis = System.currentTimeMillis()
     }
 
     private suspend fun checkKidMetadata(revocationKidData: RevocationKidData) {

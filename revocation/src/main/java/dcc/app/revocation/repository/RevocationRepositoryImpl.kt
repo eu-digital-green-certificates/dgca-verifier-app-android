@@ -47,7 +47,7 @@ class RevocationRepositoryImpl @Inject constructor(
 ) : RevocationRepository {
 
     @Throws(Exception::class)
-    override suspend fun getRevocationLists(): List<RevocationKidData> {
+    override suspend fun getRevocationLists(): List<RevocationKidData>? {
         val eTag = revocationPreferences.eTag ?: ""
         val response = revocationService.getRevocationLists(eTag)
 
@@ -59,7 +59,7 @@ class RevocationRepositoryImpl @Inject constructor(
             revocationPreferences.eTag = response.headers()["eTag"]?.replace("\"", "")
             response.body()?.map { it.toRevocationKidData() } ?: emptyList()
         } else {
-            emptyList()
+            null
         }
     }
 
