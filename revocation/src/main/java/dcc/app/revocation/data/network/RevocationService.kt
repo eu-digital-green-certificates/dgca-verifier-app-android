@@ -39,6 +39,7 @@ interface RevocationService {
     @GET("/lists/{kid}/partitions")
     suspend fun getRevocationListPartitions(
         @Header("if-Match") eTag: String,
+        @Header("if-modified-since") modifiedSince: String?,
         @Header("X-SLICE-FILTER-TYPE") type: SliceType,
         @Path("kid") kid: String
     ): Response<List<RevocationPartitionResponse>>
@@ -55,6 +56,7 @@ interface RevocationService {
     @GET("/lists/{kid}/partitions/{id}/chunks/{cid}/slices")
     suspend fun getRevocationChunk(
         @Header("If-Match") eTag: String,
+        @Header("if-modified-since") modifiedSince: String,
         @Header("X-SLICE-FILTER-TYPE") type: SliceType,
         @Path("kid") kid: String,
         @Path("id") id: String,
@@ -64,6 +66,7 @@ interface RevocationService {
     @POST("/lists/{kid}/partitions/{id}/chunks/{cid}/slices")
     suspend fun getRevocationChunkSlices(
         @Header("if-Match") eTag: String,
+        @Header("if-modified-since") modifiedSince: String,
         @Header("X-SLICE-FILTER-TYPE") type: SliceType,
         @Path("kid") kid: String,
         @Path("id") partitionId: String,
@@ -74,6 +77,7 @@ interface RevocationService {
     @GET("/lists/{kid}/partitions/{id}/chunks/{cid}/slices/{sid}")
     suspend fun getRevocationChunkSlice(
         @Header("If-Match") eTag: String,
+        @Header("if-modified-since") modifiedSince: String,
         @Header("X-SLICE-FILTER-TYPE") type: SliceType,
         @Path("kid") kid: String,
         @Path("id") id: String,

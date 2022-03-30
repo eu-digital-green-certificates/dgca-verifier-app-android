@@ -26,6 +26,8 @@ import android.util.Base64
 import com.upokecenter.cbor.CBORObject
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.util.*
 
 const val ECDSA_256 = -7
@@ -84,3 +86,5 @@ fun String.hexToByteArray(): ByteArray = chunked(2)
 
 fun String.toBase64Url(): String =
     Base64.encodeToString(Base64.decode(this, Base64.DEFAULT), Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP)
+
+fun ZonedDateTime.toUtcString(): String = this.withZoneSameInstant(ZoneOffset.UTC).toString()
