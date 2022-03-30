@@ -28,8 +28,8 @@ object Config {
     const val targetSdk = 30
     val javaVersion = JavaVersion.VERSION_1_8
 
-    const val versionCode = 39
-    const val versionName = "1.2.4"
+    const val versionCode = 45
+    const val versionName = "1.3.0"
 
     const val androidTestInstrumentation = "androidx.test.runner.AndroidJUnitRunner"
     const val proguardConsumerRules = "consumer-rules.pro"
