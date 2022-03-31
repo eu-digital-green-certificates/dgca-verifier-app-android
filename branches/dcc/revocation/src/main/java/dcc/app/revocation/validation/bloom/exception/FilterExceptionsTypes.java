@@ -24,7 +24,7 @@ public enum FilterExceptionsTypes {
 
     public static Optional<FilterExceptionsTypes> get(String type) {
         return Arrays.stream(FilterExceptionsTypes.values())
-                .filter(obj -> obj.type.equals(type))
-                .findFirst();
+            .filter(obj -> obj.type.equals(type))
+            .findFirst();
     }
 }

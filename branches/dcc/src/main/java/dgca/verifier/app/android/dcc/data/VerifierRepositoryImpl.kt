@@ -24,6 +24,7 @@ package dgca.verifier.app.android.dcc.data
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import dcc.app.revocation.data.RevocationPreferences
 import dgca.verifier.app.android.dcc.data.local.AppDatabase
 import dgca.verifier.app.android.dcc.data.local.Preferences
 import dgca.verifier.app.android.dcc.data.local.model.Key
@@ -42,6 +43,7 @@ import javax.inject.Inject
 class VerifierRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val preferences: Preferences,
+    private val revocationPreferences: RevocationPreferences,
     private val db: AppDatabase,
     private val keyStoreCryptor: KeyStoreCryptor
 ) : BaseRepository(), VerifierRepository {
@@ -75,6 +77,8 @@ class VerifierRepositoryImpl @Inject constructor(
         }
 
     override fun getLastSyncTimeMillis(): LiveData<Long> = lastSyncLiveData
+
+    override fun getLastRevocationSyncTimeMillis(): Long = revocationPreferences.lastRevocationSyncTimeMillis
 
     private suspend fun fetchCertificate(url: String, resumeToken: Long) {
         val tokenFormatted = if (resumeToken == -1L) "" else resumeToken.toString()

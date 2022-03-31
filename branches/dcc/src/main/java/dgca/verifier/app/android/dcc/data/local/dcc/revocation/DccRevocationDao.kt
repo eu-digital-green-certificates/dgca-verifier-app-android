@@ -46,12 +46,13 @@ interface DccRevocationDao {
         y: Char?
     ): DccRevocationPartitionLocal?
 
-    @Query("SELECT * FROM dcc_revocation_slice WHERE kid is :kid AND x is :x AND y is :y AND cid is :cid")
+    @Query("SELECT * FROM dcc_revocation_slice WHERE kid is :kid AND x is :x AND y is :y AND cid is :cid AND expires > :currentTime")
     suspend fun getChunkSlices(
         kid: String,
         x: Char?,
         y: Char?,
-        cid: String
+        cid: String,
+        currentTime: Long
     ): List<DccRevocationSliceLocal>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

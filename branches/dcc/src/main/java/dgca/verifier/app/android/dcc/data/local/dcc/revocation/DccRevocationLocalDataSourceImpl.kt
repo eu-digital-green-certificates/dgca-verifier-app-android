@@ -52,9 +52,10 @@ class DccRevocationLocalDataSourceImpl(private val dccRevocationDao: DccRevocati
         kid: String,
         x: Char?,
         y: Char?,
-        cid: String
+        cid: String,
+        currentTime: Long
     ): List<DccRevocationSlice> =
-        dccRevocationDao.getChunkSlices(kid, x, y, cid).map { it.fromLocal() }
+        dccRevocationDao.getChunkSlices(kid, x, y, cid, currentTime).map { it.fromLocal() }
 
     override fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata) {
         dccRevocationDao.upsert(dccRevocationKidMetadata.toLocal())

@@ -28,7 +28,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dcc.app.revocation.domain.getDccSignatureSha256
-import dcc.app.revocation.domain.model.DccRevokationDataHolder
+import dcc.app.revocation.domain.model.DccRevocationDataHolder
 import dcc.app.revocation.domain.toSha256HexString
 import dcc.app.revocation.domain.usacase.IsDccRevokedUseCase
 import dgca.verifier.app.android.dcc.data.VerifierRepository
@@ -252,7 +252,7 @@ class VerificationViewModel @Inject constructor(
 
         val isVaccinationRevoked = greenCertificate.vaccinations?.firstOrNull()?.let {
             isDccRevokedUseCase.execute(
-                DccRevokationDataHolder(
+                DccRevocationDataHolder(
                     kid,
                     it.certificateIdentifier.toByteArray().toSha256HexString(),
                     (it.countryOfVaccination + it.certificateIdentifier).toByteArray().toSha256HexString(),
@@ -263,7 +263,7 @@ class VerificationViewModel @Inject constructor(
 
         val isTestRevoked = greenCertificate.tests?.firstOrNull()?.let {
             isDccRevokedUseCase.execute(
-                DccRevokationDataHolder(
+                DccRevocationDataHolder(
                     kid,
                     it.certificateIdentifier.toByteArray().toSha256HexString(),
                     (it.countryOfVaccination + it.certificateIdentifier).toByteArray().toSha256HexString(),
@@ -274,7 +274,7 @@ class VerificationViewModel @Inject constructor(
 
         val isRecoveryRevoked = greenCertificate.recoveryStatements?.firstOrNull()?.let {
             isDccRevokedUseCase.execute(
-                DccRevokationDataHolder(
+                DccRevocationDataHolder(
                     kid,
                     it.certificateIdentifier.toByteArray().toSha256HexString(),
                     (it.countryOfVaccination + it.certificateIdentifier).toByteArray().toSha256HexString(),

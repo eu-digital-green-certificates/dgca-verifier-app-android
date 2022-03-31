@@ -28,22 +28,25 @@ import dcc.app.revocation.domain.RevocationRepository
 import dcc.app.revocation.domain.hexToByteArray
 import dcc.app.revocation.domain.model.DccRevocationHashType
 import dcc.app.revocation.domain.model.DccRevocationMode
-import dcc.app.revocation.domain.model.DccRevokationDataHolder
+import dcc.app.revocation.domain.model.DccRevocationDataHolder
 import dcc.app.revocation.validation.bloom.BloomFilterImpl
 import dcc.app.revocation.validation.hash.PartialVariableHashFilter
 import kotlinx.coroutines.CoroutineDispatcher
 import timber.log.Timber
 import java.io.ByteArrayInputStream
 import java.io.InputStream
+import java.time.Instant
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 class IsDccRevokedUseCase @Inject constructor(
     private val repository: RevocationRepository,
     dispatcher: CoroutineDispatcher,
     errorHandler: ErrorHandler,
-) : BaseUseCase<Boolean, DccRevokationDataHolder>(dispatcher, errorHandler) {
+) : BaseUseCase<Boolean, DccRevocationDataHolder>(dispatcher, errorHandler) {
 
-    override suspend fun invoke(params: DccRevokationDataHolder): Boolean {
+    override suspend fun invoke(params: DccRevocationDataHolder): Boolean {
         Timber.d("Revocation check start")
         val kid = params.kid
         val kidMetadata = repository.getMetadataByKid(kid)
@@ -120,7 +123,8 @@ class IsDccRevokedUseCase @Inject constructor(
         val bloomFilterList = mutableSetOf<ByteArray>()
         val hashList = mutableSetOf<ByteArray>()
 
-        val result = repository.getChunkSlices(kid, x, y, cid)
+        val currentTime = ChronoUnit.MICROS.between(Instant.EPOCH, ZonedDateTime.now().toInstant())
+        val result = repository.getChunkSlices(kid, x, y, cid, currentTime)
         result.forEach {
             Timber.d("Slice found: $it")
             when (it.type) {
