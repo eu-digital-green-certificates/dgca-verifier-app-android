@@ -23,13 +23,25 @@
 package dgca.verifier.app.android.vc.data
 
 import dgca.verifier.app.android.vc.fromBase64
+import dgca.verifier.app.android.vc.fromBase64Url
+import dgca.verifier.app.android.vc.inflate
+import timber.log.Timber
 
-class DefaultJwtTokenParser : JwtTokenParser {
+class DefaultJwsTokenParser : JwsTokenParser {
 
-    override fun parse(jwtToken: String): JwtObject {
-        val tokens = jwtToken.split('.')
-        val header = String(tokens[0].fromBase64())
-        val body = String(tokens[1].fromBase64())
-        return JwtObject(header, body)
+    override fun parse(jwsToken: String): JwsObject? {
+        val token = jwsToken.removePrefix("shc:/") // TODO: clarify numeric decoding
+
+        return try {
+            val tokens = jwsToken.split('.')
+            val header = String(tokens[0].fromBase64())
+            val body = inflate(tokens[1].fromBase64Url()).toString(Charsets.UTF_8)
+            val signature = String(tokens[2].fromBase64())
+            JwsObject(header, body, signature)
+
+        } catch (ex: Exception) {
+            Timber.e(ex, "Invalid JWS structure")
+            null
+        }
     }
 }

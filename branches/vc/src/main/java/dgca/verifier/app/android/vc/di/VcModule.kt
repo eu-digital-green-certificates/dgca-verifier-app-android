@@ -32,8 +32,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import dgca.verifier.app.android.vc.VcProcessor
-import dgca.verifier.app.android.vc.data.DefaultJwtTokenParser
-import dgca.verifier.app.android.vc.data.JwtTokenParser
+import dgca.verifier.app.android.vc.data.DefaultJwsTokenParser
+import dgca.verifier.app.android.vc.data.JwsTokenParser
 import dgca.verifier.app.android.vc.data.TrustListRepository
 import dgca.verifier.app.android.vc.data.TrustListRepositoryImpl
 import javax.inject.Singleton
@@ -53,5 +53,5 @@ class VcModule {
 
     @Singleton
     @Provides
-    fun provideJwtTokenParser(): JwtTokenParser = DefaultJwtTokenParser()
+    fun provideJwsTokenParser(): JwsTokenParser = DefaultJwsTokenParser()
 }

@@ -22,9 +22,13 @@
 
 package dgca.verifier.app.android.vc.data
 
-class JwtObject(val header: String, val body: String)
+data class JwsObject(
+    val header: String,
+    val payload: String,
+    val signature: String
+)
 
-interface JwtTokenParser {
+interface JwsTokenParser {
 
-    fun parse(jwtToken: String): JwtObject
+    fun parse(jwsToken: String): JwsObject?
 }

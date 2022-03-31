@@ -24,42 +24,13 @@ package dgca.verifier.app.android.vc.data
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-data class JwtEncoded(
-    @JsonProperty("sub")
-    val sub: String,
-    @JsonProperty("jti")
-    val jti: String,
-    @JsonProperty("iss")
-    val iss: String,
-    @JsonProperty("nbf")
-    val nbf: Long,
-    @JsonProperty("iat")
-    val iat: Long,
-    @JsonProperty("exp")
-    val exp: Long,
-    @JsonProperty("nonce")
-    val nonce: String,
-    @JsonProperty("vc")
-    val certificateData: Credentials?
+data class JwtHeader(
+    @JsonProperty("kid")
+    val kid: String,
+    @JsonProperty("alg")
+    val alg: String,
+    @JsonProperty("zip")
+    val zip: String
 )
 
-data class Credentials(
-    @JsonProperty("@context")
-    val context: List<String>,
-    @JsonProperty("type")
-    val type: List<String>,
-    @JsonProperty("credentialSubject")
-    val credentialSubject: CredentialSubject
-)
-
-data class CredentialSubject(
-    @JsonProperty("degree")
-    val degree: Degree
-)
-
-data class Degree(
-    @JsonProperty("type")
-    val type: String,
-    @JsonProperty("name")
-    val name: String
-)
+//{"zip":"DEF","alg":"ES256","kid":"3Kfdg-XwP-7gXyywtUfUADwBumDOPKMQx-iELL11W9s"}
