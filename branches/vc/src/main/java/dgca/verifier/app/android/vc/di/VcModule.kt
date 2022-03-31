@@ -25,6 +25,7 @@ package dgca.verifier.app.android.vc.di
 import android.content.Context
 import com.android.app.base.Processor
 import com.android.app.base.ProcessorMarker
+import com.fasterxml.jackson.databind.ObjectMapper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -53,5 +54,5 @@ class VcModule {
 
     @Singleton
     @Provides
-    fun provideJwsTokenParser(): JwsTokenParser = DefaultJwsTokenParser()
+    fun provideJwsTokenParser(objectMapper: ObjectMapper): JwsTokenParser = DefaultJwsTokenParser(objectMapper)
 }

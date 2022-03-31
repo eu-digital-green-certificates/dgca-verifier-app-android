@@ -22,8 +22,8 @@
 
 package dgca.verifier.app.android.vc.data.remote
 
+import dgca.verifier.app.android.vc.data.remote.model.JwksKeysResponse
 import dgca.verifier.app.android.vc.data.remote.model.SignerCertificate
-import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Url
@@ -34,5 +34,5 @@ interface VcApiService {
     suspend fun fetchTrustList(): List<SignerCertificate>
 
     @GET
-    suspend fun resolveIssuer(@Url url: String): Response<ResponseBody>
+    suspend fun resolveIssuer(@Url url: String): Response<JwksKeysResponse>
 }

@@ -22,22 +22,34 @@
 
 package dgca.verifier.app.android.vc.data
 
-import dgca.verifier.app.android.vc.fromBase64
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import dgca.verifier.app.android.vc.fromBase64Url
 import dgca.verifier.app.android.vc.inflate
 import timber.log.Timber
+import javax.inject.Inject
 
-class DefaultJwsTokenParser : JwsTokenParser {
+class DefaultJwsTokenParser @Inject constructor(
+    private val objectMapper: ObjectMapper
+) : JwsTokenParser {
 
     override fun parse(jwsToken: String): JwsObject? {
         val token = jwsToken.removePrefix("shc:/") // TODO: clarify numeric decoding
 
         return try {
             val tokens = jwsToken.split('.')
-            val header = String(tokens[0].fromBase64())
-            val body = inflate(tokens[1].fromBase64Url()).toString(Charsets.UTF_8)
-            val signature = String(tokens[2].fromBase64())
-            JwsObject(header, body, signature)
+            val header: JwtHeader = objectMapper.readValue(String(tokens[0].fromBase64Url()))
+
+            val payload = tokens[1].fromBase64Url()
+            val jwtPayload = if (header.zip == "DEF") {
+                Timber.d("jwt payload zip DEF compressed")
+                objectMapper.readValue(inflate(payload).toString(Charsets.UTF_8), JwtPayload::class.java)
+            } else {
+                objectMapper.readValue(payload.toString(Charsets.UTF_8), JwtPayload::class.java)
+            }
+
+            val signature = String(tokens[2].fromBase64Url())
+            JwsObject(header, jwtPayload, signature)
 
         } catch (ex: Exception) {
             Timber.e(ex, "Invalid JWS structure")

@@ -22,14 +22,11 @@
 
 package dgca.verifier.app.android.vc.ui
 
+import android.webkit.URLUtil
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dgca.verifier.app.android.vc.data.JwsTokenParser
-import dgca.verifier.app.android.vc.data.JwtHeader
-import dgca.verifier.app.android.vc.data.JwtPayload
 import dgca.verifier.app.android.vc.data.remote.VcApiService
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -37,7 +34,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class VcViewModel @Inject constructor(
-    private val objectMapper: ObjectMapper,
     private val jwsTokenParser: JwsTokenParser,
     private val vcApiService: VcApiService
 ) : ViewModel() {
@@ -45,18 +41,25 @@ class VcViewModel @Inject constructor(
     fun validate(jwt: String) {
         viewModelScope.launch {
             val jwsObject = jwsTokenParser.parse(jwt) ?: return@launch
+            val issuer = jwsObject.payload.iss
+            val publicKey = if (URLUtil.isValidUrl(issuer)) {
+                resolveIssuer("$issuer/.well-known/jwks.json")
+            } else {
+                resolveDid(issuer)
+            }
 
-            val header: JwtHeader = objectMapper.readValue(jwsObject.header)
-            Timber.d("header: $header")
-            val jwtPayload: JwtPayload = objectMapper.readValue(jwsObject.payload)
-            Timber.d("payload: $jwtPayload")
-
-            val issuer = "" //encoded.iss
-            resolveIssuer(issuer)
         }
     }
 
-    private suspend fun resolveIssuer(issuer: String) {
-        val result = vcApiService.resolveIssuer(issuer)
+    private suspend fun resolveIssuer(url: String): String {
+        val response = vcApiService.resolveIssuer(url)
+        Timber.d("pubKey: $response")
+
+        return ""
+    }
+
+    private suspend fun resolveDid(issuer: String): String {
+//        TODO: handle DID document
+        return ""
     }
 }

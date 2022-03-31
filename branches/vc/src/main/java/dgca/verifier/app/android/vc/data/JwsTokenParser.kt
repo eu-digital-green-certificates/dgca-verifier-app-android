@@ -23,8 +23,8 @@
 package dgca.verifier.app.android.vc.data
 
 data class JwsObject(
-    val header: String,
-    val payload: String,
+    val header: JwtHeader,
+    val payload: JwtPayload,
     val signature: String
 )
 

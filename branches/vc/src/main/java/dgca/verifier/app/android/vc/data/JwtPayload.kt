@@ -22,9 +22,11 @@
 
 package dgca.verifier.app.android.vc.data
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class JwtPayload {
     @JsonProperty("iss")
     val iss: String = ""
