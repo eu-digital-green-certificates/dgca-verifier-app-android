@@ -35,6 +35,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import timber.log.Timber
 import java.io.ByteArrayInputStream
 import java.io.InputStream
+import java.time.Instant
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 class IsDccRevokedUseCase @Inject constructor(
@@ -120,7 +123,8 @@ class IsDccRevokedUseCase @Inject constructor(
         val bloomFilterList = mutableSetOf<ByteArray>()
         val hashList = mutableSetOf<ByteArray>()
 
-        val result = repository.getChunkSlices(kid, x, y, cid)
+        val currentTime = ChronoUnit.MICROS.between(Instant.EPOCH, ZonedDateTime.now().toInstant())
+        val result = repository.getChunkSlices(kid, x, y, cid, currentTime)
         result.forEach {
             Timber.d("Slice found: $it")
             when (it.type) {

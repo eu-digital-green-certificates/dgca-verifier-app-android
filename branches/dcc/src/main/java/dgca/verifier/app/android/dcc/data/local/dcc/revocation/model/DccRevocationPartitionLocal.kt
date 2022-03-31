@@ -48,5 +48,6 @@ data class DccRevocationPartitionLocal(
     val x: Char?,
     val y: Char?,
     val expires: ZonedDateTime,
+    val lastUpdated: ZonedDateTime,
     val chunks: String
 )

@@ -58,6 +58,7 @@ fun DccRevocationPartitionLocal.fromLocal(): DccRevocationPartition {
         x = x,
         y = y,
         expires = expires,
+        lastUpdated = lastUpdated,
         chunks = chunks
     )
 }
@@ -69,6 +70,7 @@ fun DccRevocationPartition.toLocal(): DccRevocationPartitionLocal {
         x = x,
         y = y,
         expires = expires,
+        lastUpdated = lastUpdated,
         chunks = chunks
     )
 }

@@ -25,6 +25,7 @@ package dgca.verifier.app.android.dcc.settings
 import androidx.lifecycle.*
 import com.android.app.dcc.BuildConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dcc.app.revocation.domain.usacase.GetRevocationDataUseCase
 import dgca.verifier.app.android.dcc.data.ConfigRepository
 import dgca.verifier.app.android.dcc.data.VerifierRepository
 import dgca.verifier.app.android.dcc.data.local.Preferences
@@ -43,13 +44,15 @@ class DccSettingsViewModel @Inject constructor(
     private val configRepository: ConfigRepository,
     private val verifierRepository: VerifierRepository,
     private val countriesRepository: CountriesRepository,
-    private val preferences: Preferences
+    private val preferences: Preferences,
+    private val getRevocationDataUseCase: GetRevocationDataUseCase
 ) : ViewModel(), LifecycleObserver {
 
     private val _inProgress = MutableLiveData<Boolean>()
     val inProgress: LiveData<Boolean> = _inProgress
 
     val lastSyncLiveData: LiveData<Long> = verifierRepository.getLastSyncTimeMillis()
+    val lastRevocationSyncTime = MutableLiveData(verifierRepository.getLastRevocationSyncTimeMillis())
 
     private val _lastCountriesSyncLiveData = MutableLiveData<Long>(-1)
     val lastCountriesSyncLiveData: LiveData<Long> = _lastCountriesSyncLiveData
@@ -132,5 +135,15 @@ class DccSettingsViewModel @Inject constructor(
     fun saveCountrySelected(selectCountryData: DccSelectCountryData) {
         _selectCountryData.value = selectCountryData
         preferences.selectedCountryIsoCode = selectCountryData.selectedCountryIsoCode
+    }
+
+    fun syncRevocation() {
+        _inProgress.value = true
+        getRevocationDataUseCase.execute(
+            viewModelScope,
+            onFailure = { Timber.d("error refreshing revocation: $it") },
+            onSuccess = { lastRevocationSyncTime.value = verifierRepository.getLastRevocationSyncTimeMillis() },
+            onComplete = { _inProgress.value = false }
+        )
     }
 }

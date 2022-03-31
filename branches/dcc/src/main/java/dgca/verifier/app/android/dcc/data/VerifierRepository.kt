@@ -32,4 +32,6 @@ interface VerifierRepository {
     suspend fun getCertificatesBy(kid: String): List<Certificate>
 
     fun getLastSyncTimeMillis(): LiveData<Long>
+
+    fun getLastRevocationSyncTimeMillis(): Long
 }

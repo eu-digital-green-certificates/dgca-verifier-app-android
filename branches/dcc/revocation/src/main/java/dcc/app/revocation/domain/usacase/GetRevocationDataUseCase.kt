@@ -24,6 +24,7 @@ package dcc.app.revocation.domain.usacase
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import dcc.app.revocation.data.RevocationPreferences
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
 import dcc.app.revocation.data.network.model.Slice
 import dcc.app.revocation.data.network.model.SliceType
@@ -34,6 +35,7 @@ import dcc.app.revocation.domain.model.DccRevocationPartition
 import dcc.app.revocation.domain.model.DccRevocationSlice
 import dcc.app.revocation.domain.model.RevocationKidData
 import dcc.app.revocation.domain.toBase64Url
+import dcc.app.revocation.domain.toUtcString
 import dcc.app.revocation.isEqualTo
 import kotlinx.coroutines.CoroutineDispatcher
 import okhttp3.ResponseBody
@@ -47,9 +49,9 @@ import java.time.temporal.ChronoUnit
 import java.util.zip.GZIPInputStream
 import javax.inject.Inject
 
-
 class GetRevocationDataUseCase @Inject constructor(
     private val repository: RevocationRepository,
+    private val revocationPreferences: RevocationPreferences,
     dispatcher: CoroutineDispatcher,
     errorHandler: ErrorHandler,
 ) : BaseUseCase<Unit, Any>(dispatcher, errorHandler) {
@@ -57,6 +59,8 @@ class GetRevocationDataUseCase @Inject constructor(
     private val sliceType = SliceType.BLOOMFILTER
 
     override suspend fun invoke(params: Any) {
+        revocationPreferences.lastRevocationSyncTimeMillis = System.currentTimeMillis()
+
         // Load list of KIDs
         val newKidItems = repository.getRevocationLists() ?: return
 
@@ -92,8 +96,9 @@ class GetRevocationDataUseCase @Inject constructor(
 
         // Check the last modified date for each kid. If the last date per kid != received date,
         // call for the kid /{kid}/partitions to receive the metadata objects. If last date ==  received date, do nothing.
-        if (metadataLocal.lastUpdated != revocationKidData.lastUpdated) {
-            getPartitions(kid)
+        val lastUpdated = metadataLocal.lastUpdated.toUtcString()
+        if (lastUpdated != revocationKidData.lastUpdated.toUtcString()) {
+            getPartitions(kid, lastUpdated)
         }
     }
 
@@ -109,9 +114,13 @@ class GetRevocationDataUseCase @Inject constructor(
         )
     }
 
-    private suspend fun getPartitions(kid: String) {
+    private suspend fun getPartitions(kid: String, lastUpdated: String? = null) {
         val kidUrlSafe = kid.toBase64Url()
-        repository.getRevocationPartitions(sliceType, kidUrlSafe)?.forEach { partition ->
+        repository.getRevocationPartitions(
+            sliceType = sliceType,
+            kid = kidUrlSafe,
+            lastUpdated = lastUpdated
+        )?.forEach { partition ->
             handlePartition(kid, partition)
         }
     }
@@ -120,7 +129,8 @@ class GetRevocationDataUseCase @Inject constructor(
         val localPartition = repository.getLocalRevocationPartition(remotePartition.id, kid)
         if (localPartition != null) {
             // Optimization - section/chunk validation what changed
-            compareChunksWithLocal(kid, localPartition, remotePartition)
+            val lastUpdated = localPartition.lastUpdated.toUtcString()
+            compareChunksWithLocal(kid, localPartition, remotePartition, lastUpdated)
         } else {
             // Initial sync. load all chunks for partition
             val result =
@@ -128,7 +138,8 @@ class GetRevocationDataUseCase @Inject constructor(
                     sliceType = sliceType,
                     kid = kid.toBase64Url(),
                     partitionId = remotePartition.id,
-                    cidList = remotePartition.chunks.map { it.key })
+                    cidList = remotePartition.chunks.map { it.key }
+                )
             handlePartitionSlices(kid, remotePartition, result)
         }
 
@@ -144,7 +155,8 @@ class GetRevocationDataUseCase @Inject constructor(
     private suspend fun compareChunksWithLocal(
         kid: String,
         localPartition: DccRevocationPartition,
-        remotePartition: RevocationPartitionResponse
+        remotePartition: RevocationPartitionResponse,
+        lastUpdated: String
     ) {
         val type: Type = object : TypeToken<Map<String, Map<String, Slice>>>() {}.type
         val localChunks =
@@ -155,6 +167,7 @@ class GetRevocationDataUseCase @Inject constructor(
             if (localSlices == null) {
                 // When chunk not found load from api
                 val response = repository.getRevocationChunk(
+                    lastUpdated = lastUpdated,
                     sliceType = sliceType,
                     kid = kid.toBase64Url(),
                     id = remotePartition.id,
@@ -177,6 +190,7 @@ class GetRevocationDataUseCase @Inject constructor(
                 if (slices.size < remoteChunkValue.size / 2) {
                     // Load updated or missing slices by sid list.
                     val response = repository.getRevocationChunkSlices(
+                        lastUpdated = lastUpdated,
                         sliceType = sliceType,
                         kid = kid.toBase64Url(),
                         partitionId = remotePartition.id,
@@ -186,6 +200,7 @@ class GetRevocationDataUseCase @Inject constructor(
                     handlePartitionSlices(kid, remotePartition, response)
                 } else {
                     val response = repository.getRevocationChunk(
+                        lastUpdated = lastUpdated,
                         sliceType = sliceType,
                         kid = kid.toBase64Url(),
                         id = remotePartition.id,
@@ -205,6 +220,7 @@ class GetRevocationDataUseCase @Inject constructor(
                 x = partition.x,
                 y = partition.y,
                 expires = partition.expires,
+                lastUpdated = partition.lastUpdated,
                 chunks = Gson().toJson(partition.chunks)
             )
         )

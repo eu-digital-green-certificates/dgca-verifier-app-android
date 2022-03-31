@@ -33,6 +33,8 @@ interface RevocationPreferences {
 
     var eTag: String?
 
+    var lastRevocationSyncTimeMillis: Long
+
     fun clear()
 }
 
@@ -50,6 +52,12 @@ class RevocationPreferencesImpl(context: Context) : RevocationPreferences {
         KEY_ETAG
     )
 
+    override var lastRevocationSyncTimeMillis by LongPreference(
+        preferences,
+        KEY_REVOCATION_SYNC_TIME_MILLIS,
+        -1
+    )
+
     override fun clear() {
         preferences.value.edit().clear().apply()
     }
@@ -57,6 +65,7 @@ class RevocationPreferencesImpl(context: Context) : RevocationPreferences {
     companion object {
         private const val USER_PREF = "dcc.revocation.app.pref"
         private const val KEY_ETAG = "dcc.revocation.app.pref.eTag"
+        private const val KEY_REVOCATION_SYNC_TIME_MILLIS = "dcc.revocation.app.pref.last_revocation_sync_time_millis"
     }
 }
 
@@ -73,5 +82,21 @@ class StringPreference(
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: String?) {
         preferences.value.edit { putString(name, value) }
+    }
+}
+
+class LongPreference(
+    private val preferences: Lazy<SharedPreferences>,
+    private val name: String,
+    private val defaultValue: Long
+) : ReadWriteProperty<Any, Long> {
+
+    @WorkerThread
+    override fun getValue(thisRef: Any, property: KProperty<*>): Long {
+        return preferences.value.getLong(name, defaultValue)
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: Long) {
+        preferences.value.edit { putLong(name, value) }
     }
 }

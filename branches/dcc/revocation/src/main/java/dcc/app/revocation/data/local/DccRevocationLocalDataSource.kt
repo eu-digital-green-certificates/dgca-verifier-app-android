@@ -38,7 +38,8 @@ interface DccRevocationLocalDataSource {
         kid: String,
         x: Char?,
         y: Char?,
-        cid: String
+        cid: String,
+        currentTime: Long
     ): List<DccRevocationSlice>
 
     fun addOrUpdate(dccRevocationKidMetadata: DccRevocationKidMetadata)
