@@ -38,6 +38,9 @@ data class RevocationPartitionResponse(
     @JsonProperty("y")
     val y: Char?,
 
+    @JsonProperty("lastUpdated")
+    val lastUpdated: ZonedDateTime,
+
     @JsonProperty("expired")
     val expires: ZonedDateTime,
 
