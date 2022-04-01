@@ -64,6 +64,9 @@ android {
 
 dependencies {
     implementation project(":branches:base")
+//    TODO: remove
+//    implementation 'com.github.PhilJay:JWT:1.2.6'
+    implementation "com.nimbusds:nimbus-jose-jwt:9.21"
 
     implementation Deps.kotlin_stdlib
     implementation Deps.androidx_core

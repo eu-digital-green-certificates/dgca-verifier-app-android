@@ -17,22 +17,28 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 25/03/2022, 23:22
+ *  Created by mykhailo.nester on 01/04/2022, 18:37
  */
 
-package dgca.verifier.app.android.vc.data
+package dgca.verifier.app.android.vc.ui
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonProperty
+/**
+ * Used as a wrapper for data that is exposed via a LiveData that represents an event.
+ */
+open class Event<out T>(private val content: T) {
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class JwtHeader(
-    @JsonProperty("kid")
-    val kid: String,
-    @JsonProperty("alg")
-    val alg: String,
-    @JsonProperty("zip")
-    val zip: String?
-)
+    var hasBeenHandled = false
+        private set // Allow external read but not write
 
-//{"zip":"DEF","alg":"ES256","kid":"3Kfdg-XwP-7gXyywtUfUADwBumDOPKMQx-iELL11W9s"}
+    /**
+     * Returns the content and prevents its use again.
+     */
+    fun getContentIfNotHandled(): T? {
+        return if (hasBeenHandled) {
+            null
+        } else {
+            hasBeenHandled = true
+            content
+        }
+    }
+}

@@ -26,10 +26,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class JwksKeysResponse(
     @JsonProperty("keys")
-    val keys: List<JwkSet>,
+    val keys: List<Jwk>,
 )
 
-data class JwkSet(
+data class Jwk(
     @JsonProperty("kty")
     val kty: String,
     @JsonProperty("kid")

@@ -22,11 +22,12 @@
 
 package dgca.verifier.app.android.vc
 
-import android.util.Base64
+import java.util.*
 import java.util.zip.DataFormatException
 import java.util.zip.Inflater
 
-fun String.fromBase64Url(): ByteArray = Base64.decode(this, Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP)
+
+fun String.fromBase64Url(): ByteArray = Base64.getUrlDecoder().decode(this)
 
 @Throws(DataFormatException::class)
 fun inflate(inputBytes: ByteArray): ByteArray {
