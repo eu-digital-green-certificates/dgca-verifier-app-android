@@ -36,16 +36,32 @@ interface RevocationRepository {
     suspend fun getRevocationLists(): List<RevocationKidData>?
 
     @Throws(Exception::class)
-    suspend fun getRevocationPartitions(sliceType: SliceType, kid: String): List<RevocationPartitionResponse>?
+    suspend fun getRevocationPartitions(
+        lastUpdated: String?,
+        sliceType: SliceType,
+        kid: String,
+    ): List<RevocationPartitionResponse>?
 
     @Throws(Exception::class)
-    suspend fun getPartitionChunks(sliceType: SliceType, kid: String, partitionId: String?, cidList: List<String>): ResponseBody?
+    suspend fun getPartitionChunks(
+        sliceType: SliceType,
+        kid: String,
+        partitionId: String?,
+        cidList: List<String>
+    ): ResponseBody?
 
     @Throws(Exception::class)
-    suspend fun getRevocationChunk(sliceType: SliceType, kid: String, id: String?, chunkId: String): ResponseBody?
+    suspend fun getRevocationChunk(
+        lastUpdated: String,
+        sliceType: SliceType,
+        kid: String,
+        id: String?,
+        chunkId: String
+    ): ResponseBody?
 
     @Throws(Exception::class)
     suspend fun getRevocationChunkSlices(
+        lastUpdated: String,
         sliceType: SliceType,
         kid: String,
         partitionId: String?,
@@ -54,7 +70,14 @@ interface RevocationRepository {
     ): ResponseBody?
 
     @Throws(Exception::class)
-    suspend fun getSlice(sliceType: SliceType, kid: String, partitionId: String?, cid: String, sid: String): ResponseBody?
+    suspend fun getSlice(
+        lastUpdated: String,
+        sliceType: SliceType,
+        kid: String,
+        partitionId: String?,
+        cid: String,
+        sid: String
+    ): ResponseBody?
 
     suspend fun getMetadataByKid(kid: String): DccRevocationKidMetadata?
 
