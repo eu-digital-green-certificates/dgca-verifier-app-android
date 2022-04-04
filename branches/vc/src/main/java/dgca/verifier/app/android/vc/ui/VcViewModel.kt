@@ -28,35 +28,51 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.nimbusds.jose.JWSObject
+import com.nimbusds.jose.Payload
+import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory
 import com.nimbusds.jose.jwk.ECKey
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dgca.verifier.app.android.vc.data.JwsTokenParser
 import dgca.verifier.app.android.vc.data.remote.VcApiService
 import dgca.verifier.app.android.vc.data.remote.model.Jwk
-import dgca.verifier.app.android.vc.fromBase64Url
+import dgca.verifier.app.android.vc.inflate
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.IOException
-import java.security.Signature
+import java.text.ParseException
 import javax.inject.Inject
+
+const val ISSUER = "iss"
+const val DEFLATE = "DEF"
 
 @HiltViewModel
 class VcViewModel @Inject constructor(
-    private val jwsTokenParser: JwsTokenParser,
     private val vcApiService: VcApiService
 ) : ViewModel() {
 
     private val _event = MutableLiveData<Event<ViewEvent>>()
     val event: LiveData<Event<ViewEvent>> = _event
 
-    fun validate(jwt: String) {
+    fun validate(jws: String) {
         viewModelScope.launch {
-            val jwsObject = jwsTokenParser.parse(jwt) ?: return@launch
-            val header = jwsObject.header
-            val payload = jwsObject.payload
-            val signature = jwsObject.signature
-            val issuer = payload.iss
-            val kid = header.kid
+            val jwsObject = decodeJws(jws)
+
+            if (jwsObject == null) {
+                _event.value = Event(ViewEvent.OnError(ErrorType.JWS_STRUCTURE_NOT_VALID))
+                return@launch
+            }
+
+            val zip = jwsObject.header.customParams["zip"]
+            var payloadObject = mapOf<String, Any>()
+            if (zip == DEFLATE) {
+                val payloadUnzip = inflate(jwsObject.payload.toBytes())
+                payloadObject = Payload(payloadUnzip).toJSONObject()
+            } else {
+                jwsObject.payload.toJSONObject()
+            }
+
+            val issuer = payloadObject[ISSUER] as String
+            val kid = jwsObject.header.keyID
 
             if (kid.isEmpty()) {
                 _event.value = Event(ViewEvent.OnError(ErrorType.KID_NOT_INCLUDED))
@@ -68,29 +84,40 @@ class VcViewModel @Inject constructor(
                 return@launch
             }
 
+//            TODO: check time
+
             val publicKeys = if (URLUtil.isValidUrl(issuer)) {
                 resolveIssuer(kid, "$issuer/.well-known/jwks.json")
             } else {
                 resolveDid(kid, issuer)
             }
 
-            val isSignatureValid = false
+            var isSignatureValid = false
             publicKeys.forEach {
-                verifyJws(it, jwt)
+                if (verifyJws(it, jwsObject)) {
+                    isSignatureValid = true
+                }
             }
 
         }
     }
 
-    private suspend fun resolveIssuer(kid: String, url: String): List<Jwk> {
-        return try {
+    private fun decodeJws(jws: String): JWSObject? =
+        try {
+            JWSObject.parse(jws)
+        } catch (ex: ParseException) {
+            Timber.e(ex, "JWS parsing exception")
+            null
+        }
+
+    private suspend fun resolveIssuer(kid: String, url: String): List<Jwk> =
+        try {
             vcApiService.resolveIssuer(url).body()?.keys?.filter { it.kid == kid } ?: emptyList()
 
         } catch (ex: IOException) {
             Timber.e(ex, "Failed to fetch jwk")
             emptyList()
         }
-    }
 
     private suspend fun resolveDid(kid: String, issuer: String): List<Jwk> {
 //        TODO: handle DID document
@@ -98,66 +125,26 @@ class VcViewModel @Inject constructor(
         return emptyList()
     }
 
-    private fun verifyJws(jwk: Jwk, tokenString: String) {
-        val valid = verify(tokenString, jwk)
-        Timber.d("isValid: $valid")
-    }
+    private fun verifyJws(jwk: Jwk, jws: JWSObject): Boolean =
+        try {
+            val publicKey = ECKey.parse(ObjectMapper().writeValueAsString(jwk)).toECPublicKey()
+            val verifier = DefaultJWSVerifierFactory().createJWSVerifier(jws.header, publicKey)
 
-    fun verify(jwt: String, jwk: Jwk): Boolean {
-        val publicKey = ECKey.parse(ObjectMapper().writeValueAsString(jwk)).toECPublicKey()
+            val isVerified = jws.verify(verifier)
+            Timber.d("JWS signature isValid: $isVerified")
+            isVerified
 
-        val splitJwt: List<String> = jwt.split('.')
-        val headerStr = splitJwt[0]
-        val payloadStr = splitJwt[1]
-        val signatureStr = splitJwt[2]
-
-        val signature = Signature.getInstance("SHA256withECDSA")
-        signature.initVerify(publicKey)
-        signature.update(headerStr.toByteArray() + '.'.code.toByte() + payloadStr.toByteArray())
-        val result = signature.verify(signatureStr.fromBase64Url())
-        return result
-
-//        val rsa = try {
-//            val kf = KeyFactory.getInstance("RSA")
-//
-//            val modulus = BigInteger(1, jwk.x.fromBase64Url())
-//            val exponent = BigInteger(1, jwk.y.fromBase64Url())
-//            kf.generatePublic(RSAPublicKeySpec(modulus, exponent))
-//        } catch (e: InvalidKeySpecException) {
-//            e.printStackTrace()
-//            null
-//        } catch (e: NoSuchAlgorithmException) {
-//            e.printStackTrace()
-//            null
-//        }
-//
-//        return if (rsa == null) {
-//            false
-//        } else {
-//            val parts = jwt.split('.')
-//
-//            if (parts.size == 3) {
-//                val header = parts[0].fromBase64Url()
-//                val payload = parts[1].fromBase64Url()
-//                val tokenSignature = parts[2].fromBase64Url()
-//
-//                val rsaSignature = Signature.getInstance("SHA256withRSA")
-//                rsaSignature.initVerify(rsa)
-//                rsaSignature.update(header)
-//                rsaSignature.update('.'.code.toByte())
-//                rsaSignature.update(payload)
-//                rsaSignature.verify(tokenSignature)
-//            } else {
-//                false
-//            }
-//        }
-    }
+        } catch (ex: Exception) {
+            Timber.e(ex, "JWS signing verification exception")
+            false
+        }
 
     sealed class ViewEvent {
         data class OnError(val type: ErrorType) : ViewEvent()
     }
 
     enum class ErrorType {
+        JWS_STRUCTURE_NOT_VALID,
         KID_NOT_INCLUDED,
         ISSUER_NOT_INCLUDED,
         VERIFIED,

@@ -71,6 +71,7 @@ object Versions {
     const val jackson_datetype = "jackson-datatype-jsr310"
     const val appache_commons = "2.9.0"
     const val appache_compress = "1.21"
+    const val jose_jwt = "9.21"
 
     // Validation
     const val json_validation = "2.2.14"

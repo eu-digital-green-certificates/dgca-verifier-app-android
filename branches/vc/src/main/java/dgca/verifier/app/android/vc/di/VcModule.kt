@@ -25,7 +25,6 @@ package dgca.verifier.app.android.vc.di
 import android.content.Context
 import com.android.app.base.Processor
 import com.android.app.base.ProcessorMarker
-import com.fasterxml.jackson.databind.ObjectMapper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,8 +32,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import dgca.verifier.app.android.vc.VcProcessor
-import dgca.verifier.app.android.vc.data.DefaultJwsTokenParser
-import dgca.verifier.app.android.vc.data.JwsTokenParser
 import dgca.verifier.app.android.vc.data.TrustListRepository
 import dgca.verifier.app.android.vc.data.TrustListRepositoryImpl
 import javax.inject.Singleton
@@ -51,8 +48,4 @@ class VcModule {
     @Singleton
     @Provides
     fun provideTrustListRepository(): TrustListRepository = TrustListRepositoryImpl()
-
-    @Singleton
-    @Provides
-    fun provideJwsTokenParser(objectMapper: ObjectMapper): JwsTokenParser = DefaultJwsTokenParser(objectMapper)
 }

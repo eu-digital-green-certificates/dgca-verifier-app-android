@@ -24,7 +24,8 @@ object Deps {
 
     const val tools_gradle_android = "com.android.tools.build:gradle:${Versions.gradle}"
     const val tools_kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
-    const val androidx_navigation_safe_args_plugin = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.androidx_navigation}"
+    const val androidx_navigation_safe_args_plugin =
+        "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.androidx_navigation}"
 
     const val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}"
     const val androidx_core = "androidx.core:core-ktx:${Versions.androidx_core}"
@@ -38,7 +39,8 @@ object Deps {
     const val androidx_navigation_ui = "androidx.navigation:navigation-ui-ktx:${Versions.androidx_navigation}"
     const val androidx_fragment_ktx = "androidx.fragment:fragment-ktx:${Versions.androidx_fragment_ktx}"
     const val androidx_hilt_compiler = "androidx.hilt:hilt-compiler:${Versions.androidx_hilt_compiler}"
-    const val androidx_lifecycle_livedata_ktx = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.androidx_lifecycle_livedata_ktx}"
+    const val androidx_lifecycle_livedata_ktx =
+        "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.androidx_lifecycle_livedata_ktx}"
     const val room_runtime = "androidx.room:room-runtime:${Versions.androidx_room}"
     const val room_compiler = "androidx.room:room-compiler:${Versions.androidx_room}"
     const val room_ktx = "androidx.room:room-ktx:${Versions.room_ktx}"
@@ -48,7 +50,8 @@ object Deps {
     const val gson_converter = "com.squareup.retrofit2:converter-jackson:${Versions.gson_converter}"
     const val gson = "com.google.code.gson:gson:${Versions.gson}"
 
-    const val android_tools_desugar_jdk_libs = "com.android.tools:desugar_jdk_libs:${Versions.android_tools_desugar_jdk_libs_version}"
+    const val android_tools_desugar_jdk_libs =
+        "com.android.tools:desugar_jdk_libs:${Versions.android_tools_desugar_jdk_libs_version}"
 
     const val hilt_plugin = "com.google.dagger:hilt-android-gradle-plugin:${Versions.hilt_version}"
     const val hilt = "com.google.dagger:hilt-android:${Versions.hilt_version}"
@@ -71,6 +74,7 @@ object Deps {
     const val jackson_datetype = "com.fasterxml.jackson.datatype:${Versions.jackson_datetype}"
     const val appache_commons = "commons-io:commons-io:${Versions.appache_commons}"
     const val appache_compress = "org.apache.commons:commons-compress:${Versions.appache_compress}"
+    const val jose_jwt = "com.nimbusds:nimbus-jose-jwt:${Versions.jose_jwt}"
 
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
 

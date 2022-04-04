@@ -20,8 +20,6 @@ allprojects {
         google()
         //noinspection JcenterRepositoryObsolete
         jcenter()
-        //    TODO: remove
-        maven { url 'https://jitpack.io' }
     }
 }
 
