@@ -44,6 +44,7 @@ import javax.inject.Inject
 
 const val ISSUER = "iss"
 const val DEFLATE = "DEF"
+const val DID = "did:web"
 
 @HiltViewModel
 class VcViewModel @Inject constructor(
@@ -71,7 +72,7 @@ class VcViewModel @Inject constructor(
                 jwsObject.payload.toJSONObject()
             }
 
-            val issuer = payloadObject[ISSUER] as String
+            val issuer = "did:web:example.com" //payloadObject[ISSUER] as String
             val kid = jwsObject.header.keyID
 
             if (kid.isEmpty()) {
@@ -86,10 +87,13 @@ class VcViewModel @Inject constructor(
 
 //            TODO: check time
 
-            val publicKeys = if (URLUtil.isValidUrl(issuer)) {
-                resolveIssuer(kid, "$issuer/.well-known/jwks.json")
-            } else {
-                resolveDid(kid, issuer)
+            val publicKeys = when {
+                URLUtil.isValidUrl(issuer) -> resolveIssuer(kid, "$issuer/.well-known/jwks.json")
+                issuer.contains(DID) -> resolveDid(kid, issuer)
+                else -> {
+                    _event.value = Event(ViewEvent.OnError(ErrorType.ISSUER_NOT_RECOGNIZED))
+                    return@launch
+                }
             }
 
             var isSignatureValid = false
@@ -115,14 +119,26 @@ class VcViewModel @Inject constructor(
             vcApiService.resolveIssuer(url).body()?.keys?.filter { it.kid == kid } ?: emptyList()
 
         } catch (ex: IOException) {
-            Timber.e(ex, "Failed to fetch jwk")
+            Timber.e(ex, "Failed to fetch jwk by http url issuer")
             emptyList()
         }
 
     private suspend fun resolveDid(kid: String, issuer: String): List<Jwk> {
-//        TODO: handle DID document
+        val didUrl = issuer.drop(DID.length).replace(":", "/")
+        val fullUrl = if (didUrl.contains("/")) {
+            "https://${didUrl}/did.json"
+        } else {
+            "https://${didUrl}/.well-known/did.json"
+        }
+        return try {
+            vcApiService.resolveIssuerByDid(fullUrl).body()?.verificationMethod
+                ?.filter { it.publicKeyJwk.kid == kid }
+                ?.map { it.publicKeyJwk } ?: emptyList()
 
-        return emptyList()
+        } catch (ex: IOException) {
+            Timber.e(ex, "Failed to fetch jwk by did issuer")
+            emptyList()
+        }
     }
 
     private fun verifyJws(jwk: Jwk, jws: JWSObject): Boolean =
@@ -146,6 +162,7 @@ class VcViewModel @Inject constructor(
     enum class ErrorType {
         JWS_STRUCTURE_NOT_VALID,
         KID_NOT_INCLUDED,
+        ISSUER_NOT_RECOGNIZED,
         ISSUER_NOT_INCLUDED,
         VERIFIED,
         INVALID_SIGNATURE

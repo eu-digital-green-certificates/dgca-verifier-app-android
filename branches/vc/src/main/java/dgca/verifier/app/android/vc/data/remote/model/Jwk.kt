@@ -17,26 +17,30 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 23/03/2022, 21:37
+ *  Created by mykhailo.nester on 05/04/2022, 11:18
  */
 
-package dgca.verifier.app.android.vc.data.remote
+package dgca.verifier.app.android.vc.data.remote.model
 
-import dgca.verifier.app.android.vc.data.remote.model.DidDocumentResponse
-import dgca.verifier.app.android.vc.data.remote.model.JwksKeysResponse
-import dgca.verifier.app.android.vc.data.remote.model.SignerCertificate
-import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Url
+import com.fasterxml.jackson.annotation.JsonProperty
 
-interface VcApiService {
-
-    @GET("/trustList")
-    suspend fun fetchTrustList(): List<SignerCertificate>
-
-    @GET
-    suspend fun resolveIssuer(@Url url: String): Response<JwksKeysResponse>
-
-    @GET
-    suspend fun resolveIssuerByDid(@Url url: String): Response<DidDocumentResponse>
-}
+data class Jwk(
+    @JsonProperty("kty")
+    val kty: String,
+    @JsonProperty("kid")
+    val kid: String,
+    @JsonProperty("use")
+    val use: String,
+    @JsonProperty("alg")
+    val alg: String,
+    @JsonProperty("x5c")
+    val x5c: List<String>?,
+    @JsonProperty("crv")
+    val crv: String,
+    @JsonProperty("x")
+    val x: String,
+    @JsonProperty("y")
+    val y: String,
+    @JsonProperty("crlVersion")
+    val crlVersion: Long
+)

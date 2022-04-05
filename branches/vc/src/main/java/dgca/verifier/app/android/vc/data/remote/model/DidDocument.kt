@@ -17,26 +17,19 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 23/03/2022, 21:37
+ *  Created by mykhailo.nester on 05/04/2022, 11:16
  */
 
-package dgca.verifier.app.android.vc.data.remote
+package dgca.verifier.app.android.vc.data.remote.model
 
-import dgca.verifier.app.android.vc.data.remote.model.DidDocumentResponse
-import dgca.verifier.app.android.vc.data.remote.model.JwksKeysResponse
-import dgca.verifier.app.android.vc.data.remote.model.SignerCertificate
-import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Url
+data class DidDocumentResponse(
+    val id: String,
+    val verificationMethod: List<VerificationMethod>
+)
 
-interface VcApiService {
-
-    @GET("/trustList")
-    suspend fun fetchTrustList(): List<SignerCertificate>
-
-    @GET
-    suspend fun resolveIssuer(@Url url: String): Response<JwksKeysResponse>
-
-    @GET
-    suspend fun resolveIssuerByDid(@Url url: String): Response<DidDocumentResponse>
-}
+data class VerificationMethod(
+    val id: String,
+    val type: String,
+    val controller: String,
+    val publicKeyJwk: Jwk
+)
