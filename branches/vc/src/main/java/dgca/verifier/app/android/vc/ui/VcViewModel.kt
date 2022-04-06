@@ -121,8 +121,9 @@ class VcViewModel @Inject constructor(
             if (!isSignatureValid) {
                 _event.value = Event(ViewEvent.OnError(ErrorType.INVALID_SIGNATURE))
                 return@launch
+            } else {
+                _event.value = Event(ViewEvent.OnVerified(ErrorType.INVALID_SIGNATURE)) // TODO: replace with payload
             }
-
         }
     }
 

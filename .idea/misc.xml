@@ -25,8 +25,16 @@
         <entry key="app/src/main/res/layout/view_detailed_certificate_view.xml" value="0.30185185185185187" />
         <entry key="app/src/main/res/layout/view_detailed_verification_result.xml" value="0.44635416666666666" />
         <entry key="app/src/main/res/layout/view_detailed_verification_result_header.xml" value="0.30520833333333336" />
+        <entry key="branches/dcc/src/main/res/layout/activity_dcc_main.xml" value="0.6447916666666667" />
         <entry key="branches/dcc/src/main/res/layout/activity_dcc_settings_main.xml" value="0.6447916666666667" />
+        <entry key="branches/dcc/src/main/res/layout/fragment_dcc_intermediate.xml" value="1.5" />
         <entry key="branches/dcc/src/main/res/layout/fragment_dcc_settings.xml" value="0.6447916666666667" />
+        <entry key="branches/dcc/src/main/res/layout/fragment_verification.xml" value="0.6447916666666667" />
+        <entry key="branches/vc/src/main/res/layout/activity_vc_main.xml" value="0.6447916666666667" />
+        <entry key="branches/vc/src/main/res/layout/activity_vc_settings.xml" value="0.6447916666666667" />
+        <entry key="branches/vc/src/main/res/layout/fragment_result.xml" value="0.6447916666666667" />
+        <entry key="branches/vc/src/main/res/layout/fragment_vc_verification.xml" value="0.6447916666666667" />
+        <entry key="branches/vc/src/main/res/layout/fragment_verification.xml" value="0.6447916666666667" />
       </map>
     </option>
   </component>

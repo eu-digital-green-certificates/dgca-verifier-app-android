@@ -60,6 +60,10 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -69,7 +73,6 @@ dependencies {
     implementation Deps.androidx_core
     implementation Deps.androidx_appcompat
     implementation Deps.androidx_material
-
     implementation Deps.androidx_constraint
     implementation Deps.androidx_navigation_fragment
     implementation Deps.androidx_navigation_ui

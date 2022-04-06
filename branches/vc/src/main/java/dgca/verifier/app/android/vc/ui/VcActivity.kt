@@ -23,9 +23,11 @@
 package dgca.verifier.app.android.vc.ui
 
 import android.os.Bundle
-import android.widget.TextView
-import androidx.activity.viewModels
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.viewbinding.BuildConfig
 import com.android.app.base.RESULT_KEY
 import com.android.app.vc.R
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,17 +35,24 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class VcActivity : AppCompatActivity() {
 
-    private val viewModel by viewModels<VcViewModel>()
+    private lateinit var navHostFragment: NavHostFragment
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (!BuildConfig.DEBUG) {
+            window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+        }
+
         setContentView(R.layout.activity_vc_main)
 
-        intent.getStringExtra(RESULT_KEY)?.let {
-            findViewById<TextView>(R.id.textView).text = it
-
-            viewModel.validate(it)
-        }
+        navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
+        navController.setGraph(
+            R.navigation.vc_nav_graph,
+            VcVerificationFragmentArgs(intent.getStringExtra(RESULT_KEY) ?: "").toBundle()
+        )
     }
 }
 
