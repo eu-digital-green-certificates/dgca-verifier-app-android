@@ -41,10 +41,13 @@ import timber.log.Timber
 import java.io.IOException
 import java.text.ParseException
 import javax.inject.Inject
+import kotlin.math.roundToLong
 
 const val ISSUER = "iss"
+const val TIME_NOT_BEFORE = "nbf"
+const val TIME_EXPIRES = "exp"
 const val DEFLATE = "DEF"
-const val DID = "did:web"
+const val DID = "did:web:"
 
 @HiltViewModel
 class VcViewModel @Inject constructor(
@@ -72,7 +75,10 @@ class VcViewModel @Inject constructor(
                 jwsObject.payload.toJSONObject()
             }
 
-            val issuer = "did:web:example.com" //payloadObject[ISSUER] as String
+            val issuer = payloadObject[ISSUER] as String
+            val notBefore = (payloadObject[TIME_NOT_BEFORE] as Double).roundToLong()
+            val expires = (payloadObject[TIME_EXPIRES] as Double).roundToLong()
+
             val kid = jwsObject.header.keyID
 
             if (kid.isEmpty()) {
@@ -85,7 +91,16 @@ class VcViewModel @Inject constructor(
                 return@launch
             }
 
-//            TODO: check time
+            val now = System.currentTimeMillis() / 1000
+            if (now < notBefore) {
+                _event.value = Event(ViewEvent.OnError(ErrorType.TIME_BEFORE_NBF))
+                return@launch
+            }
+
+            if (now > expires) {
+                _event.value = Event(ViewEvent.OnError(ErrorType.VC_EXPIRED))
+                return@launch
+            }
 
             val publicKeys = when {
                 URLUtil.isValidUrl(issuer) -> resolveIssuer(kid, "$issuer/.well-known/jwks.json")
@@ -101,6 +116,11 @@ class VcViewModel @Inject constructor(
                 if (verifyJws(it, jwsObject)) {
                     isSignatureValid = true
                 }
+            }
+
+            if (!isSignatureValid) {
+                _event.value = Event(ViewEvent.OnError(ErrorType.INVALID_SIGNATURE))
+                return@launch
             }
 
         }
@@ -131,7 +151,8 @@ class VcViewModel @Inject constructor(
             "https://${didUrl}/.well-known/did.json"
         }
         return try {
-            vcApiService.resolveIssuerByDid(fullUrl).body()?.verificationMethod
+            val result = vcApiService.resolveIssuerByDid(fullUrl)
+            result.body()?.verificationMethod
                 ?.filter { it.publicKeyJwk.kid == kid }
                 ?.map { it.publicKeyJwk } ?: emptyList()
 
@@ -157,6 +178,7 @@ class VcViewModel @Inject constructor(
 
     sealed class ViewEvent {
         data class OnError(val type: ErrorType) : ViewEvent()
+        data class OnVerified(val type: ErrorType) : ViewEvent() // TODO: add payload
     }
 
     enum class ErrorType {
@@ -164,7 +186,8 @@ class VcViewModel @Inject constructor(
         KID_NOT_INCLUDED,
         ISSUER_NOT_RECOGNIZED,
         ISSUER_NOT_INCLUDED,
-        VERIFIED,
+        TIME_BEFORE_NBF,
+        VC_EXPIRED,
         INVALID_SIGNATURE
     }
 }

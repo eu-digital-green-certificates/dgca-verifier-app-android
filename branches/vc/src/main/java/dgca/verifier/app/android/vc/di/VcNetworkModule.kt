@@ -32,7 +32,10 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dgca.verifier.app.android.vc.data.remote.VcApiService
 import dgca.verifier.app.android.vc.network.HeaderInterceptor
-import okhttp3.*
+import okhttp3.Cache
+import okhttp3.Call
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -61,12 +64,7 @@ object VcNetworkModule {
     @Singleton
     @Provides
     @VerifiableCredentials
-    internal fun provideHeaderInterceptor(): Interceptor = HeaderInterceptor()
-
-    @Singleton
-    @Provides
-    @VerifiableCredentials
-    internal fun provideOkhttpClient(cache: Cache, interceptor: Interceptor): OkHttpClient {
+    internal fun provideOkhttpClient(@VerifiableCredentials cache: Cache): OkHttpClient {
         val httpClient = getHttpClient(cache).apply {
             addInterceptor(HeaderInterceptor())
         }
@@ -78,12 +76,16 @@ object VcNetworkModule {
     @Singleton
     @Provides
     @VerifiableCredentials
-    internal fun provideRetrofit(converterFactory: Converter.Factory, okHttpClient: Provider<OkHttpClient>): Retrofit =
+    internal fun provideRetrofit(
+        converterFactory: Converter.Factory,
+        @VerifiableCredentials okHttpClient: Provider<OkHttpClient>
+    ): Retrofit =
         createRetrofit(converterFactory, okHttpClient)
 
     @Singleton
     @Provides
-    internal fun provideApiService(retrofit: Retrofit): VcApiService = retrofit.create(VcApiService::class.java)
+    internal fun provideApiService(@VerifiableCredentials retrofit: Retrofit): VcApiService =
+        retrofit.create(VcApiService::class.java)
 
     private fun getHttpClient(cache: Cache): OkHttpClient.Builder =
         OkHttpClient.Builder()

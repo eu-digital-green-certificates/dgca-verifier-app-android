@@ -22,6 +22,9 @@
 
 package dgca.verifier.app.android.vc.data.remote.model
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class SignerCertificate(
     val kid: String,
     val timestamp: String,

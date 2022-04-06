@@ -22,14 +22,24 @@
 
 package dgca.verifier.app.android.vc.data.remote.model
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class DidDocumentResponse(
+    @JsonProperty("id")
     val id: String,
+    @JsonProperty("verificationMethod")
     val verificationMethod: List<VerificationMethod>
 )
 
 data class VerificationMethod(
+    @JsonProperty("id")
     val id: String,
+    @JsonProperty("type")
     val type: String,
+    @JsonProperty("controller")
     val controller: String,
+    @JsonProperty("publicKeyJwk")
     val publicKeyJwk: Jwk
 )

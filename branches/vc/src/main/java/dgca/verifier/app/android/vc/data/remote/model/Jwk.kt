@@ -22,11 +22,13 @@
 
 package dgca.verifier.app.android.vc.data.remote.model
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class Jwk(
     @JsonProperty("kty")
-    val kty: String,
+    val kty: String?,
     @JsonProperty("kid")
     val kid: String,
     @JsonProperty("use")
@@ -36,11 +38,11 @@ data class Jwk(
     @JsonProperty("x5c")
     val x5c: List<String>?,
     @JsonProperty("crv")
-    val crv: String,
+    val crv: String?,
     @JsonProperty("x")
-    val x: String,
+    val x: String?,
     @JsonProperty("y")
-    val y: String,
+    val y: String?,
     @JsonProperty("crlVersion")
-    val crlVersion: Long
+    val crlVersion: Long?
 )
