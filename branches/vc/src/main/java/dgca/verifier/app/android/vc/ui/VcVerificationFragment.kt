@@ -22,13 +22,17 @@
 
 package dgca.verifier.app.android.vc.ui
 
+import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.android.app.vc.R
 import com.android.app.vc.databinding.FragmentVcVerificationBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -51,15 +55,18 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
         }
 
         viewModel.validate(args.qrCodeText)
+
+        binding.close.setOnClickListener { requireActivity().finish() }
     }
 
     private fun onViewModelEvent(event: VcViewModel.ViewEvent) {
         when (event) {
             is VcViewModel.ViewEvent.OnError -> handleError(event.type)
-            is VcViewModel.ViewEvent.OnVerified -> showVerified()
+            is VcViewModel.ViewEvent.OnVerified -> showVerified(event.subjectName)
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun handleError(error: VcViewModel.ErrorType) {
         val errorText = when (error) {
             VcViewModel.ErrorType.JWS_STRUCTURE_NOT_VALID -> "JWS_STRUCTURE_NOT_VALID"
@@ -72,11 +79,21 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
         }
 
         binding.progressBar.isVisible = false
-        binding.status.text = errorText
+        binding.certStatusIcon.setImageResource(R.drawable.error)
+        binding.verificationStatusBackground.backgroundTintList =
+            ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.red))
+        binding.status.text = "${getString(R.string.cert_invalid)}\n$errorText"
+        binding.statusViews.isVisible = true
     }
 
-    private fun showVerified() {
+    @SuppressLint("SetTextI18n")
+    private fun showVerified(subjectName: VcViewModel.SubjectName) {
         binding.progressBar.isVisible = false
-        binding.status.text = "Valid"
+        binding.certStatusIcon.setImageResource(R.drawable.check)
+        binding.verificationStatusBackground.backgroundTintList =
+            ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
+        binding.personFullName.text = "${subjectName.family} ${subjectName.given.firstOrNull() ?: ""}"
+        binding.status.text = getString(R.string.cert_valid)
+        binding.statusViews.isVisible = true
     }
 }

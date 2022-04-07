@@ -27,8 +27,8 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.viewbinding.BuildConfig
 import com.android.app.base.RESULT_KEY
+import com.android.app.vc.BuildConfig
 import com.android.app.vc.R
 import dagger.hilt.android.AndroidEntryPoint
 

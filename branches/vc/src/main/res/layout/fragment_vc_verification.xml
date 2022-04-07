@@ -36,16 +36,72 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/black"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <View
+        android:id="@+id/verificationStatusBackground"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/green"
+        app:layout_constraintBottom_toBottomOf="@+id/status"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Valid" />
+        app:layout_constraintTop_toTopOf="@+id/personFullName" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/personFullName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="30dp"
+        android:textColor="@color/white"
+        android:textSize="26sp"
+        android:typeface="normal"
+        app:layout_constraintBottom_toTopOf="@id/status"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/certStatusIcon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/check"
+        app:layout_constraintBottom_toBottomOf="@id/status"
+        app:layout_constraintStart_toStartOf="@id/personFullName"
+        app:layout_constraintTop_toBottomOf="@id/personFullName"
+        app:layout_constraintTop_toTopOf="@id/status" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/status"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:paddingVertical="16dp"
+        android:textColor="@color/white"
+        android:textSize="42sp"
+        app:layout_constraintEnd_toEndOf="@id/personFullName"
+        app:layout_constraintStart_toEndOf="@id/certStatusIcon"
+        app:layout_constraintTop_toBottomOf="@id/personFullName"
+        tools:text="@string/cert_valid" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/status_views"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="personFullName, certStatusIcon, status"
+        tools:visibility="visible" />
+
+    <Button
+        android:id="@+id/close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:text="Close"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

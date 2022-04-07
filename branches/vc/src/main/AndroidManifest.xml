@@ -30,7 +30,8 @@
             android:name="dgca.verifier.app.android.vc.ui.VcActivity"
             android:exported="false"
             android:label="VcActivity"
-            android:launchMode="singleInstance">
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.Vc">
 
             <intent-filter>
                 <action android:name="com.android.app.vc.View" />

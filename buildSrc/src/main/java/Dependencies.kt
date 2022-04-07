@@ -75,6 +75,7 @@ object Deps {
     const val appache_commons = "commons-io:commons-io:${Versions.appache_commons}"
     const val appache_compress = "org.apache.commons:commons-compress:${Versions.appache_compress}"
     const val jose_jwt = "com.nimbusds:nimbus-jose-jwt:${Versions.jose_jwt}"
+    const val json_path = "com.jayway.jsonpath:json-path:${Versions.json_path}"
 
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
 

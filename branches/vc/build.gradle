@@ -98,6 +98,7 @@ dependencies {
     implementation Deps.google_licenses
     implementation Deps.timber
     implementation Deps.jose_jwt
+    implementation Deps.json_path
 
     testImplementation Deps.test_junit
     androidTestImplementation Deps.test_ext

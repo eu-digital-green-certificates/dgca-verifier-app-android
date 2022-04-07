@@ -28,6 +28,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.jayway.jsonpath.*
+import com.jayway.jsonpath.spi.json.GsonJsonProvider
+import com.jayway.jsonpath.spi.json.JsonProvider
+import com.jayway.jsonpath.spi.mapper.GsonMappingProvider
+import com.jayway.jsonpath.spi.mapper.MappingProvider
 import com.nimbusds.jose.JWSObject
 import com.nimbusds.jose.Payload
 import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory
@@ -40,8 +45,10 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.IOException
 import java.text.ParseException
+import java.util.*
 import javax.inject.Inject
 import kotlin.math.roundToLong
+
 
 const val ISSUER = "iss"
 const val TIME_NOT_BEFORE = "nbf"
@@ -57,6 +64,17 @@ class VcViewModel @Inject constructor(
     private val _event = MutableLiveData<Event<ViewEvent>>()
     val event: LiveData<Event<ViewEvent>> = _event
 
+    init {
+        Configuration.setDefaults(object : Configuration.Defaults {
+            private val jsonProvider: JsonProvider = GsonJsonProvider()
+            private val mappingProvider: MappingProvider = GsonMappingProvider()
+
+            override fun jsonProvider(): JsonProvider = jsonProvider
+            override fun mappingProvider(): MappingProvider = mappingProvider
+            override fun options(): Set<Option> = EnumSet.noneOf(Option::class.java)
+        })
+    }
+
     fun validate(jws: String) {
         viewModelScope.launch {
             val jwsObject = decodeJws(jws)
@@ -68,8 +86,10 @@ class VcViewModel @Inject constructor(
 
             val zip = jwsObject.header.customParams["zip"]
             var payloadObject = mapOf<String, Any>()
+            var payloadUnzipString = ""
             if (zip == DEFLATE) {
                 val payloadUnzip = inflate(jwsObject.payload.toBytes())
+                payloadUnzipString = payloadUnzip.toString(Charsets.UTF_8)
                 payloadObject = Payload(payloadUnzip).toJSONObject()
             } else {
                 jwsObject.payload.toJSONObject()
@@ -122,7 +142,11 @@ class VcViewModel @Inject constructor(
                 _event.value = Event(ViewEvent.OnError(ErrorType.INVALID_SIGNATURE))
                 return@launch
             } else {
-                _event.value = Event(ViewEvent.OnVerified(ErrorType.INVALID_SIGNATURE)) // TODO: replace with payload
+                val jsonContext: DocumentContext = JsonPath.parse(payloadUnzipString)
+                val typeRef: TypeRef<List<List<SubjectName>>> = object : TypeRef<List<List<SubjectName>>>() {}
+                val subjectName = jsonContext.read("\$.vc.credentialSubject..name", typeRef).first().first()
+
+                _event.value = Event(ViewEvent.OnVerified(subjectName))
             }
         }
     }
@@ -179,7 +203,7 @@ class VcViewModel @Inject constructor(
 
     sealed class ViewEvent {
         data class OnError(val type: ErrorType) : ViewEvent()
-        data class OnVerified(val type: ErrorType) : ViewEvent() // TODO: add payload
+        data class OnVerified(val subjectName: SubjectName) : ViewEvent() // TODO: add payload
     }
 
     enum class ErrorType {
@@ -191,4 +215,9 @@ class VcViewModel @Inject constructor(
         VC_EXPIRED,
         INVALID_SIGNATURE
     }
+
+    data class SubjectName(
+        val family: String,
+        val given: List<String>
+    )
 }
