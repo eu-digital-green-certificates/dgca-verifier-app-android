@@ -1,0 +1,62 @@
+[
+  {
+    "p": 1.0E-4,
+    "filter": "WzIxMDIwOTgwNjgsIDEyMDI2OTc2ODMsIDQzOTc1MjI2OF0=",
+    "data": [
+      "1"
+    ],
+    "exists": "[1]",
+    "k": 1,
+    "written": [
+      1
+    ]
+  },
+  {
+    "p": 1.0E-4,
+    "filter": "WzIxMjk4NjE3NTYsIDE2ODA1NjM0MzJd",
+    "data": [
+      "1",
+      "2"
+    ],
+    "exists": "[1, 1]",
+    "k": 1,
+    "written": [
+      1,
+      1
+    ]
+  },
+  {
+    "p": 1.0E-4,
+    "filter": "WzcyNTY0NTA2LCA5MTcxOTI4OTZd",
+    "data": [
+      "1",
+      "2",
+      "3"
+    ],
+    "exists": "[1, 0, 1]",
+    "k": 1,
+    "written": [
+      1,
+      0,
+      1
+    ]
+  },
+  {
+    "p": 1.0E-4,
+    "filter": "WzM3MzM2NzA2OCwgLTE0NTcyOTA3NDcsIC0xNTA0MzA1MzI2LCAzNzkyMTA5NDRd",
+    "data": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "exists": "[1, 0, 1, 1]",
+    "k": 1,
+    "written": [
+      1,
+      0,
+      1,
+      1
+    ]
+  }
+]

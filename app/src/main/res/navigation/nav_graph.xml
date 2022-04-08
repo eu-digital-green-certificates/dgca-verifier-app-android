@@ -24,137 +24,120 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/codeReaderFragment">
+    app:startDestination="@id/mainFragment">
 
     <fragment
-        android:id="@+id/codeReaderFragment"
-        android:name="dgca.verifier.app.android.reader.CodeReaderFragment"
-        android:label="CodeReader"
-        tools:layout="@layout/fragment_code_reader">
+        android:id="@+id/mainFragment"
+        android:name="dgca.verifier.app.android.ui.MainFragment"
+        android:label="Main"
+        tools:layout="@layout/fragment_main">
 
         <action
-            android:id="@+id/action_codeReaderFragment_to_verificationResultFragment"
-            app:destination="@id/verificationResultDialogFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left" />
+            android:id="@+id/action_mainFragment_to_nfcFragment"
+            app:destination="@id/nfcFragment" />
 
         <action
-            android:id="@+id/action_codeReaderFragment_to_detailedVerificationResultFragment"
-            app:destination="@id/detailedVerificationResultDialogFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left" />
+            android:id="@+id/action_mainFragment_to_intentFragment"
+            app:destination="@id/intentFragment"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
 
         <action
-            android:id="@+id/action_codeReaderFragment_to_verificationDialogFragment"
-            app:destination="@id/verificationDialogFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left" />
+            android:id="@+id/action_mainFragment_to_qrReaderFragment"
+            app:destination="@id/qrReaderFragment" />
 
         <action
-            android:id="@+id/action_codeReaderFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
+            android:id="@+id/action_mainFragment_to_urlSchemaFragment"
+            app:destination="@id/urlSchemaFragment"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
 
     </fragment>
 
-    <dialog
-        android:id="@+id/verificationDialogFragment"
-        android:name="dgca.verifier.app.android.verification.VerificationFragment"
-        android:label="Verification"
-        tools:layout="@layout/fragment_verification">
+    <fragment
+        android:id="@+id/nfcFragment"
+        android:name="dgca.verifier.app.android.inputrecognizer.nfc.NfcFragment"
+        android:label="NFC"
+        tools:layout="@layout/fragment_nfc">
+
+        <action
+            android:id="@+id/action_nfcFragment_to_protocolHandlerDialogFragment"
+            app:destination="@id/protocolHandlerDialogFragment"
+            app:enterAnim="@animator/nav_default_pop_enter_anim"
+            app:exitAnim="@animator/nav_default_exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/intentFragment"
+        android:name="dgca.verifier.app.android.inputrecognizer.intent.IntentFragment"
+        android:label="Intent"
+        tools:layout="@layout/fragment_intent">
 
         <argument
-            android:name="qrCodeText"
+            android:name="data"
             app:argType="string" />
 
+        <action
+            android:id="@+id/action_intentFragment_to_protocolHandlerDialogFragment"
+            app:destination="@id/protocolHandlerDialogFragment"
+            app:enterAnim="@animator/nav_default_pop_enter_anim"
+            app:exitAnim="@animator/nav_default_exit_anim"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/qrReaderFragment"
+        android:name="dgca.verifier.app.android.inputrecognizer.qrreader.QrReaderFragment"
+        android:label="QR Reader"
+        tools:layout="@layout/fragment_qr_reader">
+
+        <action
+            android:id="@+id/action_qrReaderFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment"
+            app:enterAnim="@animator/nav_default_pop_enter_anim"
+            app:exitAnim="@animator/nav_default_exit_anim" />
+
+        <action
+            android:id="@+id/action_qrReaderFragment_to_protocolHandlerDialogFragment"
+            app:destination="@id/protocolHandlerDialogFragment"
+            app:enterAnim="@animator/nav_default_pop_enter_anim"
+            app:exitAnim="@animator/nav_default_exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/urlSchemaFragment"
+        android:name="dgca.verifier.app.android.inputrecognizer.urlschema.UrlSchemaFragment"
+        android:label="Url Schema"
+        tools:layout="@layout/fragment_url_schema">
+
         <argument
-            android:name="countryIsoCode"
+            android:name="data"
             app:argType="string" />
-    </dialog>
 
-    <dialog
-        android:id="@+id/verificationResultDialogFragment"
-        android:name="dgca.verifier.app.android.verification.VerificationResultDialogFragment"
-        android:label="Verification Result"
-        tools:layout="@layout/dialog_fragment_verification_result">
-
-        <argument
-            android:name="standardizedVerificationResult"
-            app:argType="dgca.verifier.app.android.verification.model.StandardizedVerificationResult" />
-
-        <argument
-            android:name="certificateModel"
-            android:defaultValue="@null"
-            app:argType="dgca.verifier.app.android.model.CertificateModel"
-            app:nullable="true" />
-
-        <argument
-            android:name="ruleValidationResultModelsContainer"
-            app:argType="dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer"
-            app:nullable="true" />
-    </dialog>
-
-    <dialog
-        android:id="@+id/detailedVerificationResultDialogFragment"
-        android:name="dgca.verifier.app.android.verification.detailed.DetailedVerificationResultDialogFragment"
-        android:label="Detailed Verification"
-        tools:layout="@layout/dialog_fragment_detailed_verification_result">
-
-        <argument
-            android:name="standardizedVerificationResult"
-            app:argType="dgca.verifier.app.android.verification.model.StandardizedVerificationResult" />
-
-        <argument
-            android:name="certificateModel"
-            android:defaultValue="@null"
-            app:argType="dgca.verifier.app.android.model.CertificateModel"
-            app:nullable="true" />
-
-        <argument
-            android:name="hcert"
-            app:argType="string"
-            app:nullable="true" />
-
-        <argument
-            android:name="ruleValidationResultModelsContainer"
-            app:argType="dgca.verifier.app.android.model.rules.RuleValidationResultModelsContainer"
-            app:nullable="true" />
-
-        <argument
-            android:name="debugData"
-            app:argType="dgca.verifier.app.android.verification.model.DebugData"
-            app:nullable="true" />
-    </dialog>
+        <action
+            android:id="@+id/action_urlSchemaFragment_to_protocolHandlerDialogFragment"
+            app:destination="@id/protocolHandlerDialogFragment"
+            app:enterAnim="@animator/nav_default_pop_enter_anim"
+            app:exitAnim="@animator/nav_default_exit_anim"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="dgca.verifier.app.android.settings.SettingsFragment"
-        android:label="SettingsFragment">
+        android:name="dgca.verifier.app.android.ui.settings.SettingsFragment"
+        android:label="Settings"
+        tools:layout="@layout/fragment_dcc_settings" />
 
-        <action
-            android:id="@+id/action_settingsFragment_to_verificationResultFragment"
-            app:destination="@id/debugModeSettingsFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left" />
-    </fragment>
+    <dialog
+        android:id="@+id/protocolHandlerDialogFragment"
+        android:name="dgca.verifier.app.android.protocolhandler.ProtocolHandlerDialogFragment"
+        android:label="Protocol Handler"
+        tools:layout="@layout/dialog_fragment_protocol_handler">
 
-    <fragment
-        android:id="@+id/debugModeSettingsFragment"
-        android:name="dgca.verifier.app.android.settings.debug.mode.DebugModeSettingsFragment"
-        android:label="Debug Mode Settings">
-        <action
-            android:id="@+id/action_debugModeSettingsFragment_to_countriesSelectorFragment"
-            app:destination="@id/countriesSelectorFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/countriesSelectorFragment"
-        android:name="dgca.verifier.app.android.settings.debug.mode.CountriesSelectorFragment"
-        android:label="Countries Selector">
         <argument
-            android:name="countriesData"
-            app:argType="dgca.verifier.app.android.settings.debug.mode.CountriesData" />
-    </fragment>
-
+            android:name="data"
+            app:argType="string" />
+    </dialog>
 </navigation>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dcc_nav_graph"
+    app:startDestination="@id/intermediateFragment">
+
+    <fragment
+        android:id="@+id/intermediateFragment"
+        android:name="dgca.verifier.app.android.dcc.ui.IntermediateFragment"
+        android:label="Intermediate"
+        tools:layout="@layout/fragment_dcc_intermediate">
+
+        <argument
+            android:name="qrCodeText"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_intermediateFragment_to_verificationFragment"
+            app:destination="@id/verificationFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+
+        <action
+            android:id="@+id/action_intermediateFragment_to_countrySelectorFragment"
+            app:destination="@id/countrySelectorFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/countrySelectorFragment"
+        android:name="dgca.verifier.app.android.dcc.settings.CountrySelectorFragment"
+        android:label="Country Selector"
+        tools:layout="@layout/fragment_countries_selector">
+
+        <argument
+            android:name="selectCountryData"
+            app:argType="dgca.verifier.app.android.dcc.settings.debug.DccSelectCountryData" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/verificationFragment"
+        android:name="dgca.verifier.app.android.dcc.ui.verification.VerificationFragment"
+        android:label="Verification"
+        tools:layout="@layout/fragment_verification">
+
+        <argument
+            android:name="qrCodeText"
+            app:argType="string" />
+
+        <argument
+            android:name="countryIsoCode"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_codeReaderFragment_to_verificationResultFragment"
+            app:destination="@id/verificationResultDialogFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+
+        <action
+            android:id="@+id/action_codeReaderFragment_to_detailedVerificationResultFragment"
+            app:destination="@id/detailedVerificationResultDialogFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/verificationResultDialogFragment"
+        android:name="dgca.verifier.app.android.dcc.ui.verification.VerificationResultDialogFragment"
+        android:label="Verification Result"
+        tools:layout="@layout/dialog_fragment_verification_result">
+
+        <argument
+            android:name="standardizedVerificationResult"
+            app:argType="dgca.verifier.app.android.dcc.ui.verification.model.StandardizedVerificationResult" />
+
+        <argument
+            android:name="certificateModel"
+            android:defaultValue="@null"
+            app:argType="dgca.verifier.app.android.dcc.model.CertificateModel"
+            app:nullable="true" />
+
+        <argument
+            android:name="ruleValidationResultModelsContainer"
+            app:argType="dgca.verifier.app.android.dcc.model.rules.RuleValidationResultModelsContainer"
+            app:nullable="true" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/detailedVerificationResultDialogFragment"
+        android:name="dgca.verifier.app.android.dcc.ui.verification.detailed.DetailedVerificationResultDialogFragment"
+        android:label="Detailed Verification"
+        tools:layout="@layout/dialog_fragment_detailed_verification_result">
+
+        <argument
+            android:name="standardizedVerificationResult"
+            app:argType="dgca.verifier.app.android.dcc.ui.verification.model.StandardizedVerificationResult" />
+
+        <argument
+            android:name="certificateModel"
+            android:defaultValue="@null"
+            app:argType="dgca.verifier.app.android.dcc.model.CertificateModel"
+            app:nullable="true" />
+
+        <argument
+            android:name="hcert"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="ruleValidationResultModelsContainer"
+            app:argType="dgca.verifier.app.android.dcc.model.rules.RuleValidationResultModelsContainer"
+            app:nullable="true" />
+
+        <argument
+            android:name="debugData"
+            app:argType="dgca.verifier.app.android.dcc.ui.verification.model.DebugData"
+            app:nullable="true" />
+    </dialog>
+
+</navigation>

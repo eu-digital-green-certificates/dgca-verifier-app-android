@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~  license-start
+  ~  eu-digital-green-certificates / dgca-verifier-app-android
+  ~
+  ~  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  ~  license-end
+  ~
+  ~  Created by osarapulov on 5/12/21 2:57 PM
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@color/white">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/blue"
+        android:theme="@style/DgcaVerifierAppAndroid.Toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/ic_baseline_arrow_back_24"
+        app:title="@string/settings"
+        app:titleTextColor="@color/white" />
+
+    <ScrollView
+        android:id="@+id/settingsList"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/about_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/default_margin"
+                android:layout_marginTop="@dimen/default_margin"
+                android:text="@string/about"
+                android:textColor="@color/blue_light"
+                android:textSize="@dimen/text_size_big"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/privacyInformation"
+                style="@style/TextAppearance.Dgca.SettingsButtonHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_baseline_arrow_forward_24"
+                android:gravity="start|center"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:letterSpacing="0"
+                android:minHeight="48dp"
+                android:paddingHorizontal="@dimen/default_padding"
+                android:text="@string/privacy_information"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintTop_toBottomOf="@+id/about_title" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/licenses"
+                style="@style/TextAppearance.Dgca.SettingsButtonHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_baseline_arrow_forward_24"
+                android:gravity="start|center"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:letterSpacing="0"
+                android:minHeight="48dp"
+                android:paddingHorizontal="@dimen/default_padding"
+                android:text="@string/licenses"
+                android:textAllCaps="false"
+                app:layout_constraintTop_toBottomOf="@+id/privacyInformation" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/trustedPublicKeys"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/default_margin"
+                android:layout_marginTop="@dimen/default_margin"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/trusted_public_keys"
+                android:textColor="@color/grey_50"
+                android:textSize="@dimen/text_size_medium"
+                app:layout_constraintTop_toBottomOf="@+id/licenses"
+                tools:layout_editor_absoluteX="16dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/syncPublicKeys"
+                style="@style/TextAppearance.Dgca.SettingsButtonHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_synchronize_solid"
+                android:gravity="start|center"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:letterSpacing="0"
+                android:minHeight="48dp"
+                android:paddingHorizontal="@dimen/default_padding"
+                android:text="Reload keys"
+                android:textAllCaps="false"
+                app:layout_constraintTop_toBottomOf="@+id/trustedPublicKeys" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/lastUpdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/default_margin"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/grey_50"
+                android:textSize="@dimen/text_size_medium"
+                app:layout_constraintTop_toBottomOf="@+id/syncPublicKeys"
+                tools:layout_editor_absoluteX="16dp"
+                tools:text="Last Updated: 2021-05-27 09:44" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/materialTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/default_margin"
+                android:layout_marginTop="@dimen/default_margin"
+                android:text="@string/settings_version_title"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintTop_toBottomOf="@+id/lastUpdate"
+                tools:layout_editor_absoluteX="0dp" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/default_margin"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/grey_50"
+                android:textSize="@dimen/text_size_medium"
+                app:layout_constraintTop_toBottomOf="@+id/materialTextView"
+                tools:layout_editor_absoluteX="16dp"
+                tools:text="Version: 1.0.0" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/debugMode"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_baseline_arrow_forward_24"
+                android:gravity="start|center"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:letterSpacing="0"
+                android:minHeight="48dp"
+                android:paddingHorizontal="@dimen/default_padding"
+                android:text="@string/debug_mode"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@+id/version"
+                tools:visibility="visible" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/reloadCountries"
+                style="@style/TextAppearance.Dgca.SettingsButtonHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_synchronize_solid"
+                android:gravity="start|center"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:letterSpacing="0"
+                android:minHeight="48dp"
+                android:paddingHorizontal="@dimen/default_padding"
+                android:text="@string/reload_countries"
+                android:textAllCaps="false"
+                app:layout_constraintTop_toBottomOf="@+id/trustedPublicKeys" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/selectedCountry"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_baseline_arrow_forward_24"
+                android:gravity="start|center"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:letterSpacing="0"
+                android:minHeight="48dp"
+                android:paddingHorizontal="@dimen/default_padding"
+                android:text="@string/select_country"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintTop_toBottomOf="@+id/version" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/syncRevocation"
+                style="@style/TextAppearance.Dgca.SettingsButtonHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_synchronize_solid"
+                android:gravity="start|center"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:letterSpacing="0"
+                android:minHeight="48dp"
+                android:paddingHorizontal="@dimen/default_padding"
+                android:text="@string/reload_revocation"
+                android:textAllCaps="false"
+                app:layout_constraintTop_toBottomOf="@+id/lastUpdate" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/lastRevocationUpdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/default_margin"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/grey_50"
+                android:textSize="@dimen/text_size_medium"
+                app:layout_constraintTop_toBottomOf="@+id/syncRevocation"
+                tools:layout_editor_absoluteX="16dp"
+                tools:text="Last Updated: 2021-05-27 09:44" />
+        </LinearLayout>
+    </ScrollView>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/logo"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginBottom="@dimen/default_margin"
+        android:scaleType="centerInside"
+        android:src="@drawable/eu_logo_big"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/blue"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
