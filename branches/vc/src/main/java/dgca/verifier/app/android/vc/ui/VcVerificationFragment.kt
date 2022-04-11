@@ -62,7 +62,7 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
     private fun onViewModelEvent(event: VcViewModel.ViewEvent) {
         when (event) {
             is VcViewModel.ViewEvent.OnError -> handleError(event.type)
-            is VcViewModel.ViewEvent.OnVerified -> showVerified(event.subjectName)
+            is VcViewModel.ViewEvent.OnVerified -> showVerified(event.subjectName, event.payloadInfo)
         }
     }
 
@@ -87,12 +87,13 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showVerified(subjectName: VcViewModel.SubjectName) {
+    private fun showVerified(subjectName: VcViewModel.SubjectName, payloadInfo: String) {
         binding.progressBar.isVisible = false
         binding.certStatusIcon.setImageResource(R.drawable.check)
         binding.verificationStatusBackground.backgroundTintList =
             ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
         binding.personFullName.text = "${subjectName.family} ${subjectName.given.firstOrNull() ?: ""}"
+        binding.payloadInfo.text = payloadInfo
         binding.status.text = getString(R.string.cert_valid)
         binding.statusViews.isVisible = true
     }

@@ -28,11 +28,15 @@ import android.net.Uri
 import androidx.work.*
 import com.android.app.base.Processor
 import com.android.app.base.RESULT_KEY
+import com.nimbusds.jose.JWSObject
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dgca.verifier.app.android.vc.worker.TrustListLoadingWorker
 import timber.log.Timber
+import java.text.ParseException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+
+const val SMART_HEALTH_CARD_PREFIX = "shc:/"
 
 class VcProcessor @Inject constructor(
     @ApplicationContext private val context: Context
@@ -46,15 +50,25 @@ class VcProcessor @Inject constructor(
     }
 
     override fun isApplicable(input: String): Intent? {
-//        if applicable
-        val isVc = true
+        var isApplicable = false
 
-        if (!isVc) {
-            return null
+        if (input.startsWith(SMART_HEALTH_CARD_PREFIX)) {
+            isApplicable = true
+        } else {
+            try {
+                JWSObject.parse(input)
+                isApplicable = true
+            } catch (ex: ParseException) {
+                Timber.e(ex, "Not valid jws format")
+            }
         }
 
-        return Intent("com.android.app.vc.View", Uri.parse("verifier://vc")).apply {
-            putExtra(RESULT_KEY, input)
+        return if (isApplicable) {
+            Intent("com.android.app.vc.View", Uri.parse("verifier://vc")).apply {
+                putExtra(RESULT_KEY, input)
+            }
+        } else {
+            null
         }
     }
 

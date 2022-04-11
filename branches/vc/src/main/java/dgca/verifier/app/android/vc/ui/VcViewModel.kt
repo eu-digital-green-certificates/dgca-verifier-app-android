@@ -28,6 +28,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import com.jayway.jsonpath.*
 import com.jayway.jsonpath.spi.json.GsonJsonProvider
 import com.jayway.jsonpath.spi.json.JsonProvider
@@ -38,12 +41,15 @@ import com.nimbusds.jose.Payload
 import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory
 import com.nimbusds.jose.jwk.ECKey
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dgca.verifier.app.android.vc.SMART_HEALTH_CARD_PREFIX
+import dgca.verifier.app.android.vc.convertNumericToJws
 import dgca.verifier.app.android.vc.data.remote.VcApiService
 import dgca.verifier.app.android.vc.data.remote.model.Jwk
 import dgca.verifier.app.android.vc.inflate
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.IOException
+import java.lang.reflect.Type
 import java.text.ParseException
 import java.util.*
 import javax.inject.Inject
@@ -75,78 +81,116 @@ class VcViewModel @Inject constructor(
         })
     }
 
-    fun validate(jws: String) {
+    fun validate(input: String) {
         viewModelScope.launch {
-            val jwsObject = decodeJws(jws)
-
-            if (jwsObject == null) {
-                _event.value = Event(ViewEvent.OnError(ErrorType.JWS_STRUCTURE_NOT_VALID))
-                return@launch
+            var jws = input
+            if (input.contains(SMART_HEALTH_CARD_PREFIX)) {
+                val shc = input.drop(SMART_HEALTH_CARD_PREFIX.length)
+                jws = decodeShc(shc)
             }
 
-            val zip = jwsObject.header.customParams["zip"]
-            var payloadObject = mapOf<String, Any>()
-            var payloadUnzipString = ""
-            if (zip == DEFLATE) {
-                val payloadUnzip = inflate(jwsObject.payload.toBytes())
-                payloadUnzipString = payloadUnzip.toString(Charsets.UTF_8)
-                payloadObject = Payload(payloadUnzip).toJSONObject()
-            } else {
-                jwsObject.payload.toJSONObject()
+            decodeJwsInput(jws)
+        }
+    }
+
+    private fun decodeShc(shc: String) = shc.convertNumericToJws()
+
+    private suspend fun decodeJwsInput(input: String) {
+        val jwsObject = decodeJws(input)
+
+        if (jwsObject == null) {
+            _event.value = Event(ViewEvent.OnError(ErrorType.JWS_STRUCTURE_NOT_VALID))
+            return
+        }
+
+        val zip = jwsObject.header.customParams["zip"]
+        var payloadObject = mapOf<String, Any>()
+        var payloadUnzipString = ""
+        if (zip == DEFLATE) {
+            val payloadUnzip = inflate(jwsObject.payload.toBytes())
+            payloadUnzipString = payloadUnzip.toString(Charsets.UTF_8)
+            payloadObject = Payload(payloadUnzip).toJSONObject()
+        } else {
+            jwsObject.payload.toJSONObject()
+        }
+
+        val issuer = payloadObject[ISSUER] as String
+        val notBefore = (payloadObject[TIME_NOT_BEFORE] as Double).roundToLong()
+        val expires = (payloadObject[TIME_EXPIRES] as? Double)?.roundToLong()
+
+        val kid = jwsObject.header.keyID
+
+        if (kid.isEmpty()) {
+            _event.value = Event(ViewEvent.OnError(ErrorType.KID_NOT_INCLUDED))
+            return
+        }
+
+        if (issuer.isEmpty()) {
+            _event.value = Event(ViewEvent.OnError(ErrorType.ISSUER_NOT_INCLUDED))
+            return
+        }
+
+        val now = System.currentTimeMillis() / 1000
+        if (now < notBefore) {
+            _event.value = Event(ViewEvent.OnError(ErrorType.TIME_BEFORE_NBF))
+            return
+        }
+
+        if (expires != null && now > expires) {
+            _event.value = Event(ViewEvent.OnError(ErrorType.VC_EXPIRED))
+            return
+        }
+
+        val publicKeys = when {
+            URLUtil.isValidUrl(issuer) -> resolveIssuer(kid, "$issuer/.well-known/jwks.json")
+            issuer.contains(DID) -> resolveDid(kid, issuer)
+            else -> {
+                _event.value = Event(ViewEvent.OnError(ErrorType.ISSUER_NOT_RECOGNIZED))
+                return
             }
+        }
 
-            val issuer = payloadObject[ISSUER] as String
-            val notBefore = (payloadObject[TIME_NOT_BEFORE] as Double).roundToLong()
-            val expires = (payloadObject[TIME_EXPIRES] as Double).roundToLong()
-
-            val kid = jwsObject.header.keyID
-
-            if (kid.isEmpty()) {
-                _event.value = Event(ViewEvent.OnError(ErrorType.KID_NOT_INCLUDED))
-                return@launch
+        var isSignatureValid = false
+        publicKeys.forEach {
+            if (verifyJws(it, jwsObject)) {
+                isSignatureValid = true
             }
+        }
 
-            if (issuer.isEmpty()) {
-                _event.value = Event(ViewEvent.OnError(ErrorType.ISSUER_NOT_INCLUDED))
-                return@launch
-            }
+        if (!isSignatureValid) {
+            _event.value = Event(ViewEvent.OnError(ErrorType.INVALID_SIGNATURE))
+            return
+        } else {
+            val jsonContext: DocumentContext = JsonPath.parse(payloadUnzipString)
+            val typeRef: TypeRef<List<List<SubjectName>>> = object : TypeRef<List<List<SubjectName>>>() {}
+            val subjectName = jsonContext.read("\$.vc.credentialSubject..name", typeRef).first().first()
 
-            val now = System.currentTimeMillis() / 1000
-            if (now < notBefore) {
-                _event.value = Event(ViewEvent.OnError(ErrorType.TIME_BEFORE_NBF))
-                return@launch
-            }
+//                TODO: parsing of dynamic data
+            val type: Type = object : TypeToken<Map<String?, Any?>?>() {}.type
+            val data: Map<String, Any> = Gson().fromJson(payloadUnzipString, type)
+            val newMap: MutableMap<String, String> = HashMap()
+            process("vc", data["vc"]!!, newMap)
+            val result = GsonBuilder().setPrettyPrinting().create().toJson(newMap)
+            Timber.d("Test: $result")
 
-            if (now > expires) {
-                _event.value = Event(ViewEvent.OnError(ErrorType.VC_EXPIRED))
-                return@launch
-            }
+            _event.value = Event(ViewEvent.OnVerified(subjectName, result.replace("[{\",}]".toRegex(), "").trim()))
+        }
+    }
 
-            val publicKeys = when {
-                URLUtil.isValidUrl(issuer) -> resolveIssuer(kid, "$issuer/.well-known/jwks.json")
-                issuer.contains(DID) -> resolveDid(kid, issuer)
-                else -> {
-                    _event.value = Event(ViewEvent.OnError(ErrorType.ISSUER_NOT_RECOGNIZED))
-                    return@launch
+    private fun process(key: String, value: Any, newMap: MutableMap<String, String>) {
+        when (value) {
+            is String -> newMap[key] = value
+            is Map<*, *> -> {
+                val map = value as Map<String, Any>
+                for ((key1, value1) in map) {
+                    process(key1, value1, newMap)
                 }
             }
-
-            var isSignatureValid = false
-            publicKeys.forEach {
-                if (verifyJws(it, jwsObject)) {
-                    isSignatureValid = true
+            is List<*> -> {
+                val list = value as List<Any>
+                for (obj in list) {
+                    process(key, obj, newMap)
                 }
-            }
-
-            if (!isSignatureValid) {
-                _event.value = Event(ViewEvent.OnError(ErrorType.INVALID_SIGNATURE))
-                return@launch
-            } else {
-                val jsonContext: DocumentContext = JsonPath.parse(payloadUnzipString)
-                val typeRef: TypeRef<List<List<SubjectName>>> = object : TypeRef<List<List<SubjectName>>>() {}
-                val subjectName = jsonContext.read("\$.vc.credentialSubject..name", typeRef).first().first()
-
-                _event.value = Event(ViewEvent.OnVerified(subjectName))
             }
         }
     }
@@ -203,7 +247,7 @@ class VcViewModel @Inject constructor(
 
     sealed class ViewEvent {
         data class OnError(val type: ErrorType) : ViewEvent()
-        data class OnVerified(val subjectName: SubjectName) : ViewEvent() // TODO: add payload
+        data class OnVerified(val subjectName: SubjectName, val payloadInfo: String) : ViewEvent() // TODO: add payload
     }
 
     enum class ErrorType {

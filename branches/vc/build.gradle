@@ -99,6 +99,7 @@ dependencies {
     implementation Deps.timber
     implementation Deps.jose_jwt
     implementation Deps.json_path
+    implementation 'com.google.code.gson:gson:2.9.0' // TODO: review after UI update
 
     testImplementation Deps.test_junit
     androidTestImplementation Deps.test_ext
