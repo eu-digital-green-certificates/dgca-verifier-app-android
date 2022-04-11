@@ -239,7 +239,9 @@ internal class DccRevocationDaoTest {
                 x = x,
                 y = y,
                 expires = ZonedDateTime.now(),
-                chunks = chunksString
+                chunks = chunksString,
+                localId = index,
+                lastUpdated = ZonedDateTime.now()
             )
             partitions.add(partition)
             var counter = 0
@@ -377,7 +379,9 @@ internal class DccRevocationDaoTest {
                 x = x,
                 y = y,
                 expires = ZonedDateTime.now(),
-                chunks = chunksString
+                chunks = chunksString,
+                localId = index,
+                lastUpdated = ZonedDateTime.now()
             )
             partitions.add(partition)
             var counter = 0
@@ -485,7 +489,8 @@ internal class DccRevocationDaoTest {
             y = null,
             chunks = "chunks",
             id = "null",
-            expires = ZonedDateTime.now().plusYears(1).withZoneSameInstant(UTC_ZONE_ID)
+            expires = ZonedDateTime.now().plusYears(1).withZoneSameInstant(UTC_ZONE_ID),
+            lastUpdated = ZonedDateTime.now()
         )
 
         dccRevocationDao.insert(nullDccPartition.toLocal())

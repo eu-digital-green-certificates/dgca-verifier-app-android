@@ -51,7 +51,7 @@ class DccSettingsViewModel @Inject constructor(
     private val _inProgress = MutableLiveData<Boolean>()
     val inProgress: LiveData<Boolean> = _inProgress
 
-    val lastSyncLiveData: LiveData<Long> = verifierRepository.getLastSyncTimeMillis()
+    val lastSyncLiveData: LiveData<Long> = verifierRepository.getLastPubKeysSyncTimeMillis()
     val lastRevocationSyncTime = MutableLiveData(verifierRepository.getLastRevocationSyncTimeMillis())
 
     private val _lastCountriesSyncLiveData = MutableLiveData<Long>(-1)

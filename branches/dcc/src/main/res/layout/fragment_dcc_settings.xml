@@ -234,7 +234,7 @@
                 android:letterSpacing="0"
                 android:minHeight="48dp"
                 android:paddingHorizontal="@dimen/default_padding"
-                android:text="Reload revocation"
+                android:text="@string/reload_revocation"
                 android:textAllCaps="false"
                 app:layout_constraintTop_toBottomOf="@+id/lastUpdate" />
 

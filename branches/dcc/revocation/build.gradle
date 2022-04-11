@@ -49,6 +49,17 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    flavorDimensions "version"
+    productFlavors {
+        tst {
+            buildConfigField "String", "REVOCATION_SERVICE_HOST", "\"https://dgca-revocation-service-eu-test.cfapps.eu10.hana.ondemand.com\""
+        }
+        acc {
+            buildConfigField "String", "REVOCATION_SERVICE_HOST", "\"https://dgca-revocation-service-eu-acc.cfapps.eu10.hana.ondemand.com\""
+        }
+    }
+
     compileOptions {
         sourceCompatibility Config.javaVersion
         targetCompatibility Config.javaVersion

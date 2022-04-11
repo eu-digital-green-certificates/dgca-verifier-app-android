@@ -43,7 +43,6 @@ import javax.inject.Qualifier
 import javax.inject.Singleton
 
 private const val CONNECT_TIMEOUT = 30L
-const val BASE_URL = "https://dgca-revocation-service-eu-test.cfapps.eu10.hana.ondemand.com/"
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -101,7 +100,7 @@ object RevocationNetworkModule {
     private fun createRetrofit(converterFactory: Converter.Factory, okHttpClient: Provider<OkHttpClient>): Retrofit {
         return Retrofit.Builder()
             .addConverterFactory(converterFactory)
-            .baseUrl(BASE_URL)
+            .baseUrl(BuildConfig.REVOCATION_SERVICE_HOST)
             .callFactory { okHttpClient.get().newCall(it) }
             .build()
     }

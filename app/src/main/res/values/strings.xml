@@ -21,7 +21,7 @@
   -->
 
 <resources>
-    <string name="app_name">Verifier App</string>
+    <string name="app_name" translatable="false">Verifier App</string>
     <string name="apply">Apply</string>
     <string name="scan_qr_code">Scan QR code</string>
     <string name="scan_nfc_code">Scan NFC code</string>

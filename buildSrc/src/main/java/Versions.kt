@@ -46,7 +46,7 @@ object Versions {
     const val androidx_room = "2.3.0"
     const val androidx_lifecycle_livedata_ktx = "2.4.0-alpha02"
     const val room_ktx = "2.4.0-alpha03"
-    const val androidx_worker_ktx = "2.7.1"
+    const val androidx_worker_ktx = "2.5.0"
     const val google_licenses_version = "0.10.4"
     const val retrofit = "2.9.0"
     const val logging_interceptor = "4.9.1"
