@@ -22,13 +22,8 @@
 
 package dgca.verifier.app.android.vc
 
-import timber.log.Timber
-import java.util.*
 import java.util.zip.DataFormatException
 import java.util.zip.Inflater
-
-
-fun String.fromBase64Url(): ByteArray = Base64.getUrlDecoder().decode(this)
 
 @Throws(DataFormatException::class)
 fun inflate(inputBytes: ByteArray): ByteArray {
@@ -48,19 +43,4 @@ fun inflate(inputBytes: ByteArray): ByteArray {
     inflater.end()
 
     return inflatedBytes.copyOf(numberInflatedBytes)
-}
-
-fun String.convertNumericToJws(): String {
-    return try {
-        val numericBuilder = StringBuilder("")
-        var index = 2
-        while (index <= length) {
-            numericBuilder.append(((substring(index - 2, index)).toInt() + 45).toChar())
-            index += 2
-        }
-        numericBuilder.toString()
-    } catch (ex: Exception) {
-        Timber.d("Failed to parse")
-        ""
-    }
 }

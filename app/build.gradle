@@ -100,6 +100,7 @@ dependencies {
     implementation project(":branches:icao")
     implementation project(":branches:divoc")
     implementation project(":branches:vc")
+    implementation project(":branches:shc")
     implementation project(":decoder")
     implementation project(":engine")
 

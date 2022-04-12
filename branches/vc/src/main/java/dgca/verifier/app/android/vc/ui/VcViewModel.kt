@@ -41,8 +41,6 @@ import com.nimbusds.jose.Payload
 import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory
 import com.nimbusds.jose.jwk.ECKey
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dgca.verifier.app.android.vc.SMART_HEALTH_CARD_PREFIX
-import dgca.verifier.app.android.vc.convertNumericToJws
 import dgca.verifier.app.android.vc.data.remote.VcApiService
 import dgca.verifier.app.android.vc.data.remote.model.Jwk
 import dgca.verifier.app.android.vc.inflate
@@ -54,7 +52,6 @@ import java.text.ParseException
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.roundToLong
-
 
 const val ISSUER = "iss"
 const val TIME_NOT_BEFORE = "nbf"
@@ -83,17 +80,9 @@ class VcViewModel @Inject constructor(
 
     fun validate(input: String) {
         viewModelScope.launch {
-            var jws = input
-            if (input.contains(SMART_HEALTH_CARD_PREFIX)) {
-                val shc = input.drop(SMART_HEALTH_CARD_PREFIX.length)
-                jws = decodeShc(shc)
-            }
-
-            decodeJwsInput(jws)
+            decodeJwsInput(input)
         }
     }
-
-    private fun decodeShc(shc: String) = shc.convertNumericToJws()
 
     private suspend fun decodeJwsInput(input: String) {
         val jwsObject = decodeJws(input)

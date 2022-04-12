@@ -36,8 +36,6 @@ import java.text.ParseException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-const val SMART_HEALTH_CARD_PREFIX = "shc:/"
-
 class VcProcessor @Inject constructor(
     @ApplicationContext private val context: Context
 ) : Processor {
@@ -49,32 +47,19 @@ class VcProcessor @Inject constructor(
         }
     }
 
-    override fun isApplicable(input: String): Intent? {
-        var isApplicable = false
-
-        if (input.startsWith(SMART_HEALTH_CARD_PREFIX)) {
-            isApplicable = true
-        } else {
-            try {
-                JWSObject.parse(input)
-                isApplicable = true
-            } catch (ex: ParseException) {
-                Timber.e(ex, "Not valid jws format")
-            }
-        }
-
-        return if (isApplicable) {
+    override fun isApplicable(input: String): Intent? =
+        try {
+            JWSObject.parse(input)
             Intent("com.android.app.vc.View", Uri.parse("verifier://vc")).apply {
                 putExtra(RESULT_KEY, input)
             }
-        } else {
+        } catch (ex: ParseException) {
+            Timber.e(ex, "Not valid jws format")
             null
         }
-    }
 
-    override fun getSettingsIntent(): Pair<String, Intent> {
-        return Pair("Vc", Intent("com.android.app.vc.View", Uri.parse("settings://vc")))
-    }
+    override fun getSettingsIntent(): Pair<String, Intent> =
+        Pair("Vc", Intent("com.android.app.vc.View", Uri.parse("settings://vc")))
 
     private inline fun <reified T : ListenableWorker> WorkManager.schedulePeriodicWorker(workerId: String) =
         this.enqueueUniquePeriodicWork(

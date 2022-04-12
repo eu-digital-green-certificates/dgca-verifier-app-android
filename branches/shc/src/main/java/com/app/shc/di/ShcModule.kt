@@ -1,6 +1,6 @@
 /*
  *  ---license-start
- *  eu-digital-green-certificates / dgca-verifier-app-android
+ *  eu-digital-covid-certificates / dcc-verifier-app-android
  *  ---
  *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
  *  ---
@@ -17,28 +17,26 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 3/17/22, 7:57 AM
+ *  Created by mykhailo.nester on 12/04/2022, 19:21
  */
 
-package dgca.verifier.app.android
+package com.app.shc.di
 
-import android.content.Intent
 import com.android.app.base.Processor
+import com.android.app.base.ProcessorMarker
+import com.app.shc.ShcProcessor
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import dagger.multibindings.IntoSet
 
-class DefaultProtocolHandler(private val processors: Set<Processor>) : ProtocolHandler {
+@InstallIn(SingletonComponent::class)
+@Module
+class ShcModule {
 
-    override fun prefetchData() {
-        processors.forEach { it.prefetchData() }
-    }
-
-    override fun handle(input: String): Intent? {
-        val result: Intent? = null
-        processors.forEach { processor ->
-            processor.isApplicable(input)?.let { return it }
-        }
-        return result
-    }
-
-    override fun getSettingsIntents(): List<Pair<String, Intent>> =
-        processors.mapNotNull { processor -> processor.getSettingsIntent() }
+    @Provides
+    @IntoSet
+    @ProcessorMarker
+    fun provideShcProcessor(): Processor = ShcProcessor()
 }

@@ -17,16 +17,16 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 11/04/2022, 20:10
+ *  Created by mykhailo.nester on 12/04/2022, 19:18
  */
 
-package dgca.verifier.app.android.vc
+package com.app.shc
 
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert
 import org.junit.Test
 
-class VcTest {
+class ShcTest {
 
     @Test
     fun `convert shc numeric to jws`() {
