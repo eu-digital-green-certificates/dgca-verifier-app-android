@@ -5,12 +5,12 @@
 
     <uses-sdk tools:overrideLibrary="com.google.zxing.client.android" />
 
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.NFC" />
 
     <application
-        android:name=".DgcaApplication"
+        android:name=".ui.DgcaApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -19,22 +19,27 @@
         android:theme="@style/Theme.DgcaVerifierAppAndroid">
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="com.android.app.poc.INTENT" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
 
-        <activity
-            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
-            android:theme="@style/Theme.DgcaVerifierAppAndroid.Licensing" />
-        <activity
-            android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
-            android:theme="@style/Theme.DgcaVerifierAppAndroid.Licensing" />
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "app://open.my.app” -->
+                <data
+                    android:host="open.my.app"
+                    android:scheme="app" />
+            </intent-filter>
+        </activity>
 
         <provider
             android:name="androidx.work.impl.WorkManagerInitializer"
@@ -42,15 +47,6 @@
             android:exported="false"
             tools:node="remove" />
 
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths" />
-        </provider>
     </application>
 
 </manifest>
