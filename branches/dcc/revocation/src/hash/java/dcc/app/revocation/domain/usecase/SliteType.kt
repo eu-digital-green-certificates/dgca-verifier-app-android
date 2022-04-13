@@ -24,4 +24,4 @@ package dcc.app.revocation.domain.usecase
 
 import dcc.app.revocation.data.network.model.SliceType
 
-val currentSliceType = SliceType.BLOOMFILTER
+val currentSliceType = SliceType.VARHASHLIST
