@@ -20,33 +20,23 @@
  *  Created by mykhailo.nester on 23/03/2022, 22:34
  */
 
-package dgca.verifier.app.android.vc.data.remote.model
+package dgca.verifier.app.android.vc.data
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonProperty
+import dgca.verifier.app.android.vc.data.remote.model.Jwk
+import dgca.verifier.app.android.vc.data.remote.model.SignerCertificate
+import dgca.verifier.app.android.vc.data.remote.model.VerificationMethod
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class SignerCertificate(
-    @JsonProperty("url")
-    val url: String,
-    @JsonProperty("type")
-    val type: IssuerType,
-    @JsonProperty("country")
-    val country: String,
-    @JsonProperty("thumbprint")
-    val thumbprint: String?,
-    @JsonProperty("sslPublicKey")
-    val sslPublicKey: String,
-    @JsonProperty("keyStorageType")
-    val keyStorageType: String,
-    @JsonProperty("signature")
-    val signature: String,
-    @JsonProperty("timestamp")
-    val timestamp: String,
-    @JsonProperty("name")
-    val name: String
-)
+interface VcRepository {
 
-enum class IssuerType {
-    UNKNOWN, HTTP, DID
+    suspend fun loadTrustList(): List<SignerCertificate>
+
+    suspend fun resolveIssuer(url: String): List<Jwk>
+
+    suspend fun resolveIssuerByDid(fullUrl: String): List<VerificationMethod>
+
+    suspend fun saveIssuer(certificate: SignerCertificate, result: List<Jwk>)
+
+    suspend fun saveDidIssuer(certificate: SignerCertificate, result: List<VerificationMethod>)
+
+    suspend fun getIssuerByUrl(issuerUrl: String): List<Jwk>
 }

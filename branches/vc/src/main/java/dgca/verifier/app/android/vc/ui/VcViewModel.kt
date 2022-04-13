@@ -41,13 +41,16 @@ import com.nimbusds.jose.Payload
 import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory
 import com.nimbusds.jose.jwk.ECKey
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dgca.verifier.app.android.vc.data.remote.VcApiService
+import dgca.verifier.app.android.vc.data.VcRepository
+import dgca.verifier.app.android.vc.data.remote.model.IssuerType
 import dgca.verifier.app.android.vc.data.remote.model.Jwk
 import dgca.verifier.app.android.vc.inflate
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.io.IOException
 import java.lang.reflect.Type
+import java.net.URI
 import java.text.ParseException
 import java.util.*
 import javax.inject.Inject
@@ -61,11 +64,16 @@ const val DID = "did:web:"
 
 @HiltViewModel
 class VcViewModel @Inject constructor(
-    private val vcApiService: VcApiService
+    private val vcRepository: VcRepository
 ) : ViewModel() {
 
     private val _event = MutableLiveData<Event<ViewEvent>>()
     val event: LiveData<Event<ViewEvent>> = _event
+
+    private var jwsObject: JWSObject? = null
+    private var issuerHolder: IssuerHolder? = null
+    private var payloadUnzipString = ""
+    private var kid = ""
 
     init {
         Configuration.setDefaults(object : Configuration.Defaults {
@@ -80,74 +88,110 @@ class VcViewModel @Inject constructor(
 
     fun validate(input: String) {
         viewModelScope.launch {
-            decodeJwsInput(input)
+            withContext(Dispatchers.IO) {
+                decodeJwsInput(input)
+            }
         }
     }
 
     private suspend fun decodeJwsInput(input: String) {
-        val jwsObject = decodeJws(input)
+        jwsObject = decodeJws(input)
 
-        if (jwsObject == null) {
-            _event.value = Event(ViewEvent.OnError(ErrorType.JWS_STRUCTURE_NOT_VALID))
+        val jws = jwsObject
+        if (jws == null) {
+            _event.postValue(Event(ViewEvent.OnError(ErrorType.JWS_STRUCTURE_NOT_VALID)))
             return
         }
 
-        val zip = jwsObject.header.customParams["zip"]
+        val zip = jws.header.customParams["zip"]
         var payloadObject = mapOf<String, Any>()
-        var payloadUnzipString = ""
         if (zip == DEFLATE) {
-            val payloadUnzip = inflate(jwsObject.payload.toBytes())
+            val payloadUnzip = inflate(jws.payload.toBytes())
             payloadUnzipString = payloadUnzip.toString(Charsets.UTF_8)
             payloadObject = Payload(payloadUnzip).toJSONObject()
         } else {
-            jwsObject.payload.toJSONObject()
+            jws.payload.toJSONObject()
         }
 
         val issuer = payloadObject[ISSUER] as String
         val notBefore = (payloadObject[TIME_NOT_BEFORE] as Double).roundToLong()
         val expires = (payloadObject[TIME_EXPIRES] as? Double)?.roundToLong()
 
-        val kid = jwsObject.header.keyID
+        kid = jws.header.keyID
 
         if (kid.isEmpty()) {
-            _event.value = Event(ViewEvent.OnError(ErrorType.KID_NOT_INCLUDED))
+            _event.postValue(Event(ViewEvent.OnError(ErrorType.KID_NOT_INCLUDED)))
             return
         }
 
         if (issuer.isEmpty()) {
-            _event.value = Event(ViewEvent.OnError(ErrorType.ISSUER_NOT_INCLUDED))
+            _event.postValue(Event(ViewEvent.OnError(ErrorType.ISSUER_NOT_INCLUDED)))
             return
         }
 
         val now = System.currentTimeMillis() / 1000
         if (now < notBefore) {
-            _event.value = Event(ViewEvent.OnError(ErrorType.TIME_BEFORE_NBF))
+            _event.postValue(Event(ViewEvent.OnError(ErrorType.TIME_BEFORE_NBF)))
             return
         }
 
         if (expires != null && now > expires) {
-            _event.value = Event(ViewEvent.OnError(ErrorType.VC_EXPIRED))
+            _event.postValue(Event(ViewEvent.OnError(ErrorType.VC_EXPIRED)))
             return
         }
 
-        val publicKeys = when {
-            URLUtil.isValidUrl(issuer) -> resolveIssuer(kid, "$issuer/.well-known/jwks.json")
-            issuer.contains(DID) -> resolveDid(kid, issuer)
+        issuerHolder = when {
+            URLUtil.isValidUrl(issuer) -> IssuerHolder("$issuer/.well-known/jwks.json", IssuerType.HTTP)
+            issuer.contains(DID) -> {
+                val didUrl = issuer.drop(DID.length).replace(":", "/")
+                val url = if (didUrl.contains("/")) {
+                    "https://${didUrl}/did.json"
+                } else {
+                    "https://${didUrl}/.well-known/did.json"
+                }
+                IssuerHolder(url, IssuerType.DID)
+            }
             else -> {
-                _event.value = Event(ViewEvent.OnError(ErrorType.ISSUER_NOT_RECOGNIZED))
+                _event.postValue(Event(ViewEvent.OnError(ErrorType.ISSUER_NOT_RECOGNIZED)))
                 return
             }
         }
 
+        val resolvedUrl = issuerHolder!!.issuerUrl
+        val result = vcRepository.getIssuerByUrl(resolvedUrl)
+        if (result.isEmpty()) {
+            _event.postValue(Event(ViewEvent.OnIssuerNotTrusted(URI(resolvedUrl).host)))
+            return
+        }
+
+        validateJws(result)
+    }
+
+    fun issuerApproved() {
+        viewModelScope.launch {
+            val holder = issuerHolder ?: return@launch
+
+            withContext(Dispatchers.IO) {
+                val result = when (holder.type) {
+                    IssuerType.HTTP -> resolveIssuer(kid, holder.issuerUrl)
+                    IssuerType.DID -> resolveDid(kid, holder.issuerUrl)
+                    else -> emptyList()
+                }
+                validateJws(result)
+            }
+        }
+    }
+
+    private fun validateJws(list: List<Jwk>) {
         var isSignatureValid = false
-        publicKeys.forEach {
+        list.forEach {
             if (verifyJws(it, jwsObject)) {
                 isSignatureValid = true
             }
         }
 
         if (!isSignatureValid) {
-            _event.value = Event(ViewEvent.OnError(ErrorType.INVALID_SIGNATURE))
+            _event.postValue(Event(ViewEvent.OnError(ErrorType.INVALID_SIGNATURE)))
             return
         } else {
             val jsonContext: DocumentContext = JsonPath.parse(payloadUnzipString)
@@ -162,7 +206,7 @@ class VcViewModel @Inject constructor(
             val result = GsonBuilder().setPrettyPrinting().create().toJson(newMap)
             Timber.d("Test: $result")
 
-            _event.value = Event(ViewEvent.OnVerified(subjectName, result.replace("[{\",}]".toRegex(), "").trim()))
+            _event.postValue(Event(ViewEvent.OnVerified(subjectName, result.replace("[{\",}]".toRegex(), "").trim())))
         }
     }
 
@@ -193,35 +237,17 @@ class VcViewModel @Inject constructor(
         }
 
     private suspend fun resolveIssuer(kid: String, url: String): List<Jwk> =
-        try {
-            vcApiService.resolveIssuer(url).body()?.keys?.filter { it.kid == kid } ?: emptyList()
+        vcRepository.resolveIssuer(url).filter { it.kid == kid }
 
-        } catch (ex: IOException) {
-            Timber.e(ex, "Failed to fetch jwk by http url issuer")
-            emptyList()
-        }
+    private suspend fun resolveDid(kid: String, issuer: String): List<Jwk> =
+        vcRepository.resolveIssuerByDid(issuer)
+            .filter { it.publicKeyJwk.kid == kid }
+            .map { it.publicKeyJwk }
 
-    private suspend fun resolveDid(kid: String, issuer: String): List<Jwk> {
-        val didUrl = issuer.drop(DID.length).replace(":", "/")
-        val fullUrl = if (didUrl.contains("/")) {
-            "https://${didUrl}/did.json"
-        } else {
-            "https://${didUrl}/.well-known/did.json"
-        }
+    private fun verifyJws(jwk: Jwk, jws: JWSObject?): Boolean {
+        jws ?: return false
+
         return try {
-            val result = vcApiService.resolveIssuerByDid(fullUrl)
-            result.body()?.verificationMethod
-                ?.filter { it.publicKeyJwk.kid == kid }
-                ?.map { it.publicKeyJwk } ?: emptyList()
-
-        } catch (ex: IOException) {
-            Timber.e(ex, "Failed to fetch jwk by did issuer")
-            emptyList()
-        }
-    }
-
-    private fun verifyJws(jwk: Jwk, jws: JWSObject): Boolean =
-        try {
             val publicKey = ECKey.parse(ObjectMapper().writeValueAsString(jwk)).toECPublicKey()
             val verifier = DefaultJWSVerifierFactory().createJWSVerifier(jws.header, publicKey)
 
@@ -233,8 +259,10 @@ class VcViewModel @Inject constructor(
             Timber.e(ex, "JWS signing verification exception")
             false
         }
+    }
 
     sealed class ViewEvent {
+        data class OnIssuerNotTrusted(val issuerDomain: String) : ViewEvent()
         data class OnError(val type: ErrorType) : ViewEvent()
         data class OnVerified(val subjectName: SubjectName, val payloadInfo: String) : ViewEvent() // TODO: add payload
     }
@@ -252,5 +280,10 @@ class VcViewModel @Inject constructor(
     data class SubjectName(
         val family: String,
         val given: List<String>
+    )
+
+    data class IssuerHolder(
+        val issuerUrl: String,
+        val type: IssuerType
     )
 }

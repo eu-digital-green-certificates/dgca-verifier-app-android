@@ -47,7 +47,7 @@ import javax.inject.Singleton
 
 private const val CONNECT_TIMEOUT = 30L
 
-const val BASE_URL = "https://trustlist/"
+const val BASE_URL = "https://dgca-verifier-service-eu-test.cfapps.eu10.hana.ondemand.com/"
 
 @InstallIn(SingletonComponent::class)
 @Module

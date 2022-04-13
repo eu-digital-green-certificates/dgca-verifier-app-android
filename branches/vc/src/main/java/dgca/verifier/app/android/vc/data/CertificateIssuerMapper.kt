@@ -17,12 +17,24 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 23/03/2022, 22:34
+ *  Created by mykhailo.nester on 13/04/2022, 15:10
  */
 
 package dgca.verifier.app.android.vc.data
 
-interface TrustListRepository {
+import dgca.verifier.app.android.vc.data.local.CertificateIssuerLocal
+import dgca.verifier.app.android.vc.data.remote.model.SignerCertificate
 
-    suspend fun loadTrustList()
-}
+fun SignerCertificate.toCertificateIssuerLocal(jwkList: String): CertificateIssuerLocal =
+    CertificateIssuerLocal(
+        url = url,
+        type = type,
+        country = country,
+        thumbprint = thumbprint,
+        sslPublicKey = sslPublicKey,
+        keyStorageType = keyStorageType,
+        signature = signature,
+        timestamp = timestamp,
+        name = name,
+        jwkList = jwkList
+    )

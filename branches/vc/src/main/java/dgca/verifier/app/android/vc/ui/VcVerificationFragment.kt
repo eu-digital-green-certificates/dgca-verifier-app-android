@@ -34,6 +34,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.android.app.vc.R
 import com.android.app.vc.databinding.FragmentVcVerificationBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -63,6 +64,7 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
         when (event) {
             is VcViewModel.ViewEvent.OnError -> handleError(event.type)
             is VcViewModel.ViewEvent.OnVerified -> showVerified(event.subjectName, event.payloadInfo)
+            is VcViewModel.ViewEvent.OnIssuerNotTrusted -> showConfirmationDialog(event.issuerDomain)
         }
     }
 
@@ -96,5 +98,20 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
         binding.payloadInfo.text = payloadInfo
         binding.status.text = getString(R.string.cert_valid)
         binding.statusViews.isVisible = true
+    }
+
+    private fun showConfirmationDialog(issuerDomain: String) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setMessage(getString(R.string.issuer_not_trusted, issuerDomain))
+            .setCancelable(false)
+            .setPositiveButton(getString(R.string.approve)) { dialog, _ ->
+                viewModel.issuerApproved()
+                dialog.dismiss()
+            }
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+                requireActivity().finish()
+            }
+            .show()
     }
 }

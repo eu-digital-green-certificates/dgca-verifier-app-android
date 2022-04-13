@@ -28,25 +28,51 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import dgca.verifier.app.android.vc.data.TrustListRepository
+import dgca.verifier.app.android.vc.data.VcRepository
+import dgca.verifier.app.android.vc.data.remote.model.IssuerType
+import dgca.verifier.app.android.vc.data.remote.model.SignerCertificate
 import timber.log.Timber
 
 @HiltWorker
 class TrustListLoadingWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workParams: WorkerParameters,
-    private val trustListRepository: TrustListRepository
+    private val vcRepository: VcRepository
 ) : CoroutineWorker(context, workParams) {
 
     override suspend fun doWork(): Result {
         Timber.d("Trust list loading start")
         return try {
-            trustListRepository.loadTrustList()
+            val certificates = vcRepository.loadTrustList()
+            certificates.forEach {
+                when (it.type) {
+                    IssuerType.HTTP -> resolveIssuer(it)
+                    IssuerType.DID -> resolveDid(it)
+                    else -> {}
+                }
+            }
+
             Timber.d("Trust list loading success")
             Result.success()
         } catch (error: Throwable) {
             Timber.d(error, "Trust list loading error: $error")
             Result.retry()
+        }
+    }
+
+    //    TODO: resolve urls check if http ends with .well-knonw.json
+    private suspend fun resolveIssuer(certificate: SignerCertificate) {
+        val result = vcRepository.resolveIssuer(certificate.url)
+        if (result.isNotEmpty()) {
+            vcRepository.saveIssuer(certificate, result)
+        }
+    }
+
+    //    TODO: resolve did:web part if not resolved
+    private suspend fun resolveDid(certificate: SignerCertificate) {
+        val result = vcRepository.resolveIssuerByDid(certificate.url)
+        if (result.isNotEmpty()) {
+            vcRepository.saveDidIssuer(certificate, result)
         }
     }
 }

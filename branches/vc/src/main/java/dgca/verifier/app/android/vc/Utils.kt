@@ -22,6 +22,7 @@
 
 package dgca.verifier.app.android.vc
 
+import retrofit2.Response
 import java.util.zip.DataFormatException
 import java.util.zip.Inflater
 
@@ -44,3 +45,5 @@ fun inflate(inputBytes: ByteArray): ByteArray {
 
     return inflatedBytes.copyOf(numberInflatedBytes)
 }
+
+fun Response<*>.containsServerError(): Boolean = code() in 500..599

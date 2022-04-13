@@ -1,6 +1,6 @@
 /*
  *  ---license-start
- *  eu-digital-covid-certificates / dcc-verifier-app-android
+ *  eu-digital-green-certificates / dcc-revocation-app-android
  *  ---
  *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
  *  ---
@@ -17,35 +17,33 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 23/03/2022, 22:35
+ *  Created by osarapulov on 3/17/22, 2:47 PM
  */
 
 package dgca.verifier.app.android.vc.di
 
 import android.content.Context
-import com.android.app.base.Processor
-import com.android.app.base.ProcessorMarker
+import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import dagger.multibindings.IntoSet
-import dgca.verifier.app.android.vc.VcProcessor
-import dgca.verifier.app.android.vc.data.local.VcPreferences
-import dgca.verifier.app.android.vc.data.local.VcPreferencesImpl
+import dgca.verifier.app.android.vc.data.local.CertificateIssuerDao
+import dgca.verifier.app.android.vc.data.local.VcDatabase
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-class VcModule {
-
-    @Provides
-    @IntoSet
-    @ProcessorMarker
-    fun provideVcProcessor(@ApplicationContext context: Context): Processor = VcProcessor(context)
+object VcLocalDataSourceModule {
 
     @Singleton
     @Provides
-    fun providePreferences(@ApplicationContext context: Context): VcPreferences = VcPreferencesImpl(context)
+    fun provideDb(@ApplicationContext context: Context): VcDatabase =
+        Room.databaseBuilder(context, VcDatabase::class.java, "vc_certificate_issuers_db")
+            .fallbackToDestructiveMigration().build()
+
+    @Singleton
+    @Provides
+    fun provideCertificateIssuerDao(database: VcDatabase): CertificateIssuerDao = database.certificateIssuerDao()
 }

@@ -17,35 +17,24 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 23/03/2022, 22:35
+ *  Created by mykhailo.nester on 13/04/2022, 12:49
  */
 
 package dgca.verifier.app.android.vc.di
 
-import android.content.Context
-import com.android.app.base.Processor
-import com.android.app.base.ProcessorMarker
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import dagger.multibindings.IntoSet
-import dgca.verifier.app.android.vc.VcProcessor
-import dgca.verifier.app.android.vc.data.local.VcPreferences
-import dgca.verifier.app.android.vc.data.local.VcPreferencesImpl
+import dgca.verifier.app.android.vc.data.VcRepository
+import dgca.verifier.app.android.vc.data.VcRepositoryImpl
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-class VcModule {
-
-    @Provides
-    @IntoSet
-    @ProcessorMarker
-    fun provideVcProcessor(@ApplicationContext context: Context): Processor = VcProcessor(context)
+abstract class VcRepositoryModule {
 
     @Singleton
-    @Provides
-    fun providePreferences(@ApplicationContext context: Context): VcPreferences = VcPreferencesImpl(context)
+    @Binds
+    abstract fun bindVcRepository(repository: VcRepositoryImpl): VcRepository
 }

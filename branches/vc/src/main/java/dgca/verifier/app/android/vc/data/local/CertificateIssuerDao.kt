@@ -1,6 +1,6 @@
 /*
  *  ---license-start
- *  eu-digital-covid-certificates / dcc-verifier-app-android
+ *  eu-digital-green-certificates / dgca-verifier-app-android
  *  ---
  *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
  *  ---
@@ -17,14 +17,25 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 23/03/2022, 22:34
+ *  Created by osarapulov on 3/17/22, 1:55 PM
  */
 
-package dgca.verifier.app.android.vc.data
+package dgca.verifier.app.android.vc.data.local
 
-class TrustListRepositoryImpl : TrustListRepository {
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy.REPLACE
+import androidx.room.Query
 
-    override suspend fun loadTrustList() {
+@Dao
+interface CertificateIssuerDao {
 
-    }
+    @Query("SELECT * FROM cert_issuer")
+    fun getAll(): List<CertificateIssuerLocal>
+
+    @Insert(onConflict = REPLACE)
+    suspend fun save(entity: CertificateIssuerLocal)
+
+    @Query("SELECT * FROM cert_issuer WHERE url = :issuerUrl LIMIT 1")
+    suspend fun getIssuer(issuerUrl: String): CertificateIssuerLocal?
 }
