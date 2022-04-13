@@ -35,7 +35,7 @@ android {
         }
     }
 
-    flavorDimensions "version"
+    flavorDimensions "version","revocationDataSliceType"
     productFlavors {
         tst {
             dimension "version"
@@ -44,6 +44,13 @@ android {
         acc {
             dimension "version"
             versionNameSuffix "-acc"
+        }
+        bloom {
+            dimension "revocationDataSliceType"
+        }
+
+        hash {
+            dimension "revocationDataSliceType"
         }
     }
 

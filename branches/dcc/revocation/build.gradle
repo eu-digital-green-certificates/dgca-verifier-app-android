@@ -62,11 +62,9 @@ android {
         }
         bloom {
             dimension "revocationDataSliceType"
-            versionNameSuffix "-bloom"
         }
         hash {
             dimension "revocationDataSliceType"
-            versionNameSuffix "-hash"
         }
     }
 
