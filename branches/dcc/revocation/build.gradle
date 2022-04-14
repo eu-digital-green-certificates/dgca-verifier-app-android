@@ -50,13 +50,21 @@ android {
         }
     }
 
-    flavorDimensions "version"
+    flavorDimensions "version", "revocationDataSliceType"
     productFlavors {
         tst {
+            dimension "version"
             buildConfigField "String", "REVOCATION_SERVICE_HOST", "\"https://dgca-revocation-service-eu-test.cfapps.eu10.hana.ondemand.com\""
         }
         acc {
+            dimension "version"
             buildConfigField "String", "REVOCATION_SERVICE_HOST", "\"https://dgca-revocation-service-eu-acc.cfapps.eu10.hana.ondemand.com\""
+        }
+        bloom {
+            dimension "revocationDataSliceType"
+        }
+        hash {
+            dimension "revocationDataSliceType"
         }
     }
 
