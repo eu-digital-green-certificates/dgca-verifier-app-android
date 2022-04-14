@@ -29,12 +29,12 @@ import dgca.verifier.app.android.vc.data.Converters
 
 @Database(
     entities = [
-        CertificateIssuerLocal::class
+        JwkLocal::class
     ],
     version = 1
 )
 @TypeConverters(Converters::class)
 abstract class VcDatabase : RoomDatabase() {
 
-    abstract fun certificateIssuerDao(): CertificateIssuerDao
+    abstract fun jwkDao(): JwkDao
 }

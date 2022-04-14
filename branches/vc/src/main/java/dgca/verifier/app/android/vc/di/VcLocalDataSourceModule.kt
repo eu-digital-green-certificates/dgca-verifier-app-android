@@ -29,7 +29,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import dgca.verifier.app.android.vc.data.local.CertificateIssuerDao
+import dgca.verifier.app.android.vc.data.local.JwkDao
 import dgca.verifier.app.android.vc.data.local.VcDatabase
 import javax.inject.Singleton
 
@@ -45,5 +45,5 @@ object VcLocalDataSourceModule {
 
     @Singleton
     @Provides
-    fun provideCertificateIssuerDao(database: VcDatabase): CertificateIssuerDao = database.certificateIssuerDao()
+    fun provideJwkDao(database: VcDatabase): JwkDao = database.jwkDao()
 }

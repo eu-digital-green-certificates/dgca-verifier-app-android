@@ -56,11 +56,13 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.math.roundToLong
 
+const val KEY_ZIP = "zip"
 const val ISSUER = "iss"
 const val TIME_NOT_BEFORE = "nbf"
 const val TIME_EXPIRES = "exp"
 const val DEFLATE = "DEF"
 const val DID = "did:web:"
+const val TYPE_HTTP_SUFFIX = "/.well-known/jwks.json"
 
 @HiltViewModel
 class VcViewModel @Inject constructor(
@@ -103,7 +105,7 @@ class VcViewModel @Inject constructor(
             return
         }
 
-        val zip = jws.header.customParams["zip"]
+        val zip = jws.header.customParams[KEY_ZIP]
         var payloadObject = mapOf<String, Any>()
         if (zip == DEFLATE) {
             val payloadUnzip = inflate(jws.payload.toBytes())
@@ -140,27 +142,26 @@ class VcViewModel @Inject constructor(
             return
         }
 
-        issuerHolder = when {
-            URLUtil.isValidUrl(issuer) -> IssuerHolder("$issuer/.well-known/jwks.json", IssuerType.HTTP)
-            issuer.contains(DID) -> {
-                val didUrl = issuer.drop(DID.length).replace(":", "/")
-                val url = if (didUrl.contains("/")) {
-                    "https://${didUrl}/did.json"
-                } else {
-                    "https://${didUrl}/.well-known/did.json"
-                }
-                IssuerHolder(url, IssuerType.DID)
-            }
-            else -> {
-                _event.postValue(Event(ViewEvent.OnError(ErrorType.ISSUER_NOT_RECOGNIZED)))
-                return
-            }
-        }
-
-        val resolvedUrl = issuerHolder!!.issuerUrl
-        val result = vcRepository.getIssuerByUrl(resolvedUrl)
+        val result = vcRepository.getIssuerJWKsByKid(kid)
         if (result.isEmpty()) {
-            _event.postValue(Event(ViewEvent.OnIssuerNotTrusted(URI(resolvedUrl).host)))
+            issuerHolder = when {
+                URLUtil.isValidUrl(issuer) -> IssuerHolder("$issuer$TYPE_HTTP_SUFFIX", IssuerType.HTTP)
+                issuer.contains(DID) -> {
+                    val didUrl = issuer.drop(DID.length).replace(":", "/")
+                    val url = if (didUrl.contains("/")) {
+                        "https://${didUrl}/did.json"
+                    } else {
+                        "https://${didUrl}/.well-known/did.json"
+                    }
+                    IssuerHolder(url, IssuerType.DID)
+                }
+                else -> {
+                    _event.postValue(Event(ViewEvent.OnError(ErrorType.ISSUER_NOT_RECOGNIZED)))
+                    return
+                }
+            }
+
+            _event.postValue(Event(ViewEvent.OnIssuerNotTrusted(URI(issuerHolder!!.issuerUrl).host)))
             return
         }
 

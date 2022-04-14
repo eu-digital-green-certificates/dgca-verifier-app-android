@@ -24,18 +24,18 @@ package dgca.verifier.app.android.vc.data.local
 
 import androidx.room.Dao
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy.REPLACE
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
-interface CertificateIssuerDao {
+interface JwkDao {
 
-    @Query("SELECT * FROM cert_issuer")
-    fun getAll(): List<CertificateIssuerLocal>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun save(entity: List<JwkLocal>)
 
-    @Insert(onConflict = REPLACE)
-    suspend fun save(entity: CertificateIssuerLocal)
+    @Query("SELECT * FROM jwk WHERE kid = :kid")
+    suspend fun getIssuer(kid: String): List<JwkLocal>
 
-    @Query("SELECT * FROM cert_issuer WHERE url = :issuerUrl LIMIT 1")
-    suspend fun getIssuer(issuerUrl: String): CertificateIssuerLocal?
+    @Query("DELETE FROM jwk")
+    suspend fun deleteAll()
 }

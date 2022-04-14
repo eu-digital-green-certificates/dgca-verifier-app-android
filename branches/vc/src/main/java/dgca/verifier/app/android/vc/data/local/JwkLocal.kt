@@ -24,30 +24,17 @@ package dgca.verifier.app.android.vc.data.local
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
-import dgca.verifier.app.android.vc.data.remote.model.IssuerType
 
-@Entity(tableName = "cert_issuer")
-data class CertificateIssuerLocal(
+@Entity(
+    tableName = "jwk",
+    indices = [Index("kid")]
+)
+data class JwkLocal(
     @PrimaryKey
-    @ColumnInfo(name = "url")
-    val url: String,
-    @ColumnInfo(name = "type")
-    val type: IssuerType,
-    @ColumnInfo(name = "country")
-    val country: String,
-    @ColumnInfo(name = "thumbprint")
-    val thumbprint: String?,
-    @ColumnInfo(name = "ssl_public_key")
-    val sslPublicKey: String,
-    @ColumnInfo(name = "key_storage_type")
-    val keyStorageType: String,
-    @ColumnInfo(name = "signature")
-    val signature: String,
-    @ColumnInfo(name = "timestamp")
-    val timestamp: String,
-    @ColumnInfo(name = "name")
-    val name: String,
-    @ColumnInfo(name = "jwk_list")
-    val jwkList: String
+    @ColumnInfo(name = "kid")
+    val kid: String,
+    @ColumnInfo(name = "jwk")
+    val jwk: String
 )

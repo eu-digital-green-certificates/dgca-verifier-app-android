@@ -23,9 +23,9 @@
 package dgca.verifier.app.android.vc.data
 
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import dgca.verifier.app.android.vc.containsServerError
-import dgca.verifier.app.android.vc.data.local.CertificateIssuerDao
+import dgca.verifier.app.android.vc.data.local.JwkDao
+import dgca.verifier.app.android.vc.data.local.JwkLocal
 import dgca.verifier.app.android.vc.data.local.VcPreferences
 import dgca.verifier.app.android.vc.data.remote.VcApiService
 import dgca.verifier.app.android.vc.data.remote.model.Jwk
@@ -34,14 +34,13 @@ import dgca.verifier.app.android.vc.data.remote.model.VerificationMethod
 import retrofit2.HttpException
 import timber.log.Timber
 import java.io.IOException
-import java.lang.reflect.Type
 import java.net.HttpURLConnection
 import javax.inject.Inject
 
 class VcRepositoryImpl @Inject constructor(
     private val preferences: VcPreferences,
     private val apiService: VcApiService,
-    private val dao: CertificateIssuerDao
+    private val dao: JwkDao
 ) : VcRepository {
 
     override suspend fun loadTrustList(): List<SignerCertificate> {
@@ -77,26 +76,24 @@ class VcRepositoryImpl @Inject constructor(
             emptyList()
         }
 
-    override suspend fun saveDidIssuer(certificate: SignerCertificate, result: List<VerificationMethod>) {
-        val jwkList = Gson().toJson(result.map { it.publicKeyJwk })
-        val entity = certificate.toCertificateIssuerLocal(jwkList)
-        dao.save(entity)
+    override suspend fun saveJWKs(result: List<Jwk>) {
+        val localJwkList = result.map { JwkLocal(it.kid, Gson().toJson(it)) }
+        dao.save(localJwkList)
     }
 
-    override suspend fun saveIssuer(certificate: SignerCertificate, result: List<Jwk>) {
-        val jwkList = Gson().toJson(result)
-        val entity = certificate.toCertificateIssuerLocal(jwkList)
-        dao.save(entity)
-    }
+    override suspend fun getIssuerJWKsByKid(kid: String): List<Jwk> =
+        try {
+            dao.getIssuer(kid).map { Gson().fromJson(it.jwk, Jwk::class.java) }
+        } catch (ex: Exception) {
+            Timber.e(ex, "Cannot parse local jwk list")
+            emptyList()
+        }
 
-    override suspend fun getIssuerByUrl(issuerUrl: String): List<Jwk> =
-        dao.getIssuer(issuerUrl)?.let {
-            try {
-                val type: Type = object : TypeToken<List<Jwk>>() {}.type
-                Gson().fromJson(it.jwkList, type)
-            } catch (ex: Exception) {
-                Timber.e(ex, "Cannot parse local jwk list")
-                emptyList()
-            }
-        } ?: emptyList()
+    override suspend fun removeOutdated() {
+        try {
+            dao.deleteAll()
+        } catch (ex: Exception) {
+            Timber.e(ex, "Failed to clear db")
+        }
+    }
 }

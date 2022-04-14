@@ -34,9 +34,9 @@ interface VcRepository {
 
     suspend fun resolveIssuerByDid(fullUrl: String): List<VerificationMethod>
 
-    suspend fun saveIssuer(certificate: SignerCertificate, result: List<Jwk>)
+    suspend fun saveJWKs(result: List<Jwk>)
 
-    suspend fun saveDidIssuer(certificate: SignerCertificate, result: List<VerificationMethod>)
+    suspend fun getIssuerJWKsByKid(kid: String): List<Jwk>
 
-    suspend fun getIssuerByUrl(issuerUrl: String): List<Jwk>
+    suspend fun removeOutdated()
 }
