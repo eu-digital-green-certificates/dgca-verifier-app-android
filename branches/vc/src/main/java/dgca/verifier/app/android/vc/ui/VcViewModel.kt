@@ -29,8 +29,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
 import com.jayway.jsonpath.*
 import com.jayway.jsonpath.spi.json.GsonJsonProvider
 import com.jayway.jsonpath.spi.json.JsonProvider
@@ -45,11 +43,11 @@ import dgca.verifier.app.android.vc.data.VcRepository
 import dgca.verifier.app.android.vc.data.remote.model.IssuerType
 import dgca.verifier.app.android.vc.data.remote.model.Jwk
 import dgca.verifier.app.android.vc.inflate
+import dgca.verifier.app.android.vc.ui.model.DataItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.lang.reflect.Type
 import java.net.URI
 import java.text.ParseException
 import java.util.*
@@ -76,6 +74,7 @@ class VcViewModel @Inject constructor(
     private var issuerHolder: IssuerHolder? = null
     private var payloadUnzipString = ""
     private var kid = ""
+    private var contextFileJson = ""
 
     init {
         Configuration.setDefaults(object : Configuration.Defaults {
@@ -86,6 +85,10 @@ class VcViewModel @Inject constructor(
             override fun mappingProvider(): MappingProvider = mappingProvider
             override fun options(): Set<Option> = EnumSet.noneOf(Option::class.java)
         })
+    }
+
+    fun setContextJson(json: String) {
+        contextFileJson = json
     }
 
     fun validate(input: String) {
@@ -195,39 +198,56 @@ class VcViewModel @Inject constructor(
             _event.postValue(Event(ViewEvent.OnError(ErrorType.INVALID_SIGNATURE)))
             return
         } else {
+//            TODO: parse context json into KEY: VALUE DataItem
+            val payloadData = Gson().fromJson(contextFileJson, PayloadData::class.java)
+
+//            payloadData.header // TODO: add recyclerview for headers
+            val items = mutableListOf<DataItem>()
+            payloadData.body.forEach { (path, payloadItem) ->
+                tryFetchObject(path, payloadItem.title, payloadUnzipString, items)
+            }
+
+            _event.postValue(
+                Event(
+                    ViewEvent.OnVerified(
+                        "header",
+                        items,
+                        payloadUnzipString
+                    )
+                )
+            )
+        }
+    }
+
+    private fun tryFetchObject(path: String, title: String, payloadUnzipString: String, items: MutableList<DataItem>) {
+        try {
             val jsonContext: DocumentContext = JsonPath.parse(payloadUnzipString)
-            val typeRef: TypeRef<List<List<SubjectName>>> = object : TypeRef<List<List<SubjectName>>>() {}
-            val subjectName = jsonContext.read("\$.vc.credentialSubject..name", typeRef).first().first()
-
-//                TODO: parsing of dynamic data
-            val type: Type = object : TypeToken<Map<String?, Any?>?>() {}.type
-            val data: Map<String, Any> = Gson().fromJson(payloadUnzipString, type)
-            val newMap: MutableMap<String, String> = HashMap()
-            process("vc", data["vc"]!!, newMap)
-            val result = GsonBuilder().setPrettyPrinting().create().toJson(newMap)
-            Timber.d("Test: $result")
-
-            _event.postValue(Event(ViewEvent.OnVerified(subjectName, result.replace("[{\",}]".toRegex(), "").trim())))
+            val value = jsonContext.read(path, String::class.java)
+            items.add(DataItem(title, value))
+        } catch (ex: Exception) {
+            tryFetchObjects(path, title, items)
         }
     }
 
-    private fun process(key: String, value: Any, newMap: MutableMap<String, String>) {
-        when (value) {
-            is String -> newMap[key] = value
-            is Map<*, *> -> {
-                val map = value as Map<String, Any>
-                for ((key1, value1) in map) {
-                    process(key1, value1, newMap)
-                }
-            }
-            is List<*> -> {
-                val list = value as List<Any>
-                for (obj in list) {
-                    process(key, obj, newMap)
-                }
-            }
+    private fun tryFetchObjects(path: String, title: String, items: MutableList<DataItem>) {
+        try {
+            val jsonContext: DocumentContext = JsonPath.parse(payloadUnzipString)
+            val typeRef: TypeRef<List<String>> = object : TypeRef<List<String>>() {}
+            val value = jsonContext.read(path, typeRef).toString()
+            items.add(DataItem(title, value))
+        } catch (ex: Exception) {
+            Timber.e(ex, "Cannot parse path")
         }
     }
+
+    data class PayloadData(
+        val header: Map<String, PayloadItem>,
+        val body: Map<String, PayloadItem>
+    )
+
+    data class PayloadItem(
+        val title: String
+    )
 
     private fun decodeJws(jws: String): JWSObject? =
         try {
@@ -265,7 +285,7 @@ class VcViewModel @Inject constructor(
     sealed class ViewEvent {
         data class OnIssuerNotTrusted(val issuerDomain: String) : ViewEvent()
         data class OnError(val type: ErrorType) : ViewEvent()
-        data class OnVerified(val subjectName: SubjectName, val payloadInfo: String) : ViewEvent() // TODO: add payload
+        data class OnVerified(val header: String, val payloadItems: List<DataItem>, val json: String) : ViewEvent()
     }
 
     enum class ErrorType {

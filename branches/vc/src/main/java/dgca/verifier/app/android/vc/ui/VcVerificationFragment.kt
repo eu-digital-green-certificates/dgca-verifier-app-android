@@ -23,6 +23,7 @@
 package dgca.verifier.app.android.vc.ui
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -32,16 +33,29 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.app.vc.R
 import com.android.app.vc.databinding.FragmentVcVerificationBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import dgca.verifier.app.android.vc.ui.model.DataItem
+import timber.log.Timber
+import java.io.*
 
 @AndroidEntryPoint
 class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() {
 
     private val viewModel by viewModels<VcViewModel>()
     private val args by navArgs<VcVerificationFragmentArgs>()
+    var isRawExpanded = false
+
+    private lateinit var adapter: VcAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        adapter = VcAdapter(layoutInflater)
+    }
 
     override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentVcVerificationBinding =
         FragmentVcVerificationBinding.inflate(inflater, container, false)
@@ -49,6 +63,8 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val json = getStringFromJsonFile(requireContext(), R.raw.vc_context_example)
+        viewModel.setContextJson(json)
         viewModel.event.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let {
                 onViewModelEvent(it)
@@ -58,14 +74,42 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
         viewModel.validate(args.qrCodeText)
 
         binding.close.setOnClickListener { requireActivity().finish() }
+        binding.expandButton.setOnClickListener {
+            isRawExpanded = !isRawExpanded
+            binding.expandButton.setImageResource(if (isRawExpanded) R.drawable.ic_icon_minus else R.drawable.ic_icon_plus)
+            binding.vcRawData.isVisible = isRawExpanded
+        }
+
+        binding.mainContentRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.mainContentRecyclerView.adapter = adapter
     }
 
     private fun onViewModelEvent(event: VcViewModel.ViewEvent) {
         when (event) {
             is VcViewModel.ViewEvent.OnError -> handleError(event.type)
-            is VcViewModel.ViewEvent.OnVerified -> showVerified(event.subjectName, event.payloadInfo)
+            is VcViewModel.ViewEvent.OnVerified -> showVerified(event.header, event.payloadItems, event.json)
             is VcViewModel.ViewEvent.OnIssuerNotTrusted -> showConfirmationDialog(event.issuerDomain)
         }
+    }
+
+    private fun getStringFromJsonFile(context: Context, fileId: Int): String {
+        val inputStream: InputStream = context.resources.openRawResource(fileId)
+        val writer: Writer = StringWriter()
+        val buffer = CharArray(1024)
+        try {
+            val reader: Reader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))
+            var n = 0
+            while (reader.read(buffer).also { n = it } != -1) {
+                writer.write(buffer, 0, n)
+            }
+            return writer.toString()
+        } catch (error: Exception) {
+            Timber.e(error, "Error : ${error.printStackTrace()}")
+        } finally {
+            inputStream.close()
+        }
+
+        return ""
     }
 
     @SuppressLint("SetTextI18n")
@@ -89,13 +133,16 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showVerified(subjectName: VcViewModel.SubjectName, payloadInfo: String) {
+    private fun showVerified(header: String, payloadItems: List<DataItem>, rawJson: String) {
+        adapter.update(payloadItems)
+
         binding.progressBar.isVisible = false
         binding.certStatusIcon.setImageResource(R.drawable.check)
         binding.verificationStatusBackground.backgroundTintList =
             ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
-        binding.personFullName.text = "${subjectName.family} ${subjectName.given.firstOrNull() ?: ""}"
-        binding.payloadInfo.text = payloadInfo
+        binding.vcHeader.text = header // TODO: handle headers
+
+        binding.vcRawData.text = rawJson
         binding.status.text = getString(R.string.cert_valid)
         binding.statusViews.isVisible = true
     }

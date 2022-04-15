@@ -27,15 +27,6 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <View
         android:id="@+id/verificationStatusBackground"
         android:layout_width="0dp"
@@ -44,21 +35,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/status"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/personFullName" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/personFullName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="30dp"
-        android:textColor="@color/white"
-        android:textSize="26sp"
-        android:typeface="normal"
-        app:layout_constraintBottom_toTopOf="@id/status"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/status" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/certStatusIcon"
@@ -68,8 +45,7 @@
         android:scaleType="centerInside"
         android:src="@drawable/check"
         app:layout_constraintBottom_toBottomOf="@id/status"
-        app:layout_constraintStart_toStartOf="@id/personFullName"
-        app:layout_constraintTop_toBottomOf="@id/personFullName"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/status" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -80,45 +56,137 @@
         android:paddingVertical="16dp"
         android:textColor="@color/white"
         android:textSize="42sp"
-        app:layout_constraintEnd_toEndOf="@id/personFullName"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/certStatusIcon"
-        app:layout_constraintTop_toBottomOf="@id/personFullName"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/cert_valid" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/vc_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="30dp"
+        android:textColor="@color/white"
+        android:textSize="26sp"
+        android:typeface="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/status" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/status_views"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="personFullName, certStatusIcon, status"
+        app:constraint_referenced_ids="vc_header, certStatusIcon, status"
         tools:visibility="visible" />
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/status">
+        android:overScrollMode="always"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toTopOf="@+id/close"
+        app:layout_constraintTop_toBottomOf="@+id/vc_header">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/payload_info"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="16dp"
-            android:textColor="@color/black"
-            tools:text="Test info" />
-    </ScrollView>
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey_transparent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/main_content_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="ifContentScrolls"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:itemCount="5"
+                tools:listitem="@layout/item_main_data"
+                tools:orientation="vertical" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@color/grey_transparent"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/main_content_recycler_view">
+
+                <TextView
+                    android:id="@+id/header"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/raw_data_details_view"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="@+id/expandButton"
+                    app:layout_constraintEnd_toStartOf="@id/expandButton"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/expandButton" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/expandButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_icon_plus"
+                    app:layout_constraintDimensionRatio="1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@drawable/ic_icon_minus" />
+
+                <TextView
+                    android:id="@+id/vc_raw_data"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="start"
+                    android:textIsSelectable="true"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/header"
+                    tools:text="{ subject }"
+                    tools:visibility="visible" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <Button
         android:id="@+id/close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:text="Close"
+        android:layout_marginBottom="20dp"
+        android:text="@string/close"
         android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
