@@ -27,7 +27,6 @@ import com.google.gson.reflect.TypeToken
 import dcc.app.revocation.data.RevocationPreferences
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
 import dcc.app.revocation.data.network.model.Slice
-import dcc.app.revocation.data.network.model.SliceType
 import dcc.app.revocation.domain.ErrorHandler
 import dcc.app.revocation.domain.RevocationRepository
 import dcc.app.revocation.domain.model.DccRevocationKidMetadata
@@ -36,6 +35,7 @@ import dcc.app.revocation.domain.model.DccRevocationSlice
 import dcc.app.revocation.domain.model.RevocationKidData
 import dcc.app.revocation.domain.toBase64Url
 import dcc.app.revocation.domain.toUtcString
+import dcc.app.revocation.domain.usecase.currentSliceType
 import dcc.app.revocation.isEqualTo
 import kotlinx.coroutines.CoroutineDispatcher
 import okhttp3.ResponseBody
@@ -56,7 +56,7 @@ class GetRevocationDataUseCase @Inject constructor(
     errorHandler: ErrorHandler,
 ) : BaseUseCase<Unit, Any>(dispatcher, errorHandler) {
 
-    private val sliceType = SliceType.BLOOMFILTER
+    private val sliceType = currentSliceType
 
     override suspend fun invoke(params: Any) {
         revocationPreferences.lastRevocationSyncTimeMillis = System.currentTimeMillis()

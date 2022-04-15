@@ -25,6 +25,10 @@
         <entry key="app/src/main/res/layout/view_detailed_certificate_view.xml" value="0.30185185185185187" />
         <entry key="app/src/main/res/layout/view_detailed_verification_result.xml" value="0.44635416666666666" />
         <entry key="app/src/main/res/layout/view_detailed_verification_result_header.xml" value="0.30520833333333336" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1" />
+        <entry key="branches/dcc/src/main/res/layout/activity_dcc_settings_main.xml" value="0.6447916666666667" />
+        <entry key="branches/dcc/src/main/res/layout/fragment_dcc_settings.xml" value="0.6447916666666667" />
         <entry key="branches/dcc/src/main/res/drawable/bottom_sheet_bg.xml" value="0.237" />
         <entry key="branches/dcc/src/main/res/drawable/ic_icon_plus.xml" value="0.2565" />
         <entry key="branches/dcc/src/main/res/layout/activity_dcc_main.xml" value="0.6447916666666667" />

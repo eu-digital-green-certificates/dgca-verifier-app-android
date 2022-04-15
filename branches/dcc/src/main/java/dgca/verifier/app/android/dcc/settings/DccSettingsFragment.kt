@@ -135,6 +135,11 @@ class DccSettingsFragment : BindingFragment<FragmentDccSettingsBinding>() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.reset()
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
@@ -180,10 +185,16 @@ class DccSettingsFragment : BindingFragment<FragmentDccSettingsBinding>() {
     }
 
     private fun setCountriesReloadState(lastUpdate: Long) {
-        val updateText = if (lastUpdate <= 0) {
-            getString(R.string.never)
-        } else {
-            lastUpdate.toLocalDateTime().formatWith(LAST_UPDATE_DATE_TIME_FORMAT)
+        val updateText = when {
+            lastUpdate < 0 -> {
+                getString(R.string.never)
+            }
+            lastUpdate == 0L -> {
+                getString(R.string.failed)
+            }
+            else -> {
+                lastUpdate.toLocalDateTime().formatWith(LAST_UPDATE_DATE_TIME_FORMAT)
+            }
         }
         val lastUpdatedText = getString(R.string.last_updated, updateText)
         val context = requireContext()

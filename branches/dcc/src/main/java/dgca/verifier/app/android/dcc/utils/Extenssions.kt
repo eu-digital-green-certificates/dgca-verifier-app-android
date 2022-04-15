@@ -45,7 +45,7 @@ fun String.sha256(): String {
         digest.update(this.toByteArray())
         val byteData: ByteArray = digest.digest()
         for (x in byteData) {
-            val str = Integer.toHexString(BackportUtils.byteToUnsignedInt(x))
+            val str = Integer.toHexString(dgca.verifier.app.android.dcc.utils.BackportUtils.byteToUnsignedInt(x))
             if (str.length < 2) {
                 sb.append('0')
             }

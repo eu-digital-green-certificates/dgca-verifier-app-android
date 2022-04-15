@@ -42,7 +42,8 @@ sealed class IntermediateResult {
     object ProgressResult : IntermediateResult()
     object RetryResult : IntermediateResult()
     class CountrySelectedResult(val selectedCountryIsoCode: String) : IntermediateResult()
-    class CountryNotSelectedResult(val selectCountryData: DccSelectCountryData) : IntermediateResult()
+    class CountryNotSelectedResult(val selectCountryData: DccSelectCountryData) :
+        IntermediateResult()
 }
 
 @HiltViewModel
@@ -55,6 +56,32 @@ class IntermediateViewModel @Inject constructor(
     private val _result = MutableLiveData<IntermediateResult>(IntermediateResult.ProgressResult)
     val result: LiveData<IntermediateResult> = _result
 
+    init {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val selectedCountryIsoCode = preferences.selectedCountryIsoCode
+                if (selectedCountryIsoCode?.isNotBlank() == true) {
+                    IntermediateResult.CountrySelectedResult(selectedCountryIsoCode)
+                } else {
+                    resolveCountries()
+                }
+            }.let {
+                _result.value = it
+            }
+        }
+    }
+
+    fun retry() {
+        _result.value = IntermediateResult.ProgressResult
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                resolveCountries()
+            }.let {
+                _result.value = it
+            }
+
+        }
+    }
 
     private suspend fun fetchLocalCountries(): List<String> {
         return try {
@@ -65,7 +92,7 @@ class IntermediateViewModel @Inject constructor(
         }
     }
 
-    private suspend fun fetchRemoteCountries(): List<String> {
+    private suspend fun fetchRemoteCountries(): List<String>? {
         return try {
             val config = configRepository.local().getConfig()
             val versionName = "1.0.0" // TODO: update BuildConfig.VERSION_NAME
@@ -75,47 +102,35 @@ class IntermediateViewModel @Inject constructor(
             fetchLocalCountries()
         } catch (error: Throwable) {
             Timber.e(error, "error refreshing keys")
-            emptyList()
+            null
         }
     }
 
-    private suspend fun fetchCountries(): List<String> {
+    private suspend fun fetchCountries(): List<String>? {
         val countries = fetchLocalCountries()
-        return if (countries.isEmpty()) {
+        return countries.ifEmpty {
             fetchRemoteCountries()
-        } else {
-            countries
         }
     }
 
     fun saveCountrySelected(selectCountryData: DccSelectCountryData) {
         preferences.selectedCountryIsoCode = selectCountryData.selectedCountryIsoCode
-        _result.value = IntermediateResult.CountrySelectedResult(selectCountryData.selectedCountryIsoCode!!)
+        _result.value =
+            IntermediateResult.CountrySelectedResult(selectCountryData.selectedCountryIsoCode!!)
     }
 
-    init {
-        viewModelScope.launch {
-            var result: IntermediateResult
-            withContext(Dispatchers.IO) {
-                val selectedCountryIsoCode = preferences.selectedCountryIsoCode
-                result = if (selectedCountryIsoCode?.isNotBlank() == true) {
-                    IntermediateResult.CountrySelectedResult(selectedCountryIsoCode)
-                } else {
-                    val availableCountries = fetchCountries()
-                    if (availableCountries.isEmpty()) {
-                        IntermediateResult.RetryResult
-                    } else {
-                        val countriesSet = availableCountries.toSet()
-                        IntermediateResult.CountryNotSelectedResult(
-                            DccSelectCountryData(
-                                countriesSet,
-                                availableCountries.first()
-                            )
-                        )
-                    }
-                }
-            }
-            _result.value = result
+    private suspend fun resolveCountries(): IntermediateResult {
+        val availableCountries = fetchCountries()
+        return if (availableCountries?.isNotEmpty() == true) {
+            val countriesSet = availableCountries.toSet()
+            IntermediateResult.CountryNotSelectedResult(
+                DccSelectCountryData(
+                    countriesSet,
+                    availableCountries.first()
+                )
+            )
+        } else {
+            IntermediateResult.RetryResult
         }
     }
 }

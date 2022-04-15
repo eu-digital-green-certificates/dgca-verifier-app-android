@@ -102,4 +102,5 @@ class DccModule {
     @Singleton
     @Provides
     fun provideCryptoService(x509: X509): CryptoService = VerificationCryptoService(x509)
+
 }

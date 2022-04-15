@@ -1,8 +1,8 @@
 /*
  *  ---license-start
- *  eu-digital-green-certificates / dgca-verifier-app-android
+ *  eu-digital-green-certificates / dcc-revocation-app-android
  *  ---
- *  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
  *  ---
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,20 +17,11 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by Mykhailo Nester on 4/23/21 9:49 AM
+ *  Created by osarapulov on 4/13/22, 2:15 PM
  */
 
-import org.gradle.api.JavaVersion
+package dcc.app.revocation.domain.usecase
 
-object Config {
-    const val minSdk = 26
-    const val compileSdk = 30
-    const val targetSdk = 30
-    val javaVersion = JavaVersion.VERSION_1_8
+import dcc.app.revocation.data.network.model.SliceType
 
-    const val versionCode = 52
-    const val versionName = "1.3.1"
-
-    const val androidTestInstrumentation = "androidx.test.runner.AndroidJUnitRunner"
-    const val proguardConsumerRules = "consumer-rules.pro"
-}
+val currentSliceType = SliceType.VARHASHLIST

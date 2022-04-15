@@ -50,7 +50,10 @@ class IntermediateFragment : BindingFragment<FragmentDccIntermediateBinding>() {
         }
         viewModel.result.observe(viewLifecycleOwner) {
             when (it) {
-                IntermediateResult.RetryResult -> binding.actionButton.visibility = View.VISIBLE
+                IntermediateResult.RetryResult -> {
+                    binding.actionButton.visibility = View.VISIBLE
+                    binding.progressBar.visibility = View.GONE
+                }
                 is IntermediateResult.CountryNotSelectedResult -> {
                     val action =
                         IntermediateFragmentDirections.actionIntermediateFragmentToCountrySelectorFragment(
@@ -71,6 +74,10 @@ class IntermediateFragment : BindingFragment<FragmentDccIntermediateBinding>() {
                     binding.progressBar.visibility = View.VISIBLE
                 }
             }
+        }
+
+        binding.actionButton.setOnClickListener {
+            viewModel.retry()
         }
     }
 

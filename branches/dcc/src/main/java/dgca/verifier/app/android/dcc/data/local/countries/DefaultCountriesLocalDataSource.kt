@@ -37,6 +37,7 @@ class DefaultCountriesLocalDataSource(
         countriesDao.apply {
             deleteAll()
             insertAll(*countriesIsoCodes.map { it.toCountryLocal() }.toTypedArray())
+            enginePreferences.setLastCountriesSync(System.currentTimeMillis())
         }
     }
 

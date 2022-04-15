@@ -29,13 +29,15 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dgca.verifier.app.android.dcc.data.ConfigRepository
+import dgca.verifier.app.android.dcc.data.local.Preferences
 import timber.log.Timber
 
 @HiltWorker
 class ConfigsLoadingWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workParams: WorkerParameters,
-    private val configRepository: ConfigRepository
+    private val configRepository: ConfigRepository,
+    private val preferences: Preferences
 ) : Worker(context, workParams) {
 
     override fun doWork(): Result {
@@ -44,6 +46,7 @@ class ConfigsLoadingWorker @AssistedInject constructor(
             Timber.d("Config: $config")
         } catch (error: Throwable) {
             Timber.d(error, "Config Loading Error: $error")
+            preferences.lastCountriesSyncTimeMillis = 0
             return Result.retry()
         }
         return Result.success()

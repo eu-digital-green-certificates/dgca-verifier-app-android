@@ -51,7 +51,7 @@ class DccProcessor @Inject constructor(
     override fun prefetchData() {
         Timber.d("Prefetching data...")
         WorkManager.getInstance(context).apply {
-            schedulePeriodicWorker<ConfigsLoadingWorker>(WORKER_CONFIGS)
+//            schedulePeriodicWorker<ConfigsLoadingWorker>(WORKER_CONFIGS)
             schedulePeriodicWorker<RulesLoadWorker>(WORKER_RULES)
             schedulePeriodicWorker<RevocationWorker>(WORKER_REVOCATION)
             schedulePeriodicWorker<LoadKeysWorker>(WORKER_KEYS)
