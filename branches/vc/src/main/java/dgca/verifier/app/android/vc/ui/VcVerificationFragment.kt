@@ -85,29 +85,33 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
 
     private fun onViewModelEvent(event: VcViewModel.ViewEvent) {
         when (event) {
-            is VcViewModel.ViewEvent.OnError -> handleError(event.type)
+            is VcViewModel.ViewEvent.OnError -> handleError(event.type, event.rawPayloadData)
             is VcViewModel.ViewEvent.OnVerified -> showVerified(event.headers, event.payloadItems, event.json)
             is VcViewModel.ViewEvent.OnIssuerNotTrusted -> showConfirmationDialog(event.issuerDomain)
         }
     }
 
     @SuppressLint("SetTextI18n")
-    private fun handleError(error: VcViewModel.ErrorType) {
+    private fun handleError(error: VcViewModel.ErrorType, rawPayloadData: String) {
         val errorText = when (error) {
-            VcViewModel.ErrorType.JWS_STRUCTURE_NOT_VALID -> "JWS_STRUCTURE_NOT_VALID"
-            VcViewModel.ErrorType.KID_NOT_INCLUDED -> "KID_NOT_INCLUDED"
-            VcViewModel.ErrorType.ISSUER_NOT_RECOGNIZED -> "ISSUER_NOT_RECOGNIZED"
-            VcViewModel.ErrorType.ISSUER_NOT_INCLUDED -> "ISSUER_NOT_INCLUDED"
-            VcViewModel.ErrorType.TIME_BEFORE_NBF -> "TIME_BEFORE_NBF"
-            VcViewModel.ErrorType.VC_EXPIRED -> "VC_EXPIRED"
-            VcViewModel.ErrorType.INVALID_SIGNATURE -> "INVALID_SIGNATURE"
+            VcViewModel.ErrorType.JWS_STRUCTURE_NOT_VALID -> "JWS structure not valid"
+            VcViewModel.ErrorType.KID_NOT_INCLUDED -> "Key id (KID) not included"
+            VcViewModel.ErrorType.ISSUER_NOT_RECOGNIZED -> "Issuer not recognized"
+            VcViewModel.ErrorType.ISSUER_NOT_INCLUDED -> "Issuer not included"
+            VcViewModel.ErrorType.TIME_BEFORE_NBF -> "Time before issuance date"
+            VcViewModel.ErrorType.VC_EXPIRED -> "Verifiable credential expired"
+            VcViewModel.ErrorType.INVALID_SIGNATURE -> "Invalid signature"
         }
 
+        binding.rawDataContainer.isVisible = rawPayloadData.isNotEmpty()
+        binding.vcRawData.text = rawPayloadData
         binding.progressBar.isVisible = false
         binding.certStatusIcon.setImageResource(R.drawable.error)
         binding.verificationStatusBackground.backgroundTintList =
             ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.red))
-        binding.status.text = "${getString(R.string.cert_invalid)}\n$errorText"
+        binding.status.text = getString(R.string.cert_invalid)
+        binding.statusDetailed.isVisible = true
+        binding.statusDetailed.text = errorText
         binding.statusViews.isVisible = true
     }
 
@@ -120,12 +124,18 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
         binding.certStatusIcon.setImageResource(R.drawable.check)
         binding.verificationStatusBackground.backgroundTintList =
             ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
+        binding.rawDataContainer.isVisible = true
         binding.vcRawData.text = rawJson
         binding.status.text = getString(R.string.cert_valid)
         binding.statusViews.isVisible = true
     }
 
     private fun addHeaders(headers: MutableList<DataItem>) {
+        if (headers.isEmpty()) {
+            return
+        }
+
+        binding.headers.isVisible = true
         headers.forEach { header ->
             val viewHeader = layoutInflater.inflate(R.layout.header_title, binding.headers, false)
             viewHeader.findViewById<TextView>(R.id.vc_header).text = header.title

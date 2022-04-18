@@ -99,7 +99,7 @@ class VcViewModel @Inject constructor(
 
         val jws = jwsObject
         if (jws == null) {
-            _event.postValue(Event(ViewEvent.OnError(ErrorType.JWS_STRUCTURE_NOT_VALID)))
+            _event.postValue(Event(ViewEvent.OnError(ErrorType.JWS_STRUCTURE_NOT_VALID, payloadUnzipString)))
             return
         }
 
@@ -120,23 +120,23 @@ class VcViewModel @Inject constructor(
         kid = jws.header.keyID
 
         if (kid.isEmpty()) {
-            _event.postValue(Event(ViewEvent.OnError(ErrorType.KID_NOT_INCLUDED)))
+            _event.postValue(Event(ViewEvent.OnError(ErrorType.KID_NOT_INCLUDED, payloadUnzipString)))
             return
         }
 
         if (issuer.isEmpty()) {
-            _event.postValue(Event(ViewEvent.OnError(ErrorType.ISSUER_NOT_INCLUDED)))
+            _event.postValue(Event(ViewEvent.OnError(ErrorType.ISSUER_NOT_INCLUDED, payloadUnzipString)))
             return
         }
 
         val now = System.currentTimeMillis() / 1000
         if (now < notBefore) {
-            _event.postValue(Event(ViewEvent.OnError(ErrorType.TIME_BEFORE_NBF)))
+            _event.postValue(Event(ViewEvent.OnError(ErrorType.TIME_BEFORE_NBF, payloadUnzipString)))
             return
         }
 
         if (expires != null && now > expires) {
-            _event.postValue(Event(ViewEvent.OnError(ErrorType.VC_EXPIRED)))
+            _event.postValue(Event(ViewEvent.OnError(ErrorType.VC_EXPIRED, payloadUnzipString)))
             return
         }
 
@@ -154,7 +154,7 @@ class VcViewModel @Inject constructor(
                     IssuerHolder(url, IssuerType.DID)
                 }
                 else -> {
-                    _event.postValue(Event(ViewEvent.OnError(ErrorType.ISSUER_NOT_RECOGNIZED)))
+                    _event.postValue(Event(ViewEvent.OnError(ErrorType.ISSUER_NOT_RECOGNIZED, payloadUnzipString)))
                     return
                 }
             }
@@ -190,7 +190,7 @@ class VcViewModel @Inject constructor(
         }
 
         if (!isSignatureValid) {
-            _event.postValue(Event(ViewEvent.OnError(ErrorType.INVALID_SIGNATURE)))
+            _event.postValue(Event(ViewEvent.OnError(ErrorType.INVALID_SIGNATURE, payloadUnzipString)))
             return
         } else {
             parsePayload()
@@ -258,7 +258,7 @@ class VcViewModel @Inject constructor(
 
     sealed class ViewEvent {
         data class OnIssuerNotTrusted(val issuerDomain: String) : ViewEvent()
-        data class OnError(val type: ErrorType) : ViewEvent()
+        data class OnError(val type: ErrorType, val rawPayloadData: String) : ViewEvent()
         data class OnVerified(val headers: MutableList<DataItem>, val payloadItems: List<DataItem>, val json: String) :
             ViewEvent()
     }
