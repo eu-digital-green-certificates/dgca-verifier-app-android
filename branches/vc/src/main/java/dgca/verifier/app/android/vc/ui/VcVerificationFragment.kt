@@ -142,7 +142,12 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
             binding.headers.addView(viewHeader)
             val viewValue = layoutInflater.inflate(R.layout.header_value, binding.headers, false)
             var result = ""
-            header.value.forEach { result += "$it " }
+            var list = header.value
+            if (header.title.contains("type", true)) {
+                list = list.replaceKnownTypes()
+            }
+
+            list.forEach { result += "$it " }
             viewValue.findViewById<TextView>(R.id.vc_header_value).text = result
             binding.headers.addView(viewValue)
         }
@@ -162,4 +167,21 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
             }
             .show()
     }
+
+    private fun List<String>.replaceKnownTypes(): List<String> =
+        map {
+            when (it) {
+                HEALTH_CARD -> "Health-card"
+                HEALTH_CARD_IMMUNIZATION -> "Immunization"
+                HEALTH_CARD_COVID19 -> "Covid19"
+                else -> it
+            }
+        }
+
+    companion object {
+        private const val HEALTH_CARD = "https://smarthealth.cards#health-card"
+        private const val HEALTH_CARD_IMMUNIZATION = "https://smarthealth.cards#immunization"
+        private const val HEALTH_CARD_COVID19 = "https://smarthealth.cards#covid19"
+    }
 }
+

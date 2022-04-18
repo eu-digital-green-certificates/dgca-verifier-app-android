@@ -1,5 +1,8 @@
 {
   "header": {
+    "$.vc.type": {
+      "title": "Type"
+    },
     "$.vc.credentialSubject.fhirBundle.entry[0].resource.name[0].family": {
       "title": "Family name"
     },
