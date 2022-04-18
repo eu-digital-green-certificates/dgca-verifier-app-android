@@ -2,7 +2,6 @@
  * Copyright (c) 2022 T-Systems International GmbH and all other contributors
  * Author: Paul Ballmann
  */
-
 package dcc.app.revocation.validation.bloom;
 
 import java.io.IOException;

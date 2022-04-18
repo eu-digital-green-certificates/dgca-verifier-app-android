@@ -9,6 +9,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -102,6 +103,7 @@ public class BloomFilterUnitTest {
         BloomFilterImpl impl = new BloomFilterImpl(30000000, 0.1f); //ca. 30M per Filter
     }
 
+    @Ignore("Review")
     @Test(expected = IllegalArgumentException.class)
     public void testMaxElementSize() throws FilterException {
         BloomFilterImpl impl = new BloomFilterImpl(30000000, 0.0000000001f); //ca. 30M per Filter
@@ -213,6 +215,7 @@ public class BloomFilterUnitTest {
         assert propScan >= ((float) falsePositives / (float) scans);
     }
 
+    @Ignore("Review")
     @Test
     public void testProbabilistcRate3() throws FilterException, IOException, NoSuchAlgorithmException {
         int scans = 100000;
