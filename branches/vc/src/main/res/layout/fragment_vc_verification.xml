@@ -61,15 +61,13 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/cert_valid" />
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/vc_header"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/headers"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="30dp"
-        android:textColor="@color/white"
-        android:textSize="26sp"
-        android:typeface="normal"
+        android:orientation="vertical"
+        android:paddingTop="16dp"
+        android:paddingBottom="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/status" />
@@ -79,7 +77,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="vc_header, certStatusIcon, status"
+        app:constraint_referenced_ids="headers, certStatusIcon, status, scroll_view"
         tools:visibility="visible" />
 
     <androidx.core.widget.NestedScrollView
@@ -89,7 +87,7 @@
         android:overScrollMode="always"
         android:scrollbars="none"
         app:layout_constraintBottom_toTopOf="@+id/close"
-        app:layout_constraintTop_toBottomOf="@+id/vc_header">
+        app:layout_constraintTop_toBottomOf="@+id/headers">
 
         <LinearLayout
             android:layout_width="match_parent"

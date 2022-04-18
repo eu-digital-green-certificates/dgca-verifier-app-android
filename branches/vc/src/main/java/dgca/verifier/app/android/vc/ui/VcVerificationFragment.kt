@@ -23,12 +23,12 @@
 package dgca.verifier.app.android.vc.ui
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -38,9 +38,8 @@ import com.android.app.vc.R
 import com.android.app.vc.databinding.FragmentVcVerificationBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import dgca.verifier.app.android.vc.ui.model.DataItem
-import timber.log.Timber
-import java.io.*
+import dgca.verifier.app.android.vc.getStringFromJsonFile
+import dgca.verifier.app.android.vc.model.DataItem
 
 @AndroidEntryPoint
 class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() {
@@ -63,8 +62,8 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val json = getStringFromJsonFile(requireContext(), R.raw.vc_context_example)
-        viewModel.setContextJson(json)
+        val contextJson = requireContext().getStringFromJsonFile(R.raw.vc_context_example)
+        viewModel.setContextJson(contextJson)
         viewModel.event.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let {
                 onViewModelEvent(it)
@@ -87,29 +86,9 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
     private fun onViewModelEvent(event: VcViewModel.ViewEvent) {
         when (event) {
             is VcViewModel.ViewEvent.OnError -> handleError(event.type)
-            is VcViewModel.ViewEvent.OnVerified -> showVerified(event.header, event.payloadItems, event.json)
+            is VcViewModel.ViewEvent.OnVerified -> showVerified(event.headers, event.payloadItems, event.json)
             is VcViewModel.ViewEvent.OnIssuerNotTrusted -> showConfirmationDialog(event.issuerDomain)
         }
-    }
-
-    private fun getStringFromJsonFile(context: Context, fileId: Int): String {
-        val inputStream: InputStream = context.resources.openRawResource(fileId)
-        val writer: Writer = StringWriter()
-        val buffer = CharArray(1024)
-        try {
-            val reader: Reader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))
-            var n = 0
-            while (reader.read(buffer).also { n = it } != -1) {
-                writer.write(buffer, 0, n)
-            }
-            return writer.toString()
-        } catch (error: Exception) {
-            Timber.e(error, "Error : ${error.printStackTrace()}")
-        } finally {
-            inputStream.close()
-        }
-
-        return ""
     }
 
     @SuppressLint("SetTextI18n")
@@ -133,18 +112,30 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showVerified(header: String, payloadItems: List<DataItem>, rawJson: String) {
+    private fun showVerified(headers: MutableList<DataItem>, payloadItems: List<DataItem>, rawJson: String) {
+        addHeaders(headers)
         adapter.update(payloadItems)
 
         binding.progressBar.isVisible = false
         binding.certStatusIcon.setImageResource(R.drawable.check)
         binding.verificationStatusBackground.backgroundTintList =
             ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
-        binding.vcHeader.text = header // TODO: handle headers
-
         binding.vcRawData.text = rawJson
         binding.status.text = getString(R.string.cert_valid)
         binding.statusViews.isVisible = true
+    }
+
+    private fun addHeaders(headers: MutableList<DataItem>) {
+        headers.forEach { header ->
+            val viewHeader = layoutInflater.inflate(R.layout.header_title, binding.headers, false)
+            viewHeader.findViewById<TextView>(R.id.vc_header).text = header.title
+            binding.headers.addView(viewHeader)
+            val viewValue = layoutInflater.inflate(R.layout.header_value, binding.headers, false)
+            var result = ""
+            header.value.forEach { result += "$it " }
+            viewValue.findViewById<TextView>(R.id.vc_header_value).text = result
+            binding.headers.addView(viewValue)
+        }
     }
 
     private fun showConfirmationDialog(issuerDomain: String) {

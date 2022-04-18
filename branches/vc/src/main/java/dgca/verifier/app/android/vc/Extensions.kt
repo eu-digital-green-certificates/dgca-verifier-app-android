@@ -22,6 +22,29 @@
 
 package dgca.verifier.app.android.vc
 
+import android.content.Context
 import android.util.Base64
+import timber.log.Timber
+import java.io.*
 
 fun String.fromBase64(): ByteArray = Base64.decode(this, Base64.NO_WRAP)
+
+fun Context.getStringFromJsonFile(fileId: Int): String {
+    val inputStream: InputStream = resources.openRawResource(fileId)
+    val writer: Writer = StringWriter()
+    val buffer = CharArray(1024)
+    try {
+        val reader: Reader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))
+        var n: Int
+        while (reader.read(buffer).also { n = it } != -1) {
+            writer.write(buffer, 0, n)
+        }
+        return writer.toString()
+    } catch (error: Exception) {
+        Timber.e(error, "Error : ${error.printStackTrace()}")
+    } finally {
+        inputStream.close()
+    }
+
+    return ""
+}

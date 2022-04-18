@@ -29,7 +29,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
-import com.jayway.jsonpath.*
+import com.jayway.jsonpath.Configuration
+import com.jayway.jsonpath.Option
 import com.jayway.jsonpath.spi.json.GsonJsonProvider
 import com.jayway.jsonpath.spi.json.JsonProvider
 import com.jayway.jsonpath.spi.mapper.GsonMappingProvider
@@ -43,7 +44,9 @@ import dgca.verifier.app.android.vc.data.VcRepository
 import dgca.verifier.app.android.vc.data.remote.model.IssuerType
 import dgca.verifier.app.android.vc.data.remote.model.Jwk
 import dgca.verifier.app.android.vc.inflate
-import dgca.verifier.app.android.vc.ui.model.DataItem
+import dgca.verifier.app.android.vc.model.DataItem
+import dgca.verifier.app.android.vc.model.PayloadData
+import dgca.verifier.app.android.vc.tryFetchObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -53,14 +56,6 @@ import java.text.ParseException
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.roundToLong
-
-const val KEY_ZIP = "zip"
-const val ISSUER = "iss"
-const val TIME_NOT_BEFORE = "nbf"
-const val TIME_EXPIRES = "exp"
-const val DEFLATE = "DEF"
-const val DID = "did:web:"
-const val TYPE_HTTP_SUFFIX = "/.well-known/jwks.json"
 
 @HiltViewModel
 class VcViewModel @Inject constructor(
@@ -198,56 +193,25 @@ class VcViewModel @Inject constructor(
             _event.postValue(Event(ViewEvent.OnError(ErrorType.INVALID_SIGNATURE)))
             return
         } else {
-//            TODO: parse context json into KEY: VALUE DataItem
-            val payloadData = Gson().fromJson(contextFileJson, PayloadData::class.java)
-
-//            payloadData.header // TODO: add recyclerview for headers
-            val items = mutableListOf<DataItem>()
-            payloadData.body.forEach { (path, payloadItem) ->
-                tryFetchObject(path, payloadItem.title, payloadUnzipString, items)
-            }
-
-            _event.postValue(
-                Event(
-                    ViewEvent.OnVerified(
-                        "header",
-                        items,
-                        payloadUnzipString
-                    )
-                )
-            )
+            parsePayload()
         }
     }
 
-    private fun tryFetchObject(path: String, title: String, payloadUnzipString: String, items: MutableList<DataItem>) {
-        try {
-            val jsonContext: DocumentContext = JsonPath.parse(payloadUnzipString)
-            val value = jsonContext.read(path, String::class.java)
-            items.add(DataItem(title, value))
-        } catch (ex: Exception) {
-            tryFetchObjects(path, title, items)
+    private fun parsePayload() {
+        val payloadData = Gson().fromJson(contextFileJson, PayloadData::class.java)
+
+        val headers = mutableListOf<DataItem>()
+        payloadData.header.forEach { (path, payloadItem) ->
+            payloadUnzipString.tryFetchObject(path, payloadItem.title, headers)
         }
-    }
 
-    private fun tryFetchObjects(path: String, title: String, items: MutableList<DataItem>) {
-        try {
-            val jsonContext: DocumentContext = JsonPath.parse(payloadUnzipString)
-            val typeRef: TypeRef<List<String>> = object : TypeRef<List<String>>() {}
-            val value = jsonContext.read(path, typeRef).toString()
-            items.add(DataItem(title, value))
-        } catch (ex: Exception) {
-            Timber.e(ex, "Cannot parse path")
+        val items = mutableListOf<DataItem>()
+        payloadData.body.forEach { (path, payloadItem) ->
+            payloadUnzipString.tryFetchObject(path, payloadItem.title, items)
         }
+
+        _event.postValue(Event(ViewEvent.OnVerified(headers, items, payloadUnzipString)))
     }
-
-    data class PayloadData(
-        val header: Map<String, PayloadItem>,
-        val body: Map<String, PayloadItem>
-    )
-
-    data class PayloadItem(
-        val title: String
-    )
 
     private fun decodeJws(jws: String): JWSObject? =
         try {
@@ -282,10 +246,21 @@ class VcViewModel @Inject constructor(
         }
     }
 
+    companion object {
+        private const val KEY_ZIP = "zip"
+        private const val ISSUER = "iss"
+        private const val TIME_NOT_BEFORE = "nbf"
+        private const val TIME_EXPIRES = "exp"
+        private const val DEFLATE = "DEF"
+        private const val DID = "did:web:"
+        private const val TYPE_HTTP_SUFFIX = "/.well-known/jwks.json"
+    }
+
     sealed class ViewEvent {
         data class OnIssuerNotTrusted(val issuerDomain: String) : ViewEvent()
         data class OnError(val type: ErrorType) : ViewEvent()
-        data class OnVerified(val header: String, val payloadItems: List<DataItem>, val json: String) : ViewEvent()
+        data class OnVerified(val headers: MutableList<DataItem>, val payloadItems: List<DataItem>, val json: String) :
+            ViewEvent()
     }
 
     enum class ErrorType {
@@ -297,11 +272,6 @@ class VcViewModel @Inject constructor(
         VC_EXPIRED,
         INVALID_SIGNATURE
     }
-
-    data class SubjectName(
-        val family: String,
-        val given: List<String>
-    )
 
     data class IssuerHolder(
         val issuerUrl: String,

@@ -20,9 +20,9 @@
  *  Created by mykhailo.nester on 15/04/2022, 20:44
  */
 
-package dgca.verifier.app.android.vc.ui.model
+package dgca.verifier.app.android.vc.model
 
 data class DataItem(
     val title: String,
-    val value: String
+    val value: List<String>
 )
