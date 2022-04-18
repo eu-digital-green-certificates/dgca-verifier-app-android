@@ -59,7 +59,12 @@ class VcAdapter(
         fun bind(data: DataItem) {
             binding.title.text = data.title
             var result = ""
-            data.value.forEachIndexed { index, s -> result += "${index + 1}: $s \n" }
+            val list = data.value
+            if (list.size > 1) {
+                list.forEachIndexed { index, s -> result += "${index + 1}: $s \n" }
+            } else {
+                result = list.first()
+            }
             binding.value.text = result
         }
     }
