@@ -23,16 +23,15 @@
 package dgca.verifier.app.android.dcc.di
 
 import android.content.Context
-import androidx.hilt.work.HiltWorkerFactory
 import com.android.app.base.Processor
 import com.android.app.base.ProcessorMarker
-import dgca.verifier.app.android.dcc.DccProcessor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
+import dgca.verifier.app.android.dcc.DccProcessor
 import dgca.verifier.app.decoder.base45.Base45Service
 import dgca.verifier.app.decoder.base45.DefaultBase45Service
 import dgca.verifier.app.decoder.cbor.CborService
@@ -48,7 +47,6 @@ import dgca.verifier.app.decoder.prefixvalidation.PrefixValidationService
 import dgca.verifier.app.decoder.schema.DefaultSchemaValidator
 import dgca.verifier.app.decoder.schema.SchemaValidator
 import dgca.verifier.app.decoder.services.X509
-import javax.inject.Inject
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -60,14 +58,12 @@ class DccModule {
     @ProcessorMarker
     fun provideDccProcessor(
         @ApplicationContext context: Context,
-//        hiltWorkerFactory: HiltWorkerFactory,
         validationService: PrefixValidationService,
         base45Service: Base45Service,
         compressorService: CompressorService,
         coseService: CoseService
-    ): Processor = dgca.verifier.app.android.dcc.DccProcessor(
+    ): Processor = DccProcessor(
         context,
-//        hiltWorkerFactory,
         validationService,
         base45Service,
         compressorService,

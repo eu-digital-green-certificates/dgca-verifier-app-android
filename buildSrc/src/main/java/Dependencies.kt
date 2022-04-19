@@ -24,8 +24,8 @@ object Deps {
 
     const val tools_gradle_android = "com.android.tools.build:gradle:${Versions.gradle}"
     const val tools_kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
-    const val androidx_navigation_safe_args_plugin = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.androidx_navigation}"
-
+    const val androidx_navigation_safe_args_plugin =
+        "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.androidx_navigation}"
     const val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}"
     const val androidx_core = "androidx.core:core-ktx:${Versions.androidx_core}"
     const val androidx_appcompat = "androidx.appcompat:appcompat:${Versions.androidx_appcompat}"
@@ -71,6 +71,8 @@ object Deps {
     const val jackson_datetype = "com.fasterxml.jackson.datatype:${Versions.jackson_datetype}"
     const val appache_commons = "commons-io:commons-io:${Versions.appache_commons}"
     const val appache_compress = "org.apache.commons:commons-compress:${Versions.appache_compress}"
+    const val jose_jwt = "com.nimbusds:nimbus-jose-jwt:${Versions.jose_jwt}"
+    const val json_path = "com.jayway.jsonpath:json-path:${Versions.json_path}"
 
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
 

@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">vc</string>
+
+    <string name="cert_valid">Valid</string>
+    <string name="cert_invalid">Invalid</string>
+    <string name="issuer_not_trusted">Issuer %s is not trusted. Do you agree to proceed?</string>
+    <string name="approve">Approve</string>
+    <string name="cancel">Cancel</string>
+    <string name="raw_data_details_view">RAW data details view</string>
+    <string name="close">Close</string>
+</resources>

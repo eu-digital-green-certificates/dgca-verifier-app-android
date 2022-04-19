@@ -8,5 +8,5 @@ interface Processor {
 
     fun isApplicable(input: String): Intent?
 
-    fun getSettingsIntent(): Pair<String, Intent>
+    fun getSettingsIntent(): Pair<String, Intent>?
 }

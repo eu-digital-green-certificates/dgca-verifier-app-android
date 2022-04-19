@@ -27,8 +27,27 @@
         <entry key="app/src/main/res/layout/view_detailed_verification_result_header.xml" value="0.30520833333333336" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1" />
+        <entry key="branches/dcc/src/main/res/drawable/bottom_sheet_bg.xml" value="0.237" />
+        <entry key="branches/dcc/src/main/res/drawable/ic_icon_plus.xml" value="0.2565" />
+        <entry key="branches/dcc/src/main/res/layout/activity_dcc_main.xml" value="0.6447916666666667" />
         <entry key="branches/dcc/src/main/res/layout/activity_dcc_settings_main.xml" value="0.6447916666666667" />
+        <entry key="branches/dcc/src/main/res/layout/dialog_fragment_detailed_verification_result.xml" value="0.3109375" />
+        <entry key="branches/dcc/src/main/res/layout/fragment_dcc_intermediate.xml" value="1.5" />
         <entry key="branches/dcc/src/main/res/layout/fragment_dcc_settings.xml" value="0.6447916666666667" />
+        <entry key="branches/dcc/src/main/res/layout/fragment_verification.xml" value="0.6447916666666667" />
+        <entry key="branches/dcc/src/main/res/layout/view_certificate_content_view.xml" value="0.6447916666666667" />
+        <entry key="branches/dcc/src/main/res/layout/view_detailed_certificate_raw_view.xml" value="0.43425925925925923" />
+        <entry key="branches/dcc/src/main/res/layout/view_detailed_certificate_view.xml" value="0.43425925925925923" />
+        <entry key="branches/dcc/src/main/res/layout/view_detailed_verification_result_header.xml" value="0.3109375" />
+        <entry key="branches/vc/src/main/res/drawable-xxxhdpi/ic_icon_plus.xml" value="0.2565" />
+        <entry key="branches/vc/src/main/res/layout/activity_vc_main.xml" value="0.6447916666666667" />
+        <entry key="branches/vc/src/main/res/layout/activity_vc_settings.xml" value="0.6447916666666667" />
+        <entry key="branches/vc/src/main/res/layout/fragment_result.xml" value="0.6447916666666667" />
+        <entry key="branches/vc/src/main/res/layout/fragment_vc_verification.xml" value="0.43425925925925923" />
+        <entry key="branches/vc/src/main/res/layout/fragment_verification.xml" value="0.6447916666666667" />
+        <entry key="branches/vc/src/main/res/layout/header_title.xml" value="0.6447916666666667" />
+        <entry key="branches/vc/src/main/res/layout/header_value.xml" value="0.6447916666666667" />
+        <entry key="branches/vc/src/main/res/layout/item_main_data.xml" value="0.43425925925925923" />
       </map>
     </option>
   </component>

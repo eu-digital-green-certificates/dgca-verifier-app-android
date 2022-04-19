@@ -49,6 +49,7 @@
     <string name="privacy_information">Privacy information</string>
     <string name="licenses">Licenses</string>
     <string name="trusted_public_keys">Trusted public keys</string>
+    <string name="reload">Reload</string>
     <string name="reload_pub_keys">Reload pub keys</string>
     <string name="reload_revocation">Reload revocation list</string>
     <string name="reload_countries">Reload Countries</string>

@@ -2,10 +2,12 @@ include ':branches:base'
 include ':branches:icao'
 include ':branches:divoc'
 include ':branches:dcc'
+include ':branches:dcc:revocation'
+include ':branches:vc'
+include ':branches:shc'
 include ':app'
 include ':decoder'
 include ':engine'
-include ':branches:dcc:revocation'
 rootProject.name = "Verifier App"
 
 project(':decoder').projectDir = new File("../dgca-app-core-android/decoder")
