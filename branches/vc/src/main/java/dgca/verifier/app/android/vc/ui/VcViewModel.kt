@@ -94,6 +94,22 @@ class VcViewModel @Inject constructor(
         }
     }
 
+    fun issuerApproved() {
+        viewModelScope.launch {
+            val holder = issuerHolder ?: return@launch
+
+
+            withContext(Dispatchers.IO) {
+                val result = when (holder.type) {
+                    IssuerType.HTTP -> resolveIssuer(kid, holder.issuerUrl)
+                    IssuerType.DID -> resolveDid(kid, holder.issuerUrl)
+                    else -> emptyList()
+                }
+                validateJws(result)
+            }
+        }
+    }
+
     private suspend fun decodeJwsInput(input: String) {
         jwsObject = decodeJws(input)
 
@@ -103,16 +119,7 @@ class VcViewModel @Inject constructor(
             return
         }
 
-        val zip = jws.header.customParams[KEY_ZIP]
-        var payloadObject = mapOf<String, Any>()
-        if (zip == DEFLATE) {
-            val payloadUnzip = inflate(jws.payload.toBytes())
-            payloadUnzipString = payloadUnzip.toString(Charsets.UTF_8)
-            payloadObject = Payload(payloadUnzip).toJSONObject()
-        } else {
-            jws.payload.toJSONObject()
-        }
-
+        val payloadObject = getPayload(jws)
         val issuer = payloadObject[ISSUER] as String
         val notBefore = (payloadObject[TIME_NOT_BEFORE] as Double).roundToLong()
         val expires = (payloadObject[TIME_EXPIRES] as? Double)?.roundToLong()
@@ -129,56 +136,69 @@ class VcViewModel @Inject constructor(
             return
         }
 
+        if (isTimeValid(notBefore, expires).not()) return
+
+        val result = vcRepository.getIssuerJWKsByKid(kid)
+        if (result.isEmpty()) {
+            onJWKNotFoundError(issuer)
+            return
+        }
+        validateJws(result)
+    }
+
+    private fun decodeJws(jws: String): JWSObject? =
+        try {
+            JWSObject.parse(jws)
+        } catch (ex: ParseException) {
+            Timber.e(ex, "JWS parsing exception")
+            null
+        }
+
+    private fun getPayload(jws: JWSObject): Map<String, Any> {
+        val zip = jws.header.customParams[KEY_ZIP]
+
+        return if (zip == DEFLATE) {
+            val payloadUnzip = inflate(jws.payload.toBytes())
+            payloadUnzipString = payloadUnzip.toString(Charsets.UTF_8)
+            Payload(payloadUnzip).toJSONObject()
+        } else {
+            jws.payload.toJSONObject()
+        }
+    }
+
+    private fun isTimeValid(notBefore: Long, expires: Long?): Boolean {
         val now = System.currentTimeMillis() / 1000
         if (now < notBefore) {
             _event.postValue(Event(ViewEvent.OnError(ErrorType.TIME_BEFORE_NBF, payloadUnzipString)))
-            return
+            return false
         }
 
         if (expires != null && now > expires) {
             _event.postValue(Event(ViewEvent.OnError(ErrorType.VC_EXPIRED, payloadUnzipString)))
-            return
+            return false
         }
 
-        val result = vcRepository.getIssuerJWKsByKid(kid)
-        if (result.isEmpty()) {
-            issuerHolder = when {
-                URLUtil.isValidUrl(issuer) -> IssuerHolder("$issuer$TYPE_HTTP_SUFFIX", IssuerType.HTTP)
-                issuer.contains(DID) -> {
-                    val didUrl = issuer.drop(DID.length).replace(":", "/")
-                    val url = if (didUrl.contains("/")) {
-                        "https://${didUrl}/did.json"
-                    } else {
-                        "https://${didUrl}/.well-known/did.json"
-                    }
-                    IssuerHolder(url, IssuerType.DID)
-                }
-                else -> {
-                    _event.postValue(Event(ViewEvent.OnError(ErrorType.ISSUER_NOT_RECOGNIZED, payloadUnzipString)))
-                    return
-                }
-            }
-
-            _event.postValue(Event(ViewEvent.OnIssuerNotTrusted(URI(issuerHolder!!.issuerUrl).host)))
-            return
-        }
-
-        validateJws(result)
+        return true
     }
 
-    fun issuerApproved() {
-        viewModelScope.launch {
-            val holder = issuerHolder ?: return@launch
-
-            withContext(Dispatchers.IO) {
-                val result = when (holder.type) {
-                    IssuerType.HTTP -> resolveIssuer(kid, holder.issuerUrl)
-                    IssuerType.DID -> resolveDid(kid, holder.issuerUrl)
-                    else -> emptyList()
+    private fun onJWKNotFoundError(issuer: String) {
+        issuerHolder = when {
+            URLUtil.isValidUrl(issuer) -> IssuerHolder("$issuer$TYPE_HTTP_SUFFIX", IssuerType.HTTP)
+            issuer.contains(DID) -> {
+                val didUrl = issuer.drop(DID.length).replace(":", "/")
+                val url = if (didUrl.contains("/")) {
+                    "https://${didUrl}/did.json"
+                } else {
+                    "https://${didUrl}/.well-known/did.json"
                 }
-                validateJws(result)
+                IssuerHolder(url, IssuerType.DID)
+            }
+            else -> {
+                _event.postValue(Event(ViewEvent.OnError(ErrorType.ISSUER_NOT_RECOGNIZED, payloadUnzipString)))
+                return
             }
         }
+        _event.postValue(Event(ViewEvent.OnIssuerNotTrusted(URI(issuerHolder!!.issuerUrl).host)))
     }
 
     private fun validateJws(list: List<Jwk>) {
@@ -212,14 +232,6 @@ class VcViewModel @Inject constructor(
 
         _event.postValue(Event(ViewEvent.OnVerified(headers, items, payloadUnzipString)))
     }
-
-    private fun decodeJws(jws: String): JWSObject? =
-        try {
-            JWSObject.parse(jws)
-        } catch (ex: ParseException) {
-            Timber.e(ex, "JWS parsing exception")
-            null
-        }
 
     private suspend fun resolveIssuer(kid: String, url: String): List<Jwk> =
         vcRepository.resolveIssuer(url).filter { it.kid == kid }

@@ -29,8 +29,6 @@ import com.android.app.base.RESULT_KEY
 import timber.log.Timber
 import javax.inject.Inject
 
-const val SMART_HEALTH_CARD_PREFIX = "shc:/"
-
 class ShcProcessor @Inject constructor() : Processor {
 
     override fun prefetchData() {
@@ -41,7 +39,7 @@ class ShcProcessor @Inject constructor() : Processor {
         if (input.startsWith(SMART_HEALTH_CARD_PREFIX)) {
             val shc = input.drop(SMART_HEALTH_CARD_PREFIX.length)
             val jws = decodeShc(shc)
-            Intent("com.android.app.vc.View", Uri.parse("verifier://vc")).apply {
+            Intent(VC_VIEW_ACTION, Uri.parse(VC_VIEW_URI)).apply {
                 putExtra(RESULT_KEY, jws)
             }
         } else {
@@ -51,4 +49,10 @@ class ShcProcessor @Inject constructor() : Processor {
     override fun getSettingsIntent(): Pair<String, Intent>? = null
 
     private fun decodeShc(shc: String) = shc.convertNumericToJws()
+
+    companion object {
+        private const val SMART_HEALTH_CARD_PREFIX = "shc:/"
+        private const val VC_VIEW_ACTION = "com.android.app.vc.View"
+        private const val VC_VIEW_URI = "verifier://vc"
+    }
 }

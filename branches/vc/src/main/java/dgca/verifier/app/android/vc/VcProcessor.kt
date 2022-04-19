@@ -50,16 +50,14 @@ class VcProcessor @Inject constructor(
     override fun isApplicable(input: String): Intent? =
         try {
             JWSObject.parse(input)
-            Intent("com.android.app.vc.View", Uri.parse("verifier://vc")).apply {
-                putExtra(RESULT_KEY, input)
-            }
+            Intent(VC_VIEW_ACTION, Uri.parse(VC_VIEW_URI)).apply { putExtra(RESULT_KEY, input) }
         } catch (ex: ParseException) {
             Timber.e(ex, "Not valid jws format")
             null
         }
 
     override fun getSettingsIntent(): Pair<String, Intent> =
-        Pair("Vc", Intent("com.android.app.vc.View", Uri.parse("settings://vc")))
+        Pair(VC_SETTINGS_TITLE, Intent(VC_VIEW_ACTION, Uri.parse(VC_SETTINGS_URI)))
 
     private inline fun <reified T : ListenableWorker> WorkManager.schedulePeriodicWorker(workerId: String) =
         this.enqueueUniquePeriodicWork(
@@ -79,6 +77,10 @@ class VcProcessor @Inject constructor(
         )
 
     companion object {
-        const val VC_WORKER_CONFIGS = "vcWorkerConfigs"
+        private const val VC_WORKER_CONFIGS = "vcWorkerConfigs"
+        private const val VC_VIEW_ACTION = "com.android.app.vc.View"
+        private const val VC_VIEW_URI = "verifier://vc"
+        private const val VC_SETTINGS_URI = "settings://vc"
+        private const val VC_SETTINGS_TITLE = "Vc"
     }
 }
