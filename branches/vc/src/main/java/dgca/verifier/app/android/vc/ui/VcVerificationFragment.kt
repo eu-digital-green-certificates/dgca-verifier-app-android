@@ -101,6 +101,7 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
             VcViewModel.ErrorType.TIME_BEFORE_NBF -> "Time before issuance date"
             VcViewModel.ErrorType.VC_EXPIRED -> "Verifiable credential expired"
             VcViewModel.ErrorType.INVALID_SIGNATURE -> "Invalid signature"
+            VcViewModel.ErrorType.PAYLOAD_NOT_PARSED -> "Failed to parse payload"
         }
 
         binding.rawDataContainer.isVisible = rawPayloadData.isNotEmpty()

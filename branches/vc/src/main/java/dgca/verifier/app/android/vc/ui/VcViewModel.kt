@@ -98,7 +98,6 @@ class VcViewModel @Inject constructor(
         viewModelScope.launch {
             val holder = issuerHolder ?: return@launch
 
-
             withContext(Dispatchers.IO) {
                 val result = when (holder.type) {
                     IssuerType.HTTP -> resolveIssuer(kid, holder.issuerUrl)
@@ -120,8 +119,13 @@ class VcViewModel @Inject constructor(
         }
 
         val payloadObject = getPayload(jws)
+        if (payloadObject == null) {
+            _event.postValue(Event(ViewEvent.OnError(ErrorType.PAYLOAD_NOT_PARSED, payloadUnzipString)))
+            return
+        }
+
         val issuer = payloadObject[ISSUER] as String
-        val notBefore = (payloadObject[TIME_NOT_BEFORE] as Double).roundToLong()
+        val notBefore = parseNbf(payloadObject[TIME_NOT_BEFORE])
         val expires = (payloadObject[TIME_EXPIRES] as? Double)?.roundToLong()
 
         kid = jws.header.keyID
@@ -154,21 +158,27 @@ class VcViewModel @Inject constructor(
             null
         }
 
-    private fun getPayload(jws: JWSObject): Map<String, Any> {
+    private fun getPayload(jws: JWSObject): Map<String, Any>? {
         val zip = jws.header.customParams[KEY_ZIP]
 
         return if (zip == DEFLATE) {
-            val payloadUnzip = inflate(jws.payload.toBytes())
-            payloadUnzipString = payloadUnzip.toString(Charsets.UTF_8)
-            Payload(payloadUnzip).toJSONObject()
+            try {
+                val payloadUnzip = inflate(jws.payload.toBytes())
+                payloadUnzipString = payloadUnzip.toString(Charsets.UTF_8)
+                Payload(payloadUnzip).toJSONObject()
+            } catch (ex: Exception) {
+                Timber.e(ex, "Failed to unzip payload")
+                return null
+            }
         } else {
+            payloadUnzipString = jws.payload.toBytes().toString(Charsets.UTF_8)
             jws.payload.toJSONObject()
         }
     }
 
     private fun isTimeValid(notBefore: Long, expires: Long?): Boolean {
         val now = System.currentTimeMillis() / 1000
-        if (now < notBefore) {
+        if (now < notBefore || notBefore == -1L) {
             _event.postValue(Event(ViewEvent.OnError(ErrorType.TIME_BEFORE_NBF, payloadUnzipString)))
             return false
         }
@@ -258,6 +268,21 @@ class VcViewModel @Inject constructor(
         }
     }
 
+    private fun parseNbf(any: Any?): Long {
+        any ?: return -1
+
+        return try {
+            val nbf = any.toString()
+            if (nbf.contains(".")) {
+                nbf.toDouble().toLong()
+            } else {
+                nbf.toLong()
+            }
+        } catch (ex: Exception) {
+            return -1
+        }
+    }
+
     companion object {
         private const val KEY_ZIP = "zip"
         private const val ISSUER = "iss"
@@ -277,6 +302,7 @@ class VcViewModel @Inject constructor(
 
     enum class ErrorType {
         JWS_STRUCTURE_NOT_VALID,
+        PAYLOAD_NOT_PARSED,
         KID_NOT_INCLUDED,
         ISSUER_NOT_RECOGNIZED,
         ISSUER_NOT_INCLUDED,

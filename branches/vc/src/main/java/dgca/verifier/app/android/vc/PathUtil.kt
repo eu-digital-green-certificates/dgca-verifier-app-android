@@ -43,7 +43,9 @@ private fun String.tryFetchObjects(path: String, title: String, items: MutableLi
         val jsonContext: DocumentContext = JsonPath.parse(this)
         val typeRef: TypeRef<List<String>> = object : TypeRef<List<String>>() {}
         val value = jsonContext.read(path, typeRef)
-        items.add(DataItem(title, value))
+        if (value.isNotEmpty()) {
+            items.add(DataItem(title, value))
+        }
     } catch (ex: Exception) {
         Timber.e(ex, "Cannot parse path")
     }

@@ -28,13 +28,13 @@ import com.fasterxml.jackson.annotation.JsonProperty
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Jwk(
     @JsonProperty("kty")
-    val kty: String?,
+    val kty: String,
     @JsonProperty("kid")
     val kid: String,
     @JsonProperty("use")
-    val use: String,
+    val use: String?,
     @JsonProperty("alg")
-    val alg: String,
+    val alg: String?,
     @JsonProperty("x5c")
     val x5c: List<String>?,
     @JsonProperty("crv")
