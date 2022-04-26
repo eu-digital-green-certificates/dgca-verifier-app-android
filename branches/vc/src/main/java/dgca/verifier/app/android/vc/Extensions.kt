@@ -26,6 +26,10 @@ import android.content.Context
 import android.util.Base64
 import timber.log.Timber
 import java.io.*
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 fun String.fromBase64(): ByteArray = Base64.decode(this, Base64.NO_WRAP)
 
@@ -48,3 +52,9 @@ fun Context.getStringFromJsonFile(fileId: Int): String {
 
     return ""
 }
+
+fun Long.toLocalDateTime(): LocalDateTime =
+    LocalDateTime.ofInstant(Instant.ofEpochMilli(this), ZoneId.systemDefault())
+
+fun LocalDateTime.formatWith(pattern: String): String =
+    DateTimeFormatter.ofPattern(pattern).format(this)

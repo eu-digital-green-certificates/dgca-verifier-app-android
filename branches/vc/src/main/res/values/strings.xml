@@ -8,4 +8,7 @@
     <string name="cancel">Cancel</string>
     <string name="raw_data_details_view">RAW data details view</string>
     <string name="close">Close</string>
+    <string name="reload_trusted_list">Reload trusted list</string>
+    <string name="last_updated">Last Updated: %s</string>
+    <string name="settings">Settings</string>
 </resources>

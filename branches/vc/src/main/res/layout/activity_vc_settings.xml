@@ -1,6 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/blue"
+            android:theme="@style/Vc.Toolbar"
+            app:navigationIcon="@drawable/ic_baseline_arrow_back"
+            app:title="@string/settings"
+            app:titleTextColor="@color/white" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/syncTrustedList"
+            style="@style/TextAppearance.Vc.SettingsButtonHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:drawableEnd="@drawable/ic_synchronize_solid"
+            android:gravity="start|center"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:letterSpacing="0"
+            android:minHeight="48dp"
+            android:paddingHorizontal="16dp"
+            android:text="@string/reload_trusted_list"
+            android:textAllCaps="false" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/lastUpdate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/grey_50"
+            android:textSize="14sp"
+            tools:layout_editor_absoluteX="16dp"
+            tools:text="Last Updated: 2021-05-27 09:44" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/blue"
+        android:visibility="gone"
+        tools:visibility="visible" />
+</FrameLayout>
