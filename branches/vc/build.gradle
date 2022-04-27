@@ -52,6 +52,18 @@ android {
         }
     }
 
+    flavorDimensions "version"
+    productFlavors {
+        tst {
+            dimension "version"
+            buildConfigField "String", "VC_SERVICE_HOST", "\"https://dgca-verifier-service.cfapps.eu10.hana.ondemand.com/\""
+        }
+        acc {
+            dimension "version"
+            buildConfigField "String", "VC_SERVICE_HOST", "\"https://dgca-verifier-service-eu-acc.cfapps.eu10.hana.ondemand.com/\""
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -99,7 +111,7 @@ dependencies {
     implementation Deps.timber
     implementation Deps.jose_jwt
     implementation Deps.json_path
-    implementation 'com.google.code.gson:gson:2.9.0' // TODO: review after UI update
+    implementation Deps.gson
 
     testImplementation Deps.test_junit
     androidTestImplementation Deps.test_ext

@@ -47,8 +47,6 @@ import javax.inject.Singleton
 
 private const val CONNECT_TIMEOUT = 30L
 
-const val BASE_URL = "https://dgca-verifier-service-eu-test.cfapps.eu10.hana.ondemand.com/"
-
 @InstallIn(SingletonComponent::class)
 @Module
 object VcNetworkModule {
@@ -115,7 +113,7 @@ object VcNetworkModule {
     private fun createRetrofit(converterFactory: Converter.Factory, okHttpClient: Provider<OkHttpClient>): Retrofit {
         return Retrofit.Builder()
             .addConverterFactory(converterFactory)
-            .baseUrl(BASE_URL)
+            .baseUrl(BuildConfig.VC_SERVICE_HOST)
             .callFactory { okHttpClient.get().newCall(it) }
             .build()
     }
