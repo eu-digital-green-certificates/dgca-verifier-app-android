@@ -33,6 +33,8 @@ interface VcPreferences {
 
     var eTag: String?
 
+    var trustListSyncTimeMillis: Long
+
     fun clear()
 }
 
@@ -50,6 +52,12 @@ class VcPreferencesImpl(context: Context) : VcPreferences {
         KEY_ETAG
     )
 
+    override var trustListSyncTimeMillis by LongPreference(
+        preferences,
+        KEY_TRUST_LIST_SYNC,
+        -1
+    )
+
     override fun clear() {
         preferences.value.edit().clear().apply()
     }
@@ -57,6 +65,7 @@ class VcPreferencesImpl(context: Context) : VcPreferences {
     companion object {
         private const val USER_PREF = "dgca.verifier.app.vc.pref"
         private const val KEY_ETAG = "dgca.verifier.app.vc.eTag"
+        private const val KEY_TRUST_LIST_SYNC = "dgca.verifier.app.vc.trustList"
     }
 }
 
@@ -73,5 +82,21 @@ class StringPreference(
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: String?) {
         preferences.value.edit { putString(name, value) }
+    }
+}
+
+class LongPreference(
+    private val preferences: Lazy<SharedPreferences>,
+    private val name: String,
+    private val defaultValue: Long
+) : ReadWriteProperty<Any, Long> {
+
+    @WorkerThread
+    override fun getValue(thisRef: Any, property: KProperty<*>): Long {
+        return preferences.value.getLong(name, defaultValue)
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: Long) {
+        preferences.value.edit { putLong(name, value) }
     }
 }

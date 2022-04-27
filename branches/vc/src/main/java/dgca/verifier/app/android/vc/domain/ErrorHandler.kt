@@ -17,22 +17,12 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 23/03/2022, 22:35
+ *  Created by mykhailo.nester on 26/04/2022, 23:54
  */
 
-package dgca.verifier.app.android.vc.ui
+package dgca.verifier.app.android.vc.domain
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.android.app.vc.R
-import dagger.hilt.android.AndroidEntryPoint
+interface ErrorHandler {
 
-@AndroidEntryPoint
-class VcSettingsActivity : AppCompatActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setContentView(R.layout.activity_vc_settings)
-    }
+    fun getError(throwable: Throwable): ErrorType
 }

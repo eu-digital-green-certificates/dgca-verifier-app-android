@@ -28,77 +28,29 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import dgca.verifier.app.android.vc.data.VcRepository
-import dgca.verifier.app.android.vc.data.remote.model.IssuerType
+import dgca.verifier.app.android.vc.domain.GetTrustListUseCase
 import timber.log.Timber
 
 @HiltWorker
 class TrustListLoadingWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workParams: WorkerParameters,
-    private val vcRepository: VcRepository
+    private val getTrustListUseCase: GetTrustListUseCase
 ) : CoroutineWorker(context, workParams) {
 
     override suspend fun doWork(): Result {
         Timber.d("Trust list loading start")
         return try {
-//            TODO: add reload Button in setting to reload manually
-
-            val certificates = vcRepository.loadTrustList()
-            if (certificates.isNotEmpty()) {
-                vcRepository.removeOutdated()
-            }
-
-            certificates
-                .filter { it.keyStorageType == KEY_STORAGE_TYPE }
-                .forEach {
-                    when (it.type) {
-                        IssuerType.HTTP -> resolveIssuer(it.url)
-                        IssuerType.DID -> resolveDid(it.url)
-                        else -> {}
-                    }
-                }
+            var result = Result.success()
+            getTrustListUseCase.execute(onFailure = {
+                result = Result.retry()
+            })
 
             Timber.d("Trust list loading success")
-            Result.success()
+            result
         } catch (error: Throwable) {
             Timber.d(error, "Trust list loading error: $error")
             Result.retry()
         }
-    }
-
-    private suspend fun resolveIssuer(url: String) {
-        var fullUrl = url
-        if (url.endsWith(TYPE_HTTP_SUFFIX).not() && url.endsWith(".json").not()) {
-            fullUrl = "$url$TYPE_HTTP_SUFFIX"
-        }
-
-        val result = vcRepository.resolveIssuer(fullUrl)
-        if (result.isNotEmpty()) {
-            vcRepository.saveJWKs(result)
-        }
-    }
-
-    private suspend fun resolveDid(url: String) {
-        var resolvedUrl = url
-        if (url.startsWith("did:web")) {
-            val didUrl = url.drop(DID.length).replace(":", "/")
-            resolvedUrl = if (didUrl.contains("/")) {
-                "https://${didUrl}/did.json"
-            } else {
-                "https://${didUrl}/.well-known/did.json"
-            }
-        }
-
-        val result = vcRepository.resolveIssuerByDid(resolvedUrl)
-        if (result.isNotEmpty()) {
-            vcRepository.saveJWKs(result.map { it.publicKeyJwk })
-        }
-    }
-
-    companion object {
-        const val KEY_STORAGE_TYPE = "JWKS"
-        const val TYPE_HTTP_SUFFIX = "/.well-known/jwks.json"
-        const val DID = "did:web:"
     }
 }

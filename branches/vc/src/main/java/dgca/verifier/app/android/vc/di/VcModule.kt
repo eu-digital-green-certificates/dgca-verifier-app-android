@@ -34,6 +34,9 @@ import dagger.multibindings.IntoSet
 import dgca.verifier.app.android.vc.VcProcessor
 import dgca.verifier.app.android.vc.data.local.VcPreferences
 import dgca.verifier.app.android.vc.data.local.VcPreferencesImpl
+import dgca.verifier.app.android.vc.domain.ErrorHandler
+import dgca.verifier.app.android.vc.network.GeneralErrorHandlerImpl
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -48,4 +51,14 @@ class VcModule {
     @Singleton
     @Provides
     fun providePreferences(@ApplicationContext context: Context): VcPreferences = VcPreferencesImpl(context)
+
+    @Provides
+    @Singleton
+    @VerifiableCredentials
+    fun provideVcExecutionDispatcher() = Dispatchers.IO
+
+    @Singleton
+    @Provides
+    @VerifiableCredentials
+    fun provideVcErrorHandler(): ErrorHandler = GeneralErrorHandlerImpl()
 }

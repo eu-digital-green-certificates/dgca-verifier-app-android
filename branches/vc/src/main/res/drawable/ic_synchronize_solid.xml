@@ -1,0 +1,31 @@
+<!--
+  ~  -license-start
+  ~  eu-digital-covid-certificates / dcc-verifier-app-android
+  ~  -
+  ~  Copyright (C) 2022 T-Systems International GmbH and all other contributors
+  ~  -
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  ~  -license-end
+  ~
+  ~  Created by mykhailo.nester on 27/04/2022, 00:16
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="64.001"
+    android:viewportHeight="64">
+    <path
+        android:fillColor="#262626"
+        android:pathData="M14.925,28.71c0.652,-3.301 2.262,-6.312 4.654,-8.705c3.211,-3.21 7.479,-4.979 12.02,-4.979c3.43,0 6.703,1.012 9.484,2.89L36.001,23l16,0.002V7l-5.191,5.19C42.466,8.844 37.174,7.026 31.6,7.026c-6.678,0 -12.955,2.601 -17.678,7.322c-3.518,3.52 -5.884,7.949 -6.845,12.811c-0.428,2.167 0.982,4.271 3.149,4.699c0.262,0.052 0.523,0.077 0.78,0.077C12.876,31.935 14.549,30.615 14.925,28.71zM53.741,32.069c-2.176,-0.416 -4.263,1.02 -4.671,3.191c-0.626,3.33 -2.203,6.278 -4.684,8.761C41.174,47.231 36.906,49 32.366,49c-3.428,0 -6.7,-1.011 -9.479,-2.885L28.001,41h-16v16l5.159,-5.159C21.503,55.183 26.793,57 32.366,57c6.677,0 12.954,-2.601 17.677,-7.322c3.59,-3.592 5.972,-8.065 6.889,-12.938C57.34,34.568 55.912,32.478 53.741,32.069z" />
+</vector>

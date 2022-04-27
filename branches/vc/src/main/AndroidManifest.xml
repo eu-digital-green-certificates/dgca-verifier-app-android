@@ -43,7 +43,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="dgca.verifier.app.android.vc.ui.VcSettingsActivity"
+            android:name="dgca.verifier.app.android.vc.ui.settings.VcSettingsActivity"
             android:exported="false"
             android:label="VcSettingsActivity">
             <intent-filter>
