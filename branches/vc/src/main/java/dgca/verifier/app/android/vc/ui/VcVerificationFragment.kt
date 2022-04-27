@@ -100,6 +100,7 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
             VcViewModel.ErrorType.ISSUER_NOT_INCLUDED -> "Issuer not included"
             VcViewModel.ErrorType.TIME_BEFORE_NBF -> "Time before issuance date"
             VcViewModel.ErrorType.VC_EXPIRED -> "Verifiable credential expired"
+            VcViewModel.ErrorType.NO_JWK_FOR_KID -> "JWK not found for this KID"
             VcViewModel.ErrorType.INVALID_SIGNATURE -> "Invalid signature"
             VcViewModel.ErrorType.PAYLOAD_NOT_PARSED -> "Failed to parse payload"
         }

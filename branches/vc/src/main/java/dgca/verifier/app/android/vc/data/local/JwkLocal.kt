@@ -36,5 +36,7 @@ data class JwkLocal(
     @ColumnInfo(name = "kid")
     val kid: String,
     @ColumnInfo(name = "jwk")
-    val jwk: String
+    val jwk: String,
+    @ColumnInfo(name = "resolved_url")
+    val url: String
 )

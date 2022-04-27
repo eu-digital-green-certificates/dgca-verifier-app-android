@@ -26,6 +26,8 @@ import dgca.verifier.app.android.vc.data.VcRepository
 import dgca.verifier.app.android.vc.data.local.VcPreferences
 import dgca.verifier.app.android.vc.data.remote.model.IssuerType
 import dgca.verifier.app.android.vc.di.VerifiableCredentials
+import dgca.verifier.app.android.vc.resolveDidUrl
+import dgca.verifier.app.android.vc.resolveHttpUrl
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
@@ -38,10 +40,6 @@ class GetTrustListUseCase @Inject constructor(
 
     override suspend fun invoke(params: Any) {
         val certificates = repository.loadTrustList()
-        if (certificates.isNotEmpty()) {
-            repository.removeOutdated()
-        }
-
         certificates
             .filter { it.keyStorageType == KEY_STORAGE_TYPE }
             .forEach {
@@ -56,31 +54,18 @@ class GetTrustListUseCase @Inject constructor(
     }
 
     private suspend fun resolveIssuer(url: String) {
-        var fullUrl = url
-        if (url.endsWith(TYPE_HTTP_SUFFIX).not() && url.endsWith(".json").not()) {
-            fullUrl = "$url$TYPE_HTTP_SUFFIX"
-        }
-
-        val result = repository.resolveIssuer(fullUrl)
+        val resolvedUrl = url.resolveHttpUrl()
+        val result = repository.resolveIssuer(resolvedUrl)
         if (result.isNotEmpty()) {
-            repository.saveJWKs(result)
+            repository.saveJWKs(result, resolvedUrl)
         }
     }
 
     private suspend fun resolveDid(url: String) {
-        var resolvedUrl = url
-        if (url.startsWith("did:web")) {
-            val didUrl = url.drop(DID.length).replace(":", "/")
-            resolvedUrl = if (didUrl.contains("/")) {
-                "https://${didUrl}/did.json"
-            } else {
-                "https://${didUrl}/.well-known/did.json"
-            }
-        }
-
+        val resolvedUrl = url.resolveDidUrl()
         val result = repository.resolveIssuerByDid(resolvedUrl)
         if (result.isNotEmpty()) {
-            repository.saveJWKs(result.map { it.publicKeyJwk })
+            repository.saveJWKs(result.map { it.publicKeyJwk }, resolvedUrl)
         }
     }
 

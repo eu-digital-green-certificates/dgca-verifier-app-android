@@ -76,8 +76,10 @@ class VcRepositoryImpl @Inject constructor(
             emptyList()
         }
 
-    override suspend fun saveJWKs(result: List<Jwk>) {
-        val localJwkList = result.map { JwkLocal(it.kid, Gson().toJson(it)) }
+    override suspend fun saveJWKs(result: List<Jwk>, url: String) {
+        val localJwkList = result.map {
+            JwkLocal(it.kid, Gson().toJson(it), url)
+        }
         dao.save(localJwkList)
     }
 
@@ -96,4 +98,12 @@ class VcRepositoryImpl @Inject constructor(
             Timber.e(ex, "Failed to clear db")
         }
     }
+
+    override suspend fun isIssuerKnown(issuerUrl: String): Boolean =
+        try {
+            dao.getIssuerByUrl(issuerUrl) != null
+        } catch (ex: Exception) {
+            Timber.e(ex, "Failed to clear db")
+            false
+        }
 }
