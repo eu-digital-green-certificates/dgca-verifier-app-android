@@ -36,6 +36,9 @@ interface JwkDao {
     @Query("SELECT * FROM jwk WHERE kid = :kid")
     suspend fun getIssuer(kid: String): List<JwkLocal>
 
+    @Query("SELECT * FROM jwk WHERE resolved_url = :url LIMIT 1")
+    suspend fun getIssuerByUrl(url: String): JwkLocal?
+
     @Query("DELETE FROM jwk")
     suspend fun deleteAll()
 }

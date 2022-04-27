@@ -24,6 +24,7 @@ package dgca.verifier.app.android.vc
 
 import android.content.Context
 import android.util.Base64
+import dgca.verifier.app.android.vc.domain.GetTrustListUseCase
 import timber.log.Timber
 import java.io.*
 import java.time.Instant
@@ -52,6 +53,25 @@ fun Context.getStringFromJsonFile(fileId: Int): String {
 
     return ""
 }
+
+fun String.resolveHttpUrl(): String =
+    if (endsWith(GetTrustListUseCase.TYPE_HTTP_SUFFIX).not() && endsWith(".json").not()) {
+        "$this${GetTrustListUseCase.TYPE_HTTP_SUFFIX}"
+    } else {
+        this
+    }
+
+fun String.resolveDidUrl(): String =
+    if (startsWith("did:web")) {
+        val didUrl = drop(GetTrustListUseCase.DID.length).replace(":", "/")
+        if (didUrl.contains("/")) {
+            "https://${didUrl}/did.json"
+        } else {
+            "https://${didUrl}/.well-known/did.json"
+        }
+    } else {
+        this
+    }
 
 fun Long.toLocalDateTime(): LocalDateTime =
     LocalDateTime.ofInstant(Instant.ofEpochMilli(this), ZoneId.systemDefault())
