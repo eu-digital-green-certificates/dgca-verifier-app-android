@@ -42,6 +42,6 @@ class IcaoProcessor @Inject constructor() : Processor {
     }
 
     override fun getSettingsIntent(): Pair<String, Intent> {
-        return Pair("Icao", Intent("com.android.app.dcc.View", Uri.parse("settings://icao")))
+        return Pair("Icao", Intent("com.android.app.verifier.dcc.View", Uri.parse("settings://icao")))
     }
 }

@@ -78,7 +78,7 @@ class VcProcessor @Inject constructor(
 
     companion object {
         private const val VC_WORKER_CONFIGS = "vcWorkerConfigs"
-        private const val VC_VIEW_ACTION = "com.android.app.vc.View"
+        private const val VC_VIEW_ACTION = "com.android.app.verifier.vc.View"
         private const val VC_VIEW_URI = "verifier://vc"
         private const val VC_SETTINGS_URI = "settings://vc"
         private const val VC_SETTINGS_TITLE = "Vc"
