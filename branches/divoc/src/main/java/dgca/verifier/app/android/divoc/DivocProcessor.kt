@@ -42,6 +42,6 @@ class DivocProcessor @Inject constructor() : Processor {
     }
 
     override fun getSettingsIntent(): Pair<String, Intent> {
-        return Pair("Divoc", Intent("com.android.app.dcc.View", Uri.parse("settings://divoc")))
+        return Pair("Divoc", Intent("com.android.app.verifier.dcc.View", Uri.parse("settings://divoc")))
     }
 }

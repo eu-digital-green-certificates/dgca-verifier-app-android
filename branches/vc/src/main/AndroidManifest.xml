@@ -34,7 +34,7 @@
             android:theme="@style/Theme.Vc">
 
             <intent-filter>
-                <action android:name="com.android.app.vc.View" />
+                <action android:name="com.android.app.verifier.vc.View" />
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data
@@ -47,7 +47,7 @@
             android:exported="false"
             android:label="VcSettingsActivity">
             <intent-filter>
-                <action android:name="com.android.app.vc.View" />
+                <action android:name="com.android.app.verifier.vc.View" />
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data

@@ -10,7 +10,7 @@
             android:theme="@style/Theme.Dcc">
 
             <intent-filter>
-                <action android:name="com.android.app.dcc.View" />
+                <action android:name="com.android.app.verifier.dcc.View" />
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data
@@ -25,7 +25,7 @@
             android:label="DccSettingsActivity"
             android:theme="@style/Theme.Dcc">
             <intent-filter>
-                <action android:name="com.android.app.dcc.View" />
+                <action android:name="com.android.app.verifier.dcc.View" />
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data

@@ -22,7 +22,7 @@
             android:exported="false"
             android:label="DivocSettingsActivity">
             <intent-filter>
-                <action android:name="com.android.app.dcc.View" />
+                <action android:name="com.android.app.verifier.dcc.View" />
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data

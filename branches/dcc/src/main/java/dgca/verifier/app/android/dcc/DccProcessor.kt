@@ -87,13 +87,13 @@ class DccProcessor @Inject constructor(
             return null
         }
 
-        return Intent("com.android.app.dcc.View", Uri.parse("verifier://dcc")).apply {
+        return Intent("com.android.app.verifier.dcc.View", Uri.parse("verifier://dcc")).apply {
             putExtra(RESULT_KEY, input)
         }
     }
 
     override fun getSettingsIntent(): Pair<String, Intent> {
-        return Pair("Dcc", Intent("com.android.app.dcc.View", Uri.parse("settings://dcc")))
+        return Pair("Dcc", Intent("com.android.app.verifier.dcc.View", Uri.parse("settings://dcc")))
     }
 
     private inline fun <reified T : ListenableWorker> WorkManager.schedulePeriodicWorker(workerId: String) =
