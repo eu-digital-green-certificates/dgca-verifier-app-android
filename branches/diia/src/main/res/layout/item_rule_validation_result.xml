@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~  -license-start
+  ~  eu-digital-green-certificates / dgca-verifier-app-android
+  ~  -
+  ~  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+  ~  -
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  ~  -license-end
+  ~
+  ~  Created by mykhailo.nester on 5/5/21 6:35 PM
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/recycler_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/default_half_margin"
+    android:background="@color/rule_card_background_color"
+    android:paddingStart="@dimen/default_quarter_margin"
+    android:paddingTop="@dimen/default_half_margin"
+    android:paddingEnd="@dimen/default_quarter_margin"
+    android:paddingBottom="@dimen/default_half_margin">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/ruleVerificationResultHeader"
+        style="@style/TextAppearance.Dgca.RuleTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Failed"
+        tools:textColor="@color/red" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/ruleVerificationRuleTitle"
+        style="@style/TextAppearance.Dgca.RuleTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/rule"
+        app:layout_constraintBottom_toBottomOf="@id/description"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/description" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/ruleVerificationCurrentTitle"
+        style="@style/TextAppearance.Dgca.RuleTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/current"
+        app:layout_constraintBottom_toBottomOf="@id/current"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/current" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/ruleVerificationResultTitle"
+        style="@style/TextAppearance.Dgca.RuleTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/result"
+        app:layout_constraintBottom_toBottomOf="@id/result"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/result" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="ruleVerificationRuleTitle,ruleVerificationCurrentTitle, ruleVerificationResultTitle" />
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_double_margin"
+        android:layout_marginTop="@dimen/default_half_margin"
+        app:layout_constraintBottom_toTopOf="@id/current"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/barrier"
+        app:layout_constraintTop_toBottomOf="@id/ruleVerificationResultHeader"
+        tools:text="Rule description" />
+
+    <TextView
+        android:id="@+id/current"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_half_margin"
+        app:layout_constraintBottom_toTopOf="@id/result"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/description"
+        app:layout_constraintTop_toBottomOf="@id/description"
+        tools:text="Really long current description. Really long current description. Really long current description." />
+
+    <TextView
+        android:id="@+id/result"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_half_margin"
+        android:text="@string/result"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/description"
+        app:layout_constraintTop_toBottomOf="@id/current" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

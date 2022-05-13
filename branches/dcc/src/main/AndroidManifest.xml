@@ -4,7 +4,7 @@
 
     <application>
         <activity
-            android:name="dgca.verifier.app.android.dcc.ui.DccActivity"
+            android:name="dgca.verifier.app.android.dcc.DccActivity"
             android:exported="false"
             android:launchMode="singleInstance"
             android:theme="@style/Theme.Dcc">
@@ -20,7 +20,7 @@
         </activity>
 
         <activity
-            android:name="dgca.verifier.app.android.dcc.settings.DccSettingsActivity"
+            android:name="dgca.verifier.app.android.dcc.DccSettingsActivity"
             android:exported="false"
             android:label="DccSettingsActivity"
             android:theme="@style/Theme.Dcc">

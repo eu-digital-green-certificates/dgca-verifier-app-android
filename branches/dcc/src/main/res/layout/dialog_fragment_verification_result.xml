@@ -29,7 +29,7 @@
     android:layout_marginTop="50dp"
     android:minHeight="500dp">
 
-    <dgca.verifier.app.android.dcc.ui.verification.detailed.DetailedVerificationResultHeaderView
+    <dgca.verifier.app.android.diia.DetailedVerificationResultHeaderView
         android:id="@+id/verificationResultHeaderView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

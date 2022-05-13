@@ -78,7 +78,7 @@
         app:layout_constraintTop_toBottomOf="@id/personFullName"
         tools:text="@string/cert_valid" />
 
-    <dgca.verifier.app.android.dcc.ui.verification.detailed.DetailedVerificationResultView
+    <dgca.verifier.app.android.diia.DetailedVerificationResultView
         android:id="@+id/detailedVerificationResultView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

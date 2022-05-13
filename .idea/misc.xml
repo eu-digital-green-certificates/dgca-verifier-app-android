@@ -39,6 +39,7 @@
         <entry key="branches/dcc/src/main/res/layout/view_detailed_certificate_raw_view.xml" value="0.43425925925925923" />
         <entry key="branches/dcc/src/main/res/layout/view_detailed_certificate_view.xml" value="0.43425925925925923" />
         <entry key="branches/dcc/src/main/res/layout/view_detailed_verification_result_header.xml" value="0.3109375" />
+        <entry key="branches/diia/src/main/res/layout/item_ua_certificat.xml" value="0.14387031408308004" />
         <entry key="branches/vc/src/main/res/drawable-xxxhdpi/ic_icon_plus.xml" value="0.2565" />
         <entry key="branches/vc/src/main/res/layout/activity_vc_main.xml" value="0.6447916666666667" />
         <entry key="branches/vc/src/main/res/layout/activity_vc_settings.xml" value="0.6447916666666667" />

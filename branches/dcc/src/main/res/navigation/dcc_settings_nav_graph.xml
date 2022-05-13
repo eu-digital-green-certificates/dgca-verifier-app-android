@@ -28,7 +28,7 @@
 
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="dgca.verifier.app.android.dcc.settings.DccSettingsFragment"
+        android:name="dgca.verifier.app.android.diia.DccSettingsFragment"
         android:label="SettingsFragment"
         tools:layout="@layout/fragment_dcc_settings">
 
@@ -47,18 +47,18 @@
 
     <fragment
         android:id="@+id/countrySelectorFragment"
-        android:name="dgca.verifier.app.android.dcc.settings.CountrySelectorFragment"
+        android:name="dgca.verifier.app.android.diia.CountrySelectorFragment"
         android:label="Country Selector"
         tools:layout="@layout/fragment_countries_selector">
 
         <argument
             android:name="selectCountryData"
-            app:argType="dgca.verifier.app.android.dcc.settings.debug.DccSelectCountryData" />
+            app:argType="dgca.verifier.app.android.diia.DccSelectCountryData" />
     </fragment>
 
     <fragment
         android:id="@+id/debugModeSettingsFragment"
-        android:name="dgca.verifier.app.android.dcc.settings.debug.mode.DebugModeSettingsFragment"
+        android:name="dgca.verifier.app.android.diia.DebugModeSettingsFragment"
         android:label="Debug Mode Settings"
         tools:layout="@layout/fragment_debug_mode_settings">
         <action
@@ -70,13 +70,13 @@
 
     <fragment
         android:id="@+id/countriesSelectorFragment"
-        android:name="dgca.verifier.app.android.dcc.settings.debug.mode.CountriesSelectorFragment"
+        android:name="dgca.verifier.app.android.diia.CountriesSelectorFragment"
         android:label="Countries Selector"
         tools:layout="@layout/fragment_countries_selector">
 
         <argument
             android:name="countriesData"
-            app:argType="dgca.verifier.app.android.dcc.settings.debug.mode.CountriesData" />
+            app:argType="dgca.verifier.app.android.diia.CountriesData" />
     </fragment>
 
 </navigation>

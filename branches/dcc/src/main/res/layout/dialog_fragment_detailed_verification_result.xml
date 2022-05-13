@@ -29,7 +29,7 @@
     android:layout_marginTop="50dp"
     android:minHeight="500dp">
 
-    <dgca.verifier.app.android.dcc.ui.verification.detailed.DetailedVerificationResultHeaderView
+    <dgca.verifier.app.android.diia.DetailedVerificationResultHeaderView
         android:id="@+id/detailedVerificationResultHeaderView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
             android:padding="@dimen/default_half_margin"
             android:paddingVertical="@dimen/default_margin_top">
 
-            <dgca.verifier.app.android.dcc.ui.verification.detailed.DetailedCertificateView
+            <dgca.verifier.app.android.diia.DetailedCertificateView
                 android:id="@+id/certificateInfo"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="visible" />
 
-            <dgca.verifier.app.android.dcc.ui.verification.detailed.CertificateContentView
+            <dgca.verifier.app.android.diia.CertificateContentView
                 android:id="@+id/certificateContent"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/certificateInfo"
                 tools:visibility="visible" />
 
-            <dgca.verifier.app.android.dcc.ui.verification.detailed.DetailedCertificateRawView
+            <dgca.verifier.app.android.diia.DetailedCertificateRawView
                 android:id="@+id/certificateRawInfo"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

@@ -156,7 +156,8 @@ internal class IsDccRevokedUseCaseTest {
         val signatureSha256 = ""
         val dccRevocationDataHolder = DccRevocationDataHolder(kid, uvciSha256, coUvciSha256, signatureSha256)
 
-        val bloomFilter = BloomFilterImpl(1, 1.toByte(), 1)
+        val bloomFilter =
+            BloomFilterImpl(1, 1.toByte(), 1)
         bloomFilter.add(uvciSha256.hexToByteArray())
         val content = ByteArrayOutputStream().use {
             bloomFilter.writeTo(it)
@@ -178,7 +179,8 @@ internal class IsDccRevokedUseCaseTest {
         val signatureSha256 = ""
         val dccRevocationDataHolder = DccRevocationDataHolder(kid, uvciSha256, coUvciSha256, signatureSha256)
 
-        val bloomFilter = BloomFilterImpl(1, 1.toByte(), 1)
+        val bloomFilter =
+            BloomFilterImpl(1, 1.toByte(), 1)
         bloomFilter.add(coUvciSha256.hexToByteArray())
         val content = ByteArrayOutputStream().use {
             bloomFilter.writeTo(it)
@@ -200,7 +202,8 @@ internal class IsDccRevokedUseCaseTest {
         val signatureSha256 = "25550b0b1a96392737888374121c4505"
         val dccRevocationDataHolder = DccRevocationDataHolder(kid, uvciSha256, coUvciSha256, signatureSha256)
 
-        val bloomFilter = BloomFilterImpl(1, 1.toByte(), 1)
+        val bloomFilter =
+            BloomFilterImpl(1, 1.toByte(), 1)
         bloomFilter.add(signatureSha256.hexToByteArray())
         val content = ByteArrayOutputStream().use {
             bloomFilter.writeTo(it)
@@ -277,7 +280,8 @@ internal class IsDccRevokedUseCaseTest {
         val signatureSha256 = ""
         val dccRevocationDataHolder = DccRevocationDataHolder(kid, uvciSha256, coUvciSha256, signatureSha256)
 
-        val bloomFilter = BloomFilterImpl(1, 1.toByte(), 1)
+        val bloomFilter =
+            BloomFilterImpl(1, 1.toByte(), 1)
         bloomFilter.add(uvciSha256.hexToByteArray())
         val content = ByteArrayOutputStream().use {
             bloomFilter.writeTo(it)
@@ -299,7 +303,8 @@ internal class IsDccRevokedUseCaseTest {
         val signatureSha256 = ""
         val dccRevocationDataHolder = DccRevocationDataHolder(kid, uvciSha256, coUvciSha256, signatureSha256)
 
-        val bloomFilter = BloomFilterImpl(1, 1.toByte(), 1)
+        val bloomFilter =
+            BloomFilterImpl(1, 1.toByte(), 1)
         bloomFilter.add(coUvciSha256.hexToByteArray())
         val content = ByteArrayOutputStream().use {
             bloomFilter.writeTo(it)
@@ -321,7 +326,8 @@ internal class IsDccRevokedUseCaseTest {
         val signatureSha256 = "737888374121c450525550b0b1a96392"
         val dccRevocationDataHolder = DccRevocationDataHolder(kid, uvciSha256, coUvciSha256, signatureSha256)
 
-        val bloomFilter = BloomFilterImpl(1, 1.toByte(), 1)
+        val bloomFilter =
+            BloomFilterImpl(1, 1.toByte(), 1)
         bloomFilter.add(signatureSha256.hexToByteArray())
         val content = ByteArrayOutputStream().use {
             bloomFilter.writeTo(it)
@@ -398,7 +404,8 @@ internal class IsDccRevokedUseCaseTest {
         val signatureSha256 = ""
         val dccRevocationDataHolder = DccRevocationDataHolder(kid, uvciSha256, coUvciSha256, signatureSha256)
 
-        val bloomFilter = BloomFilterImpl(1, 1.toByte(), 1)
+        val bloomFilter =
+            BloomFilterImpl(1, 1.toByte(), 1)
         bloomFilter.add(uvciSha256.hexToByteArray())
         val content = ByteArrayOutputStream().use {
             bloomFilter.writeTo(it)
@@ -420,7 +427,8 @@ internal class IsDccRevokedUseCaseTest {
         val signatureSha256 = ""
         val dccRevocationDataHolder = DccRevocationDataHolder(kid, uvciSha256, coUvciSha256, signatureSha256)
 
-        val bloomFilter = BloomFilterImpl(1, 1.toByte(), 1)
+        val bloomFilter =
+            BloomFilterImpl(1, 1.toByte(), 1)
         bloomFilter.add(coUvciSha256.hexToByteArray())
         val content = ByteArrayOutputStream().use {
             bloomFilter.writeTo(it)
@@ -442,7 +450,8 @@ internal class IsDccRevokedUseCaseTest {
         val signatureSha256 = "737888374121c450525550b0b1a96392"
         val dccRevocationDataHolder = DccRevocationDataHolder(kid, uvciSha256, coUvciSha256, signatureSha256)
 
-        val bloomFilter = BloomFilterImpl(1, 1.toByte(), 1)
+        val bloomFilter =
+            BloomFilterImpl(1, 1.toByte(), 1)
         bloomFilter.add(signatureSha256.hexToByteArray())
         val content = ByteArrayOutputStream().use {
             bloomFilter.writeTo(it)

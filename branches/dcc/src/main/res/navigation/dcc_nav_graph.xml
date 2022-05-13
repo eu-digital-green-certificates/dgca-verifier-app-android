@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/intermediateFragment"
-        android:name="dgca.verifier.app.android.dcc.ui.IntermediateFragment"
+        android:name="dgca.verifier.app.android.diia.IntermediateFragment"
         android:label="Intermediate"
         tools:layout="@layout/fragment_dcc_intermediate">
 
@@ -30,18 +30,18 @@
 
     <fragment
         android:id="@+id/countrySelectorFragment"
-        android:name="dgca.verifier.app.android.dcc.settings.CountrySelectorFragment"
+        android:name="dgca.verifier.app.android.diia.CountrySelectorFragment"
         android:label="Country Selector"
         tools:layout="@layout/fragment_countries_selector">
 
         <argument
             android:name="selectCountryData"
-            app:argType="dgca.verifier.app.android.dcc.settings.debug.DccSelectCountryData" />
+            app:argType="dgca.verifier.app.android.diia.DccSelectCountryData" />
     </fragment>
 
     <fragment
         android:id="@+id/verificationFragment"
-        android:name="dgca.verifier.app.android.dcc.ui.verification.VerificationFragment"
+        android:name="dgca.verifier.app.android.diia.VerificationFragment"
         android:label="Verification"
         tools:layout="@layout/fragment_verification">
 
@@ -68,40 +68,40 @@
 
     <dialog
         android:id="@+id/verificationResultDialogFragment"
-        android:name="dgca.verifier.app.android.dcc.ui.verification.VerificationResultDialogFragment"
+        android:name="dgca.verifier.app.android.diia.VerificationResultDialogFragment"
         android:label="Verification Result"
         tools:layout="@layout/dialog_fragment_verification_result">
 
         <argument
             android:name="standardizedVerificationResult"
-            app:argType="dgca.verifier.app.android.dcc.ui.verification.model.StandardizedVerificationResult" />
+            app:argType="dgca.verifier.app.android.diia.StandardizedVerificationResult" />
 
         <argument
             android:name="certificateModel"
             android:defaultValue="@null"
-            app:argType="dgca.verifier.app.android.dcc.model.CertificateModel"
+            app:argType="dgca.verifier.app.android.diia.CertificateModel"
             app:nullable="true" />
 
         <argument
             android:name="ruleValidationResultModelsContainer"
-            app:argType="dgca.verifier.app.android.dcc.model.rules.RuleValidationResultModelsContainer"
+            app:argType="dgca.verifier.app.android.diia.RuleValidationResultModelsContainer"
             app:nullable="true" />
     </dialog>
 
     <dialog
         android:id="@+id/detailedVerificationResultDialogFragment"
-        android:name="dgca.verifier.app.android.dcc.ui.verification.detailed.DetailedVerificationResultDialogFragment"
+        android:name="dgca.verifier.app.android.diia.DetailedVerificationResultDialogFragment"
         android:label="Detailed Verification"
         tools:layout="@layout/dialog_fragment_detailed_verification_result">
 
         <argument
             android:name="standardizedVerificationResult"
-            app:argType="dgca.verifier.app.android.dcc.ui.verification.model.StandardizedVerificationResult" />
+            app:argType="dgca.verifier.app.android.diia.StandardizedVerificationResult" />
 
         <argument
             android:name="certificateModel"
             android:defaultValue="@null"
-            app:argType="dgca.verifier.app.android.dcc.model.CertificateModel"
+            app:argType="dgca.verifier.app.android.diia.CertificateModel"
             app:nullable="true" />
 
         <argument
@@ -111,12 +111,12 @@
 
         <argument
             android:name="ruleValidationResultModelsContainer"
-            app:argType="dgca.verifier.app.android.dcc.model.rules.RuleValidationResultModelsContainer"
+            app:argType="dgca.verifier.app.android.diia.RuleValidationResultModelsContainer"
             app:nullable="true" />
 
         <argument
             android:name="debugData"
-            app:argType="dgca.verifier.app.android.dcc.ui.verification.model.DebugData"
+            app:argType="dgca.verifier.app.android.diia.DebugData"
             app:nullable="true" />
     </dialog>
 

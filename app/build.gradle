@@ -105,8 +105,9 @@ android {
 
 dependencies {
     implementation project(":branches:base")
-    implementation project(":branches:dcc")
-    implementation project(':branches:dcc:revocation')
+//    implementation project(":branches:dcc")
+    implementation project(':branches:revocation')
+    implementation project(":branches:diia")
     implementation project(":branches:icao")
     implementation project(":branches:divoc")
     implementation project(":branches:vc")

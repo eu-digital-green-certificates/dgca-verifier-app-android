@@ -1,0 +1,136 @@
+<!--
+  ~  license-start
+  ~  eu-digital-green-certificates / dgca-verifier-app-android
+  ~
+  ~  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  ~  license-end
+  ~
+  ~  Created by Mykhailo Nester on 4/23/21 9:53 AM
+  -->
+
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="app_name">Verifier App</string>
+    <string name="cert_valid">Valid</string>
+    <string name="cert_limited_validity">Limited validity</string>
+    <string name="cert_invalid">Invalid</string>
+    <string name="type_test">Test</string>
+    <string name="type_recovered">Recovery</string>
+    <string name="type_vaccination">Vaccination %1$d of %2$d</string>
+    <string name="done">Done</string>
+    <string name="retry">Retry</string>
+    <string name="reason_for_invalidity">Reason for Invalidity</string>
+    <string name="possible_limitation">Possible limitation</string>
+    <string name="certificate_type_title">Certificate Type</string>
+    <string name="standardised_family_name_title">Standardised Family Name</string>
+    <string name="family_name_title">Family Name</string>
+    <string name="standardised_given_name_title">Standardised Given Name</string>
+    <string name="given_name_title">Given Name</string>
+    <string name="date_of_birth_title">Date of Birth</string>
+    <string name="date_of_vaccination_title">Date of Vaccination</string>
+    <string name="issuer_country">Issuer Country</string>
+    <string name="target_disease">Target Disease</string>
+    <string name="date_of_test">Date of Test</string>
+    <string name="test_result_title">Test Result</string>
+    <string name="certificate_valid_from_to">Certificate Valid From - To</string>
+
+    <string name="settings">Settings</string>
+    <string name="privacy_information">Privacy information</string>
+    <string name="licenses">Licenses</string>
+    <string name="trusted_public_keys">Trusted public keys</string>
+    <string name="reload">Reload</string>
+    <string name="reload_pub_keys">Reload pub keys</string>
+    <string name="reload_revocation">Reload revocation list</string>
+    <string name="reload_countries">Reload Countries</string>
+    <string name="last_updated">Last Updated: %s</string>
+    <string name="version">Version: %1$s (%2$d)</string>
+    <string name="about">About</string>
+    <string name="settings_version_title">Verifier App</string>
+    <string name="certificate_is_expired">Certificate is expired.</string>
+    <string name="certificate_was_revoked">Certificate was revoked.</string>
+    <string name="verification_failed">Verification failed.</string>
+    <string name="signing_certificate_is_expired">Signing Certificate is expired.</string>
+    <string name="the_vaccination_date_is_in_the_future">Vaccination date is in the future.</string>
+    <string name="the_test_date_is_in_the_future">The test date is in the future.</string>
+    <string name="test_result_positive">Test result positive.</string>
+    <string name="recovery_not_valid_yet">Recovery statement is not valid yet.</string>
+    <string name="recover_not_valid_anymore">Recovery statement is not valid anymore.</string>
+    <string name="rules_validation_failed">Country rules validation failed.</string>
+    <string name="cryptographic_signature_invalid">Cryptographic signature invalid.</string>
+    <string name="validate_with">Validate with:</string>
+    <string name="result">Result</string>
+    <string name="current">Current</string>
+    <string name="passed">Passed</string>
+    <string name="failed">Failed</string>
+    <string name="open">Open</string>
+    <string name="negative">Negative</string>
+    <string name="rule">Rule</string>
+    <string name="passed_for">Passed for %1$s (see settings)</string>
+    <string name="open_for">Open for %1$s (see settings)</string>
+    <string name="failed_for">Failed for %1$s (see settings)</string>
+    <string name="type_of_test">Type of Test</string>
+    <string name="country_of_test">Country of Test</string>
+    <string name="test_result">Test Result</string>
+    <string name="debug_mode">Debug Mode</string>
+    <string name="selected">Selected: %s</string>
+    <string name="none">None</string>
+    <string name="technical_verification">Technical\nVerification</string>
+    <string name="issuer_invalidation">Issuer\nInvalidation</string>
+    <string name="destination_acceptance">Destination\nAcceptance</string>
+    <string name="traveller_acceptance">Traveller\nAcceptance</string>
+    <string name="certificate_information">Certificate information</string>
+    <string name="raw_data_details_view">RAW data details view</string>
+    <string name="off">Off</string>
+    <string name="on_level_1">On - Level 1</string>
+    <string name="on_level_2">On - Level 2</string>
+    <string name="on_level_3">On - Level 3</string>
+    <string name="level_1_normal_capture">Level 1 - normal capture</string>
+    <string name="level_2_traceable_capture">Level 2 - traceable capture</string>
+    <string name="level_3_full_take">Level 3 - full take</string>
+    <string name="select_country">Select country</string>
+    <string name="no_countries_selected">No countries selected</string>
+    <string name="share">Share</string>
+    <string name="certificate_content">Content</string>
+    <string name="vaccination_title">Vaccination:</string>
+    <string name="vaccine_title">Vaccine</string>
+    <string name="medical_product_title">Medicinal product</string>
+    <string name="manufacturer_title">Manufacturer</string>
+    <string name="dose_number_title">Dose number</string>
+    <string name="total_doses_title">Total series of doses</string>
+    <string name="country_of_vaccination_title">Country of vaccination</string>
+    <string name="certificate_issuer_title">Certificate issuer</string>
+    <string name="certificate_identifier_title">Certificate identifier</string>
+    <string name="test_title">Test:</string>
+    <string name="type_of_test_title">Type of test</string>
+    <string name="test_name_title">Test name</string>
+    <string name="test_name_manufacturer_title">Test name and manufacturer</string>
+    <string name="date_time_of_collection_title">Date time of collection</string>
+    <string name="date_time_of_test_result_title">Date time of test result</string>
+    <string name="testing_centre_title">Testing centre</string>
+    <string name="result_type_title">Result type</string>
+    <string name="recovery_title">Recovery:</string>
+    <string name="date_of_first_positive_test_title">Date of first positive test</string>
+    <string name="certificate_valid_from_title">Certificate valid from</string>
+    <string name="certificate_valid_until_title">Certificate valid until</string>
+    <string name="personal_data_title">Personal data:</string>
+    <string name="nfc_enabled">NFC enabled</string>
+    <string name="nfc_scan">NFC scan</string>
+    <string name="never">Never</string>
+    <string name="document_type">Document Type</string>
+    <string name="gender">Gender</string>
+    <string name="document_number">Document Number</string>
+    <string name="middle_name_ua">Middle Name UA</string>
+    <string name="nationality">Nationality</string>
+    <string name="registration">Registration</string>
+</resources>

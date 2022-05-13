@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~  license-start
+  ~  eu-digital-green-certificates / dgca-verifier-app-android
+  ~
+  ~  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  ~  license-end
+  ~
+  ~  Created by Mykhailo Nester on 4/23/21 9:53 AM
+  -->
+
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dcc_nav_settings_graph"
+    app:startDestination="@id/settingsFragment">
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="dgca.verifier.app.android.diia.settings.DccSettingsFragment"
+        android:label="SettingsFragment"
+        tools:layout="@layout/fragment_dcc_settings">
+
+        <action
+            android:id="@+id/action_settingsFragment_to_verificationResultFragment"
+            app:destination="@id/debugModeSettingsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+
+        <action
+            android:id="@+id/action_settingsFragment_to_countrySelectorFragment"
+            app:destination="@id/countrySelectorFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/countrySelectorFragment"
+        android:name="dgca.verifier.app.android.diia.settings.CountrySelectorFragment"
+        android:label="Country Selector"
+        tools:layout="@layout/fragment_countries_selector">
+
+        <argument
+            android:name="selectCountryData"
+            app:argType="dgca.verifier.app.android.diia.settings.debug.DccSelectCountryData" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/debugModeSettingsFragment"
+        android:name="dgca.verifier.app.android.diia.settings.debug.mode.DebugModeSettingsFragment"
+        android:label="Debug Mode Settings"
+        tools:layout="@layout/fragment_debug_mode_settings">
+        <action
+            android:id="@+id/action_debugModeSettingsFragment_to_countriesSelectorFragment"
+            app:destination="@id/countriesSelectorFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/countriesSelectorFragment"
+        android:name="dgca.verifier.app.android.diia.settings.debug.mode.CountriesSelectorFragment"
+        android:label="Countries Selector"
+        tools:layout="@layout/fragment_countries_selector">
+
+        <argument
+            android:name="countriesData"
+            app:argType="dgca.verifier.app.android.diia.settings.debug.mode.CountriesData" />
+    </fragment>
+
+</navigation>

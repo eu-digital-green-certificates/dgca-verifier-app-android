@@ -245,7 +245,11 @@ internal class DccRevocationDaoTest {
             )
             partitions.add(partition)
             var counter = 0
-            val bloomFilter = BloomFilterImpl(amountOfHashesPerSlice, 0.00000000001f)
+            val bloomFilter =
+                BloomFilterImpl(
+                    amountOfHashesPerSlice,
+                    0.00000000001f
+                )
             chunks.forEach { (cid, slices) ->
                 slices.forEach { (expirationTime, slice) ->
                     val hashStart = hashPrefix + cid
@@ -394,7 +398,13 @@ internal class DccRevocationDaoTest {
 
             chunks.forEach { (cid, slices) ->
                 slices.forEach { (expirationTime, slice) ->
-                    val hashFilter = PartialVariableHashFilter(4, offset, amountOfHashesPerSlice, 0.00000000001f)
+                    val hashFilter =
+                        PartialVariableHashFilter(
+                            4,
+                            offset,
+                            amountOfHashesPerSlice,
+                            0.00000000001f
+                        )
                     val hashStart = hashPrefix + cid
 
                     for (i in 0 until amountOfHashesPerSlice) {
