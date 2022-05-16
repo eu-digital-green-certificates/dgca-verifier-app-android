@@ -28,7 +28,7 @@ object Config {
     const val targetSdk = 30
     val javaVersion = JavaVersion.VERSION_1_8
 
-    const val versionCode = 60
+    const val versionCode = 62
     const val versionName = "1.3.2"
 
     const val androidTestInstrumentation = "androidx.test.runner.AndroidJUnitRunner"
