@@ -24,7 +24,7 @@ package dgca.verifier.app.android.dcc.security
 
 import android.util.Base64
 import timber.log.Timber
-import java.security.GeneralSecurityException
+import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
@@ -34,45 +34,59 @@ import javax.crypto.spec.GCMParameterSpec
  */
 class SecurityKeyWrapper(private val secretKey: SecretKey) {
 
+    private val cipher = Cipher.getInstance(AES_GCM_NO_PADDING)
+
     fun encrypt(token: String?): String? {
         if (token == null) return null
 
-        try {
-            val cipher = getCipher(Cipher.ENCRYPT_MODE)
-            val encrypted = cipher.doFinal(token.toByteArray())
-            return Base64.encodeToString(encrypted, Base64.URL_SAFE)
-        } catch (e: GeneralSecurityException) {
-            Timber.w(e)
-        }
+        return try {
+            val iv = ByteArray(16)
+            SecureRandom().nextBytes(iv)
+            cipher.init(
+                Cipher.ENCRYPT_MODE,
+                secretKey,
+                GCMParameterSpec(128, iv, 0, 12)
+            )
 
-        return null
+            val ivString = Base64.encodeToString(iv, Base64.URL_SAFE)
+            val result = StringBuilder(ivString)
+            result.append(IV_SEPARATOR)
+
+            val bytes = cipher.doFinal(token.toByteArray())
+            result.append(Base64.encodeToString(bytes, Base64.URL_SAFE))
+            result.toString()
+        } catch (ex: Exception) {
+            Timber.w(ex)
+            null
+        }
     }
 
     fun decrypt(encryptedToken: String?): String? {
         if (encryptedToken == null) return null
 
-        try {
-            val cipher = getCipher(Cipher.DECRYPT_MODE)
-            val decoded = Base64.decode(encryptedToken, Base64.URL_SAFE)
-            val original = cipher.doFinal(decoded)
-            return String(original)
-        } catch (e: GeneralSecurityException) {
-            Timber.w(e)
+        return try {
+            val split = encryptedToken.split(IV_SEPARATOR.toRegex())
+            if (split.size != 2) throw IllegalArgumentException("Passed data is incorrect. There was no IV specified with it.")
+
+            val ivString = split[0]
+            val encodedString = split[1]
+            cipher.init(
+                Cipher.DECRYPT_MODE,
+                secretKey,
+                GCMParameterSpec(128, Base64.decode(ivString, Base64.URL_SAFE), 0, 12)
+            )
+
+            val encryptedData = Base64.decode(encodedString, Base64.URL_SAFE)
+            val decodedData = cipher.doFinal(encryptedData)
+            String(decodedData)
+        } catch (ex: Exception) {
+            Timber.w(ex)
+            null
         }
-
-        return null
-    }
-
-    @Throws(GeneralSecurityException::class)
-    private fun getCipher(mode: Int) = Cipher.getInstance(AES_GCM_NO_PADDING).apply {
-        init(
-            mode,
-            secretKey,
-            GCMParameterSpec(128, AES_GCM_NO_PADDING.toByteArray(), 0, 12)
-        )
     }
 
     companion object {
         private const val AES_GCM_NO_PADDING = "AES/GCM/NoPadding"
+        private const val IV_SEPARATOR = "]"
     }
 }
