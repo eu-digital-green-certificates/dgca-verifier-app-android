@@ -89,4 +89,5 @@ object Deps {
 
     const val mockito_core = "org.mockito:mockito-core:${Versions.mockito_core}"
     const val mockito_kotlin = "org.mockito.kotlin:mockito-kotlin:${Versions.mockito_kotlin}"
+    const val mockito_inline = "org.mockito:mockito-inline:${Versions.mockito_kotlin}"
 }
