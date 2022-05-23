@@ -48,9 +48,8 @@ class RevocationRepositoryImpl @Inject constructor(
 ) : RevocationRepository {
 
     @Throws(Exception::class)
-    override suspend fun getRevocationLists(): List<RevocationKidData>? {
+    override suspend fun getRevocationLists(baseUrl: String): List<RevocationKidData>? {
         val eTag = revocationPreferences.eTag ?: ""
-        val baseUrl = BuildConfig.REVOCATION_SERVICE_HOST
         val url = "$baseUrl/lists"
         val response = revocationService.getRevocationLists(eTag, url)
 
@@ -68,12 +67,12 @@ class RevocationRepositoryImpl @Inject constructor(
 
     @Throws(Exception::class)
     override suspend fun getRevocationPartitions(
+        baseUrl: String,
         lastUpdated: String?,
         sliceType: SliceType,
         kid: String
     ): List<RevocationPartitionResponse>? {
         val eTag = revocationPreferences.eTag ?: ""
-        val baseUrl = BuildConfig.REVOCATION_SERVICE_HOST
         val url = "$baseUrl/lists/$kid/partitions"
         val response = revocationService.getRevocationListPartitions(
             eTag = eTag,
@@ -91,13 +90,13 @@ class RevocationRepositoryImpl @Inject constructor(
 
     @Throws(Exception::class)
     override suspend fun getPartitionChunks(
+        baseUrl: String,
         sliceType: SliceType,
         kid: String,
         partitionId: String?,
         cidList: List<String>
     ): ResponseBody? {
         val eTag = revocationPreferences.eTag ?: ""
-        val baseUrl = BuildConfig.REVOCATION_SERVICE_HOST
         val url = "$baseUrl/lists/$kid/partitions/$partitionId/slices"
         val response = revocationService.getRevocationPartitionChunks(
             eTag = eTag,
@@ -115,6 +114,7 @@ class RevocationRepositoryImpl @Inject constructor(
 
     @Throws(Exception::class)
     override suspend fun getRevocationChunk(
+        baseUrl: String,
         lastUpdated: String,
         sliceType: SliceType,
         kid: String,
@@ -122,7 +122,6 @@ class RevocationRepositoryImpl @Inject constructor(
         chunkId: String
     ): ResponseBody? {
         val eTag = revocationPreferences.eTag ?: ""
-        val baseUrl = BuildConfig.REVOCATION_SERVICE_HOST
         val url = "$baseUrl/lists/$kid/partitions/$id/chunks/$chunkId/slices"
         val response = revocationService.getRevocationChunk(
             eTag = eTag,
@@ -140,6 +139,7 @@ class RevocationRepositoryImpl @Inject constructor(
 
     @Throws(Exception::class)
     override suspend fun getRevocationChunkSlices(
+        baseUrl: String,
         lastUpdated: String,
         sliceType: SliceType,
         kid: String,
@@ -148,7 +148,6 @@ class RevocationRepositoryImpl @Inject constructor(
         sidList: List<String>
     ): ResponseBody? {
         val eTag = revocationPreferences.eTag ?: ""
-        val baseUrl = BuildConfig.REVOCATION_SERVICE_HOST
         val url = "$baseUrl/lists/$kid/partitions/$partitionId/chunks/$cid/slices"
         val response = revocationService.getRevocationChunkSlices(
             eTag = eTag,
@@ -167,6 +166,7 @@ class RevocationRepositoryImpl @Inject constructor(
 
     @Throws(Exception::class)
     override suspend fun getSlice(
+        baseUrl: String,
         lastUpdated: String,
         sliceType: SliceType,
         kid: String,
@@ -175,7 +175,6 @@ class RevocationRepositoryImpl @Inject constructor(
         sid: String
     ): ResponseBody? {
         val eTag = revocationPreferences.eTag ?: ""
-        val baseUrl = BuildConfig.REVOCATION_SERVICE_HOST
         val url = "$baseUrl/lists/$kid/partitions/$partitionId/chunks/$cid/slices/$sid"
         val response = revocationService.getRevocationChunkSlice(
             eTag = eTag,
