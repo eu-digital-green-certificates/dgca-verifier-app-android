@@ -23,6 +23,7 @@
 package dgca.verifier.app.android.dcc.data
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dcc.app.revocation.BuildConfig
 
 /**
  * Holds information of public key info hashes for certificate pinning
@@ -40,6 +41,7 @@ data class Config(
         const val COUNTRY_LIST_ENDPOINT_NAME = "countryList"
         const val RULES_ENDPOINT_NAME = "rules"
         const val VALUE_SETS_ENDPOINT_NAME = "valuesets"
+        const val REVOCATION_ENDPOINT_NAME = "revocation"
     }
 
     private fun getCurrentVersionOrUseDefault(versionName: String): Version? =
@@ -64,6 +66,10 @@ data class Config(
     fun getValueSetsUrl(versionName: String): String =
         getCurrentVersionOrUseDefault(versionName)?.endpoints?.get(VALUE_SETS_ENDPOINT_NAME)?.url
             ?: ""
+
+    fun getRevocationUrl(versionName: String): String =
+        getCurrentVersionOrUseDefault(versionName)?.endpoints?.get(REVOCATION_ENDPOINT_NAME)?.url
+            ?: BuildConfig.REVOCATION_SERVICE_HOST
 }
 
 data class Endpoint(
