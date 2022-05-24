@@ -70,7 +70,7 @@ abstract class RulesDao {
     @Insert
     abstract fun insertRuleIdentifiers(ruleIdentifiers: Collection<RuleIdentifierLocal>)
 
-    fun insertAll(rulesWithDescription: Collection<RuleWithDescriptionsLocal>) {
+    private fun insertAll(rulesWithDescription: Collection<RuleWithDescriptionsLocal>) {
         rulesWithDescription.forEach { ruleWithDescriptionsLocal ->
             val rule = ruleWithDescriptionsLocal.rule
             val descriptions = ruleWithDescriptionsLocal.descriptions

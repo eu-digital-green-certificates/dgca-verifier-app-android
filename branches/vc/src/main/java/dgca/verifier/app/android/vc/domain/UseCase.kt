@@ -23,9 +23,6 @@
 package dgca.verifier.app.android.vc.domain
 
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flowOn
 import timber.log.Timber
 
 abstract class BaseUseCase<Type, Params> constructor(
@@ -80,28 +77,9 @@ abstract class BaseUseCase<Type, Params> constructor(
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    open suspend fun execute(params: Params = Any() as Params): Type? =
-        try {
-            invoke(params)
-        } catch (e: Exception) {
-            Timber.e(e, "Failed to execute ${this@BaseUseCase}")
-            null
-        }
-
     open fun cancel() {
         if (backgroundDeferredJob.isActive) {
             backgroundDeferredJob.cancel()
         }
     }
-}
-
-abstract class BaseFlowableUseCase<F, P>(private val dispatcher: CoroutineDispatcher) {
-
-    protected abstract fun invoke(params: P): Flow<F>
-
-    @Suppress("UNCHECKED_CAST")
-    open fun execute(params: P = Any() as P): Flow<F> = invoke(params)
-        .catch { Timber.e(it, "Failed to execute flow") }
-        .flowOn(dispatcher)
 }

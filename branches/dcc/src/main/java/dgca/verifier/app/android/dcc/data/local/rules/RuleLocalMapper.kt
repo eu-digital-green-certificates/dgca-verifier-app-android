@@ -58,7 +58,7 @@ fun Map<String, String>.toDescriptionsLocal(): List<DescriptionLocal> {
 
 fun List<DescriptionLocal>.toDescriptions(): Map<String, String> {
     val descriptions = mutableMapOf<String, String>()
-    forEach { descriptions[it.lang.toLowerCase(Locale.ROOT)] = it.desc }
+    forEach { descriptions[it.lang.lowercase(Locale.ROOT)] = it.desc }
 
     return descriptions
 }

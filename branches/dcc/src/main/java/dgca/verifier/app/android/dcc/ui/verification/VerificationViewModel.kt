@@ -121,9 +121,9 @@ class VerificationViewModel @Inject constructor(
 
                     val isDebugModeEnabled =
                         standardizedVerificationResult.category != StandardizedVerificationResultCategory.VALID
-                                && (preferences.debugModeState?.let { DebugModeState.valueOf(it) }
+                            && (preferences.debugModeState?.let { DebugModeState.valueOf(it) }
                             ?: DebugModeState.OFF) != DebugModeState.OFF
-                                && preferences.debugModeSelectedCountriesCodes?.contains(
+                            && preferences.debugModeSelectedCountriesCodes?.contains(
                             innerVerificationResult.greenCertificateData?.getNormalizedIssuingCountry()
                         ) == true
 
@@ -296,11 +296,9 @@ class VerificationViewModel @Inject constructor(
             val engineCertificateType = this.greenCertificate.getEngineCertificateType()
 
             return if (countryOfArrivalIsoCode.isNotBlank()) {
-                val issuingCountry: String = if (certificateIssuingCountryIsoCode.isNotBlank()) {
-                    certificateIssuingCountryIsoCode
-                } else {
+                val issuingCountry: String = (certificateIssuingCountryIsoCode.ifBlank {
                     this.getNormalizedIssuingCountry()
-                }.toLowerCase(Locale.ROOT)
+                }).lowercase(Locale.ROOT)
                 val rules = getRulesUseCase.invoke(
                     ZonedDateTime.now().withZoneSameInstant(UTC_ZONE_ID),
                     countryOfArrivalIsoCode,
@@ -393,10 +391,11 @@ class VerificationViewModel @Inject constructor(
 const val ISSUING_COUNTRY_X509_CERTIFICATE_KEY = "C"
 
 fun X509Certificate.getIssuerCountry(): String {
-    val fieldPattern = Pattern.compile("$ISSUING_COUNTRY_X509_CERTIFICATE_KEY=((?:[^,]|\\\\,)+)");
-    val matcher = fieldPattern.matcher(issuerX500Principal.name);
-    if (matcher.find()) {
-        return matcher.group(1);
+    val fieldPattern = Pattern.compile("$ISSUING_COUNTRY_X509_CERTIFICATE_KEY=((?:[^,]|\\\\,)+)")
+    val matcher = fieldPattern.matcher(issuerX500Principal.name)
+    return if (matcher.find()) {
+        matcher.group(1) ?: ""
+    } else {
+        ""
     }
-    return ""
 }

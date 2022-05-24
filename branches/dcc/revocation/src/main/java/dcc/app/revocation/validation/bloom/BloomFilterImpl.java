@@ -5,6 +5,8 @@
 
 package dcc.app.revocation.validation.bloom;
 
+import androidx.annotation.NonNull;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -25,6 +27,7 @@ import java.util.logging.Logger;
 import dcc.app.revocation.validation.bloom.exception.FilterException;
 
 public class BloomFilterImpl implements BloomFilter, Serializable {
+
     private long numBits;
     private byte numberOfHashes;
     private int currentElementAmount = 0;
@@ -62,7 +65,7 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
         this.definedElementAmount = numberOfElements;
         this.numBits = (long) size * NUM_BIT_FORMAT;
         this.numberOfHashes = numberOfHashes;
-        this.probRate = (float) Math.pow(1 - Math.exp(-numberOfHashes / (float) ((float) (this.numBits / NUM_BITS) / numberOfElements)), numberOfHashes);
+        this.probRate = (float) Math.pow(1 - Math.exp(-numberOfHashes / ((float) (this.numBits / NUM_BITS) / numberOfElements)), numberOfHashes);
         this.data = new AtomicIntegerArray(size);
     }
 
@@ -73,11 +76,11 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
         }
         // n: numberOfElements
         // m: numberOfBits -> ceil((n * log(p)) / log(1 / pow(2, log(2))));
-        this.numBits = (long) (Math.ceil((numberOfElements * Math.log((double) probRate)) / Math.log(1 / Math.pow(2, Math.log(2)))));
+        this.numBits = (long) (Math.ceil((numberOfElements * Math.log(probRate)) / Math.log(1 / Math.pow(2, Math.log(2)))));
 
         int bytes = (int) (this.numBits / NUM_BITS) + 1;
         int size = (bytes / NUM_BYTES) + (bytes % NUM_BYTES);
-        this.numBits = size * NUM_BIT_FORMAT;
+        this.numBits = (long) size * NUM_BIT_FORMAT;
         long heapFreeSize = Runtime.getRuntime().freeMemory();
 
         if (size <= 0) {
@@ -107,10 +110,10 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
     public void add(byte[] element) throws NoSuchAlgorithmException, FilterException, IOException {
         for (int i = 0; i < this.numberOfHashes; i++) {
             long index = calcIndex(element, i, this.numBits).longValue();
-            int bytepos = (int) index / NUM_BIT_FORMAT;
-            index -= bytepos * NUM_BIT_FORMAT;
-            Integer pattern = Integer.MIN_VALUE >>> index;
-            this.data.set(bytepos, this.data.get(bytepos) | pattern);
+            int bytePos = (int) index / NUM_BIT_FORMAT;
+            index -= bytePos * NUM_BIT_FORMAT;
+            int pattern = Integer.MIN_VALUE >>> index;
+            this.data.set(bytePos, this.data.get(bytePos) | pattern);
         }
         currentElementAmount++;
 
@@ -120,17 +123,15 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
     }
 
     @Override
-    public boolean mightContain(byte[] element) throws NoSuchAlgorithmException, FilterException, IOException {
+    public boolean mightContain(byte[] element) throws NoSuchAlgorithmException, IOException {
         boolean result = true;
         for (int i = 0; i < this.numberOfHashes; i++) {
             long index = calcIndex(element, i, this.numBits).longValue();
-            int bytepos = (int) index / NUM_BIT_FORMAT;
-            index -= bytepos * NUM_BIT_FORMAT;
+            int bytePos = (int) index / NUM_BIT_FORMAT;
+            index -= bytePos * NUM_BIT_FORMAT;
             long pattern = Integer.MIN_VALUE >>> index;
-            if ((this.data.get(bytepos) & pattern) == pattern) {
-                result &= true;
-            } else {
-                result &= false;
+            if ((this.data.get(bytePos) & pattern) != pattern) {
+                result = false;
                 break;
             }
         }
@@ -153,8 +154,6 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
         return md.digest(outputStream.toByteArray());
     }
 
-    //region Streams
-
     /**
      * Writes the filter to an output stream in a structured manner
      * 0 byte -> k (numberOfHashes)
@@ -162,10 +161,10 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
      * 5 byte -> unsigned length of the data
      * 6 - x byte -> data as utf8
      *
-     * @param outputStream
-     * @throws IOException
+     * @param outputStream for bloom filter bytes
+     * @throws IOException can be thrown while operation with stream
      */
-    public void writeTo(OutputStream outputStream) throws FilterException, IOException {
+    public void writeTo(OutputStream outputStream) throws IOException {
         // k = 1 (numberOfHashes), p = 4 (probRate),
         // 0 = k, 1 = p, 5 = filter
         DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
@@ -179,11 +178,11 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
         for (int i = 0; i < this.getData().length(); i++) {
             dataOutputStream.writeInt(this.getData().get(i));
         }
-
     }
 
     private void readFromStream(DataInputStream dis) {
         try {
+            @SuppressWarnings("unused")
             int version = dis.readShort(); // for later compatibility
             this.numberOfHashes = dis.readByte();
             this.usedHashFunction = dis.readByte();
@@ -196,7 +195,7 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
                 data[i] = dis.readInt();
             }
             this.data = new AtomicIntegerArray(data);
-            this.numBits = data.length * NUM_BIT_FORMAT;
+            this.numBits = (long) data.length * NUM_BIT_FORMAT;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -208,16 +207,12 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
      * * 1 - 4 byte -> p (probRate)
      * * 5 - x byte -> data as utf8
      *
-     * @param inputStream
-     * @throws IOException
+     * @param inputStream to read from
      */
     public void readFrom(InputStream inputStream) {
         DataInputStream dataInputStream = new DataInputStream(inputStream);
         this.readFromStream(dataInputStream);
     }
-    //endregion
-
-    //region Utility
 
     /**
      * Indicates whether some other object is "equal to" this one.
@@ -245,6 +240,7 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
      *                                    be cloned.
      * @see Cloneable
      */
+    @NonNull
     @Override
     protected Object clone() throws CloneNotSupportedException {
         return super.clone();
@@ -261,7 +257,6 @@ public class BloomFilterImpl implements BloomFilter, Serializable {
     private void writeObject(ObjectOutputStream outputStream) throws IOException {
         outputStream.defaultWriteObject();
     }
-    //endregion
 
     @Override
     public float getP() {
