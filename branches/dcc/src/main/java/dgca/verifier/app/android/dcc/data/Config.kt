@@ -40,6 +40,7 @@ data class Config(
         const val COUNTRY_LIST_ENDPOINT_NAME = "countryList"
         const val RULES_ENDPOINT_NAME = "rules"
         const val VALUE_SETS_ENDPOINT_NAME = "valuesets"
+        const val REVOCATION_ENDPOINT_NAME = "revocation"
     }
 
     private fun getCurrentVersionOrUseDefault(versionName: String): Version? =
@@ -63,6 +64,10 @@ data class Config(
 
     fun getValueSetsUrl(versionName: String): String =
         getCurrentVersionOrUseDefault(versionName)?.endpoints?.get(VALUE_SETS_ENDPOINT_NAME)?.url
+            ?: ""
+
+    fun getRevocationUrl(versionName: String): String =
+        getCurrentVersionOrUseDefault(versionName)?.endpoints?.get(REVOCATION_ENDPOINT_NAME)?.url
             ?: ""
 }
 

@@ -1,8 +1,8 @@
 /*
  *  ---license-start
- *  eu-digital-green-certificates / dcc-revocation-app-android
+ *  eu-digital-covid-certificates / dcc-verifier-app-android
  *  ---
- *  Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
  *  ---
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by mykhailo.nester on 24/12/2021, 15:53
+ *  Created by osarapulov on 5/25/22, 8:30 AM
  */
 
 package dcc.app.revocation.di
@@ -30,6 +30,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dcc.app.revocation.BuildConfig
 import dcc.app.revocation.data.network.RevocationService
+import dgca.verifier.app.android.dcc.di.BASE_URL
 import okhttp3.Cache
 import okhttp3.Call
 import okhttp3.OkHttpClient
@@ -100,7 +101,7 @@ object RevocationNetworkModule {
     private fun createRetrofit(converterFactory: Converter.Factory, okHttpClient: Provider<OkHttpClient>): Retrofit {
         return Retrofit.Builder()
             .addConverterFactory(converterFactory)
-            .baseUrl(BuildConfig.REVOCATION_SERVICE_HOST)
+            .baseUrl(BASE_URL)
             .callFactory { okHttpClient.get().newCall(it) }
             .build()
     }
