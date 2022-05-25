@@ -45,6 +45,13 @@
             "lKdU1EbQubxyDDm2q3N8KclZ2C94Num3xXjG0pk+3eI=",
             "r/mIkG3eEpVdm+u/ko/cwxzOMo1bk4TyHIlByibiA5E="
           ]
+        },
+        "revocation": {
+          "url": "https://dgca-revocation-service-eu-acc.cfapps.eu10.hana.ondemand.com",
+          "pubKeys": [
+            "lKdU1EbQubxyDDm2q3N8KclZ2C94Num3xXjG0pk+3eI=",
+            "r/mIkG3eEpVdm+u/ko/cwxzOMo1bk4TyHIlByibiA5E="
+          ]
         }
       }
     },

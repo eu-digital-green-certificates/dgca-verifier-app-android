@@ -31,57 +31,50 @@ import retrofit2.http.*
 
 interface RevocationService {
 
-    @GET("/lists")
+    @GET
     suspend fun getRevocationLists(
-        @Header("If-None-Match") eTag: String
+        @Header("If-None-Match") eTag: String,
+        @Url url: String
     ): Response<List<RevocationKIDResponse>>
 
-    @GET("/lists/{kid}/partitions")
+    @GET
     suspend fun getRevocationListPartitions(
         @Header("if-Match") eTag: String,
         @Header("if-modified-since") modifiedSince: String?,
         @Header("X-SLICE-FILTER-TYPE") type: SliceType,
-        @Path("kid") kid: String
+        @Url url: String
     ): Response<List<RevocationPartitionResponse>>
 
-    @POST("/lists/{kid}/partitions/{id}/slices")
+    @POST
     suspend fun getRevocationPartitionChunks(
         @Header("if-Match") eTag: String,
         @Header("X-SLICE-FILTER-TYPE") type: SliceType,
-        @Path("kid") kid: String,
-        @Path("id") partitionId: String,
+        @Url url: String,
         @Body cidList: List<String>
     ): Response<ResponseBody>
 
-    @GET("/lists/{kid}/partitions/{id}/chunks/{cid}/slices")
+    @GET
     suspend fun getRevocationChunk(
         @Header("If-Match") eTag: String,
         @Header("if-modified-since") modifiedSince: String,
         @Header("X-SLICE-FILTER-TYPE") type: SliceType,
-        @Path("kid") kid: String,
-        @Path("id") id: String,
-        @Path("cid") chunkId: String
+        @Url url: String
     ): Response<ResponseBody>
 
-    @POST("/lists/{kid}/partitions/{id}/chunks/{cid}/slices")
+    @POST
     suspend fun getRevocationChunkSlices(
         @Header("if-Match") eTag: String,
         @Header("if-modified-since") modifiedSince: String,
         @Header("X-SLICE-FILTER-TYPE") type: SliceType,
-        @Path("kid") kid: String,
-        @Path("id") partitionId: String,
-        @Path("cid") cid: String,
+        @Url url: String,
         @Body sidList: List<String>
     ): Response<ResponseBody>
 
-    @GET("/lists/{kid}/partitions/{id}/chunks/{cid}/slices/{sid}")
+    @GET
     suspend fun getRevocationChunkSlice(
         @Header("If-Match") eTag: String,
         @Header("if-modified-since") modifiedSince: String,
         @Header("X-SLICE-FILTER-TYPE") type: SliceType,
-        @Path("kid") kid: String,
-        @Path("id") id: String,
-        @Path("cid") chunkId: String,
-        @Path("sid") sid: String
+        @Url url: String
     ): Response<ResponseBody>
 }

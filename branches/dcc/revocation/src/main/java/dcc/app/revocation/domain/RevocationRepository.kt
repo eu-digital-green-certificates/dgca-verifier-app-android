@@ -33,10 +33,11 @@ import okhttp3.ResponseBody
 interface RevocationRepository {
 
     @Throws(Exception::class)
-    suspend fun getRevocationLists(): List<RevocationKidData>?
+    suspend fun getRevocationLists(baseUrl: String): List<RevocationKidData>?
 
     @Throws(Exception::class)
     suspend fun getRevocationPartitions(
+        baseUrl: String,
         lastUpdated: String?,
         sliceType: SliceType,
         kid: String,
@@ -44,6 +45,7 @@ interface RevocationRepository {
 
     @Throws(Exception::class)
     suspend fun getPartitionChunks(
+        baseUrl: String,
         sliceType: SliceType,
         kid: String,
         partitionId: String?,
@@ -52,6 +54,7 @@ interface RevocationRepository {
 
     @Throws(Exception::class)
     suspend fun getRevocationChunk(
+        baseUrl: String,
         lastUpdated: String,
         sliceType: SliceType,
         kid: String,
@@ -61,6 +64,7 @@ interface RevocationRepository {
 
     @Throws(Exception::class)
     suspend fun getRevocationChunkSlices(
+        baseUrl: String,
         lastUpdated: String,
         sliceType: SliceType,
         kid: String,
@@ -71,6 +75,7 @@ interface RevocationRepository {
 
     @Throws(Exception::class)
     suspend fun getSlice(
+        baseUrl: String,
         lastUpdated: String,
         sliceType: SliceType,
         kid: String,
