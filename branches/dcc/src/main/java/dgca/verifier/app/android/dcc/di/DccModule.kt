@@ -31,7 +31,10 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
+import dcc.app.revocation.domain.usacase.GetRevocationBaseUr
 import dgca.verifier.app.android.dcc.DccProcessor
+import dgca.verifier.app.android.dcc.data.ConfigRepository
+import dgca.verifier.app.android.dcc.revocation.GetRevocationBaseUrImpl
 import dgca.verifier.app.decoder.base45.Base45Service
 import dgca.verifier.app.decoder.base45.DefaultBase45Service
 import dgca.verifier.app.decoder.cbor.CborService
@@ -103,4 +106,8 @@ class DccModule {
     @Provides
     fun provideCryptoService(x509: X509): CryptoService = VerificationCryptoService(x509)
 
+    @Singleton
+    @Provides
+    fun provideGetRevocationBaseUr(configRepository: ConfigRepository): GetRevocationBaseUr =
+        GetRevocationBaseUrImpl(configRepository)
 }
