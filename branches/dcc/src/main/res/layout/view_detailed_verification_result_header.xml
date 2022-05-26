@@ -25,7 +25,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:parentTag="com.android.app.dcc.ui.verification.detailed.DetailedVerificationResultHeaderView">
+    tools:parentTag="dgca.verifier.app.android.dcc.ui.verification.detailed.DetailedVerificationResultHeaderView">
 
     <View
         android:id="@+id/verificationStatusBackground"

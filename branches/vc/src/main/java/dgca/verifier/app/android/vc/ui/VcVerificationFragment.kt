@@ -46,7 +46,7 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
 
     private val viewModel by viewModels<VcViewModel>()
     private val args by navArgs<VcVerificationFragmentArgs>()
-    var isRawExpanded = false
+    private var isRawExpanded = false
 
     private lateinit var adapter: VcAdapter
 

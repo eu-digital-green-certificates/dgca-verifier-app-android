@@ -48,7 +48,7 @@ data class RuleModel(
 ) : Parcelable {
 
     fun getDescriptionFor(languageCode: String): String {
-        val description = descriptions[languageCode.toLowerCase(Locale.ROOT)]
+        val description = descriptions[languageCode.lowercase(Locale.ROOT)]
 
         return if (description?.isNotBlank() == true) {
             description

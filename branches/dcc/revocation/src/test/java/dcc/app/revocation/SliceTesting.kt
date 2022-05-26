@@ -179,5 +179,29 @@ class SliceTesting {
         var chunk: String? = null,
         var hash: String? = null,
         var binaryData: ByteArray
-    )
+    ) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as SliceEntity
+
+            if (kid != other.kid) return false
+            if (id != other.id) return false
+            if (chunk != other.chunk) return false
+            if (hash != other.hash) return false
+            if (!binaryData.contentEquals(other.binaryData)) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = kid?.hashCode() ?: 0
+            result = 31 * result + (id?.hashCode() ?: 0)
+            result = 31 * result + (chunk?.hashCode() ?: 0)
+            result = 31 * result + (hash?.hashCode() ?: 0)
+            result = 31 * result + binaryData.contentHashCode()
+            return result
+        }
+    }
 }

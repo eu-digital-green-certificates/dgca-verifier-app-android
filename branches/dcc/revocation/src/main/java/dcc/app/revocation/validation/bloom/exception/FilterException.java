@@ -3,7 +3,8 @@ package dcc.app.revocation.validation.bloom.exception;
 import java.util.Optional;
 
 public class FilterException extends Exception {
-    private FilterExceptionsTypes exceptionsType;
+
+    private final FilterExceptionsTypes exceptionsType;
 
     /**
      * Constructs a new europa.ec.dgc.bloomfilter.exception with {@code null} as its detail message.

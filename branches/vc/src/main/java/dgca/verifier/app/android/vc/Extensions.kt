@@ -32,8 +32,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-fun String.fromBase64(): ByteArray = Base64.decode(this, Base64.NO_WRAP)
-
 fun Context.getStringFromJsonFile(fileId: Int): String {
     val inputStream: InputStream = resources.openRawResource(fileId)
     val writer: Writer = StringWriter()

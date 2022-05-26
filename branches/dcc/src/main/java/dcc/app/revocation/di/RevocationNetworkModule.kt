@@ -107,6 +107,7 @@ object RevocationNetworkModule {
     }
 }
 
+@Suppress("unused")
 @PublishedApi
 internal inline fun Retrofit.Builder.callFactory(
     crossinline body: (Request) -> Call

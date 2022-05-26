@@ -12,7 +12,7 @@ public enum FilterExceptionsTypes {
     IO_EXCEPTION("Error in I/O"),
     UNKNOWN_ERROR("Unknown error occured");
 
-    private String type;
+    private final String type;
 
     FilterExceptionsTypes(String type) {
         this.type = type;

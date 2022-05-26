@@ -32,20 +32,6 @@ const val FORMATTED_YEAR_MONTH_DAY = "MMM d, yyyy"
 private const val FORMATTED_DATE_TIME = "MMM d, yyyy, HH:mm"
 private val DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(FORMATTED_DATE_TIME)
 
-private fun String.toZonedDateTime(): ZonedDateTime? =
-    try {
-        ZonedDateTime.parse(this)
-    } catch (error: Throwable) {
-        null
-    }
-
-private fun String.toLocalDateTime(): LocalDateTime? =
-    try {
-        LocalDateTime.parse(this)
-    } catch (error: Throwable) {
-        null
-    }
-
 fun String.toFormattedDateTime(): String {
     if (isEmpty()) {
         return ""

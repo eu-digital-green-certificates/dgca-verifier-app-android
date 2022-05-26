@@ -70,7 +70,7 @@ class VerificationResultDialogFragment : BaseVerificationDialogFragment<DialogFr
         }
 
         handleDecodeResult()
-        hideLiveData.observe(viewLifecycleOwner, { requireActivity().finish() })
+        hideLiveData.observe(viewLifecycleOwner) { requireActivity().finish() }
         startTimer()
     }
 
@@ -114,21 +114,21 @@ class VerificationResultDialogFragment : BaseVerificationDialogFragment<DialogFr
             when {
                 certificateModel.vaccinations?.size == 1 -> {
                     binding.greenCertificate.layoutResource = R.layout.item_vaccination
-                    binding.greenCertificate.setOnInflateListener { stub, inflated ->
+                    binding.greenCertificate.setOnInflateListener { _, inflated ->
                         VaccinationViewHolder.create(inflated as ViewGroup).bind(certificateModel.vaccinations.first())
                     }
                     binding.greenCertificate.inflate()
                 }
                 certificateModel.recoveryStatements?.size == 1 -> {
                     binding.greenCertificate.layoutResource = R.layout.item_recovery
-                    binding.greenCertificate.setOnInflateListener { stub, inflated ->
+                    binding.greenCertificate.setOnInflateListener { _, inflated ->
                         RecoveryViewHolder.create(inflated as ViewGroup).bind(certificateModel.recoveryStatements.first())
                     }
                     binding.greenCertificate.inflate()
                 }
                 certificateModel.tests?.size == 1 -> {
                     binding.greenCertificate.layoutResource = R.layout.item_test
-                    binding.greenCertificate.setOnInflateListener { stub, inflated ->
+                    binding.greenCertificate.setOnInflateListener { _, inflated ->
                         TestViewHolder.create(inflated as ViewGroup).bind(certificateModel.tests.first())
                     }
                     binding.greenCertificate.inflate()

@@ -26,7 +26,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/green"
-    tools:parentTag="com.android.app.dcc.ui.verification.detailed.DetailedVerificationResultView">
+    tools:parentTag="dgca.verifier.app.android.dcc.ui.verification.detailed.DetailedVerificationResultView">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

@@ -16,7 +16,7 @@
         ],
         "p": 0.01,
         "k": 1,
-        "exists": [], // gefüllt durch lookup
+        "exists": [],
         "written": [1, 1],
         "filter": ""
     },
@@ -28,7 +28,7 @@
         ],
         "p": 0.01,
         "k": 1,
-        "exists": [], // gefüllt durch lookup
+        "exists": [],
         "written": [1, 0, 1],
         "filter": ""
     }

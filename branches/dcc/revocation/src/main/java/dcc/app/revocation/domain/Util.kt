@@ -78,8 +78,6 @@ fun ByteArray.sha256Short(): ByteArray? {
     }
 }
 
-fun ByteArray.toHexString(): String = joinToString("") { "%02x".format(it) }
-
 fun String.hexToByteArray(): ByteArray = chunked(2)
     .map { it.toInt(16).toByte() }
     .toByteArray()

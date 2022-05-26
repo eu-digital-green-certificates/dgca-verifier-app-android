@@ -25,7 +25,6 @@ package dgca.verifier.app.android.vc.network
 import dgca.verifier.app.android.vc.domain.ErrorHandler
 import dgca.verifier.app.android.vc.domain.ErrorType
 import retrofit2.HttpException
-import retrofit2.Response
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
@@ -54,5 +53,3 @@ class GeneralErrorHandlerImpl @Inject constructor() : ErrorHandler {
         }
     }
 }
-
-fun Response<*>.containsServerError(): Boolean = code() in 500..599 || code() == 412
