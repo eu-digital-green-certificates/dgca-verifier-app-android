@@ -24,7 +24,6 @@ package dcc.app.revocation.domain.usacase
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import dcc.app.revocation.BuildConfig
 import dcc.app.revocation.data.RevocationPreferences
 import dcc.app.revocation.data.network.model.RevocationPartitionResponse
 import dcc.app.revocation.data.network.model.Slice
@@ -51,7 +50,7 @@ import java.util.zip.GZIPInputStream
 import javax.inject.Inject
 
 class GetRevocationDataUseCase @Inject constructor(
-    private val getRevocationBaseUr: GetRevocationBaseUr,
+    private val getRevocationBaseUrl: GetRevocationBaseUrl,
     private val repository: RevocationRepository,
     private val revocationPreferences: RevocationPreferences,
     dispatcher: CoroutineDispatcher,
@@ -63,7 +62,7 @@ class GetRevocationDataUseCase @Inject constructor(
     override suspend fun invoke(params: Any) {
         revocationPreferences.lastRevocationSyncTimeMillis = System.currentTimeMillis()
 
-        val baseUrl = getRevocationBaseUr.invoke()
+        val baseUrl = getRevocationBaseUrl.invoke()
 
         // Load list of KIDs
         val newKidItems = repository.getRevocationLists(baseUrl) ?: return
@@ -120,7 +119,7 @@ class GetRevocationDataUseCase @Inject constructor(
 
     private suspend fun getPartitions(kid: String, lastUpdated: String? = null) {
         val kidUrlSafe = kid.toBase64Url()
-        val baseUrl = getRevocationBaseUr.invoke()
+        val baseUrl = getRevocationBaseUrl.invoke()
         repository.getRevocationPartitions(
             baseUrl = baseUrl,
             sliceType = sliceType,
@@ -138,7 +137,7 @@ class GetRevocationDataUseCase @Inject constructor(
             val lastUpdated = localPartition.lastUpdated.toUtcString()
             compareChunksWithLocal(kid, localPartition, remotePartition, lastUpdated)
         } else {
-            val baseUrl = getRevocationBaseUr.invoke()
+            val baseUrl = getRevocationBaseUrl.invoke()
 
             // Initial sync. load all chunks for partition
             val result =
@@ -170,7 +169,7 @@ class GetRevocationDataUseCase @Inject constructor(
         val type: Type = object : TypeToken<Map<String, Map<String, Slice>>>() {}.type
         val localChunks =
             Gson().fromJson<Map<String, Map<String, Slice>>>(localPartition.chunks, type)
-        val baseUrl = getRevocationBaseUr.invoke()
+        val baseUrl = getRevocationBaseUrl.invoke()
 
         remotePartition.chunks.forEach { (remoteChunkKey, remoteChunkValue) ->
             val localSlices = localChunks[remoteChunkKey]

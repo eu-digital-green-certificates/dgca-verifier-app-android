@@ -31,10 +31,10 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
-import dcc.app.revocation.domain.usacase.GetRevocationBaseUr
+import dcc.app.revocation.domain.usacase.GetRevocationBaseUrl
 import dgca.verifier.app.android.dcc.DccProcessor
 import dgca.verifier.app.android.dcc.data.ConfigRepository
-import dgca.verifier.app.android.dcc.revocation.GetRevocationBaseUrImpl
+import dgca.verifier.app.android.dcc.revocation.GetRevocationBaseUrlImpl
 import dgca.verifier.app.decoder.base45.Base45Service
 import dgca.verifier.app.decoder.base45.DefaultBase45Service
 import dgca.verifier.app.decoder.cbor.CborService
@@ -108,6 +108,6 @@ class DccModule {
 
     @Singleton
     @Provides
-    fun provideGetRevocationBaseUr(configRepository: ConfigRepository): GetRevocationBaseUr =
-        GetRevocationBaseUrImpl(configRepository)
+    fun provideGetRevocationBaseUr(configRepository: ConfigRepository): GetRevocationBaseUrl =
+        GetRevocationBaseUrlImpl(configRepository)
 }

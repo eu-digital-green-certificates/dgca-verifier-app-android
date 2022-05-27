@@ -17,23 +17,12 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by osarapulov on 5/25/22, 8:15 AM
+ *  Created by osarapulov on 5/25/22, 8:12 AM
  */
 
-package dgca.verifier.app.android.dcc.revocation
+package dcc.app.revocation.domain.usacase
 
-import com.android.app.dcc.BuildConfig
-import dcc.app.revocation.domain.usacase.GetRevocationBaseUr
-import dgca.verifier.app.android.dcc.data.ConfigRepository
-import javax.inject.Inject
+interface GetRevocationBaseUrl {
 
-class GetRevocationBaseUrImpl @Inject constructor(
-    private val configRepository: ConfigRepository
-): GetRevocationBaseUr {
-
-    override suspend fun invoke(): String {
-        val config = configRepository.local().getConfig()
-        val versionName = BuildConfig.VERSION_NAME
-        return config.getRevocationUrl(versionName)
-    }
+    suspend fun invoke(): String
 }
