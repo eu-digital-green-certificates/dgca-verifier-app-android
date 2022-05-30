@@ -38,6 +38,27 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ * Partial variable-length SHA encoding
+ * To reduce the data footprint while offering the same privacy guarantees as Bloom filters, ordered lists of the first d bits of
+ * SHA hashes can be used. Lookup of a revoked certificate is performed via binary search in the ordered list.
+ * <p>
+ * In more detail:
+ * - For n certificates, we take the first d bits of their hash values.
+ * - These are stored in an ordered array (or any data structure with random access in O(1))  of length n.
+ * - To lookup a particular certificate we take the first d hashes of its hash value and use it as a key in a binary search in the ordered list.
+ * <p>
+ * The scheme uses exactly d bits per hash, instead of 1.44d bits required by Bloom filters.
+ * The lookup time is logarithmic on the size of the list, which is completely adequate. Using the first d bits of SHA hashes
+ * achieves a precision of 2^-d; by varying d different levels of precision can be achieved.
+ * <p>
+ * We recommend choosing a value of d which is byte aligned - so divisible by 8 - as this because that makes sense given modern computers.
+ * <p>
+ * Our recommendations are:
+ * <p>
+ * 32 bits for a 1 in 4.3*10^9 chance of false positives.
+ * 40 bits for a 1 in 1.1*10^12 chance of false positives.
+ */
 public class PartialVariableHashFilter {
 
     private List<BigInteger> arrayList;
