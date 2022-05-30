@@ -22,7 +22,16 @@
 
 package dcc.app.revocation.domain
 
+/**
+ * Error handler that can convert data layer errors into domain layer types.
+ */
 interface ErrorHandler {
 
+    /**
+     * Convert Throwable into app readable error type.
+     *
+     * @param throwable data storage or network error
+     * @return dcc.app.revocation.domain.ErrorType domain app type
+     */
     fun getError(throwable: Throwable): ErrorType
 }

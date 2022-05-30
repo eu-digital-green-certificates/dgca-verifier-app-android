@@ -36,6 +36,12 @@ import java.text.ParseException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+/**
+ * Verifiable credentials according to the W3C VC standard.
+ * Solution for scanning and validating JWT encoded verifiable credentials and present their content in the verifier app.
+ *
+ * https://www.w3.org/TR/vc-data-model/
+ */
 class VcProcessor @Inject constructor(
     @ApplicationContext private val context: Context
 ) : Processor {

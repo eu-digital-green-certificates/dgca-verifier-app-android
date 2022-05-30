@@ -26,6 +26,10 @@ import dgca.verifier.app.android.dcc.model.CertificateModel
 import dgca.verifier.app.android.dcc.settings.debug.mode.DebugModeState
 import javax.inject.Inject
 
+/**
+ * Three levels of capture are defined; ranging from one that is fully anonymised (but still allows for verification of the digital seal)
+ * to an intermediate one (with just the UVCI) and a special level in which a one to one exact copy of the whole QR is made
+ */
 class AnonymizationManager @Inject constructor() {
 
     fun anonymizeDcc(certificateModel: CertificateModel, state: DebugModeState = DebugModeState.LEVEL_1): CertificateModel {
@@ -116,7 +120,7 @@ fun String.anonymize(): String {
                             "\\u002C".toRegex().matches(it.toString()) -> ","
                             it.category == CharCategory.DASH_PUNCTUATION -> "="
                             it.category == CharCategory.FINAL_QUOTE_PUNCTUATION || it.category == CharCategory.START_PUNCTUATION ||
-                                    it.category == CharCategory.INITIAL_QUOTE_PUNCTUATION || it.category == CharCategory.END_PUNCTUATION -> "Q"
+                                it.category == CharCategory.INITIAL_QUOTE_PUNCTUATION || it.category == CharCategory.END_PUNCTUATION -> "Q"
                             else -> "!"
                         }
                     }
