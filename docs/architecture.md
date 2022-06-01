@@ -4,7 +4,7 @@
 
 The verifier app provides functionality to verify DCCs and Verifiable credentials. It verifies the signature with the keys provided by the verifier app’s backend. The app uses only open-source libraries. All DCCs and other types of certificates scanned or processed are ephemeral and will not be stored.
 
-TODO: [ image ]
+![App architecture overview](application_architecture.png)
 
 App architecture is created in a modularized way so new types of certificates can be easily added. 
 
@@ -19,9 +19,10 @@ Input data can be provided by:
 - Intent 
 - QR code scanning
 
-Processed input passed to one of branch module that can handle it.
+Main app view provides possibility to scan QR code or receive it by NFC. Processed input passed to one of branch module that can handle it.
 
-TODO: [ main image ]
+<img src="main_screen.png" width="200" />
+
 
 ### DCC module
 
@@ -41,7 +42,10 @@ Verifier app workflow during verification:
 
 All codes are scanned with the open-source Zebra Crossing (zXing) Library. The decoding of the content is done by base45 decoding and CBOR libraries, with the COSE signature validation by Android-internal encryption libraries.
 
-TODO: [ images of dcc scan valid/failed ]
+Verification result:
+
+<img src="dcc_success_result.png" width="200" /> <img src="dcc_invalid_result.png" width="200" />
+
 
 ### VC module
 
@@ -50,6 +54,10 @@ In version 1.3 we introduced an enhancement for verifiable credentials according
 ### SHC module
 
 Extension of VC functionality allows app to verify Smart Health cards.
+
+Example of SHC verification result:
+
+<img src="shc_card.png" width="200" />
 
 ### DIVOC/ICAO modules
 
