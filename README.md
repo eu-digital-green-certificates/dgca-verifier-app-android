@@ -57,7 +57,7 @@ This project uses the Gradle build system. To build this project, use the `gradl
 
 ## Documentation  
 
-- [ ] TODO: Link to documentation
+- [App architecture](/docs/architecture.md)
 
 ## Support and feedback
 
