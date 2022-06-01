@@ -58,6 +58,7 @@ This project uses the Gradle build system. To build this project, use the `gradl
 ## Documentation  
 
 - [App architecture](/docs/architecture.md)
+- [DCC Revocation](/docs/revocation.md)
 
 ## Support and feedback
 
