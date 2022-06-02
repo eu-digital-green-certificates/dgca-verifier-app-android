@@ -59,6 +59,7 @@ This project uses the Gradle build system. To build this project, use the `gradl
 
 - [App architecture](/docs/architecture.md)
 - [DCC Revocation](/docs/revocation.md)
+- [Verifiable credentials](/docs/verifiable_credentials.md)
 
 ## Support and feedback
 
