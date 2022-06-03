@@ -4,7 +4,7 @@
 
 The verifier app provides functionality to verify DCCs and Verifiable credentials. It verifies the signature with the keys provided by the verifier app’s backend. The app uses only open-source libraries. All DCCs and other types of certificates scanned or processed are ephemeral and will not be stored.
 
-![App architecture overview](application_architecture.png)
+![App architecture overview](/docs/resources/application_architecture.png)
 
 App architecture is created in a modularized way so new types of certificates can be easily added. 
 
