@@ -21,7 +21,7 @@ Input data can be provided by:
 
 Main app view provides possibility to scan QR code or receive it by NFC. Processed input passed to one of branch module that can handle it.
 
-<img src="main_screen.png" width="200" />
+<img src="/docs/resources/main_screen.png" width="200" />
 
 
 ### DCC module
@@ -44,7 +44,7 @@ All codes are scanned with the open-source Zebra Crossing (zXing) Library. The d
 
 Verification result:
 
-<img src="dcc_success_result.png" width="200" /> <img src="dcc_invalid_result.png" width="200" />
+<img src="/docs/resources/dccScan/dcc_success_result.png" width="200" /> <img src="/docs/resources/dccScan/dcc_invalid_result.png" width="200" />
 
 
 ### VC module
@@ -57,7 +57,7 @@ Extension of VC functionality allows app to verify Smart Health cards.
 
 Example of SHC verification result:
 
-<img src="shc_card.png" width="200" />
+<img src="/docs/resources/shcScan/shc_card.png" width="200" />
 
 ### DIVOC/ICAO modules
 

@@ -32,4 +32,4 @@ The revocation of single DCCs can result in a very big amount of data. When mill
 
 The core question is how to find a revocation entry in an efficient way. For this kind of problem an effective pointing method must be introduced to avoid a delay of the verification process. For instance, during a scan of 1000 people, a delay of 6 seconds means 100 min more delay on the entire process.  To save this time, the lookup mechanism must be optimised (striving to achieve O(log(n)) access) and avoid a linear search complexity (O(n)) depending on the amount of items. To achieve this goal, the DCC will be used as the basis for the point by using the KID as entrypoint, and the first and the second byte of the revocation entry (hash) as coordinates to identify where the revocation entry must be located.
 
-<img src="revocation_entry_lookup.png" width="600" />
+<img src="/docs/resources/revocation_entry_lookup.png" width="600" />
