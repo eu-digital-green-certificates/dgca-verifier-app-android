@@ -2,11 +2,11 @@
     Debug mode
 </h1>
 
-### Summary
+## Summary
 
 At times it may be required to capture Digital COVID Certificate (DCC) data in the field for further investigation (e.g. if the DCC  fails verification for no apparent reason; or if (large scale/sophisticated) digital fraud is suspected. Three levels of capture are defined; ranging from one that is fully anonymised (but still allows for verification of the digital seal) to an intermediate one (with just the UVCI, as per the recommendation) and a special level in which a one to one exact copy of the whole QR is made.
 
-### Background
+## Background
 
 DCCs are rolled out in volume now; by many different countries (and sometimes even by different issuers within a country) each with their own issuer software. This software is generally written from scratch, by independent teams and with a highly diverse set of technologies. Likewise most countries participating have written their own scanners using a similarly diverse set of technologies.  
 
@@ -22,7 +22,7 @@ To make the bilateral (or through the eHealth Network) exchanges of this data ea
 
 However a DCC contains private, medical, data. Which can only be stored and exchanged with relatively high safeguard and in exceptional cases (in fact -the Regulation forbids routine capture).  Experience during the first 4 weeks of operation has shown for most (technical) validations and ‘in vivo’ debugging the actual sensitive data is *not needed*. Instead - structure, checksums and digital signatures are more important to preserve.
 
-### Principles
+## Principles
 
 The need to mask personal data - and in particular medical data - has long been a topic of interest in the field of medical informatics. Since with the EU Digital COVID Certificate (DCC) we are dealing with, albeit in a very small measure, medical data then we can turn to established standards for both [pseudonymization and anonymization](https://www.johner-institute.com/articles/software-iec-62304/and-more/anonymization-and-pseudonymization/)
 
@@ -33,7 +33,7 @@ In addition, the IHE also provides a description of how to [de-identify data](ht
 Note that there are already free / open-source tools available for both DICOM de-identification (e.g. [gdcm](http://gdcm.sourceforge.net/html/gdcmanon.html), [DICAT](https://github.com/aces/DICAT)) and HL7 anonymization (e.g. [FHIR](https://github.com/microsoft/FHIR-Tools-for-Anonymization)).
 
 
-### Best Current Practice
+## Best Current Practice
 
 Since the EU DCC is neither a complete DICOM Metadata or HL7 data record, then best current practice is to conform to ISO 25237:
 
@@ -51,7 +51,7 @@ EU DCC fields:
 To aid debugging - the masking should be done such that certain (structural) elements that may be relevant remain (both in the nam, dob and ci fields). 
 
 
-### General field masking
+## General field masking
 
 In the decoded UTF8 sequence; each (unicode) glyph should be replaced according to the following schema for all fields (except the ci field) to a 7bit safe character from the ASCI 32..127 range:
 
@@ -77,8 +77,4 @@ For this reason it is critical that no normalisation or any such changes are don
 
 TODO: update images
 
-<img src="/docs/resources/debugMode/settings.png" width="200" />
-<img src="/docs/resources/debugMode/debug.png" width="200" />
-<img src="/docs/resources/debugMode/debug_certInfo.png" width="200" />
-<img src="/docs/resources/debugMode/debug_rawData.png" width="200" />
-<img src="/docs/resources/debugMode/debug_content.png" width="200" />
+<img src="/docs/resources/debugMode/settings.png" width="200" /> <img src="/docs/resources/debugMode/debug.png" width="200" /> <img src="/docs/resources/debugMode/debug_certInfo.png" width="200" /> <img src="/docs/resources/debugMode/debug_rawData.png" width="200" /> <img src="/docs/resources/debugMode/debug_content.png" width="200" />
