@@ -74,13 +74,13 @@ For this reason it is critical that no normalisation or any such changes are don
 
 ### DoB field substitution
 
-The date of birth (‘dob’) should be reduced to just the year the remainder of the string should be masked. The reason for preserving the year is to maintain the ability to apply special business logic (e.g. for children or young adults). 
+The date of birth (‘dob’) should be reduced to just the year the remainder of the string should be masked. The reason for preserving the year is to maintain the ability to apply special business logic (e.g. for children or young adults).
 
 As the 0-9 digits are mapped to a ‘9’ and any alphanumeric character to an ‘X’ it becomes possible to recognise incomplete DoBs (e.g. those lacking the day or month, or using non standard values). This presents a small privacy risk (as this group is relatively small ~ 0.5% of the population).
 
 ### UVCI field substitution
 
-For the UVCI field - above defined masking should be applied after the country designator but maintaining the length. This is to aid debugging of extreme/odd lengths (this is unlikely to be an indirect personal data issue - as countries generally issue UVCI’s of very similar and usually identical lengths).  
+For the UVCI field - above defined masking should be applied after the country designator but maintaining the length. This is to aid debugging of extreme/odd lengths (this is unlikely to be an indirect personal data issue - as countries generally issue UVCI’s of very similar and usually identical lengths).
 
 The masking should be done with the following deviation from above table:
 
@@ -129,7 +129,7 @@ There is a potential residual risk around the time stamp in the COSE field which
       "ci": "URN:UVCI:01:NL:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
     }
   ]
-} | 
+} |
 {
   "ver": "1.3.0",
   "nam": {
@@ -151,7 +151,7 @@ There is a potential residual risk around the time stamp in the COSE field which
       "ci": "URN:UVCI:01:NL:DADFCC47C7334E45A906DB12FD859FB2"
     }
   ]
-} | 
+} |
 {
   "ver": "1.3.0",
   "nam": {
@@ -179,7 +179,7 @@ There is a potential residual risk around the time stamp in the COSE field which
 
 For L1 and higher - the data handled contains personal data (either just the UVCI in L2, or `everything` at L3). Handling and storage of these requires a set of appropriate organisational and technical measures. As a minimum the principle of four-eyes checking should be in place, with full, independent, auditable logs. In combination with encryption at rest. For L3 it is strongly advised to asymmetrically encrypt the record with controlled decryption key access (e.g. public/private key mechanism).
 
-Note that there is a certain unblinding risk in L2 by revealing the payload SHA256 if the “nam” and “ci” fields are (relatively) short. As the permutation space of a short name and the missing DoB digits is small (10-15 characters with a lot of common names as you know the country, 3-4 digits for the DoB yields).  
+Note that there is a certain unblinding risk in L2 by revealing the payload SHA256 if the “nam” and “ci” fields are (relatively) short. As the permutation space of a short name and the missing DoB digits is small (10-15 characters with a lot of common names as you know the country, 3-4 digits for the DoB yields).
 
 For L1 this is less of an issue - as the UCI should be both large and sufficiently securely random.  As this is very unlikely for a real person (and likely the type of anomaly that one is trying to find) this is considered an acceptable, proportional risk.
 
@@ -194,7 +194,7 @@ For exchange purposes; it is suggested that member states package the data gathe
 - A file `QR.base64` that contains the COSE structure (with for L1/2 the payload replaced by an equal number of 0x58 bytes) as a [base64 string](https://datatracker.ietf.org/doc/html/rfc4648).
 - A file `payload.json` that contains the decoded JSON (with substitutions depending on the level applied).
 - *For  L2 and L3*:
-	- A 32 byte file `QR-sha.bin` and a 65 byte, human readable, `QR-sha.txt` file that contains the SHA-256 of the QR as a case insensitive HEX string terminated by a linefeed. 
+	- A 32 byte file `QR-sha.bin` and a 65 byte, human readable, `QR-sha.txt` file that contains the SHA-256 of the QR as a case insensitive HEX string terminated by a linefeed.
 - *For L3*:
 	- A file `QR.png` or `QR.jpg` that contains the scanned QR (*L3 only*)
 	- A file `QR.txt` that contains the decoded string from the image as is so prior to HC1 stripping and base45 decoding (*L3 only*))
