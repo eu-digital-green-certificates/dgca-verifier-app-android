@@ -20,7 +20,7 @@ In all these cases (software, publications and help requests) data must be proce
 
 To make the bilateral (or through the eHealth Network) exchanges of this data easier - it is desirable for countries to use similar (good) practices. This makes it easier for all parties to understand what the situation is and to share (debugging) tools.
 
-However a DCC contains private, medical, data. Which can only be stored and exchanged with relatively high safeguard and in exceptional cases (in fact -the Regulation forbids routine capture).  Experience during the first 4 weeks of operation has shown for most (technical) validations and ‘in vivo’ debugging the actual sensitive data is *not needed*. Instead - structure, checksums and digital signatures are more important to preserve.
+However a DCC contains private, medical, data. Which can only be stored and exchanged with relatively high safeguard and in exceptional cases (in fact -the Regulation forbids routine capture).  Experience during the first 4 weeks of operation has shown for most (technical) validations and ‘in vivo’ debugging the actual sensitive data is **not needed**. Instead - structure, checksums and digital signatures are more important to preserve.
 
 ## Principles
 
@@ -101,80 +101,14 @@ There is a potential residual risk around the time stamp in the COSE field which
 
 ### Levels disclosed:
 
-| L1 (normal capture) | L2 (traceable capture) | L3 (full take) |
-|----------------|-----------------|-----------------|
+| L 1 (normal capture) | L2 (traceable capture) | L3 (full take) |
+|:-----|:-----|:-----|
 | n/a | n/a | QR code / photograph |
-| n/a | n/a | SHA256 of the decoded QR<br/>Payload of decoded QR as base45*|
+| n/a | n/a | SHA256 of the decoded QR<br/>Payload of decoded QR as base45|
 | CWT/COSE structure with the payload field replaced by a sequence ‘X’s (i.e. the byte 0x58); same length as the original binary/octet string.| As L1 | SHA256 of the CWT/COSE structureQR<br/>CWT/COSE structure as base64 |
 | SHA256 of the actual payload sequence as a HEX sequence (as to still allow sig validation) | As L1 | Base64 representation of the payloadQR<br/>SHA256 of the decoded payload |
 | n/a | SHA 256 of the QR | SHA256 of the QR |
-|{
-  "ver": "1.3.0",
-  "nam": {
-    "fn": "Xxxxx-Xxxxx",
-    "fnt": "XX9XX<XXXX",
-    "gn": "Xxxxxxx Xxxxxx",
-    "gnt": "XXXXXXX<XXXXXX"
-  },
-  "dob": "1964-99-99",
-  "t": [
-    {
-      "tg": "840539006",
-      "tt": "LP217198-3",
-      "ma": "532",
-      "sc": "2021-06-11T99:99:99+99",
-      "tr": "260415000",
-      "co": "NL",
-      "is": "Amsterdam PHR",
-      "ci": "URN:UVCI:01:NL:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-    }
-  ]
-} |
-{
-  "ver": "1.3.0",
-  "nam": {
-    "fn": "Xxxxx-Xxxxx",
-    "fnt": "XX9XX<XXXX",
-    "gn": "Xxxxxxx Xxxxxx",
-    "gnt": "XXXXXXX<XXXXXX"
-  },
-  "dob": "1964-99-99",
-  "t": [
-    {
-      "tg": "840539006",
-      "tt": "LP217198-3",
-      "ma": "532",
-      "sc": "2021-06-11T17:30:00+02",
-      "tr": "260415000",
-      "co": "NL",
-      "is": "Amsterdam PHR",
-      "ci": "URN:UVCI:01:NL:DADFCC47C7334E45A906DB12FD859FB2"
-    }
-  ]
-} |
-{
-  "ver": "1.3.0",
-  "nam": {
-    "fn": "Smith-Jones",
-    "fnt": "SM1TH<JONES",
-    "gn": "Charles Edward",
-    "gnt": "CHARLES<EDWARD"
-  },
-  "dob": "1964-02-01",
-  "t": [
-    {
-      "tg": "840539006",
-      "tt": "LP217198-3",
-      "ma": "532",
-      "sc": "2021-06-11T17:30:00+02",
-      "tr": "260415000",
-      "co": "UNHCR",
-      "is": "Amsterdam PHR",
-      "ci": "URN:UVCI:01:NL:DADFCC47C7334E45A906DB12FD859FB2"
-    }
-  ]
-} |
-
+| <pre>{<br> "ver": "1.3.0",<br> "nam": { <br>    "fn": "Xxxxx-Xxxxx",<br>    "fnt": "XX9XX<XXXX",<br>    "gn": "Xxxxxxx Xxxxxx",<br>    "gnt": "XXXXXXX<XXXXXX"<br>    },<br>  "dob": "1964-99-99",<br>  "t": [<br>    {<br>      "tg": "840539006",<br>      "tt": "LP217198-3",<br>      "ma": "532",<br>      "sc": "2021-06-11T99:99:99+99",<br>      "tr": "260415000",<br>      "co": "NL",<br>      "is": "Amsterdam PHR",<br>      "ci": "URN:UVCI:01:NL:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"<br>    }<br>  ]<br>}</pre> | <pre>{<br>  "ver": "1.3.0",<br>  "nam": {<br>    "fn": "Xxxxx-Xxxxx",<br>    "fnt": "XX9XX<XXXX",<br>    "gn": "Xxxxxxx Xxxxxx",<br>    "gnt": "XXXXXXX<XXXXXX"<br>  },<br>  "dob": "1964-99-99",<br>  "t": [<br>    {<br>      "tg": "840539006",<br>      "tt": "LP217198-3",<br>      "ma": "532",<br>      "sc": "2021-06-11T17:30:00+02",<br>      "tr": "260415000",<br>      "co": "NL",<br>      "is": "Amsterdam PHR",<br>      "ci": "URN:UVCI:01:NL:DADFCC47C7334E45A906DB12FD859FB2"<br>    }<br>  ]<br>}</pre> | <pre>{<br><br>  "ver": "1.3.0",<br>  "nam": {<br>    "fn": "Smith-Jones",<br>    "fnt": "SM1TH<JONES",<br>    "gn": "Charles Edward",<br>    "gnt": "CHARLES<EDWARD"<br>  },<br>  "dob": "1964-02-01",<br>  "t": [<br>    {<br>      "tg": "840539006",<br>      "tt": "LP217198-3",<br>      "ma": "532",<br>      "sc": "2021-06-11T17:30:00+02",<br>      "tr": "260415000",<br>      "co": "UNHCR",<br>      "is": "Amsterdam PHR",<br>      "ci": "URN:UVCI:01:NL:DADFCC47C7334E45A906DB12FD859FB2"<br>    }<br>  ]<br>}</pre> |
 
 
 For L1 and higher - the data handled contains personal data (either just the UVCI in L2, or `everything` at L3). Handling and storage of these requires a set of appropriate organisational and technical measures. As a minimum the principle of four-eyes checking should be in place, with full, independent, auditable logs. In combination with encryption at rest. For L3 it is strongly advised to asymmetrically encrypt the record with controlled decryption key access (e.g. public/private key mechanism).
@@ -193,24 +127,27 @@ For exchange purposes; it is suggested that member states package the data gathe
 - A 32 byte file `payload-sha.bin` and a 65 byte human readable `payload-sha.txt` that contains the SHA256 of the payload as a case insensitive HEX string terminated by a linefeed.
 - A file `QR.base64` that contains the COSE structure (with for L1/2 the payload replaced by an equal number of 0x58 bytes) as a [base64 string](https://datatracker.ietf.org/doc/html/rfc4648).
 - A file `payload.json` that contains the decoded JSON (with substitutions depending on the level applied).
-- *For  L2 and L3*:
+- **For  L2 and L3**:
 	- A 32 byte file `QR-sha.bin` and a 65 byte, human readable, `QR-sha.txt` file that contains the SHA-256 of the QR as a case insensitive HEX string terminated by a linefeed.
-- *For L3*:
-	- A file `QR.png` or `QR.jpg` that contains the scanned QR (*L3 only*)
-	- A file `QR.txt` that contains the decoded string from the image as is so prior to HC1 stripping and base45 decoding (*L3 only*))
-	- A 32 byte file `cose-sha.bin` and a 65 byte, human readable, `cose-sha.txt` that contains the SHA-256 of the payload as decoded as a case insensitive HEX string terminated by a linefeed. (*L3 only*)
-	- A file `cose.base64` that contains the COSE binary (*L3 only*)
-	- A file `payload.base64` that contains the payload (*L3 only*)
+- **For L3**:
+	- A file `QR.png` or `QR.jpg` that contains the scanned QR (**L3 only**)
+	- A file `QR.txt` that contains the decoded string from the image as is so prior to HC1 stripping and base45 decoding (**L3 only**))
+	- A 32 byte file `cose-sha.bin` and a 65 byte, human readable, `cose-sha.txt` that contains the SHA-256 of the payload as decoded as a case insensitive HEX string terminated by a linefeed. (**L3 only**)
+	- A file `cose.base64` that contains the COSE binary (**L3 only**)
+	- A file `payload.base64` that contains the payload (**L3 only**)
 
 
 
 Dcc settings page:
+
 <img src="/docs/resources/debugMode/settings.png" width="200" />
 
 Debug mode:
+
 <img src="/docs/resources/debugMode/debug.png" width="200" />
 
 Detailed verification view when debug mode is ON:
+
 <img src="/docs/resources/debugMode/debug_certInfo.png" width="200" /> <img src="/docs/resources/debugMode/debug_rawData.png" width="200" /> <img src="/docs/resources/debugMode/debug_content.png" width="200" />
 
 The detailed view displayed when such conditions are met:
