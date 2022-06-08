@@ -30,19 +30,15 @@ import androidx.fragment.app.DialogFragment
 import androidx.viewbinding.ViewBinding
 
 abstract class BindingDialogFragment<T : ViewBinding> : DialogFragment() {
+
     private var _binding: T? = null
     val binding get() = _binding!!
 
     abstract fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): T
 
-    open fun onDestroyBinding(binding: T) {
-    }
+    open fun onDestroyBinding(binding: T) {}
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val innerBinding = onCreateBinding(inflater, container)
         _binding = innerBinding
         return innerBinding.root

@@ -34,8 +34,8 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
-import dgca.verifier.app.android.base.BindingDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import dgca.verifier.app.android.base.BindingDialogFragment
 import dgca.verifier.app.android.databinding.DialogFragmentProtocolHandlerBinding
 
 @AndroidEntryPoint
@@ -44,33 +44,25 @@ class ProtocolHandlerDialogFragment : BindingDialogFragment<DialogFragmentProtoc
     private val args: ProtocolHandlerDialogFragmentArgs by navArgs()
     private val viewModel by viewModels<ProtocolHandlerViewModel>()
 
-    override fun onCreateBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): DialogFragmentProtocolHandlerBinding =
+    override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): DialogFragmentProtocolHandlerBinding =
         DialogFragmentProtocolHandlerBinding.inflate(inflater, container, false)
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return super.onCreateDialog(savedInstanceState).apply {
-            this.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            this.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
+        super.onCreateDialog(savedInstanceState).apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setStyle(STYLE_NO_FRAME, android.R.style.Theme)
         }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.protocolHandlerResult.observe(viewLifecycleOwner) {
             when (it) {
-                is ProtocolHandlerViewModel.ProtocolHandlerResult.NotApplicable -> setFragmentResult(
-                    PROTOCOL_HANDLER_REQUEST_KEY,
-                    bundleOf()
-                )
-                is ProtocolHandlerViewModel.ProtocolHandlerResult.Applicable -> setFragmentResult(
-                    PROTOCOL_HANDLER_REQUEST_KEY,
-                    bundleOf(PROTOCOL_HANDLER_RESULT_KEY to it.intent)
-                )
+                is ProtocolHandlerViewModel.ProtocolHandlerResult.NotApplicable ->
+                    setFragmentResult(PROTOCOL_HANDLER_REQUEST_KEY, bundleOf())
+                is ProtocolHandlerViewModel.ProtocolHandlerResult.Applicable ->
+                    setFragmentResult(PROTOCOL_HANDLER_REQUEST_KEY, bundleOf(PROTOCOL_HANDLER_RESULT_KEY to it.intent))
             }
         }
 

@@ -45,10 +45,7 @@ class NfcFragment : BindingFragment<FragmentNfcBinding>() {
 
     private var adapter: NfcAdapter? = null
 
-    override fun onCreateBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): FragmentNfcBinding =
+    override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentNfcBinding =
         FragmentNfcBinding.inflate(inflater, container, false)
 
     override fun onResume() {
@@ -68,10 +65,7 @@ class NfcFragment : BindingFragment<FragmentNfcBinding>() {
         }
 
         try {
-            val intent = Intent(
-                requireActivity(),
-                MainActivity::class.java
-            ).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            val intent = Intent(requireActivity(), MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
             val nfcPendingIntent = PendingIntent.getActivity(requireActivity(), 0, intent, 0)
             adapter?.enableForegroundDispatch(requireActivity(), nfcPendingIntent, null, null)
             binding.stateTextView.text = getString(R.string.nfc_enabled)

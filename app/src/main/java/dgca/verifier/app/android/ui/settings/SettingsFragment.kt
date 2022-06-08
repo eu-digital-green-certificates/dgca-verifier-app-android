@@ -22,7 +22,6 @@
 
 package dgca.verifier.app.android.ui.settings
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -52,10 +51,7 @@ class SettingsFragment : BindingFragment<FragmentSettingsBinding>() {
             SettingsAdapter(
                 layoutInflater,
                 protocolHandler.getSettingsIntents(),
-                object : SettingClickListener {
-                    override fun onSettingClick(intent: Intent) {
-                        startActivity(intent)
-                    }
-                })
+                onSettingsClick = { startActivity(it) }
+            )
     }
 }
