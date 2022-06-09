@@ -36,15 +36,13 @@ object NdefParser {
     private fun getRecords(records: Array<NdefRecord>): List<ParsedNdefRecord> =
         records.map {
             it.parse() ?: object : ParsedNdefRecord {
-                override fun str(): String {
-                    return String(it.payload)
-                }
+                override fun str(): String = String(it.payload)
             }
         }
 }
 
-fun NdefRecord.parse(): ParsedNdefRecord? {
-    return if (tnf == NdefRecord.TNF_WELL_KNOWN && Arrays.equals(type, NdefRecord.RTD_TEXT)) {
+fun NdefRecord.parse(): ParsedNdefRecord? =
+    if (tnf == NdefRecord.TNF_WELL_KNOWN && Arrays.equals(type, NdefRecord.RTD_TEXT)) {
         try {
             val recordPayload = payload
 
@@ -68,12 +66,11 @@ fun NdefRecord.parse(): ParsedNdefRecord? {
             val langCodeLen = (recordPayload[0] and 63.toByte()).toInt()
             val text = String(recordPayload, textEncoding).substring(1 + langCodeLen)
 
-            return TextRecord(text)
+            TextRecord(text)
         } catch (e: UnsupportedEncodingException) {
             Timber.w("We got a malformed tag.")
-            return null
+            null
         }
     } else {
         null
     }
-}

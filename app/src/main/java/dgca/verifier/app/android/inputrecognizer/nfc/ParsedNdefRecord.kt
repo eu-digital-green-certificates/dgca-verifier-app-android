@@ -22,6 +22,9 @@
 
 package dgca.verifier.app.android.inputrecognizer.nfc
 
+/**
+ * Parsed ndef record
+ */
 interface ParsedNdefRecord {
 
     fun str(): String

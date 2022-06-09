@@ -45,9 +45,6 @@ class MainFragment : BindingFragment<FragmentMainBinding>() {
         }
     }
 
-    override fun onCreateBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): FragmentMainBinding =
+    override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentMainBinding =
         FragmentMainBinding.inflate(inflater, container, false)
 }

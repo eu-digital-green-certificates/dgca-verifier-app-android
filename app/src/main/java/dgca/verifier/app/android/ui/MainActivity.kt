@@ -53,8 +53,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
         handleIntent(intent)
@@ -76,9 +75,7 @@ class MainActivity : AppCompatActivity() {
         when (intent.action) {
             INTENT_ACTION -> {
                 val action = MainFragmentDirections.actionMainFragmentToIntentFragment(
-                    intent.getStringExtra(
-                        DATA_PARAM_KEY
-                    )!!
+                    intent.getStringExtra(DATA_PARAM_KEY)!!
                 )
                 navController.navigate(action)
             }
@@ -88,7 +85,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkNdefMessage(intent: Intent) {
         intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)?.also { rawMessages ->
-            val messages: List<NdefMessage> = rawMessages.map { it as NdefMessage }
+            val messages = rawMessages.map { it as NdefMessage }
             parseNdefMessages(messages)
             intent.removeExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
         }

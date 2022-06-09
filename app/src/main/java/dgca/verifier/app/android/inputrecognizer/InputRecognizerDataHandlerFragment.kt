@@ -27,6 +27,7 @@ import android.view.View
 import androidx.viewbinding.ViewBinding
 
 abstract class InputRecognizerDataHandlerFragment<T : ViewBinding> : InputRecognizerFragment<T>() {
+
     abstract fun getData(): String
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

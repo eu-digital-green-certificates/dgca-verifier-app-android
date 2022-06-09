@@ -66,10 +66,8 @@ class QrReaderFragment : InputRecognizerFragment<FragmentQrReaderBinding>() {
         override fun possibleResultPoints(resultPoints: List<ResultPoint>) {}
     }
 
-    override fun onCreateBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): FragmentQrReaderBinding = FragmentQrReaderBinding.inflate(inflater, container, false)
+    override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentQrReaderBinding =
+        FragmentQrReaderBinding.inflate(inflater, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -105,14 +103,8 @@ class QrReaderFragment : InputRecognizerFragment<FragmentQrReaderBinding>() {
     }
 
     private fun requestCameraPermission() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
-            == PackageManager.PERMISSION_DENIED
-        ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(Manifest.permission.CAMERA),
-                CAMERA_REQUEST_CODE
-            )
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CAMERA), CAMERA_REQUEST_CODE)
         }
     }
 

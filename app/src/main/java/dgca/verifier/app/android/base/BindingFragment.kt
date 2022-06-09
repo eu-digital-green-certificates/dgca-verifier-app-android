@@ -36,14 +36,9 @@ abstract class BindingFragment<T : ViewBinding> : Fragment() {
 
     abstract fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): T
 
-    open fun onDestroyBinding(binding: T) {
-    }
+    open fun onDestroyBinding(binding: T) {}
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val innerBinding = onCreateBinding(inflater, container)
         _binding = innerBinding
         return innerBinding.root

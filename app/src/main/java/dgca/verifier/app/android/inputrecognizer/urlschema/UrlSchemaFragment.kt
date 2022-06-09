@@ -35,12 +35,10 @@ import dgca.verifier.app.android.inputrecognizer.InputRecognizerDataHandlerFragm
  */
 @AndroidEntryPoint
 class UrlSchemaFragment : InputRecognizerDataHandlerFragment<FragmentUrlSchemaBinding>() {
+
     private val args: UrlSchemaFragmentArgs by navArgs()
 
-    override fun onCreateBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): FragmentUrlSchemaBinding =
+    override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentUrlSchemaBinding =
         FragmentUrlSchemaBinding.inflate(inflater, container, false)
 
     override fun getData() = args.data

@@ -28,40 +28,25 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dgca.verifier.app.android.databinding.ItemSettingsBinding
 
-interface SettingClickListener {
-    fun onSettingClick(intent: Intent)
-}
-
 class SettingsAdapter(
     private val inflater: LayoutInflater,
     private val settings: List<Pair<String, Intent>>,
-    private val settingClickListener: SettingClickListener
+    private val onSettingsClick: (intent: Intent) -> Unit
 ) : RecyclerView.Adapter<SettingsAdapter.ViewHolder>() {
 
     private fun create(inflater: LayoutInflater, parent: ViewGroup) =
-        ViewHolder(
-            ItemSettingsBinding.inflate(
-                inflater,
-                parent,
-                false
-            )
-        )
+        ViewHolder(ItemSettingsBinding.inflate(inflater, parent, false))
 
-    inner class ViewHolder(val binding: ItemSettingsBinding) : RecyclerView.ViewHolder(binding.root)
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return create(inflater, parent)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
+        create(inflater, parent)
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val setting = settings[position]
         holder.binding.title.text = setting.first
-        holder.binding.title.setOnClickListener {
-            settingClickListener.onSettingClick(setting.second)
-        }
+        holder.binding.title.setOnClickListener { onSettingsClick(setting.second) }
     }
 
-    override fun getItemCount(): Int {
-        return settings.size
-    }
+    override fun getItemCount(): Int = settings.size
+
+    inner class ViewHolder(val binding: ItemSettingsBinding) : RecyclerView.ViewHolder(binding.root)
 }

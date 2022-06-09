@@ -54,6 +54,7 @@ class ProtocolHandlerViewModel @Inject constructor(
     }
 
     sealed class ProtocolHandlerResult {
+
         class Applicable(
             val intent: Intent
         ) : ProtocolHandlerResult()

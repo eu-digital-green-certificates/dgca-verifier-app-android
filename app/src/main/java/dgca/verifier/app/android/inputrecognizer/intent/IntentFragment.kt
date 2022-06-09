@@ -38,10 +38,7 @@ class IntentFragment : InputRecognizerDataHandlerFragment<FragmentIntentBinding>
 
     private val args: IntentFragmentArgs by navArgs()
 
-    override fun onCreateBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): FragmentIntentBinding =
+    override fun onCreateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentIntentBinding =
         FragmentIntentBinding.inflate(inflater, container, false)
 
     override fun toProtocolHandlerNavDirection(data: String) =

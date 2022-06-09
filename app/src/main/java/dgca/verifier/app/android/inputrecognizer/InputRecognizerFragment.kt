@@ -37,7 +37,9 @@ import dgca.verifier.app.android.protocolhandler.PROTOCOL_HANDLER_REQUEST_KEY
 import dgca.verifier.app.android.protocolhandler.PROTOCOL_HANDLER_RESULT_KEY
 
 abstract class InputRecognizerFragment<T : ViewBinding> : BindingFragment<T>() {
+
     abstract fun toProtocolHandlerNavDirection(data: String): NavDirections
+
     abstract fun handleError()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
