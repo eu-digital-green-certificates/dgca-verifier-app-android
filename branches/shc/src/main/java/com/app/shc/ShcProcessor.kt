@@ -52,7 +52,7 @@ class ShcProcessor @Inject constructor() : Processor {
 
     companion object {
         private const val SMART_HEALTH_CARD_PREFIX = "shc:/"
-        private const val VC_VIEW_ACTION = "com.android.app.vc.View"
+        private const val VC_VIEW_ACTION = "com.android.app.verifier.vc.View"
         private const val VC_VIEW_URI = "verifier://vc"
     }
 }
