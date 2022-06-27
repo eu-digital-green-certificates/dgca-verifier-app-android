@@ -57,7 +57,10 @@ This project uses the Gradle build system. To build this project, use the `gradl
 
 ## Documentation  
 
-- [ ] TODO: Link to documentation
+- [App architecture](/docs/architecture.md)
+- [DCC Revocation](/docs/revocation.md)
+- [Verifiable credentials](/docs/verifiable_credentials.md)
+- [Debug mode](/docs/debug_mode.md)
 
 ## Support and feedback
 

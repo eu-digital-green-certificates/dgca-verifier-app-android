@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.android.app.dcc">
+
+    <application>
+        <activity
+            android:name="dgca.verifier.app.android.dcc.ui.DccActivity"
+            android:exported="false"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.Dcc">
+
+            <intent-filter>
+                <action android:name="com.android.app.verifier.dcc.View" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="dcc"
+                    android:scheme="verifier" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="dgca.verifier.app.android.dcc.settings.DccSettingsActivity"
+            android:exported="false"
+            android:label="DccSettingsActivity"
+            android:theme="@style/Theme.Dcc">
+            <intent-filter>
+                <action android:name="com.android.app.verifier.dcc.View" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="dcc"
+                    android:scheme="settings" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
+            android:theme="@style/Theme.DgcaVerifierAppAndroid.Licensing" />
+
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
+            android:theme="@style/Theme.DgcaVerifierAppAndroid.Licensing" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
+    </application>
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+        </intent>
+    </queries>
+</manifest>
