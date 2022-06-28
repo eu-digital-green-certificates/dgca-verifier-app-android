@@ -5,10 +5,10 @@ plugins {
 
 android {
     compileSdkVersion 31
-    buildToolsVersion "30.0.3"
+    buildToolsVersion "28.0.3"
 
     defaultConfig {
-        minSdkVersion 26
+        minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -26,8 +26,13 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+    dependencies {
+        implementation Deps.jackson_datetype
+        coreLibraryDesugaring Deps.android_tools_desugar_jdk_libs
     }
 }

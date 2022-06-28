@@ -219,7 +219,7 @@ class VcViewModel @Inject constructor(
 
     private fun validateJws(list: List<Jwk>) {
         var isSignatureValid = false
-        list.forEach {
+        list.iterator().forEach {
             if (verifyJws(it, jwsObject)) {
                 isSignatureValid = true
             }
@@ -237,12 +237,12 @@ class VcViewModel @Inject constructor(
         val payloadData = Gson().fromJson(contextFileJson, PayloadData::class.java)
 
         val headers = mutableListOf<DataItem>()
-        payloadData.header.forEach { (path, payloadItem) ->
+        payloadData.header.iterator().forEach { (path, payloadItem) ->
             payloadUnzipString.tryFetchObject(path, payloadItem.title, headers)
         }
 
         val items = mutableListOf<DataItem>()
-        payloadData.body.forEach { (path, payloadItem) ->
+        payloadData.body.iterator().forEach { (path, payloadItem) ->
             payloadUnzipString.tryFetchObject(path, payloadItem.title, items)
         }
 

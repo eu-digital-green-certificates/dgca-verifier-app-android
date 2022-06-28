@@ -138,7 +138,7 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
         }
 
         binding.headers.isVisible = true
-        headers.forEach { header ->
+        headers.iterator().forEach { header ->
             val viewHeader = layoutInflater.inflate(R.layout.header_title, binding.headers, false)
             viewHeader.findViewById<TextView>(R.id.vc_header).text = header.title
             binding.headers.addView(viewHeader)
@@ -149,7 +149,7 @@ class VcVerificationFragment : BindingFragment<FragmentVcVerificationBinding>() 
                 list = list.replaceKnownTypes()
             }
 
-            list.forEach { result += "$it " }
+            list.iterator().forEach { result += "$it " }
             viewValue.findViewById<TextView>(R.id.vc_header_value).text = result
             binding.headers.addView(viewValue)
         }

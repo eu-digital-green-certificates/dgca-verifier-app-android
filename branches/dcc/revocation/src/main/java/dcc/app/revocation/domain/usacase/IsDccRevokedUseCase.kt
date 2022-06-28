@@ -125,7 +125,7 @@ class IsDccRevokedUseCase @Inject constructor(
 
         val currentTime = ChronoUnit.MICROS.between(Instant.EPOCH, ZonedDateTime.now().toInstant())
         val result = repository.getChunkSlices(kid, x, y, cid, currentTime)
-        result.forEach {
+        result.iterator().forEach {
             Timber.d("Slice found: $it")
             when (it.type) {
                 SliceType.VARHASHLIST -> hashList.add(it.content)
@@ -140,7 +140,7 @@ class IsDccRevokedUseCase @Inject constructor(
         validationData ?: return false
 
         Timber.d("bloom filter slices: ${validationData.bloomFilterList.size}")
-        validationData.bloomFilterList.forEach {
+        validationData.bloomFilterList.iterator().forEach {
             val inputStream: InputStream = ByteArrayInputStream(it)
             val bloomFilter = BloomFilterImpl(inputStream)
             val contains = bloomFilter.mightContain(dccHash.hexToByteArray())
@@ -151,7 +151,7 @@ class IsDccRevokedUseCase @Inject constructor(
         }
 
         Timber.d("hash filter slices: ${validationData.hashFilterList.size}")
-        validationData.hashFilterList.forEach {
+        validationData.hashFilterList.iterator().forEach {
             val filter = PartialVariableHashFilter(it)
             val contains = filter.mightContain(dccHash.hexToByteArray())
             if (contains) {
