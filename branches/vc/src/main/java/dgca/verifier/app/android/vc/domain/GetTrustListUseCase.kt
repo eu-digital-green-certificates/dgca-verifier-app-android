@@ -42,7 +42,7 @@ class GetTrustListUseCase @Inject constructor(
         val certificates = repository.loadTrustList()
         certificates
             .filter { it.keyStorageType == KEY_STORAGE_TYPE }
-            .forEach {
+            .iterator().forEach {
                 when (it.type) {
                     IssuerType.HTTP -> resolveIssuer(it.url)
                     IssuerType.DID -> resolveDid(it.url)
