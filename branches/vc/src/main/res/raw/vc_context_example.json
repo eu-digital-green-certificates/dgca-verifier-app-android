@@ -1,0 +1,33 @@
+{
+  "header": {
+    "$.vc.type": {
+      "title": "Type"
+    },
+    "$.vc.credentialSubject.fhirBundle.entry[0].resource.name[0].family": {
+      "title": "Family name"
+    },
+    "$.vc.credentialSubject.fhirBundle.entry[0].resource.name[0].given": {
+      "title": "Given name"
+    }
+  },
+  "body": {
+    "$.vc.credentialSubject.fhirBundle.entry[0].resource.birthDate": {
+      "title": "Birthday"
+    },
+    "$.vc.credentialSubject.fhirBundle.entry..status": {
+      "title": "Status"
+    },
+    "$.vc.credentialSubject.fhirBundle.entry..vaccineCode..code": {
+      "title": "Vaccine code"
+    },
+    "$.vc.credentialSubject.fhirBundle.entry..actor.display": {
+      "title": "Actor name"
+    },
+    "$.vc.credentialSubject.fhirBundle.entry..lotNumber": {
+      "title": "Lot number"
+    },
+    "$.vc.credentialSubject.fhirBundle.entry..occurrenceDateTime": {
+      "title": "Time of vaccination"
+    }
+  }
+}

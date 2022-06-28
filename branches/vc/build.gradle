@@ -1,0 +1,118 @@
+/*
+ *  ---license-start
+ *  eu-digital-covid-certificates / dcc-verifier-app-android
+ *  ---
+ *  Copyright (C) 2022 T-Systems International GmbH and all other contributors
+ *  ---
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *  ---license-end
+ *
+ *  Created by mykhailo.nester on 23/03/2022, 22:32
+ */
+
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.4.30'
+    id 'androidx.navigation.safeargs.kotlin'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+    id 'kotlin-parcelize'
+}
+
+android {
+    compileSdkVersion Config.compileSdk
+
+    defaultConfig {
+        minSdkVersion Config.minSdk
+        targetSdkVersion Config.targetSdk
+        versionCode Config.versionCode
+        versionName Config.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+
+        buildConfigField "String", "VERSION_NAME", "\"$versionName\""
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions "version"
+    productFlavors {
+        tst {
+            dimension "version"
+            buildConfigField "String", "VC_SERVICE_HOST", "\"https://dgca-verifier-service.cfapps.eu10.hana.ondemand.com/\""
+        }
+        acc {
+            dimension "version"
+            buildConfigField "String", "VC_SERVICE_HOST", "\"https://dgca-verifier-service-eu-acc.cfapps.eu10.hana.ondemand.com/\""
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+    implementation project(":branches:base")
+
+    implementation Deps.kotlin_stdlib
+    implementation Deps.androidx_core
+    implementation Deps.androidx_appcompat
+    implementation Deps.androidx_material
+    implementation Deps.androidx_constraint
+    implementation Deps.androidx_navigation_fragment
+    implementation Deps.androidx_navigation_ui
+    implementation Deps.androidx_fragment_ktx
+    implementation Deps.androidx_lifecycle_livedata_ktx
+    implementation Deps.room_runtime
+    implementation Deps.room_ktx
+    implementation Deps.androidx_worker_ktx
+    implementation Deps.kotlinx_coroutines
+
+    implementation Deps.retrofit2
+    implementation Deps.log_interceptor
+    implementation Deps.gson_converter
+    implementation Deps.jackson_kotlin
+
+    implementation Deps.hilt
+    kapt Deps.hilt_compiler
+    implementation Deps.hilt_viewmodel
+    implementation Deps.hilt_work
+    kapt Deps.androidx_hilt_compiler
+    kapt Deps.room_compiler
+
+    implementation Deps.google_licenses
+    implementation Deps.timber
+    implementation Deps.jose_jwt
+    implementation Deps.json_path
+    implementation Deps.gson
+
+    testImplementation Deps.test_junit
+    androidTestImplementation Deps.test_ext
+}

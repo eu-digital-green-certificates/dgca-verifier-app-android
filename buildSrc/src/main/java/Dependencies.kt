@@ -24,21 +24,21 @@ object Deps {
 
     const val tools_gradle_android = "com.android.tools.build:gradle:${Versions.gradle}"
     const val tools_kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
-    const val desugar_jdk_libs = "com.android.tools:desugar_jdk_libs:${Versions.desugar_jdk_libs}"
+    const val androidx_navigation_safe_args_plugin =
+        "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.androidx_navigation}"
     const val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}"
-    const val kotlinx_coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.kotlinx_coroutines}"
-    const val kotlinx_coroutines_core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.kotlinx_coroutines_core}"
     const val androidx_core = "androidx.core:core-ktx:${Versions.androidx_core}"
     const val androidx_appcompat = "androidx.appcompat:appcompat:${Versions.androidx_appcompat}"
     const val androidx_material = "com.google.android.material:material:${Versions.androidx_material}"
     const val androidx_constraint = "androidx.constraintlayout:constraintlayout:${Versions.androidx_constraint}"
+    const val desugar_jdk_libs = "com.android.tools:desugar_jdk_libs:${Versions.desugar_jdk_libs}"
+    const val kotlinx_coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.kotlinx_coroutines}"
+    const val kotlinx_coroutines_core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.kotlinx_coroutines_core}"
     const val androidx_navigation_fragment = "androidx.navigation:navigation-fragment-ktx:${Versions.androidx_navigation}"
     const val androidx_navigation_ui = "androidx.navigation:navigation-ui-ktx:${Versions.androidx_navigation}"
-    const val androidx_navigation = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.androidx_navigation}"
     const val androidx_fragment_ktx = "androidx.fragment:fragment-ktx:${Versions.androidx_fragment_ktx}"
     const val androidx_hilt_compiler = "androidx.hilt:hilt-compiler:${Versions.androidx_hilt_compiler}"
-    const val androidx_lifecycle_livedata_ktx =
-        "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.androidx_lifecycle_livedata_ktx}"
+    const val androidx_lifecycle_livedata_ktx = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.androidx_lifecycle_livedata_ktx}"
     const val room_runtime = "androidx.room:room-runtime:${Versions.androidx_room}"
     const val room_compiler = "androidx.room:room-compiler:${Versions.androidx_room}"
     const val room_ktx = "androidx.room:room-ktx:${Versions.room_ktx}"
@@ -48,19 +48,20 @@ object Deps {
     const val gson_converter = "com.squareup.retrofit2:converter-jackson:${Versions.gson_converter}"
     const val gson = "com.google.code.gson:gson:${Versions.gson}"
 
-    const val android_tools_desugar_jdk_libs =
-        "com.android.tools:desugar_jdk_libs:${Versions.android_tools_desugar_jdk_libs_version}"
+    const val android_tools_desugar_jdk_libs = "com.android.tools:desugar_jdk_libs:${Versions.android_tools_desugar_jdk_libs_version}"
 
     const val hilt_plugin = "com.google.dagger:hilt-android-gradle-plugin:${Versions.hilt_version}"
     const val hilt = "com.google.dagger:hilt-android:${Versions.hilt_version}"
-    const val hilt_compiler = "com.google.dagger:hilt-android-compiler:${Versions.hilt_version}"
+    const val hilt_android_compiler = "com.google.dagger:hilt-android-compiler:${Versions.hilt_version}"
     const val hilt_viewmodel = "androidx.hilt:hilt-lifecycle-viewmodel:${Versions.androidx_hilt_viewmodel}"
     const val hilt_work = "androidx.hilt:hilt-work:${Versions.androidx_hilt_work}"
+    const val hilt_compiler = "com.google.dagger:hilt-compiler:${Versions.hilt_compiler_version}"
 
     const val google_licenses_plugin = "com.google.android.gms:oss-licenses-plugin:${Versions.google_licenses_version}"
 
     const val zxing = "com.journeyapps:zxing-android-embedded:${Versions.zxing}"
     const val zxing_core = "com.google.zxing:core:${Versions.zxing_core}"
+    const val guava_conflict_resolver = "com.google.guava:listenablefuture:${Versions.guave_conflict_resolver_version}"
     const val kotlin_reflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin_reflect}"
     const val java_cose = "com.augustcellars.cose:cose-java:${Versions.java_cose}"
     const val json_validation = "com.github.java-json-tools:json-schema-validator:${Versions.json_validation}"
@@ -70,6 +71,8 @@ object Deps {
     const val jackson_datetype = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${Versions.jackson_datetype}"
     const val appache_commons = "commons-io:commons-io:${Versions.appache_commons}"
     const val appache_compress = "org.apache.commons:commons-compress:${Versions.appache_compress}"
+    const val jose_jwt = "com.nimbusds:nimbus-jose-jwt:${Versions.jose_jwt}"
+    const val json_path = "com.jayway.jsonpath:json-path:${Versions.json_path}"
 
     const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
 
@@ -86,4 +89,5 @@ object Deps {
 
     const val mockito_core = "org.mockito:mockito-core:${Versions.mockito_core}"
     const val mockito_kotlin = "org.mockito.kotlin:mockito-kotlin:${Versions.mockito_kotlin}"
+    const val mockito_inline = "org.mockito:mockito-inline:${Versions.mockito_kotlin}"
 }

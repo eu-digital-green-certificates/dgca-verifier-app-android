@@ -1,9 +1,14 @@
+include ':branches:base'
+include ':branches:icao'
+include ':branches:divoc'
+include ':branches:dcc'
+include ':branches:dcc:revocation'
+include ':branches:vc'
+include ':branches:shc'
 include ':app'
 include ':decoder'
 include ':engine'
-include ':revocation'
+rootProject.name = "Verifier App"
 
-rootProject.name = "dgca-verifier-app-android"
 project(':decoder').projectDir = new File("../dgca-app-core-android/decoder")
-//project(':certlogic').projectDir = new File("../dgc-business-rules/certlogic/certlogic-kotlin")
 project(':engine').projectDir = new File("../dgc-certlogic-android/engine")

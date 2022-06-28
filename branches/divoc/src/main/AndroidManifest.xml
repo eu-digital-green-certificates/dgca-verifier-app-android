@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.android.app.divoc">
+
+    <application>
+        <activity
+            android:name="dgca.verifier.app.android.divoc.ui.DivocActivity"
+            android:exported="false"
+            android:label="DivocActivity">
+
+            <intent-filter>
+                <action android:name="com.android.app.divoc.View" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="divoc"
+                    android:scheme="verifier" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="dgca.verifier.app.android.divoc.ui.DivocSettingsActivity"
+            android:exported="false"
+            android:label="DivocSettingsActivity">
+            <intent-filter>
+                <action android:name="com.android.app.verifier.dcc.View" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="divoc"
+                    android:scheme="settings" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

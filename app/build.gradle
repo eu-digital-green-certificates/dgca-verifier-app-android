@@ -42,11 +42,6 @@ android {
         versionCode Config.versionCode
         versionName Config.versionName
 
-        // It's required to provide config json files, and path to it.
-        // Examples based on different flavors could be found here: 'app/src/acc/assets/verifier-context.jsonc' or 'app/src/tst/assets/verifier-context.jsonc'
-
-        buildConfigField "String", "CONFIG_FILE_NAME", "\"$CONFIG_FILE_NAME\""
-
         testInstrumentationRunner Config.androidTestInstrumentation
     }
 
@@ -57,27 +52,37 @@ android {
         }
     }
 
-    flavorDimensions "version"
+    flavorDimensions "version", "revocationDataSliceType"
 
     productFlavors {
         tst {
             dimension "version"
             versionNameSuffix "-tst"
         }
+
         acc {
             dimension "version"
             versionNameSuffix "-acc"
+        }
+
+        bloom {
+            dimension "revocationDataSliceType"
+            versionNameSuffix "-bloom"
+        }
+
+        hash {
+            dimension "revocationDataSliceType"
+            versionNameSuffix "-hash"
         }
     }
 
     compileOptions {
         sourceCompatibility Config.javaVersion
         targetCompatibility Config.javaVersion
-        coreLibraryDesugaringEnabled true
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
     buildFeatures {
@@ -100,32 +105,26 @@ android {
 }
 
 dependencies {
-    implementation project(':decoder')
-    implementation project(':engine')
-    implementation project(':revocation')
+    implementation project(":branches:base")
+    implementation project(":branches:dcc")
+    implementation project(':branches:dcc:revocation')
+    implementation project(":branches:icao")
+    implementation project(":branches:divoc")
+    implementation project(":branches:vc")
+    implementation project(":branches:shc")
+    implementation project(":decoder")
+    implementation project(":engine")
 
     implementation Deps.kotlin_stdlib
     implementation Deps.androidx_core
+    implementation Deps.kotlinx_coroutines
     implementation Deps.androidx_appcompat
+    implementation Deps.androidx_fragment_ktx
     implementation Deps.androidx_material
     implementation Deps.androidx_constraint
     implementation Deps.androidx_navigation_fragment
     implementation Deps.androidx_navigation_ui
-    implementation Deps.androidx_fragment_ktx
-    implementation Deps.androidx_lifecycle_livedata_ktx
-    implementation Deps.room_runtime
-    implementation Deps.room_ktx
     implementation Deps.androidx_worker_ktx
-    implementation Deps.kotlinx_coroutines
-    implementation(Deps.zxing) { transitive = false }
-    implementation Deps.zxing_core
-
-    implementation Deps.hilt
-    kapt Deps.hilt_compiler
-    implementation Deps.hilt_viewmodel
-    implementation Deps.hilt_work
-    kapt Deps.androidx_hilt_compiler
-    kapt Deps.room_compiler
 
     implementation Deps.retrofit2
     implementation Deps.log_interceptor
@@ -133,17 +132,16 @@ dependencies {
     implementation Deps.jackson_kotlin
     implementation Deps.jackson_datetype
 
-    implementation Deps.timber
+    implementation Deps.zxing
+    implementation Deps.hilt
+    kapt Deps.hilt_compiler
+    implementation Deps.hilt_work
 
-    implementation Deps.google_licenses
+    implementation Deps.timber
 
     testImplementation Deps.test_junit
     testImplementation Deps.mockito_core
     testImplementation Deps.mockito_kotlin
-    coreLibraryDesugaring Deps.android_tools_desugar_jdk_libs
-
-    androidTestImplementation Deps.test_runner
-    androidTestImplementation Deps.test_rules
+    testImplementation Deps.mockito_inline
     androidTestImplementation Deps.test_ext
-    androidTestImplementation Deps.appache_commons
 }
