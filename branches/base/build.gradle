@@ -26,8 +26,13 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+    dependencies {
+        implementation Deps.jackson_datetype
+        coreLibraryDesugaring Deps.android_tools_desugar_jdk_libs
     }
 }

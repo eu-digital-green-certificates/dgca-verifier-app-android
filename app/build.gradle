@@ -77,8 +77,9 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility Config.javaVersion
-        targetCompatibility Config.javaVersion
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
     }
 
     kotlinOptions {
@@ -131,6 +132,8 @@ dependencies {
     implementation Deps.gson_converter
     implementation Deps.jackson_kotlin
     implementation Deps.jackson_datetype
+
+    coreLibraryDesugaring Deps.android_tools_desugar_jdk_libs
 
     implementation Deps.zxing
     implementation Deps.hilt
