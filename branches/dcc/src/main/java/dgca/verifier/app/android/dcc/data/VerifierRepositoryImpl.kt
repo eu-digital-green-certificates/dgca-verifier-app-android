@@ -91,10 +91,13 @@ class VerifierRepositoryImpl @Inject constructor(
             val newResumeToken = headers[HEADER_RESUME_TOKEN]
             val responseStr = response.body()?.stringSuspending() ?: return
 
-            if (validCertList.contains(responseKid) && isKidValid(responseKid, responseStr)) {
+            if (isKidValid(responseKid, responseStr)) {
                 Timber.d("Cert KID verified")
-                val key = Key(kid = responseKid!!, key = keyStoreCryptor.encrypt(responseStr)!!)
-                db.keyDao().insert(key)
+
+                if (validCertList.contains(responseKid)) {
+                    val key = Key(kid = responseKid!!, key = keyStoreCryptor.encrypt(responseStr)!!)
+                    db.keyDao().insert(key)
+                }
 
                 preferences.resumeToken = resumeToken
 
