@@ -19,3 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class dgca.verifier.app.android.dcc.data.*  { *; }
+-keep class dgca.verifier.app.android.dcc.model.* { *; }
