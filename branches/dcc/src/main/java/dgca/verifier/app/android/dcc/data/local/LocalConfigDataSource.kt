@@ -23,7 +23,6 @@
 package dgca.verifier.app.android.dcc.data.local
 
 import android.content.Context
-import com.android.app.dcc.BuildConfig
 import com.fasterxml.jackson.databind.ObjectMapper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dgca.verifier.app.android.dcc.data.Config
@@ -76,7 +75,7 @@ class LocalConfigDataSource @Inject constructor(
     }
 
     private fun defaultConfig(): Config =
-        context.assets.open(BuildConfig.CONFIG_FILE_NAME).bufferedReader().use {
+        context.assets.open("verifier-context.jsonc").bufferedReader().use {
             objectMapper.readValue(it.readText(), Config::class.java)
         }
 }
