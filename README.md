@@ -46,12 +46,26 @@ android-app
 |___dgc-certlogic-android
 ```
 
-- To build project - it's required to add config json file to application assets folder. Structure of the file should be similar to:
-'app/src/acc/assets/verifier-context.jsonc' or 'app/src/tst/assets/verifier-context.jsonc', depending on chosen flavor.
-After related file has been added - it's name should be passed via gradle properties:
-gradlew -PCONFIG_FILE_NAME="config.json"
+Project flavours:
+- tstBloomDebug
+- tstBloomRelease
+- tstHashDebug
+- tstHashRelease
+- accBloomDebug
+- accBloomRelease
+- accHashDebug
+- accHashRelease
 
-#### Android Studio based build
+tst/acc prefix corresponds to app configuration. JSON files in application assets folders:
+'app/src/acc/assets/verifier-context.jsonc' or 'app/src/tst/assets/verifier-context.jsonc'
+These files are required for the DCC module. To make this functionality work you need to provide your own endpoints.
+
+Bloom - BloomFilter implementation for DCC revocation check.
+Hash - alternate method of DCC revocation check.
+
+Flavors can be changed directly in android studio:
+
+<img src="/docs/resources/flavors.png" width="200" />
 
 This project uses the Gradle build system. To build this project, use the `gradlew build` command or use "Run" in Android Studio.
 
