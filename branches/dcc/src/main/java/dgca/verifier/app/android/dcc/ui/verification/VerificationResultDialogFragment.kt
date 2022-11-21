@@ -268,11 +268,11 @@ class VerificationResultDialogFragment : BaseVerificationDialogFragment<DialogFr
 
     private fun toggleButton(certificate: CertificateModel) {
         binding.certificateTypeText.text = when {
-            certificate.vaccinations?.isNotEmpty() == true -> getString(
-                R.string.type_vaccination,
-                certificate.vaccinations.first().doseNumber,
-                certificate.vaccinations.first().totalSeriesOfDoses
-            )
+            certificate.vaccinations?.isNotEmpty() == true -> {
+                val doseNumber: Int = certificate.vaccinations.first().doseNumber
+                val totalSeriesOfDoses: Int = certificate.vaccinations.first().totalSeriesOfDoses
+                getString(R.string.type_vaccination, doseNumber, totalSeriesOfDoses)
+            }
             certificate.recoveryStatements?.isNotEmpty() == true -> getString(R.string.type_recovered)
             certificate.tests?.isNotEmpty() == true -> getString(R.string.type_test)
             else -> getString(R.string.type_test)
