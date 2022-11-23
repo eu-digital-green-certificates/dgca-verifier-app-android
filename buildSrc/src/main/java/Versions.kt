@@ -23,7 +23,7 @@
 object Versions {
 
     // Base
-    const val gradle = "4.1.3"
+    const val gradle = "7.4.0-beta05"
     const val kotlin = "1.6.21"
     const val androidx_navigation = "2.3.5"
 
@@ -32,9 +32,9 @@ object Versions {
     const val androidx_material = "1.4.0"
     const val androidx_constraint = "2.1.1"
 
-    const val hilt_version = "2.38.1"
-    const val hilt_compiler_version = "2.38.1"
-    const val desugar_jdk_libs = "1.1.5"
+    const val hilt_version = "2.42"
+    const val hilt_compiler_version = "2.42"
+    const val desugar_jdk_libs = "2.0.0"
 
     const val androidx_fragment_ktx = "1.3.6"
     const val kotlinx_coroutines = "1.6.0"
@@ -55,7 +55,7 @@ object Versions {
     const val gson = "2.9.0"
 
     const val google_licenses = "17.0.0"
-    const val android_tools_desugar_jdk_libs_version = "1.1.5"
+    const val android_tools_desugar_jdk_libs_version = "2.0.0"
 
     // QR
     const val zxing = "4.2.0"

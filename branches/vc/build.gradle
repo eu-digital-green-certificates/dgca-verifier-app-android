@@ -107,7 +107,7 @@ dependencies {
 
     implementation Deps.hilt
     kapt Deps.hilt_compiler
-    implementation Deps.hilt_viewmodel
+    //implementation Deps.hilt_viewmodel
     implementation Deps.hilt_work
     kapt Deps.androidx_hilt_compiler
     kapt Deps.room_compiler
