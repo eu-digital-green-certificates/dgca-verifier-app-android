@@ -9,7 +9,7 @@ on:
     - synchronize
     - reopened
 env:
-  GRADLE_OPTS: -Dkotlin.incremental=false -Dorg.gradle.jvmargs="-Xmx8g -XX:MaxMetaspaceSize=2g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
+  GRADLE_OPTS: -Dkotlin.incremental=false -Dorg.gradle.jvmargs="-Xmx8g -XX:MaxMetaspaceSize=8g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
 jobs:
   build:
     runs-on: ubuntu-20.04
