@@ -23,7 +23,7 @@
 object Versions {
 
     // Base
-    const val gradle = "4.1.3"
+    const val gradle = "7.4.0-beta05"
     const val kotlin = "1.6.21"
     const val androidx_navigation = "2.3.5"
 
@@ -32,8 +32,8 @@ object Versions {
     const val androidx_material = "1.4.0"
     const val androidx_constraint = "2.1.1"
 
-    const val hilt_version = "2.38.1"
-    const val hilt_compiler_version = "2.38.1"
+    const val hilt_version = "2.42"
+    const val hilt_compiler_version = "2.42"
     const val desugar_jdk_libs = "2.0.0"
 
     const val androidx_fragment_ktx = "1.3.6"
@@ -59,7 +59,7 @@ object Versions {
 
     // QR
     const val zxing = "4.2.0"
-    const val zxing_core = "3.3.0"
+    const val zxing_core = "3.3.2"
     const val guave_conflict_resolver_version = "9999.0-empty-to-avoid-conflict-with-guava"
 
     // Decoder
@@ -68,7 +68,7 @@ object Versions {
     const val java_cose = "1.1.0"
     const val bouncy_castle = "1.68"
     const val jackson_kotlin = "2.14.0"
-    const val jackson_datetype = "jackson-datatype-jsr310"
+    const val jackson_datetype = "2.14.0"
     const val appache_commons = "2.9.0"
     const val appache_compress = "1.21"
     const val jose_jwt = "9.21"

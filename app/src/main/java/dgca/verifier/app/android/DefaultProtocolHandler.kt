@@ -28,12 +28,12 @@ import com.android.app.base.Processor
 class DefaultProtocolHandler(private val processors: Set<Processor>) : ProtocolHandler {
 
     override fun prefetchData() {
-        processors.forEach { it.prefetchData() }
+        processors.iterator().forEach { it.prefetchData() }
     }
 
     override fun handle(input: String): Intent? {
         val result: Intent? = null
-        processors.forEach { processor ->
+        processors.iterator().forEach { processor ->
             processor.isApplicable(input)?.let { return it }
         }
         return result

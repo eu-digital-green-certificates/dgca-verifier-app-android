@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
@@ -149,7 +150,7 @@ public class PartialVariableHashFilter {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        arrayList.sort(Comparator.naturalOrder());
+        Collections.sort(arrayList);
     }
 
     public byte[] writeTo() throws IOException {
@@ -199,7 +200,7 @@ public class PartialVariableHashFilter {
 
         arrayList.add(new BigInteger(Arrays.copyOf(data, size)));
         currentElementAmount++;
-        arrayList.sort(Comparator.naturalOrder());
+        Collections.sort(arrayList);
     }
 
     /**
