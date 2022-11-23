@@ -23,7 +23,7 @@
 object Versions {
 
     // Base
-    const val gradle = "4.1.3"
+    const val gradle = "7.4.0-alpha10"
     const val kotlin = "1.6.21"
     const val androidx_navigation = "2.3.5"
 
