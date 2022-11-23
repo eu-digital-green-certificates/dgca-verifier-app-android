@@ -9,10 +9,10 @@ on:
     - synchronize
     - reopened
 env:
-  GRADLE_OPTS: -Dkotlin.incremental=false -Dorg.gradle.jvmargs="-Xmx8g -XX:MaxMetaspaceSize=8g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
+  GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false -Dkotlin.compiler.execution.strategy=in-process -Dandroid.useAndroidX=true -Dandroid.enableJetifier=true -Dkotlin.code.style=official -Dorg.gradle.jvmargs="-Xmx8192m -XX:MaxMetaspaceSize=8192m -XX:+HeapDumpOnOutOfMemoryError -XX:+UseParallelGC -Dfile.encoding=UTF-8"
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
       with:
