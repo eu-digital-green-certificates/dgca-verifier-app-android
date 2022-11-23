@@ -39,10 +39,6 @@ android {
     buildToolsVersion '28.0.3'
     compileSdkVersion Config.compileSdk
 
-    lintOptions {
-        disable 'ExpiredTargetSdkVersion'
-    }
-
     defaultConfig {
         applicationId "dgca.verifier.app.android"
         minSdkVersion Config.minSdk

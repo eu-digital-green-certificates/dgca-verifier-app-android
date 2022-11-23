@@ -21,6 +21,18 @@ allprojects {
         //noinspection JcenterRepositoryObsolete
         jcenter()
     }
+
+    afterEvaluate {
+        if (getPlugins().hasPlugin('android') ||
+            getPlugins().hasPlugin('android-library')) {
+
+            configure(android.lintOptions) {
+                disable 'ExpiredTargetSdkVersion'
+            }
+        }
+
+    }
+
 }
 
 task clean(type: Delete) {
