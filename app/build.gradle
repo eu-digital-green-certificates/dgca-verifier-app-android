@@ -29,6 +29,7 @@ plugins {
     id 'dagger.hilt.android.plugin'
     id 'com.google.android.gms.oss-licenses-plugin'
     id 'kotlin-parcelize'
+    id 'org.owasp.dependencycheck'
 }
 
 def debugKeystorePropertiesFile = rootProject.file("debug.keystore.properties")
@@ -36,7 +37,6 @@ def debugKeystoreProperties = new Properties()
 debugKeystoreProperties.load(new FileInputStream(debugKeystorePropertiesFile))
 
 android {
-    compileSdkVersion Config.compileSdk
 
     defaultConfig {
         applicationId "dgca.verifier.app.android"
@@ -44,6 +44,7 @@ android {
         targetSdkVersion Config.targetSdk
         versionCode Config.versionCode
         versionName Config.versionName
+        compileSdkVersion Config.compileSdk
 
         testInstrumentationRunner Config.androidTestInstrumentation
         signingConfig signingConfigs.debug
