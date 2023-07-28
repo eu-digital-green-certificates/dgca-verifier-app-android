@@ -8,6 +8,13 @@
 .cxx
 local.properties
 
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+.jpb
+
 .idea/workspace.xml
 .idea/tasks.xml
 .idea/gradle.xml
